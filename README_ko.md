@@ -79,7 +79,7 @@ did-ta-server
 
 이 프로젝트에서 사용되는 라이브러리는 두 가지 주요 카테고리로 구성됩니다:
 
-1. **Open DID 라이브러리**: Open DID 프로젝트에서 개발된 라이브러리로, [libs 폴더](source/tas/libs)에 포함되어 있습니다. 주요 라이브러리는 다음과 같습니다:
+1. **Open DID 라이브러리**: Open DID 프로젝트에서 개발된 라이브러리로, [libs 폴더](source/did-ta-server/libs)에 포함되어 있습니다. 주요 라이브러리는 다음과 같습니다:
 
    - `did-sdk-common-1.0.0.jar`
    - `did-blockchain-sdk-server-1.0.0.jar`

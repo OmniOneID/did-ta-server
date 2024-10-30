@@ -79,7 +79,7 @@ Below is a description of each folder and file in the directory:
 
 Libraries used in this project are organized into two main categories:
 
-1. **Open DID Libraries**: These libraries are developed by the Open DID project and are available in the [libs folder](source/tas/libs). They include:
+1. **Open DID Libraries**: These libraries are developed by the Open DID project and are available in the [libs folder](source/did-ta-server/libs). They include:
 
    - `did-sdk-common-1.0.0.jar`
    - `did-blockchain-sdk-server-1.0.0.jar`
