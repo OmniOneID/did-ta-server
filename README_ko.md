@@ -42,6 +42,7 @@ did-ta-server
         └── src
         └── build.gradle
         └── README.md
+        └── README_ko.md
 ```
 
 <br/>
@@ -98,7 +99,7 @@ TA 서버의 설치 및 구성에 대한 자세한 지침은 아래 가이드를
 ## API 참고 문서
 
 - **TAS API**: TAS 서버의 API 엔드포인트 및 사용법에 대한 자세한 참고 자료입니다.
-  - [[TAS API 참고 자료](docs/api/TAS_API_ko.md)
+  - [TAS API 참고 자료](docs/api/TAS_API_ko.md)
 
 ## Change Log
 
