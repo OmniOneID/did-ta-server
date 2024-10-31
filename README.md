@@ -34,7 +34,7 @@ did-ta-server
         ├── libs
             └── did-sdk-common-1.0.0.jar
             └── did-blockchain-sdk-server-1.0.0.jar
-            └── did-core-sdk-server-1.0.0..jar
+            └── did-core-sdk-server-1.0.0.jar
             └── did-crypto-sdk-server-1.0.0.jar
             └── did-datamodel-sdk-server-1.0.0.jar
             └── did-wallet-sdk-server-1.0.0.jar
@@ -42,35 +42,36 @@ did-ta-server
         └── src
         └── build.gradle
         └── README.md
+        └── README_ko.md
 ```
 
 <br/>
 
 Below is a description of each folder and file in the directory:
 
-| Name                    | Description                                     |
-| ----------------------- | ----------------------------------------------- |
-| CHANGELOG.md            | Version-specific changes in the project         |
-| CODE_OF_CONDUCT.md      | Code of conduct for contributors                |
-| CONTRIBUTING.md         | Contribution guidelines and procedures          |
-| LICENSE                 | License                                        |
-| dependencies-license.md | Licenses for the project’s dependency libraries |
-| MAINTAINERS.md          | Guidelines for project maintainers              |
-| RELEASE-PROCESS.md      | Procedures for releasing new versions           |
-| SECURITY.md             | Security policies and vulnerability reporting   |
-| docs                    | Documentation                                   |
-| ┖ api                   | API guide documentation                         |
-| ┖ errorCode             | Error codes and troubleshooting guides          |
-| ┖ installation          | Installation and setup instructions             |
-| ┖ db                    | Database ERD,  Table Specifications             |
-| source                  | Server source code project                      |
-| ┖ did-ta-server        | TAS Server source code and build files          |
-| ┖ gradle                | Gradle build configurations and scripts         |
-| ┖ libs                  | External libraries and dependencies             |
-| ┖ sample                | Sample files                                    |
-| ┖ src                   | Main source code directory                      |
-| ┖ build.gradle          | Gradle build configuration file                 |
-| ┖ README.md             | Overview and instructions for the source code   |
+| Name                             | Description                                     |
+| -------------------------------- | ----------------------------------------------- |
+| CHANGELOG.md                     | Version-specific changes in the project         |
+| CODE_OF_CONDUCT.md               | Code of conduct for contributors                |
+| CONTRIBUTING.md                  | Contribution guidelines and procedures          |
+| LICENSE                          | License                                         |
+| dependencies-license.md          | Licenses for the project’s dependency libraries |
+| MAINTAINERS.md                   | Guidelines for project maintainers              |
+| RELEASE-PROCESS.md               | Procedures for releasing new versions           |
+| SECURITY.md                      | Security policies and vulnerability reporting   |
+| docs                             | Documentation                                   |
+| ┖ api                            | API guide documentation                         |
+| ┖ errorCode                      | Error codes and troubleshooting guides          |
+| ┖ installation                   | Installation and setup instructions             |
+| ┖ db                             | Database ERD,  Table Specifications             |
+| source                           | Server source code project                      |
+| ┖ did-ta-server                  | TAS Server source code and build files          |
+| &nbsp;&nbsp;&nbsp;┖ gradle       | Gradle build configurations and scripts         |
+| &nbsp;&nbsp;&nbsp;┖ libs         | External libraries and dependencies             |
+| &nbsp;&nbsp;&nbsp;┖ sample       | Sample files                                    |
+| &nbsp;&nbsp;&nbsp;┖ src          | Main source code directory                      |
+| &nbsp;&nbsp;&nbsp;┖ build.gradle | Gradle build configuration file                 |
+| &nbsp;&nbsp;&nbsp;┖ README.md    | Overview and instructions for the source code   |
 
 <br/>
 
@@ -79,7 +80,7 @@ Below is a description of each folder and file in the directory:
 
 Libraries used in this project are organized into two main categories:
 
-1. **Open DID Libraries**: These libraries are developed by the Open DID project and are available in the [libs folder](source/tas/libs). They include:
+1. **Open DID Libraries**: These libraries are developed by the Open DID project and are available in the [libs folder](source/did-ta-server/libs). They include:
 
    - `did-sdk-common-1.0.0.jar`
    - `did-blockchain-sdk-server-1.0.0.jar`
@@ -88,7 +89,7 @@ Libraries used in this project are organized into two main categories:
    - `did-datamodel-sdk-server-1.0.0.jar`
    - `did-wallet-sdk-server-1.0.0.jar`
 
-2. **Third-Party Libraries**: These libraries are open-source dependencies managed via the [build.gradle](source/tas/build.gradle) file. For a detailed list of third-party libraries and their licenses, please refer to the [LICENSE-dependencies.md](LICENSE-dependencies.md) file.
+2. **Third-Party Libraries**: These libraries are open-source dependencies managed via the [build.gradle](source/did-ta-server/build.gradle) file. For a detailed list of third-party libraries and their licenses, please refer to the [dependencies-license.md](dependencies-license.md) file.
 
 ## Installation And Operation Guide
 
@@ -105,7 +106,7 @@ For detailed instructions on installing and configuring the TA Server, please re
 The Change Log provides a detailed record of version-specific changes and updates. You can find it here:
 - [Change Log](./CHANGELOG.md)  
 
-## OpenDID Demonstration Videos <br>
+## OpenDID Demonstration Videos
 To watch our demonstration videos of the OpenDID system in action, please visit our [Demo Repository](https://github.com/OmniOneID/did-demo-server). <br>
 
 These videos showcase key features including user registration, VC issuance, and VP submission processes.
