@@ -16,6 +16,7 @@
 
 package org.omnione.did.tas.v1.dto.user;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,5 +34,8 @@ import lombok.ToString;
 @ToString
 @Builder
 public class ProposeUpdateDidDocResDto {
+    @NotNull(message = "txId cannot be null")
     private String txId;
+    @NotNull(message = "authNonce cannot be null")
+    private String authNonce;
 }

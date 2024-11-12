@@ -671,6 +671,7 @@ public class UserServiceImpl implements UserService {
             String txId = IdGenerator.generateTxId();
 
             // Generate authNonce. (16-byte)
+            log.debug("\t--> Generating auth nonce");
             String authNonce = BaseTasUtil.generateNonceWithMultibase();
 
             // Insert transaction information.
@@ -699,6 +700,7 @@ public class UserServiceImpl implements UserService {
 
             return ProposeUpdateDidDocResDto.builder()
                     .txId(txId)
+                    .authNonce(authNonce)
                     .build();
         } catch (OpenDidException e) {
             log.error("\t--> OpenDidException occurred during proposeUpdateUser: {}", e.getErrorCode() != null ? e.getErrorCode() : e.getErrorResponse());
