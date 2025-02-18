@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.omnione.did.tas.v1.agent.service.query;
+package org.omnione.did.tas.v1.common.service.query;
 
 import org.omnione.did.base.db.domain.Ecdh;
 import org.omnione.did.base.db.repository.EcdhRepository;

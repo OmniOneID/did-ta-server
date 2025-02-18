@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package org.omnione.did.tas.v1.agent.service.query;
+package org.omnione.did.tas.v1.common.service.query;
 
-import org.omnione.did.base.db.domain.Token;
-import org.omnione.did.base.db.repository.TokenRepository;
+import org.omnione.did.base.db.domain.CertificateVc;
+import org.omnione.did.base.db.repository.CertificateVcRepository;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
 import lombok.RequiredArgsConstructor;
@@ -25,31 +25,30 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 /**
- * Service for querying Token.
+ * Service for querying CertificateVc.
  */
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class TokenQueryService {
-    private final TokenRepository tokenRepository;
+public class CertificateVcQueryService {
+    private final CertificateVcRepository certificateVcRepository;
 
     /**
-     * Finds a Token by its transaction ID.
+     * Finds the latest CertificateVc.
      *
-     * @param transactionId Transaction ID to search for.
-     * @return Found Token.
-     * @throws OpenDidException if the Token is not found.
+     * @return The latest CertificateVc
+     * @throws OpenDidException if the CertificateVc is not found
      */
-    public Token findTokenByTransactionId(Long transactionId) {
+    public CertificateVc findCertificateVc() {
         try {
-            return tokenRepository.findByTransactionId(transactionId)
-                    .orElseThrow(() -> new OpenDidException(ErrorCode.TOKEN_INFO_NOT_FOUND));
+            return certificateVcRepository.findFirstByOrderByCreatedAtDesc()
+                    .orElseThrow(() -> new OpenDidException(ErrorCode.TAS_CERTIFICATE_DATA_NOT_FOUND));
         } catch (OpenDidException e) {
-            log.error("Token not found for transactionId {}: {}", transactionId, e.getMessage());
+            log.error("CertificateVc not found: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
-            log.error("Unexpected error occurred while finding Token for transactionId {}: {}", transactionId, e.getMessage());
-            throw new OpenDidException(ErrorCode.TOKEN_INFO_NOT_FOUND);
+            log.error("Unexpected error occurred while finding CertificateVc: {}" , e.getMessage());
+            throw new OpenDidException(ErrorCode.TAS_CERTIFICATE_DATA_NOT_FOUND);
         }
     }
 }

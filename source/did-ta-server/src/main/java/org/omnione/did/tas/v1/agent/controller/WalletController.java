@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(value = UrlConstant.Tas.V1)
+@RequestMapping(value = UrlConstant.Tas.AGENT_V1)
 public class WalletController {
     private final WalletService walletService;
 

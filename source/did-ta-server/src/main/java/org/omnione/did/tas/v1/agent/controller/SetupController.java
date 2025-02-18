@@ -36,7 +36,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(value = UrlConstant.Tas.V1 + "/setup")
+@RequestMapping(value = UrlConstant.Tas.AGENT_V1 + "/setup")
 public class SetupController {
     private final SetupService setupService;
 

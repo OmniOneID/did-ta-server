@@ -34,7 +34,7 @@ import org.omnione.did.base.util.BaseCoreVcUtil;
 import org.omnione.did.base.util.BaseMultibaseUtil;
 import org.omnione.did.tas.v1.agent.dto.tas.RequestEnrollTasReqDto;
 import org.omnione.did.tas.v1.agent.dto.tas.RequestEnrollTasResDto;
-import org.omnione.did.tas.v1.agent.service.query.TasQueryService;
+import org.omnione.did.tas.v1.common.service.query.TasQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.common.util.IdGenerator;

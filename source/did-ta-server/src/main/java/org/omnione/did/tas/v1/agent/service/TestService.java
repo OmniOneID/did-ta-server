@@ -20,7 +20,7 @@ import org.omnione.did.base.db.domain.User;
 import org.omnione.did.base.db.repository.AppRepository;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
-import org.omnione.did.tas.v1.agent.service.query.UserQueryService;
+import org.omnione.did.tas.v1.common.service.query.UserQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

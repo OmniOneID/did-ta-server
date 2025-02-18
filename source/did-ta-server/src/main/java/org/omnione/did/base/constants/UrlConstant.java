@@ -26,7 +26,8 @@ public class UrlConstant {
      * Contains URL constants for the TAS (Trusted Agent) API.
      */
     public static class Tas {
-        public static final String V1 = "/tas/api/v1";
+        public static final String AGENT_V1 = "/tas/api/v1";
+        public static final String ADMIN_V1 = "/tas/admin/v1";
     }
 
     /**

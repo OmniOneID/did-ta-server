@@ -65,7 +65,7 @@ public class VcIssueServiceTest {
         reqDto.setIssuer("did:omn:issuer");
 
         // 2. Call controller and verify response
-        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.V1 + "/offer-issue-vc/qr")
+        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.AGENT_V1 + "/offer-issue-vc/qr")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(reqDto)))
                 .andExpect(status().isOk())
@@ -91,7 +91,7 @@ public class VcIssueServiceTest {
                 .build();
 
         // 2. Call controller and verify response
-        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.V1 + "/propose-issue-vc")
+        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.AGENT_V1 + "/propose-issue-vc")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(reqDto)))
                 .andExpect(status().isOk())
@@ -118,7 +118,7 @@ public class VcIssueServiceTest {
                 .build();
 
         // 2.  Call controller and verify response
-        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.V1 + "/request-ecdh")
+        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.AGENT_V1 + "/request-ecdh")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(reqDto)))
                 .andExpect(status().isOk())
@@ -140,7 +140,7 @@ public class VcIssueServiceTest {
         RequestCreateTokenReqDto reqDto = objectMapper.readValue(req, RequestCreateTokenReqDto.class);
 
         // 2.  Call controller and verify response
-        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.V1 + "/request-create-token")
+        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.AGENT_V1 + "/request-create-token")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(reqDto)))
                 .andExpect(status().isOk())
@@ -163,7 +163,7 @@ public class VcIssueServiceTest {
         reqDto.setServerToken("mr9B+5H6PbgSCNilyvvdbwJA05P/LyvC7ijTVkid7qGU");
 
         // 2. Call controller and verify response
-        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.V1 + "/request-issue-profile")
+        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.AGENT_V1 + "/request-issue-profile")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(reqDto)))
                 .andExpect(status().isOk())
@@ -188,7 +188,7 @@ public class VcIssueServiceTest {
 
 
         // 2. Call controller and verify response
-        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.V1 + "/request-issue-vc")
+        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.AGENT_V1 + "/request-issue-vc")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(reqDto)))
                 .andExpect(status().isOk())
@@ -214,7 +214,7 @@ public class VcIssueServiceTest {
                 .build();
 
         // 2. Call controller and verify response
-        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.V1 + "/confirm-issue-vc")
+        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.AGENT_V1 + "/confirm-issue-vc")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(reqDto)))
                 .andExpect(status().isOk())

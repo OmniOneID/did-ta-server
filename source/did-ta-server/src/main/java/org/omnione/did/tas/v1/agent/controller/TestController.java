@@ -22,8 +22,8 @@ import org.omnione.did.base.db.domain.Tas;
 import org.omnione.did.base.db.domain.User;
 import org.omnione.did.base.property.TasProperty;
 import org.omnione.did.tas.v1.agent.service.EntityService;
-import org.omnione.did.tas.v1.agent.service.query.EntityQueryService;
-import org.omnione.did.tas.v1.agent.service.query.TasQueryService;
+import org.omnione.did.tas.v1.common.service.query.EntityQueryService;
+import org.omnione.did.tas.v1.common.service.query.TasQueryService;
 import org.omnione.did.tas.v1.agent.service.validator.CertificateVcValidator;
 import org.omnione.did.tas.v1.agent.dto.common.EmptyResDto;
 import org.omnione.did.tas.v1.agent.dto.vc.OfferIssueVcNotiResDto;
@@ -54,7 +54,7 @@ import java.util.Map;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(value = UrlConstant.Tas.V1 + "/test")
+@RequestMapping(value = UrlConstant.Tas.AGENT_V1 + "/test")
 @Profile("test")
 public class TestController {
     private final DidDocService didDocService;

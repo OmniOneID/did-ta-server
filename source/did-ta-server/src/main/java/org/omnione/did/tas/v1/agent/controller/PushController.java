@@ -35,7 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(value = UrlConstant.Tas.V1)
+@RequestMapping(value = UrlConstant.Tas.AGENT_V1)
 public class PushController {
     private final PushService pushService;
 

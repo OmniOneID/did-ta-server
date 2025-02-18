@@ -32,7 +32,7 @@ import org.omnione.did.base.util.BaseCryptoUtil;
 import org.omnione.did.base.util.BaseDigestUtil;
 import org.omnione.did.tas.v1.agent.dto.common.EmptyResDto;
 import org.omnione.did.tas.v1.agent.dto.push.UpdatePushTokenReqDto;
-import org.omnione.did.tas.v1.agent.service.query.UserQueryService;
+import org.omnione.did.tas.v1.common.service.query.UserQueryService;
 import org.omnione.did.tas.v1.agent.service.validator.DidAuthValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
