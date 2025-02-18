@@ -16,7 +16,6 @@
 
 package org.omnione.did.list.v1.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,7 +25,7 @@ import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.list.v1.dto.ca.AllowedCaResDto;
 import org.omnione.did.list.v1.dto.vcplan.RequestVcplanListResDto;
 import org.omnione.did.list.v1.dto.vcplan.VcPlanResDto;
-import org.omnione.did.tas.v1.service.FileLoaderService;
+import org.omnione.did.tas.v1.agent.service.FileLoaderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

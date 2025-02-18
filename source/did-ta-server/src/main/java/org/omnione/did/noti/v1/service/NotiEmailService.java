@@ -20,7 +20,7 @@ import org.omnione.did.base.datamodel.enums.EmailTemplateType;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.noti.v1.dto.email.RequestSendEmailReqDto;
-import org.omnione.did.tas.v1.dto.common.EmptyResDto;
+import org.omnione.did.tas.v1.agent.dto.common.EmptyResDto;
 import jakarta.annotation.PostConstruct;
 import jakarta.mail.Message;
 import jakarta.mail.internet.InternetAddress;

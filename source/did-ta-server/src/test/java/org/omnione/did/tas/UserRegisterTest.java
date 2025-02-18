@@ -17,16 +17,18 @@
 package org.omnione.did.tas;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.*;
 import org.omnione.did.TasApplication;
 import org.omnione.did.base.constants.UrlConstant;
 import org.omnione.did.base.datamodel.data.EcdhReqData;
 import org.omnione.did.base.datamodel.data.SignedDidDoc;
-import org.omnione.did.base.datamodel.enums.DidDocStatus;
-import org.omnione.did.tas.v1.dto.entity.RequestECDHReqDto;
-import org.omnione.did.tas.v1.dto.user.*;
+import org.omnione.did.tas.v1.agent.dto.entity.RequestECDHReqDto;
+import org.omnione.did.tas.v1.agent.dto.user.ConfirmRegisterUserReqDto;
+import org.omnione.did.tas.v1.agent.dto.user.ProposeRegisterUserReqDto;
+import org.omnione.did.tas.v1.agent.dto.user.RequestCreateTokenReqDto;
+import org.omnione.did.tas.v1.agent.dto.user.RequestRegisterUserReqDto;
+import org.omnione.did.tas.v1.agent.dto.user.RetrieveKycReqDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;

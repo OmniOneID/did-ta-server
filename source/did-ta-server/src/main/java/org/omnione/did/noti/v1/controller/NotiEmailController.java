@@ -19,7 +19,7 @@ package org.omnione.did.noti.v1.controller;
 import org.omnione.did.base.constants.UrlConstant;
 import org.omnione.did.noti.v1.dto.email.RequestSendEmailReqDto;
 import org.omnione.did.noti.v1.service.NotiEmailService;
-import org.omnione.did.tas.v1.dto.common.EmptyResDto;
+import org.omnione.did.tas.v1.agent.dto.common.EmptyResDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
