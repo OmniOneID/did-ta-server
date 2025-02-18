@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import { ReactRouterAppProvider } from '@toolpad/core/react-router';
 import { Outlet, useNavigate } from 'react-router';
@@ -13,6 +13,11 @@ const NAVIGATION: Navigation = [
     title: 'Dashboard',
     icon: <DashboardIcon />,
   },
+  {
+    segment: 'ta-register',
+    title: 'TA 등록',
+    icon: <DashboardIcon />,
+  },
 ];
 
 export default function App() {
@@ -23,10 +28,12 @@ export default function App() {
     return storedSession ? JSON.parse(storedSession) : null;
   });
 
+  const [navigation, setNavigation] = React.useState<Navigation>(NAVIGATION);
+
   const setSession = React.useCallback((newSession: Session | null) => {
     setSessionState(newSession);
     if (newSession) {
-      localStorage.setItem('session', JSON.stringify(newSession)); 
+      localStorage.setItem('session', JSON.stringify(newSession));
     } else {
       localStorage.removeItem('session'); 
     }
@@ -48,7 +55,7 @@ export default function App() {
     <SessionContext.Provider value={sessionContextValue}>
       <DialogsProvider>
         <ReactRouterAppProvider
-          navigation={NAVIGATION}
+          navigation={navigation}
           session={session}
           authentication={{ signIn, signOut }}
         >

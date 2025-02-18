@@ -5,6 +5,8 @@ import App from './App';
 import Layout from './layout/Layout';
 import Dashboard from './pages/dashboard/Dashboard';
 import SignInPage from './pages/auth/SignIn';
+import TrustAgentRegisterPage from './pages/trust-agent/TrustAgentRegisterPage';
+
 const router = createBrowserRouter([
   {
     Component: App,
@@ -17,6 +19,10 @@ const router = createBrowserRouter([
             path: '/',
             Component: Dashboard,
           },
+          {
+            path: '/ta-register',
+            Component: TrustAgentRegisterPage
+          }
         ],
       },
       {
