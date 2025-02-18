@@ -1,11 +1,9 @@
-import * as React from 'react';
-import { Outlet, Navigate, useNavigate } from 'react-router';
+import CloudCircleIcon from '@mui/icons-material/CloudCircle';
+import { Stack, Typography } from '@mui/material';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import { PageContainer } from '@toolpad/core/PageContainer';
+import { Navigate, Outlet, useNavigate } from 'react-router';
 import { useSession } from '../context/SessionContext';
-import BreadcrumbsGenerator from '../components/breadcrumbs/BreadcrumbsGenerator';
-import { Stack, Typography } from '@mui/material';
-import CloudCircleIcon from '@mui/icons-material/CloudCircle';
 
 export default function Layout() {
   const { session } = useSession();
@@ -14,8 +12,6 @@ export default function Layout() {
   if (!session) {
     return <Navigate to="/sign-in" replace />;
   }
-
-  const breadcrumbs = BreadcrumbsGenerator();
 
   const CustomAppTitle = () => {
     return (
@@ -46,7 +42,7 @@ export default function Layout() {
         appTitle: CustomAppTitle,
       }}
     >
-      <PageContainer breadcrumbs={breadcrumbs}>
+      <PageContainer>
         <Outlet />
       </PageContainer>
     </DashboardLayout>
