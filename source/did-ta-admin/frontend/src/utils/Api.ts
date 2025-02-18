@@ -1,4 +1,4 @@
-const API_BASE_URL = "/api";
+const API_BASE_URL = "/admin/v1";
 
 const requestApi = (
   endpoint: string,
@@ -6,6 +6,7 @@ const requestApi = (
   body?: any
 ): Promise<{ url: string; data: any }> => {
   const fullUrl = `${API_BASE_URL}/${endpoint}`;
+  console.log(fullUrl);
   const options: RequestInit = {
     method,
     headers: {
