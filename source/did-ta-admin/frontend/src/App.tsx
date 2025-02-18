@@ -1,18 +1,13 @@
-import React from 'react';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import { ReactRouterAppProvider } from '@toolpad/core/react-router';
-import { Outlet, useNavigate } from 'react-router';
 import type { Navigation, Session } from '@toolpad/core/AppProvider';
-import { SessionContext } from './context/SessionContext';
+import { ReactRouterAppProvider } from '@toolpad/core/react-router';
 import { DialogsProvider } from '@toolpad/core/useDialogs';
+import React from 'react';
+import { Outlet, useNavigate } from 'react-router';
+import { SessionContext } from './context/SessionContext';
 
 // Sidebar menu link
 const NAVIGATION: Navigation = [
-  {
-    segment: '',
-    title: 'Dashboard',
-    icon: <DashboardIcon />,
-  },
   {
     segment: 'ta-register',
     title: 'TA 등록',
