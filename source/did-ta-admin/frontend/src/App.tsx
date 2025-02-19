@@ -8,13 +8,7 @@ import { SessionContext } from './context/SessionContext';
 import { ServerStatusProvider, useServerStatus } from './context/ServerStatusContext';
 import LoadingScreen from './components/loading/LoadingScreen';
 import { getTaInfo } from './apis/TaApi';
-
-const getNavigationByStatus = (serverStatus: string | null): Navigation => {
-  if (serverStatus !== 'COMPLETED') {
-    return [{ segment: 'ta-register', title: 'TA 등록', icon: <DashboardIcon /> }];
-  }
-  return [];
-};
+import { getNavigationByStatus } from './config/navigationConfig';
 
 function AppContent() {
   const navigate = useNavigate();
