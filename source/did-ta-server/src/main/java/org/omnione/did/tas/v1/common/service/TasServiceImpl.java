@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.omnione.did.tas.v1.agent.service;
+package org.omnione.did.tas.v1.common.service;
 
 import org.omnione.did.base.db.constant.SubTransactionStatus;
 import org.omnione.did.base.db.constant.SubTransactionType;
@@ -34,6 +34,10 @@ import org.omnione.did.base.util.BaseCoreVcUtil;
 import org.omnione.did.base.util.BaseMultibaseUtil;
 import org.omnione.did.tas.v1.agent.dto.tas.RequestEnrollTasReqDto;
 import org.omnione.did.tas.v1.agent.dto.tas.RequestEnrollTasResDto;
+import org.omnione.did.tas.v1.agent.service.FileWalletService;
+import org.omnione.did.tas.v1.agent.service.IssueVcService;
+import org.omnione.did.tas.v1.agent.service.StorageService;
+import org.omnione.did.tas.v1.agent.service.TransactionService;
 import org.omnione.did.tas.v1.common.service.query.TasQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -17,7 +17,7 @@
 package org.omnione.did.tas.v1.agent.controller;
 
 import org.omnione.did.base.constants.UrlConstant;
-import org.omnione.did.tas.v1.agent.service.SetupService;
+import org.omnione.did.tas.v1.common.service.SetupService;
 import org.omnione.did.tas.v1.agent.dto.common.EmptyResDto;
 import org.omnione.did.tas.v1.agent.dto.setup.RemoveBlockChainIndexReqDto;
 import lombok.RequiredArgsConstructor;

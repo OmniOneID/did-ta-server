@@ -17,7 +17,7 @@
 package org.omnione.did.tas.v1.agent.controller;
 
 import org.omnione.did.base.constants.UrlConstant;
-import org.omnione.did.tas.v1.agent.service.TasService;
+import org.omnione.did.tas.v1.common.service.TasService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

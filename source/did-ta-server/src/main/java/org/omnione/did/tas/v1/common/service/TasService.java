@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.omnione.did.tas.v1.agent.service;
+package org.omnione.did.tas.v1.common.service;
 
 import org.omnione.did.tas.v1.agent.dto.tas.RequestEnrollTasReqDto;
 import org.omnione.did.tas.v1.agent.dto.tas.RequestEnrollTasResDto;

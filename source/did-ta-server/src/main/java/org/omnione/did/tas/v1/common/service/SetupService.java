@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.omnione.did.tas.v1.agent.service;
+package org.omnione.did.tas.v1.common.service;
 
 import org.omnione.did.base.db.constant.EntityStatus;
 import org.omnione.did.base.db.constant.Role;
@@ -30,6 +30,8 @@ import org.omnione.did.base.util.BaseBlockChainUtil;
 import org.omnione.did.base.util.BaseCoreDidUtil;
 import org.omnione.did.tas.v1.agent.dto.common.EmptyResDto;
 import org.omnione.did.tas.v1.agent.dto.setup.RemoveBlockChainIndexReqDto;
+import org.omnione.did.tas.v1.agent.service.SignatureService;
+import org.omnione.did.tas.v1.agent.service.StorageService;
 import org.omnione.did.tas.v1.common.service.query.EntityQueryService;
 import org.omnione.did.tas.v1.common.service.query.TasQueryService;
 import lombok.RequiredArgsConstructor;
@@ -72,6 +74,56 @@ public class SetupService {
             // Parse the DID Document
             log.debug("\t--> Parsing DID Document");
             DidManager didManager = BaseCoreDidUtil.parseDidDoc(new String(didDoc.getBytes(), StandardCharsets.UTF_8));
+            DidDocument ownerDidDoc = didManager.getDocument();
+
+            // Verify TAS DID
+            log.debug("\t--> Verifying TAS DID");
+            verifyTasDid(ownerDidDoc.getId());
+
+            // Check if TAS is not registered.
+            log.debug("\t--> Verifying TAS registration");
+            verifyTasNotRegistered(ownerDidDoc.getId());
+
+            // Verify DID document key signatures.
+            log.debug("\t--> Verifying DID document key signatures");
+            signatureService.verifyDidDocKeyProofs(ownerDidDoc);
+
+            // Sign DID document.
+            log.debug("\t--> Signing DID document");
+            InvokedDidDoc invokedDidDoc = signatureService.signTasInvokedDidDoc(ownerDidDoc);
+
+            // Upload User DID document.
+            log.debug("\t--> Uploading wallet DID document");
+            storageService.registerDidDoc(invokedDidDoc, RoleType.TAS);
+
+            // Register TAS DID document.
+            log.debug("\t--> Registering TAS DID document");
+            tasRepository.save(Tas.builder()
+                    .did(ownerDidDoc.getId())
+                    .name(tasProperty.getName())
+                    .serverUrl(tasProperty.getUrl())
+                    .status(TasStatus.CERTIFICATE_VC_REQUIRED)
+                    .build());
+
+            log.debug("=== Finished registerTasDidDocument ===");
+
+            return new EmptyResDto();
+        } catch (OpenDidException e) {
+            log.error("Failed to register DID Document : {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to register DID Document : {}", e.getMessage());
+            throw new OpenDidException(ErrorCode.UNKNOWN_SERVER_ERROR);
+        }
+    }
+
+    public EmptyResDto registerTasDidDocument(byte[] didDocBytes) {
+        try {
+            log.debug("=== Starting registerTasDidDocument ===");
+
+            // Parse the DID Document
+            log.debug("\t--> Parsing DID Document");
+            DidManager didManager = BaseCoreDidUtil.parseDidDoc(new String(didDocBytes, StandardCharsets.UTF_8));
             DidDocument ownerDidDoc = didManager.getDocument();
 
             // Verify TAS DID

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package org.omnione.did.tas.v1.agent.service.sample;
+package org.omnione.did.tas.v1.common.service.sample;
 
 import org.omnione.did.base.db.repository.TasRepository;
-import org.omnione.did.tas.v1.agent.service.TasService;
+import org.omnione.did.tas.v1.common.service.TasService;
 import org.omnione.did.tas.v1.agent.dto.tas.RequestEnrollTasReqDto;
 import org.omnione.did.tas.v1.agent.dto.tas.RequestEnrollTasResDto;
 import lombok.RequiredArgsConstructor;

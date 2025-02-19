@@ -12,6 +12,7 @@ spring:
           - spring-docs
           - notification
           - tas
+          - setup
         sample:
           - auth
           - databases-sample
@@ -20,6 +21,7 @@ spring:
           - spring-docs
           - notification
           - tas
+          - setup
   jackson:
     default-property-inclusion: non_null
     serialization:
@@ -29,6 +31,17 @@ spring:
       enabled: true
       max-file-size: 10MB
       max-request-size: 10MB
+
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: "health,info"
+#      base-path: "/tas/admin/v1"
+#  endpoint:
+#    health:
+#      show-details: "always" # 모든 상태 정보 노출
+
 
 server:
   port: 8090

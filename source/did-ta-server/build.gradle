@@ -83,6 +83,8 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
     implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
+
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 }
 
 dependencyManagement {
