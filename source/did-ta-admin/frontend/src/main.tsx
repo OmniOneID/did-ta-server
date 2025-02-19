@@ -3,7 +3,6 @@ import * as ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router';
 import App from './App';
 import Layout from './layout/Layout';
-import Dashboard from './pages/dashboard/Dashboard';
 import SignInPage from './pages/auth/SignIn';
 import TrustAgentRegisterPage from './pages/trust-agent/TrustAgentRegisterPage';
 
@@ -15,10 +14,6 @@ const router = createBrowserRouter([
         path: '/',
         Component: Layout,
         children: [
-          {
-            path: '/',
-            Component: Dashboard,
-          },
           {
             path: '/ta-register',
             Component: TrustAgentRegisterPage

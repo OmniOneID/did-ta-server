@@ -2,30 +2,33 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import type { Navigation, Session } from '@toolpad/core/AppProvider';
 import { ReactRouterAppProvider } from '@toolpad/core/react-router';
 import { DialogsProvider } from '@toolpad/core/useDialogs';
-import React from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { Outlet, useNavigate } from 'react-router';
 import { SessionContext } from './context/SessionContext';
+import { ServerStatusProvider, useServerStatus } from './context/ServerStatusContext';
+import LoadingScreen from './components/loading/LoadingScreen';
+import { getTaInfo } from './apis/TaApi';
 
-// Sidebar menu link
-const NAVIGATION: Navigation = [
-  {
-    segment: 'ta-register',
-    title: 'TA 등록',
-    icon: <DashboardIcon />,
-  },
-];
+const getNavigationByStatus = (serverStatus: string | null): Navigation => {
+  if (serverStatus !== 'COMPLETED') {
+    return [{ segment: 'ta-register', title: 'TA 등록', icon: <DashboardIcon /> }];
+  }
+  return [];
+};
 
-export default function App() {
+function AppContent() {
   const navigate = useNavigate();
+  
+  const { serverStatus, loading, setServerStatus, setLoading } = useServerStatus();
 
-  const [session, setSessionState] = React.useState<Session | null>(() => {
+  const [session, setSessionState] = useState<Session | null>(() => {
     const storedSession = localStorage.getItem('session');
     return storedSession ? JSON.parse(storedSession) : null;
   });
 
-  const [navigation, setNavigation] = React.useState<Navigation>(NAVIGATION);
+  const [navigation, setNavigation] = useState<Navigation>(getNavigationByStatus(null));
 
-  const setSession = React.useCallback((newSession: Session | null) => {
+  const setSession = useCallback((newSession: Session | null) => {
     setSessionState(newSession);
     if (newSession) {
       localStorage.setItem('session', JSON.stringify(newSession));
@@ -34,19 +37,44 @@ export default function App() {
     }
   }, []);
 
-  const signIn = React.useCallback(() => {
+  const signIn = useCallback(() => {
     navigate('/sign-in');
   }, [navigate]);
 
-  const signOut = React.useCallback(() => {
+  const signOut = useCallback(() => {
     setSession(null);
     navigate('/sign-in');
   }, [navigate]);
 
-  const sessionContextValue = React.useMemo(() => ({ session, setSession }), [session, setSession]);
+  useEffect(() => {
+    getTaInfo()
+      .then(({ url, data }) => {
+        setServerStatus(data.status);
+        setNavigation(getNavigationByStatus(data.status));
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error('TA 정보 조회 실패:', err);
+        navigate('/sign-in');
+      });
+
+  }, [setServerStatus]);
+
+  useEffect(() => {
+    if (serverStatus !== 'COMPLETED') {
+      navigate('/');
+    } else {
+      navigate('/ta-register');
+    }
+  }, [serverStatus, navigate]);
+
+  const sessionContextValue = useMemo(() => ({ session, setSession }), [session, setSession]);
+
+  if (loading) {
+    return <LoadingScreen />;
+  }
 
   return (
-    
     <SessionContext.Provider value={sessionContextValue}>
       <DialogsProvider>
         <ReactRouterAppProvider
@@ -58,5 +86,13 @@ export default function App() {
         </ReactRouterAppProvider>
       </DialogsProvider>
     </SessionContext.Provider>
+  );
+}
+
+export default function App() {
+  return (
+    <ServerStatusProvider>
+      <AppContent />
+    </ServerStatusProvider>
   );
 }
