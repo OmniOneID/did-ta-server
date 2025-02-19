@@ -5,6 +5,7 @@ import App from './App';
 import Layout from './layout/Layout';
 import SignInPage from './pages/auth/SignIn';
 import TrustAgentRegisterPage from './pages/trust-agent/TrustAgentRegisterPage';
+import ErrorPage from './pages/ErrorPage';
 
 const router = createBrowserRouter([
   {
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
       {
         path: '/sign-in',
         Component: SignInPage,
+      },
+      {
+        path: '/error',
+        Component: ErrorPage,
       },
     ],
   },

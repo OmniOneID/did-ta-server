@@ -21,7 +21,18 @@ const requestApi = (
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
-        return response.json().then((data) => resolve({ url: fullUrl, data }));
+        // return response.json().then((data) => resolve({ url: fullUrl, data }));
+        return response.text().then((text) => {
+          let data = {};
+          if (text) {
+            try {
+              data = JSON.parse(text);
+            } catch (error) {
+              console.warn("Failed to parse JSON response:", error);
+            }
+          }
+          resolve({ url: fullUrl, data });
+        });
       })
       .catch((error) => reject(error));
   });

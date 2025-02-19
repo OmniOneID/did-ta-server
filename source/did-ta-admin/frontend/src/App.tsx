@@ -6,14 +6,13 @@ import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { Outlet, useNavigate } from 'react-router';
 import { SessionContext } from './context/SessionContext';
 import { ServerStatusProvider, useServerStatus } from './context/ServerStatusContext';
-import LoadingScreen from './components/loading/LoadingScreen';
 import { getTaInfo } from './apis/TaApi';
 import { getNavigationByStatus } from './config/navigationConfig';
 
 function AppContent() {
   const navigate = useNavigate();
   
-  const { serverStatus, loading, setServerStatus, setLoading } = useServerStatus();
+  const { serverStatus, setServerStatus } = useServerStatus();
 
   const [session, setSessionState] = useState<Session | null>(() => {
     const storedSession = localStorage.getItem('session');
@@ -40,33 +39,19 @@ function AppContent() {
     navigate('/sign-in');
   }, [navigate]);
 
+  // Fetch TA information
   useEffect(() => {
     getTaInfo()
       .then(({ url, data }) => {
         setServerStatus(data.status);
         setNavigation(getNavigationByStatus(data.status));
-        setLoading(false);
       })
       .catch((err) => {
-        console.error('TA 정보 조회 실패:', err);
-        navigate('/sign-in');
+        console.error('Failed to fetch TA information:', err);
       });
-
-  }, [setServerStatus]);
-
-  useEffect(() => {
-    if (serverStatus !== 'COMPLETED') {
-      navigate('/');
-    } else {
-      navigate('/ta-register');
-    }
-  }, [serverStatus, navigate]);
+  }, []);
 
   const sessionContextValue = useMemo(() => ({ session, setSession }), [session, setSession]);
-
-  if (loading) {
-    return <LoadingScreen />;
-  }
 
   return (
     <SessionContext.Provider value={sessionContextValue}>
