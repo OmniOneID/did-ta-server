@@ -1,26 +1,25 @@
-import React, { useEffect } from 'react'
 import { postData } from '../../utils/api';
 
 type Props = {}
 
 const TrustAgentRegisterPage = (props: Props) => {
 
-  useEffect(() => {
-
-    postData('ta/diddoc', null)
-    .then(({ url, data }) => {
-      console.log('호출 성공');
-    })
-    .catch((err) => {
-      console.error('Failed to fetch TA information:', err);
-    });
-
-
-  }, []);
+  const handlePostData = () => {
+    postData('ta/register-simple', null)
+      .then(({ url, data }) => {
+        console.log('호출 성공');
+      })
+      .catch((err) => {
+        console.error('Failed to fetch TA information:', err);
+      });
+  };
 
   return (
-    <div>TrustAgentRegister</div>
-  )
+    <div>
+      <h2>TrustAgent Register</h2>
+      <button onClick={handlePostData}>TA 등록 요청</button>
+    </div>
+  );
 }
 
-export default TrustAgentRegisterPage
+export default TrustAgentRegisterPage;
