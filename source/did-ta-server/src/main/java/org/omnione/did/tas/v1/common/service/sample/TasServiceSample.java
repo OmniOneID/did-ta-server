@@ -18,8 +18,8 @@ package org.omnione.did.tas.v1.common.service.sample;
 
 import org.omnione.did.base.db.repository.TasRepository;
 import org.omnione.did.tas.v1.common.service.TasService;
-import org.omnione.did.tas.v1.agent.dto.tas.RequestEnrollTasReqDto;
-import org.omnione.did.tas.v1.agent.dto.tas.RequestEnrollTasResDto;
+import org.omnione.did.tas.v1.common.dto.agent.tas.RequestEnrollTasReqDto;
+import org.omnione.did.tas.v1.common.dto.agent.tas.RequestEnrollTasResDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;

@@ -3,10 +3,10 @@ import { Typography, Button, Box } from '@mui/material';
 
 const ErrorPage: React.FC = () => {
   const goBackAndRefresh = () => {
-    window.history.back(); // ✅ 이전 페이지로 이동
+    window.history.back();
     setTimeout(() => {
         window.location.href = '/';
-    }, 100); // 약간의 지연 추가 (이전 페이지 이동 후 새로고침)
+    }, 100);
   };
 
   return (

@@ -16,8 +16,8 @@
 
 package org.omnione.did.tas.v1.agent.service;
 
-import org.omnione.did.tas.v1.agent.dto.wallet.RegisterWalletReqDto;
-import org.omnione.did.tas.v1.agent.dto.wallet.RegisterWalletResDto;
+import org.omnione.did.tas.v1.common.dto.agent.wallet.RegisterWalletReqDto;
+import org.omnione.did.tas.v1.common.dto.agent.wallet.RegisterWalletResDto;
 
 /**
  * Wallet service interface for handling wallet registration.

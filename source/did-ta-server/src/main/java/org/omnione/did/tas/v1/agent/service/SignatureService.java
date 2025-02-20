@@ -32,6 +32,8 @@ import org.omnione.did.common.util.JsonUtil;
 import org.omnione.did.data.model.did.DidDocument;
 import org.omnione.did.data.model.did.InvokedDidDoc;
 import org.omnione.did.data.model.did.VerificationMethod;
+import org.omnione.did.tas.v1.common.service.DidDocService;
+import org.omnione.did.tas.v1.common.service.StorageService;
 import org.springframework.stereotype.Service;
 
 /**

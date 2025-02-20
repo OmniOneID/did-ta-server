@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.omnione.did.TasApplication;
 import org.omnione.did.base.constants.UrlConstant;
 import org.omnione.did.base.datamodel.data.AttestedDidDoc;
-import org.omnione.did.tas.v1.agent.dto.wallet.RegisterWalletReqDto;
+import org.omnione.did.tas.v1.common.dto.agent.wallet.RegisterWalletReqDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;

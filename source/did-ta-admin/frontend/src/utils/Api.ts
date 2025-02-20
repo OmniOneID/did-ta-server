@@ -6,7 +6,6 @@ const requestApi = (
   body?: any
 ): Promise<{ url: string; data: any }> => {
   const fullUrl = `${API_BASE_URL}/${endpoint}`;
-  console.log(fullUrl);
   const options: RequestInit = {
     method,
     headers: {

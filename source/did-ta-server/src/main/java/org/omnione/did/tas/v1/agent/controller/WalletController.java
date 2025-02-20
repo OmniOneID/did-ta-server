@@ -17,8 +17,8 @@
 package org.omnione.did.tas.v1.agent.controller;
 
 import org.omnione.did.base.constants.UrlConstant;
-import org.omnione.did.tas.v1.agent.dto.wallet.RegisterWalletReqDto;
-import org.omnione.did.tas.v1.agent.dto.wallet.RegisterWalletResDto;
+import org.omnione.did.tas.v1.common.dto.agent.wallet.RegisterWalletReqDto;
+import org.omnione.did.tas.v1.common.dto.agent.wallet.RegisterWalletResDto;
 import org.omnione.did.tas.v1.agent.service.WalletService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

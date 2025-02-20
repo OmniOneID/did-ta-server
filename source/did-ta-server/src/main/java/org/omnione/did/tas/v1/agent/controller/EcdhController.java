@@ -17,8 +17,8 @@
 package org.omnione.did.tas.v1.agent.controller;
 
 import org.omnione.did.base.constants.UrlConstant;
-import org.omnione.did.tas.v1.agent.dto.entity.RequestECDHReqDto;
-import org.omnione.did.tas.v1.agent.dto.entity.RequestECDHResDto;
+import org.omnione.did.tas.v1.common.dto.agent.entity.RequestECDHReqDto;
+import org.omnione.did.tas.v1.common.dto.agent.entity.RequestECDHResDto;
 import org.omnione.did.tas.v1.agent.service.EcdhService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

@@ -40,8 +40,8 @@ import org.omnione.did.base.util.BaseCoreDidUtil;
 import org.omnione.did.base.util.BaseCryptoUtil;
 import org.omnione.did.base.util.BaseDigestUtil;
 import org.omnione.did.base.util.BaseMultibaseUtil;
-import org.omnione.did.tas.v1.agent.dto.entity.RequestECDHReqDto;
-import org.omnione.did.tas.v1.agent.dto.entity.RequestECDHResDto;
+import org.omnione.did.tas.v1.common.dto.agent.entity.RequestECDHReqDto;
+import org.omnione.did.tas.v1.common.dto.agent.entity.RequestECDHResDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.common.util.DateTimeUtil;
@@ -50,6 +50,7 @@ import org.omnione.did.common.util.DidValidator;
 import org.omnione.did.common.util.JsonUtil;
 import org.omnione.did.crypto.keypair.KeyPairInterface;
 import org.omnione.did.data.model.did.DidDocument;
+import org.omnione.did.tas.v1.common.service.DidDocService;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 

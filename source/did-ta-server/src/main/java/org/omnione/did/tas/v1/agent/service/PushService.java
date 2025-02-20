@@ -16,8 +16,8 @@
 
 package org.omnione.did.tas.v1.agent.service;
 
-import org.omnione.did.tas.v1.agent.dto.common.EmptyResDto;
-import org.omnione.did.tas.v1.agent.dto.push.UpdatePushTokenReqDto;
+import org.omnione.did.tas.v1.common.dto.agent.common.EmptyResDto;
+import org.omnione.did.tas.v1.common.dto.agent.push.UpdatePushTokenReqDto;
 
 /**
  * Push service interface for managing push tokens.

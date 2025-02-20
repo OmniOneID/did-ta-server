@@ -16,8 +16,8 @@
 
 package org.omnione.did.tas.v1.agent.service;
 
-import org.omnione.did.tas.v1.agent.dto.entity.RequestECDHReqDto;
-import org.omnione.did.tas.v1.agent.dto.entity.RequestECDHResDto;
+import org.omnione.did.tas.v1.common.dto.agent.entity.RequestECDHReqDto;
+import org.omnione.did.tas.v1.common.dto.agent.entity.RequestECDHResDto;
 
 /**
  * ECDH service interface for managing ECDH.

@@ -77,4 +77,18 @@ public class TasQueryService {
     public long countByDidAndStatus(String did, TasStatus status) {
         return tasRepository.countByDidAndStatus(did, status);
     }
+
+    /**
+     * Finds a TAS by its DID. Returns null if not found.
+     *
+     * @return Found TAS or null if not found.
+     */
+    public Tas findTasOrNull() {
+        try {
+            return tasRepository.findByDid(tasProperty.getDid()).orElse(null);
+        } catch (Exception e) {
+            log.error("Unexpected error occurred while finding TAS : {}", e.getMessage());
+            return null;
+        }
+    }
 }

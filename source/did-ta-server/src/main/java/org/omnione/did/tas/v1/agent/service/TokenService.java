@@ -16,8 +16,8 @@
 
 package org.omnione.did.tas.v1.agent.service;
 
-import org.omnione.did.tas.v1.agent.dto.user.RequestCreateTokenReqDto;
-import org.omnione.did.tas.v1.agent.dto.user.RequestCreateTokenResDto;
+import org.omnione.did.tas.v1.common.dto.agent.user.RequestCreateTokenReqDto;
+import org.omnione.did.tas.v1.common.dto.agent.user.RequestCreateTokenResDto;
 
 /**
  * Token service interface for managing tokens.

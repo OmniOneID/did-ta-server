@@ -17,8 +17,8 @@
 package org.omnione.did.tas.v1.agent.controller;
 
 import org.omnione.did.base.constants.UrlConstant;
-import org.omnione.did.tas.v1.agent.dto.common.EmptyResDto;
-import org.omnione.did.tas.v1.agent.dto.push.UpdatePushTokenReqDto;
+import org.omnione.did.tas.v1.common.dto.agent.common.EmptyResDto;
+import org.omnione.did.tas.v1.common.dto.agent.push.UpdatePushTokenReqDto;
 import org.omnione.did.tas.v1.agent.service.PushService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

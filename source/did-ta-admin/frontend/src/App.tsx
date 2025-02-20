@@ -8,11 +8,12 @@ import { SessionContext } from './context/SessionContext';
 import { ServerStatusProvider, useServerStatus } from './context/ServerStatusContext';
 import { getTaInfo } from './apis/TaApi';
 import { getNavigationByStatus } from './config/navigationConfig';
+import LoadingOverlay from './components/loading/LoadingOverlay';
 
 function AppContent() {
   const navigate = useNavigate();
   
-  const { serverStatus, setServerStatus } = useServerStatus();
+  const { serverStatus, setServerStatus, isLoading, setTaInfo } = useServerStatus();
 
   const [session, setSessionState] = useState<Session | null>(() => {
     const storedSession = localStorage.getItem('session');
@@ -42,8 +43,9 @@ function AppContent() {
   // Fetch TA information
   useEffect(() => {
     getTaInfo()
-      .then(({ url, data }) => {
+      .then(({ data }) => {
         setServerStatus(data.status);
+        setTaInfo(data);
         setNavigation(getNavigationByStatus(data.status));
       })
       .catch((err) => {
@@ -51,20 +53,32 @@ function AppContent() {
       });
   }, []);
 
+  useEffect(() => {
+    if (serverStatus !== null) {
+      setNavigation(getNavigationByStatus(serverStatus));
+    }
+  }, [serverStatus]);
+
   const sessionContextValue = useMemo(() => ({ session, setSession }), [session, setSession]);
 
   return (
-    <SessionContext.Provider value={sessionContextValue}>
-      <DialogsProvider>
-        <ReactRouterAppProvider
-          navigation={navigation}
-          session={session}
-          authentication={{ signIn, signOut }}
-        >
-          <Outlet />
-        </ReactRouterAppProvider>
-      </DialogsProvider>
-    </SessionContext.Provider>
+    <>
+      <SessionContext.Provider value={sessionContextValue}>
+      {isLoading && (
+       <LoadingOverlay />
+      )}
+        <DialogsProvider>
+          <ReactRouterAppProvider
+            navigation={navigation}
+            session={session}
+            authentication={{ signIn, signOut }}
+          >
+            <Outlet />
+          </ReactRouterAppProvider>
+        </DialogsProvider>
+      </SessionContext.Provider>
+    </>
+
   );
 }
 

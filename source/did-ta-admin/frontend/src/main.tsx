@@ -4,8 +4,9 @@ import { createBrowserRouter, RouterProvider } from 'react-router';
 import App from './App';
 import Layout from './layout/Layout';
 import SignInPage from './pages/auth/SignIn';
-import TrustAgentRegisterPage from './pages/trust-agent/TrustAgentRegisterPage';
+import TrustAgentRegistrationPage from './pages/trust-agent/TrustAgentRegistrationPage';
 import ErrorPage from './pages/ErrorPage';
+import TrustAgentManagementPage from './pages/trust-agent/TrustAgentManagementPage';
 
 const router = createBrowserRouter([
   {
@@ -16,9 +17,13 @@ const router = createBrowserRouter([
         Component: Layout,
         children: [
           {
-            path: '/ta-register',
-            Component: TrustAgentRegisterPage
-          }
+            path: '/ta-registration',
+            Component: TrustAgentRegistrationPage,
+          },
+          {
+            path: '/ta-management',
+            Component: TrustAgentManagementPage,
+          },
         ],
       },
       {

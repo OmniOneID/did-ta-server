@@ -22,7 +22,7 @@ import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.base.property.TasProperty;
 import org.omnione.did.base.util.BaseCoreVcUtil;
 import org.omnione.did.tas.v1.agent.service.SignatureService;
-import org.omnione.did.tas.v1.agent.service.DidDocService;
+import org.omnione.did.tas.v1.common.service.DidDocService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.common.exception.HttpClientException;

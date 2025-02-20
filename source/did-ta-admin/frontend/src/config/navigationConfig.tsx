@@ -10,6 +10,6 @@ export type NavigationItem = {
 export const getNavigationByStatus = (serverStatus: string | null): NavigationItem[] => {
   if (serverStatus !== 'COMPLETED') {
     return [{ segment: 'ta-register', title: 'TA 등록', icon: <DashboardIcon /> }];
-  }
-  return [];
+  } 
+  return [{ segment: 'ta-management', title: 'TA 관리', icon: <DashboardIcon /> }];
 };

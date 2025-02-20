@@ -16,8 +16,8 @@
 
 package org.omnione.did.tas.v1.common.service;
 
-import org.omnione.did.tas.v1.agent.dto.tas.RequestEnrollTasReqDto;
-import org.omnione.did.tas.v1.agent.dto.tas.RequestEnrollTasResDto;
+import org.omnione.did.tas.v1.common.dto.agent.tas.RequestEnrollTasReqDto;
+import org.omnione.did.tas.v1.common.dto.agent.tas.RequestEnrollTasResDto;
 
 /**
  * Tas service interface for managing TAS enrollments.

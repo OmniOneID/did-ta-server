@@ -40,12 +40,11 @@ export default function SignIn() {
             setSession(session);
 
             helthCheck()
-            .then(({ url, data }) => {
+            .then(() => {
               if (serverStatus !== 'COMPLETED') {
-                navigate('/ta-register', { replace: true });
+                navigate('/ta-registration', { replace: true });
               } else {
-                // TODO: Modify when the TA management page is developed
-                navigate('/ta-register', { replace: true });
+                navigate('/ta-management', { replace: true });
               }
             })
             .catch((err) => {

@@ -21,8 +21,8 @@ import org.omnione.did.tas.v1.common.service.TasService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.omnione.did.tas.v1.agent.dto.tas.RequestEnrollTasReqDto;
-import org.omnione.did.tas.v1.agent.dto.tas.RequestEnrollTasResDto;
+import org.omnione.did.tas.v1.common.dto.agent.tas.RequestEnrollTasReqDto;
+import org.omnione.did.tas.v1.common.dto.agent.tas.RequestEnrollTasResDto;
 import org.springframework.web.bind.annotation.*;
 
 /**

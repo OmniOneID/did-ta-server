@@ -21,7 +21,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.omnione.did.TasApplication;
 import org.omnione.did.base.constants.UrlConstant;
-import org.omnione.did.tas.v1.agent.dto.tas.RequestEnrollTasReqDto;
+import org.omnione.did.tas.v1.common.dto.agent.tas.RequestEnrollTasReqDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
