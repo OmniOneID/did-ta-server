@@ -19,6 +19,7 @@ package org.omnione.did.base.db.repository;
 import org.omnione.did.base.db.constant.EntityStatus;
 import org.omnione.did.base.db.domain.Entity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -29,7 +30,7 @@ import java.util.Optional;
  * for more specific database interactions with Entity entities.
  */
 @Repository
-public interface EntityRepository extends JpaRepository<Entity, Long> {
+public interface EntityRepository extends JpaRepository<Entity, Long>, QuerydslPredicateExecutor<Entity>, EntityRepositoryAdmin {
     Optional<Entity> findByDid(String did);
     long countByDid(String did);
     long countByDidAndStatus(String did, EntityStatus status);

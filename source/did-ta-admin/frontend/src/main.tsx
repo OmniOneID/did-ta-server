@@ -4,9 +4,10 @@ import { createBrowserRouter, RouterProvider } from 'react-router';
 import App from './App';
 import Layout from './layout/Layout';
 import SignInPage from './pages/auth/SignIn';
-import TrustAgentRegistrationPage from './pages/trust-agent/TrustAgentRegistrationPage';
+import EntityManagementPage from './pages/entities/EntityManagementPage';
 import ErrorPage from './pages/ErrorPage';
 import TrustAgentManagementPage from './pages/trust-agent/TrustAgentManagementPage';
+import TrustAgentRegistrationPage from './pages/trust-agent/TrustAgentRegistrationPage';
 
 const router = createBrowserRouter([
   {
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
             path: '/ta-management',
             Component: TrustAgentManagementPage,
           },
+          {
+            path: '/entities/entity-management',
+            Component: EntityManagementPage,
+          }
         ],
       },
       {

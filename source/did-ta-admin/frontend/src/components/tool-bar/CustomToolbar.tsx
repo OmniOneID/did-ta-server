@@ -1,6 +1,5 @@
-import * as React from 'react';
+import { Box, Button } from '@mui/material';
 import { GridToolbarContainer } from '@mui/x-data-grid';
-import { Button, Box } from '@mui/material';
 import CustomSearchBar from '../search-bar/CustomSearchBar';
 
 interface CustomToolbarProps {
@@ -16,6 +15,12 @@ interface CustomToolbarProps {
   disableEdit: boolean;
   disableDelete: boolean;
   searchOptions?: Array<{ value: string; label: string }>;
+  additionalButtons?: Array<{ 
+    label: string; 
+    onClick: () => void; 
+    color?: 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning';
+    disabled?: boolean;
+  }>;
 }
 
 export default function CustomToolbar({
@@ -31,6 +36,7 @@ export default function CustomToolbar({
   disableEdit,
   disableDelete,
   searchOptions,
+  additionalButtons = [],
 }: CustomToolbarProps) {
   return (
     <GridToolbarContainer sx={{ display: 'flex', alignItems: 'center', padding: '8px' }}>
@@ -65,6 +71,17 @@ export default function CustomToolbar({
             삭제
           </Button>
         )}
+        {additionalButtons.map((btn, index) => (
+          <Button
+            key={index}
+            variant="contained"
+            color={btn.color || 'primary'}
+            onClick={btn.onClick}
+            disabled={btn.disabled}
+          >
+            {btn.label}
+          </Button>
+        ))}
       </Box>
     </GridToolbarContainer>
   );
