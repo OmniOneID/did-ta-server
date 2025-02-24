@@ -1,11 +1,13 @@
-import * as React from 'react';
-import { useState } from 'react';
-import { Box, TextField, Button, Popover, Typography } from '@mui/material';
+import { Box, Button, Popover, TextField, Typography } from '@mui/material';
+import React, { useState } from 'react';
+import { Navigate, useNavigate } from 'react-router';
 import { useServerStatus } from '../../context/ServerStatusContext';
 
 export default function TrustAgentManagementPage() {
   const { taInfo } = useServerStatus();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const { setServerStatus, setTaInfo, serverStatus } = useServerStatus();
+  const navigate = useNavigate();
 
   if (!taInfo) {
     return (
@@ -22,6 +24,10 @@ export default function TrustAgentManagementPage() {
   const handlePopoverClose = () => {
     setAnchorEl(null);
   };
+
+  if (serverStatus !== 'COMPLETED') {
+    return <Navigate to="/ta-registration" replace />;
+  }
 
   return (
     <Box sx={{ maxWidth: 400, margin: 'auto', mt: 1, p: 3, border: '1px solid #ccc', borderRadius: 2 }}>

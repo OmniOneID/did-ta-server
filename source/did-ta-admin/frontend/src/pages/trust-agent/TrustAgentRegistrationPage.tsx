@@ -1,55 +1,73 @@
-import { use, useState, useEffect } from 'react';
-import { postData } from '../../utils/api';
+import { Button, Stack } from '@mui/material';
+import { useDialogs } from '@toolpad/core/useDialogs';
+import { useState } from 'react';
+import { Navigate, useNavigate } from 'react-router';
+import CustomDialog from '../../components/dialog/CustomDialog';
+import FullscreenLoader from '../../components/loading/FullscreenLoader';
 import { useServerStatus } from '../../context/ServerStatusContext';
-import { useNavigate } from 'react-router';
-import { Button, Typography } from '@mui/material';
+import { postData } from '../../utils/api';
 
 const TrustAgentRegisterPage = () => {
   const navigate = useNavigate();
-  const { setIsLoading, setServerStatus, setTaInfo, serverStatus } = useServerStatus();
-  const [error, setError] = useState<string | null>(null);
+  const { setServerStatus, setTaInfo, serverStatus } = useServerStatus();
+  const [isError, setIsError] = useState<boolean>(false);
+  const dialogs = useDialogs();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSimpleRegistration = async () => {
     setIsLoading(true);
-    setError(null);
-
+    setIsError(false);
+    
     try {
       const { data } = await postData('ta/register-simple', null);
       setServerStatus(data.status);
       setTaInfo(data);
 
       if (data.status === 'COMPLETED') {
+
+        await dialogs.open(CustomDialog, {
+          title: 'Notification',
+          message: `Registration completed successfully.`,
+          isModal: true,
+        });
+
         navigate('/ta-management');
       }
     } catch (err: any) {
-      console.error('Failed to register TA:', err);
-      setError(err.message || 'Failed to register TA');
+      setIsLoading(false);
+      await dialogs.open(CustomDialog, {
+        title: 'Notification',
+        message: `Failed to register TA: ${err.message}`,
+        isModal: true,
+      });
+
+      setIsError(true);
     } finally {
       setIsLoading(false);
     }
   };
 
-  useEffect(() => {
-    if (serverStatus === 'COMPLETED') {
-      navigate('/ta-management');
-    }
-  }, []);
+
+  if (serverStatus === 'COMPLETED') {
+    return <Navigate to="/ta-management" replace />;
+  }
 
   return (
-    <div>
-      <Button variant="contained" color="primary" onClick={handleSimpleRegistration}>
-        TA Simple Registration
-      </Button>
-
-      {error && (
-        <div>
-          <Typography sx={{ color: 'red' }}>{error}</Typography>
-          <Button variant="contained" color="error" onClick={handleSimpleRegistration}>
-            Retry
+    <>
+        <FullscreenLoader open={isLoading} />
+        <Stack direction="row" spacing={2}>
+          <Button variant="contained" color="primary" onClick={handleSimpleRegistration}>
+            Quick Register
           </Button>
-        </div>
-      )}
-    </div>
+
+          {isError && (
+            <Button variant="contained" color="error" onClick={handleSimpleRegistration}>
+              Retry
+            </Button>
+          )}
+        </Stack>
+    </>
+
   );
 };
 
