@@ -1,10 +1,11 @@
-import { Box, CircularProgress, Link } from '@mui/material';
+import { Link } from '@mui/material';
 import { GridPaginationModel } from '@mui/x-data-grid';
 import { useDialogs } from '@toolpad/core/useDialogs';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { fetchEntities, registerEntitiesSimple } from '../../apis/EntityApi';
 import CustomDataGrid from '../../components/data-grid/CustomDataGrid';
+import CustomConfirmDialog from '../../components/dialog/CustomConfirmDialog';
 import FullscreenLoader from '../../components/loading/FullscreenLoader';
 
 type Props = {}
@@ -40,13 +41,25 @@ const EntityManagementPage = (props: Props) => {
   }, [paginationModel]);
 
   const handelRegisterSimple = async () => {
-    setLoading(true);
-    registerEntitiesSimple()
+    const result = await dialogs.open(CustomConfirmDialog, {
+      title: 'Confirmation',
+      message: 'Do you want to quickly register all entities?',
+      isModal: true,
+    });
+
+    if (result) {
+      setLoading(true);
+      registerEntitiesSimple()
         .then((response) => {
           setLoading(false);
           window.location.reload();
+        })
+        .catch((error) => {
+          console.error("Error registering entities:", error);
+          setLoading(false);
         });
-    };
+    }
+  };
 
   return (
     <>
