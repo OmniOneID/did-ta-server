@@ -101,6 +101,20 @@ public class DidDocServiceImpl implements DidDocService {
         throw new OpenDidException(ErrorCode.INVALID_PROOF_PURPOSE);
     }
 
+    @Override
+    public DidDocument getDidDocumentOrNull(String did) {
+        try {
+            if (shouldUpdate(did)) {
+                updateDidDocument(did);
+            }
+
+            return didDocCache.getDidDoc(did);
+        } catch (Exception e) {
+            log.error("Failed to retrieve DID Document for DID: {}", did, e);
+            return null;
+        }
+    }
+
     /**
      * Update the DID Document in the cache for the given DID by fetching the latest version.
      * @param did The DID to update the DID Document for

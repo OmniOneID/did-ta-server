@@ -34,4 +34,5 @@ public interface EntityRepository extends JpaRepository<Entity, Long>, QuerydslP
     Optional<Entity> findByDid(String did);
     long countByDid(String did);
     long countByDidAndStatus(String did, EntityStatus status);
+    long countByName(String name);
 }

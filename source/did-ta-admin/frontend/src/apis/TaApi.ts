@@ -1,4 +1,4 @@
-import { getData, postData, deleteData, putData } from "../utils/Api";
+import { getData } from "../utils/api";
 
 export const getTaInfo = async () => {
     return getData("ta/info");

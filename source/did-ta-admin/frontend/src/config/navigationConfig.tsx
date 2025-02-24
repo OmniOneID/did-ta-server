@@ -4,17 +4,17 @@ import { type Navigation } from '@toolpad/core/AppProvider';
 
 export const getNavigationByStatus = (serverStatus: string | null): Navigation=> {
   if (serverStatus !== 'COMPLETED') {
-    return [{ segment: 'ta-register', title: 'TA 등록', icon: <StorageIcon /> }];
+    return [{ segment: 'ta-registration', title: 'TA Registration', icon: <StorageIcon /> }];
   } 
   return [
     { 
       segment: 'ta-management', 
-      title: 'TA 관리', 
+      title: 'TA Management', 
       icon: <StorageIcon />,
     },
     {
       segment: 'entities/entity-management',
-      title: 'Entity 관리',
+      title: 'Entity Management',
       icon: <StorageIcon />,
     },
   ];

@@ -13,7 +13,7 @@ import LoadingOverlay from './components/loading/LoadingOverlay';
 function AppContent() {
   const navigate = useNavigate();
   
-  const { serverStatus, setServerStatus, isLoading, setTaInfo } = useServerStatus();
+  const { serverStatus, setServerStatus, isLoading, setTaInfo, setIsLoading } = useServerStatus();
 
   const [session, setSessionState] = useState<Session | null>(() => {
     const storedSession = localStorage.getItem('session');
@@ -40,13 +40,16 @@ function AppContent() {
     navigate('/sign-in');
   }, [navigate]);
 
+  
   // Fetch TA information
   useEffect(() => {
+    setIsLoading(true);
     getTaInfo()
       .then(({ data }) => {
         setServerStatus(data.status);
         setTaInfo(data);
         setNavigation(getNavigationByStatus(data.status));
+        setIsLoading(false);
       })
       .catch((err) => {
         console.error('Failed to fetch TA information:', err);
@@ -61,24 +64,22 @@ function AppContent() {
 
   const sessionContextValue = useMemo(() => ({ session, setSession }), [session, setSession]);
 
-  return (
-    <>
-      <SessionContext.Provider value={sessionContextValue}>
-      {isLoading && (
-       <LoadingOverlay />
-      )}
-        <DialogsProvider>
-          <ReactRouterAppProvider
-            navigation={navigation}
-            session={session}
-            authentication={{ signIn, signOut }}
-          >
-            <Outlet />
-          </ReactRouterAppProvider>
-        </DialogsProvider>
-      </SessionContext.Provider>
-    </>
+  if (isLoading) {
+    return <LoadingOverlay />;
+  }
 
+  return (
+    <SessionContext.Provider value={sessionContextValue}>
+      <DialogsProvider>
+        <ReactRouterAppProvider
+          navigation={navigation}
+          session={session}
+          authentication={{ signIn, signOut }}
+        >
+          <Outlet />
+        </ReactRouterAppProvider>
+      </DialogsProvider>
+    </SessionContext.Provider>
   );
 }
 

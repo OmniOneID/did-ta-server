@@ -12,4 +12,5 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "setup")
 public class SetupProperty {
     private String path;
+    private String url;
 }

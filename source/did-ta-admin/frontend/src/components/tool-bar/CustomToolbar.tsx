@@ -40,7 +40,6 @@ export default function CustomToolbar({
 }: CustomToolbarProps) {
   return (
     <GridToolbarContainer sx={{ display: 'flex', alignItems: 'center', padding: '8px' }}>
-      {/* 검색바가 있을 경우 왼쪽 정렬 */}
       {enableSearch && (
         <Box sx={{ flex: 1 }}>
           <CustomSearchBar
@@ -54,21 +53,20 @@ export default function CustomToolbar({
         </Box>
       )}
 
-      {/* 버튼 영역을 항상 우측 정렬 */}
       <Box sx={{ display: 'flex', gap: '4px', justifyContent: 'flex-end', flex: enableSearch ? 1 : 'auto', width: '100%' }}>
         {onRegister && (
           <Button variant="contained" color="primary" onClick={onRegister}>
-            등록
+            Register
           </Button>
         )}
         {onEdit && (
           <Button variant="contained" color="primary" onClick={onEdit} disabled={disableEdit}>
-            수정
+            Update
           </Button>
         )}
         {onDelete && (
           <Button variant="contained" color="error" onClick={onDelete} disabled={disableDelete}>
-            삭제
+            Delete
           </Button>
         )}
         {additionalButtons.map((btn, index) => (

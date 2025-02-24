@@ -10,7 +10,7 @@ export default function TrustAgentManagementPage() {
   if (!taInfo) {
     return (
       <Box sx={{ textAlign: 'center', mt: 5 }}>
-        <Typography variant="h6">TA 정보를 불러올 수 없습니다.</Typography>
+        <Typography variant="h6">Failed to retrieve TA information.</Typography>
       </Box>
     );
   }
@@ -48,7 +48,6 @@ export default function TrustAgentManagementPage() {
           View DID Document
         </Button>
       </Box>
-
 
       <Popover
         open={Boolean(anchorEl)}

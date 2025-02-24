@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useCallback } from 'react';
 import { TaInfoResDto } from '../apis/models/TaInfoResDto';
 
 export type ServerStatus = 'DID_DOCUMENT_REQUIRED' | 'CERTIFICATE_VC_REQUIRED' | 'COMPLETED';
@@ -29,10 +29,11 @@ export const ServerStatusProvider: React.FC<{ children: ReactNode }> = ({ childr
   const [isLoadingMessage, setIsLoadingMessage] = useState<string>('');
   const [taInfo, setTaInfo] = useState<TaInfoResDto | null>(null);
 
-  const setIsLoading = (loading: boolean, message?: string) => {
+  // ✅ useCallback을 사용하여 setIsLoading의 참조를 고정 (무한 렌더링 방지)
+  const setIsLoading = useCallback((loading: boolean, message?: string) => {
     setIsLoadingState(loading);
-    setIsLoadingMessage(message?? '처리 중입니다...');
-  };
+    setIsLoadingMessage(message ?? '처리 중입니다...');
+  }, []); // 🔹 의존성 배열을 빈 배열로 설정하여 함수 참조 유지
 
   return (
     <ServerStatusContext.Provider 

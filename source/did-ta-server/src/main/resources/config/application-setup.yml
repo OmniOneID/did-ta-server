@@ -1,2 +1,3 @@
 setup:
-    path: /Users/yundabal/git/OpensourceRND/Etc/did-env/tool/sample/
+    path: /Users/yundabal/git/OpensourceRND/Etc/did-release/tool/sample/
+    url: http://localhost

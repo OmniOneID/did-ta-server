@@ -6,12 +6,18 @@ const requestApi = (
   body?: any
 ): Promise<{ url: string; data: any }> => {
   const fullUrl = `${API_BASE_URL}/${endpoint}`;
+
+  // ✅ FormData 여부 체크
+  const isFormData = body instanceof FormData;
+
   const options: RequestInit = {
     method,
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: body ? JSON.stringify(body) : undefined,
+    headers: isFormData
+      ? undefined // 🔥 FormData 전송 시 Content-Type 자동 설정
+      : {
+          "Content-Type": "application/json",
+        },
+        body: isFormData ? body : body ? JSON.stringify(body) : undefined,
   };
 
   return new Promise((resolve, reject) => {
@@ -51,4 +57,8 @@ export const putData = (endpoint: string, body: any): Promise<{ url: string; dat
 
 export const deleteData = (endpoint: string): Promise<{ url: string; data: any }> => {
   return requestApi(endpoint, "DELETE");
+};
+
+export const uploadData = (endpoint: string, formData: FormData): Promise<{ url: string; data: any }> => {
+  return requestApi(endpoint, "POST", formData);
 };

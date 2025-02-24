@@ -8,6 +8,8 @@ import EntityManagementPage from './pages/entities/EntityManagementPage';
 import ErrorPage from './pages/ErrorPage';
 import TrustAgentManagementPage from './pages/trust-agent/TrustAgentManagementPage';
 import TrustAgentRegistrationPage from './pages/trust-agent/TrustAgentRegistrationPage';
+import EntityDetailPage from './pages/entities/EntityDetailPage';
+import EntityRegistrationPage from './pages/entities/EntityRegistrationPage';
 
 const router = createBrowserRouter([
   {
@@ -28,6 +30,14 @@ const router = createBrowserRouter([
           {
             path: '/entities/entity-management',
             Component: EntityManagementPage,
+          },
+          {
+            path: '/entities/entity-management/:entityId',
+            Component: EntityDetailPage
+          },
+          {
+            path: '/entities/entity-registration',
+            Component: EntityRegistrationPage
           }
         ],
       },

@@ -21,13 +21,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.constants.UrlConstant;
 import org.omnione.did.tas.v1.admin.service.EntityManagementService;
 import org.omnione.did.tas.v1.common.dto.admin.entity.EntityInfoDto;
+import org.omnione.did.tas.v1.common.dto.admin.entity.VerifyEntityNameUniqueResDto;
+import org.omnione.did.tas.v1.common.dto.agent.common.EmptyResDto;
+import org.omnione.did.tas.v1.common.service.SetupService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -35,10 +39,36 @@ import java.util.List;
 @RequestMapping(value = UrlConstant.Tas.ADMIN_V1)
 public class EntityManagementController {
     private final EntityManagementService entityManagementService;
+    private final SetupService setupService;
 
     @GetMapping(value = "/entities/list")
     public Page<EntityInfoDto> searchEntities(String searchKey, String searchValue, Pageable pageable) {
         return entityManagementService.searchEntities(searchKey, searchValue, pageable);
+    }
+
+    @GetMapping(value = "/entities")
+    public EntityInfoDto findEntity(@RequestParam Long id) {
+        return entityManagementService.findEntity(id);
+    }
+
+    @RequestMapping(value = "/entities", method = RequestMethod.POST)
+    public EmptyResDto registerEntity(@RequestParam("didDoc") MultipartFile didDoc,
+                                      @RequestParam("role") String role,
+                                      @RequestParam("serverUrl") String serverUrl,
+                                      @RequestParam("name") String name,
+                                      @RequestParam("certificateUrl") String certificateUrl) {
+
+        return setupService.registerEntityDidDocument(didDoc, role, serverUrl, certificateUrl, name);
+    }
+
+    @RequestMapping(value = "/entities/check-name", method = RequestMethod.GET)
+    public VerifyEntityNameUniqueResDto verifyEntityNameUnique(@RequestParam String name) {
+        return entityManagementService.verifyNameIsUnique(name);
+    }
+
+    @RequestMapping(value = "/entities/register-simple", method = RequestMethod.POST)
+    public EmptyResDto registerEntitiesSimple() {
+        return entityManagementService.registerEntitiesSimple();
     }
 
 }

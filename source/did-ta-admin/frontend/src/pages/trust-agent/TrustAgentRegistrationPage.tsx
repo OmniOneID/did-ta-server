@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { use, useState, useEffect } from 'react';
 import { postData } from '../../utils/api';
 import { useServerStatus } from '../../context/ServerStatusContext';
 import { useNavigate } from 'react-router';
@@ -6,7 +6,7 @@ import { Button, Typography } from '@mui/material';
 
 const TrustAgentRegisterPage = () => {
   const navigate = useNavigate();
-  const { setIsLoading, setServerStatus, setTaInfo } = useServerStatus();
+  const { setIsLoading, setServerStatus, setTaInfo, serverStatus } = useServerStatus();
   const [error, setError] = useState<string | null>(null);
 
   const handleSimpleRegistration = async () => {
@@ -28,6 +28,12 @@ const TrustAgentRegisterPage = () => {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (serverStatus === 'COMPLETED') {
+      navigate('/ta-management');
+    }
+  }, []);
 
   return (
     <div>

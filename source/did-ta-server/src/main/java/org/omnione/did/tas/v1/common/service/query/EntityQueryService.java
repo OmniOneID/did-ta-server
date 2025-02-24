@@ -23,7 +23,14 @@ import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.omnione.did.tas.v1.common.dto.admin.entity.EntityInfoDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Service for querying Entity.
@@ -93,5 +100,43 @@ public class EntityQueryService {
      */
     public long countByDidAndStatus(String did, EntityStatus status) {
         return entityRepository.countByDidAndStatus(did, status);
+    }
+
+    /**
+     * Searches for entities by search key and value.
+     *
+     * @param searchKey Key to search for.
+     * @param searchValue Value to search for.
+     * @param pageable Pageable.
+     * @return Page of EntityInfoDto.
+     */
+    public Page<EntityInfoDto> searchEntities(String searchKey, String searchValue, Pageable pageable) {
+        Page<Entity> entityPage = entityRepository.searchEntities(searchKey, searchValue, pageable);
+
+        List<EntityInfoDto> entityDtos = entityPage.getContent().stream()
+                .map(EntityInfoDto::fromEntity)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(entityDtos, pageable, entityPage.getTotalElements());
+    }
+
+    /**
+     * Counts the number of entities by name.
+     *
+     * @param name Name to search for.
+     * @return Number of entities.
+     */
+    public long countByName(String name) {
+        return entityRepository.countByName(name);
+    }
+
+    /**
+     * Finds an Entity by its DID.
+     *
+     * @param did DID to search for.
+     * @return Found Entity or null if not found.
+     */
+    public Entity findEntityByDidOrNull(String did) {
+        return entityRepository.findByDid(did).orElse(null);
     }
 }

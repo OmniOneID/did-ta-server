@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,22 @@
  * limitations under the License.
  */
 
-package org.omnione.did.tas.v1.common.service;
+package org.omnione.did.tas.v1.common.dto.admin.entity;
 
-import org.omnione.did.base.datamodel.enums.ProofPurpose;
-import org.omnione.did.data.model.did.DidDocument;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
- * DID document service interface for managing DID documents.
+ * DTO for verifying if an entity name is unique.
  */
-public interface DidDocService {
-    DidDocument getDidDocument(String did);
-    String getVerificationMethod(DidDocument didDocument, ProofPurpose proofPurpose);
-    DidDocument getDidDocumentOrNull(String did);
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class VerifyEntityNameUniqueResDto {
+    private boolean isUnique;
 }

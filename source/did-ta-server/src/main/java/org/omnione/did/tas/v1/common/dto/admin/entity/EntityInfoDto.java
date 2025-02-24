@@ -19,6 +19,7 @@ package org.omnione.did.tas.v1.common.dto.admin.entity;
 import lombok.Builder;
 import lombok.Getter;
 import org.omnione.did.base.db.domain.Entity;
+import org.omnione.did.data.model.did.DidDocument;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -40,6 +41,7 @@ public class EntityInfoDto {
     private final String certificateUrl;
     private final String createdAt;
     private final String updatedAt;
+    private DidDocument didDocument;
 
     public static EntityInfoDto fromEntity(Entity entity) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -52,6 +54,23 @@ public class EntityInfoDto {
                 .status(entity.getStatus().name())
                 .serverUrl(entity.getServerUrl())
                 .certificateUrl(entity.getCertificateUrl())
+                .createdAt(formatInstant(entity.getCreatedAt(), formatter))
+                .updatedAt(formatInstant(entity.getUpdatedAt(), formatter))
+                .build();
+    }
+
+    public static EntityInfoDto fromEntity(Entity entity, DidDocument didDocument) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        return EntityInfoDto.builder()
+                .id(entity.getId())
+                .did(entity.getDid())
+                .name(entity.getName())
+                .role(entity.getRole().name())
+                .status(entity.getStatus().name())
+                .serverUrl(entity.getServerUrl())
+                .certificateUrl(entity.getCertificateUrl())
+                .didDocument(didDocument)
                 .createdAt(formatInstant(entity.getCreatedAt(), formatter))
                 .updatedAt(formatInstant(entity.getUpdatedAt(), formatter))
                 .build();

@@ -16,6 +16,7 @@
 
 package org.omnione.did.tas.v1.common.service;
 
+import jakarta.transaction.Transactional;
 import org.omnione.did.base.db.constant.EntityStatus;
 import org.omnione.did.base.db.constant.Role;
 import org.omnione.did.base.db.constant.TasStatus;
@@ -50,6 +51,7 @@ import java.nio.charset.StandardCharsets;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class SetupService {
     private final StorageService storageService;
     private final SignatureService signatureService;
@@ -294,6 +296,60 @@ public class SetupService {
             // Parse the DID Document
             log.debug("\t--> Parsing DID Document");
             DidManager didManager = BaseCoreDidUtil.parseDidDoc(new String(didDoc.getBytes(), StandardCharsets.UTF_8));
+            DidDocument ownerDidDoc = didManager.getDocument();
+
+            // Check if Entity is already registered.
+            log.debug("\t--> Verifying TAS registration");
+            verifyTasRegistered();
+
+            // Check if Entity is already registered.
+            log.debug("\t--> Verifying Entity registration");
+            verifyEntityRegistered(ownerDidDoc.getId());
+
+            // Verify DID document key signatures.
+            log.debug("\t--> Verifying DID document key signatures");
+            signatureService.verifyDidDocKeyProofs(ownerDidDoc);
+
+            // Sign DID document.
+            log.debug("\t--> Signing DID document");
+            InvokedDidDoc invokedDidDoc = signatureService.signEntityInvokedDidDoc(ownerDidDoc);
+            log.debug(invokedDidDoc.toJson());
+
+            // Upload Entity DID document.
+            log.debug("\t--> Uploading DID document");
+            storageService.registerDidDoc(invokedDidDoc, RoleType.fromString(roleType));
+
+            // Insert Entity information.
+            log.debug("\t--> Inserting Entity information");
+            entityRepository.save(Entity.builder()
+                    .did(ownerDidDoc.getId())
+                    .name(name)
+                    .role(Role.fromRoleType(RoleType.fromString(roleType)))
+                    .serverUrl(serverUrl)
+                    .certificateUrl(certificateUrl)
+                    .status(EntityStatus.CERTIFICATE_VC_REQUIRED)
+                    .build());
+
+            log.debug("=== Finished registerEntityDidDocument ===");
+
+        } catch (OpenDidException e) {
+            log.error("Failed to register DID Document : {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to register DID Document : {}", e.getMessage());
+            throw new OpenDidException(ErrorCode.UNKNOWN_SERVER_ERROR);
+        }
+
+        return new EmptyResDto();
+    }
+
+    public EmptyResDto registerEntityDidDocument(byte[] didDoc, String roleType, String serverUrl, String certificateUrl, String name) {
+        try {
+            log.debug("=== Starting registerEntityDidDocument ===");
+
+            // Parse the DID Document
+            log.debug("\t--> Parsing DID Document");
+            DidManager didManager = BaseCoreDidUtil.parseDidDoc(new String(didDoc, StandardCharsets.UTF_8));
             DidDocument ownerDidDoc = didManager.getDocument();
 
             // Check if Entity is already registered.

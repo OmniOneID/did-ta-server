@@ -1,10 +1,11 @@
-import { Box, CircularProgress } from '@mui/material';
+import { Box, CircularProgress, Link } from '@mui/material';
 import { GridPaginationModel } from '@mui/x-data-grid';
 import { useDialogs } from '@toolpad/core/useDialogs';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { fetchEntities } from '../../apis/EntityApi';
+import { fetchEntities, registerEntitiesSimple } from '../../apis/EntityApi';
 import CustomDataGrid from '../../components/data-grid/CustomDataGrid';
+import FullscreenLoader from '../../components/loading/FullscreenLoader';
 
 type Props = {}
 
@@ -34,24 +35,53 @@ const EntityManagementPage = (props: Props) => {
         setRows(response.data.content);
         setTotalRows(response.data.totalElements);
       })
-      .catch((error) => console.error("데이터 로딩 실패:", error))
+      .catch((error) => console.error("Failed to retrieve entities. ", error))
       .finally(() => setLoading(false));
   }, [paginationModel]);
 
+  const handelRegisterSimple = async () => {
+    setLoading(true);
+    registerEntitiesSimple()
+        .then((response) => {
+          setLoading(false);
+          window.location.reload();
+        });
+    };
 
   return (
     <>
-      {loading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height:'400px' }}>
-          <CircularProgress />
-        </Box>       
-      ) : (
-        <CustomDataGrid 
+      <FullscreenLoader open={loading} />
+
+      <CustomDataGrid 
           rows={rows} 
           columns={[
             { field: 'did', headerName: "Did", width: 200},
-            { field: 'name', headerName: "Name", width: 100},
-            { field: 'role', headerName: "Role", width: 100},
+            { 
+              field: 'name', 
+              headerName: "Name", 
+              width: 100,
+              renderCell: (params) => (
+                <Link 
+                  component="button"
+                  variant='body2'
+                  onClick={() => navigate(`/entities/entity-management/${params.row.id}`)}
+                  sx={{ cursor: 'pointer', color: 'primary.main' }}
+                >
+                  {params.value}
+                </Link>),
+            },
+            { 
+              field: 'role',
+              headerName: "Role",
+              width: 100,
+              renderCell: (params) => {
+                if (!params.value) return ""; 
+                return params.value
+                  .toLowerCase() 
+                  .replace(/_/g, " ") 
+                  .replace(/\b\w/g, (char: string) => char.toUpperCase()); 
+              }
+            },
             { 
               field: 'status', 
               headerName: "Status", 
@@ -64,18 +94,15 @@ const EntityManagementPage = (props: Props) => {
           ]} 
           selectedRow={null} 
           setSelectedRow={setSelectedRow}
-          onRegister={() => navigate('/orders/register')}
+          onRegister={() => navigate('/entities/entity-registration')}
           additionalButtons={[
-            { label: '일괄 등록하기', onClick: () => alert('11'), color: 'success' },
+            { label: 'Quick Register', onClick: () => handelRegisterSimple(), color: 'secondary' },
           ]}
           paginationMode="server" 
           totalRows={totalRows} 
           paginationModel={paginationModel} 
           setPaginationModel={setPaginationModel} 
-          loading={loading} 
         />
-      )
-    }
     </>
   )
 }

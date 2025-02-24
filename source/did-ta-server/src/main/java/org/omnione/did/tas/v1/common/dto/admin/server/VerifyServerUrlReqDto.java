@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.omnione.did.tas.v1.common.dto.admin.server;
 
-package org.omnione.did.tas.v1.common.service;
-
-import org.omnione.did.base.datamodel.enums.ProofPurpose;
-import org.omnione.did.data.model.did.DidDocument;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
- * DID document service interface for managing DID documents.
+ * DTO for verifying server URL.
  */
-public interface DidDocService {
-    DidDocument getDidDocument(String did);
-    String getVerificationMethod(DidDocument didDocument, ProofPurpose proofPurpose);
-    DidDocument getDidDocumentOrNull(String did);
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+@Builder
+public class VerifyServerUrlReqDto {
+    @NotNull(message = "serverUrl cannot be null")
+    private String serverUrl;
 }
