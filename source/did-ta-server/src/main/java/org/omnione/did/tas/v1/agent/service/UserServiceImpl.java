@@ -21,7 +21,7 @@ import org.omnione.did.base.datamodel.data.DidAuth;
 import org.omnione.did.base.datamodel.data.Proof;
 import org.omnione.did.base.datamodel.data.RestoreDidOfferPayload;
 import org.omnione.did.base.datamodel.data.SignedDidDoc;
-import org.omnione.did.base.datamodel.enums.DidDocStatus;
+import org.omnione.did.data.model.enums.did.DidDocStatus;
 import org.omnione.did.base.datamodel.enums.EmailTemplateType;
 import org.omnione.did.base.datamodel.enums.OfferType;
 import org.omnione.did.base.datamodel.enums.ProofPurpose;

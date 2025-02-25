@@ -13,6 +13,7 @@ spring:
           - notification
           - tas
           - setup
+          - blockchain
         sample:
           - auth
           - databases-sample
@@ -41,7 +42,6 @@ management:
   endpoint:
     health:
       show-details: "always"
-
 
 server:
   port: 8090

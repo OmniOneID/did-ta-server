@@ -21,6 +21,7 @@ import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.base.util.BaseCoreDidUtil;
 import org.omnione.did.base.util.BaseCoreVcUtil;
 import org.omnione.did.base.util.BaseMultibaseUtil;
+import org.omnione.did.data.model.enums.did.DidDocStatus;
 import org.omnione.did.tas.v1.agent.api.RepositoryFeign;
 import org.omnione.did.tas.v1.agent.api.dto.RegisterDidApiReqDto;
 import org.omnione.did.tas.v1.agent.api.dto.DidDocApiResDto;
@@ -84,8 +85,8 @@ public class RepositoryServiceImpl implements StorageService {
      * @param didDocStatus The new status of the document
      */
     @Override
-    public void updateDidDocStatus(String did, Object didDocStatus) {
-
+    public DidDocument updateDidDocStatus(String did, DidDocStatus didDocStatus) {
+        return null;
     }
 
     /**

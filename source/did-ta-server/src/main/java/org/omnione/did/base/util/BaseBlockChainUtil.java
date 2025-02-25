@@ -48,7 +48,7 @@ public class BaseBlockChainUtil {
      * @return a ContractApi instance.
      */
     public static ContractApi initBlockChain() {
-        return ContractFactory.FABRIC.create("properties/blockchain.properties");
+        return ContractFactory.FABRIC.create("/Users/yundabal/blockchain/blockchain.properties");
 
     }
 

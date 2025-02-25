@@ -16,7 +16,7 @@
 
 package org.omnione.did.tas.v1.common.dto.agent.user;
 
-import org.omnione.did.base.datamodel.enums.DidDocStatus;
+import org.omnione.did.data.model.enums.did.DidDocStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

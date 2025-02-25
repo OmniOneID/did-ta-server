@@ -20,13 +20,14 @@ import org.omnione.did.data.model.did.DidDocument;
 import org.omnione.did.data.model.did.InvokedDidDoc;
 import org.omnione.did.data.model.enums.vc.RoleType;
 import org.omnione.did.data.model.vc.VcMeta;
+import org.omnione.did.data.model.enums.did.DidDocStatus;
 
 /**
  * Storage service interface for managing DID documents and verifiable credentials.
  */
 public interface StorageService {
     void registerDidDoc(InvokedDidDoc didDoc, RoleType roleType);
-    void updateDidDocStatus(String did, Object didDocStatus);
+    DidDocument updateDidDocStatus(String did, DidDocStatus didDocStatus);
     DidDocument findDidDoc(String didKeyUrl);
     void registerVcMeta(VcMeta vcMeta);
     VcMeta findVcMeta(String vcId);
