@@ -3,7 +3,7 @@ import { TextField, Typography, SelectChangeEvent, FormControl, InputLabel, Sele
 import Box from '@mui/material/Box'
 import { useNavigate } from 'react-router';
 import { useDialogs } from '@toolpad/core/useDialogs';
-import { urlRegex, ipRegex } from '../../utils/regex';
+import { urlRegex, ipRegex, englishRegex } from '../../utils/regex';
 import CustomConfirmDialog from '../../components/dialog/CustomConfirmDialog';
 import { roles } from '../../constants/roles';
 import { registerEntity, verifyEntityNameUnique } from '../../apis/EntityApi';
@@ -56,8 +56,20 @@ const EntityRegistrationPage = (props: Props) => {
         setIsButtonDisabled(!isModified);
       }, [formData]);
 
-    const handleChange = (field: keyof EntityFormData) => (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>) => {
-        setFormData((prev) => ({ ...prev, [field]: event.target.value as string }));
+    const handleChange = (field: keyof EntityFormData) => 
+    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>) => {
+        const newValue = event.target.value as string;
+        setFormData((prev) => ({ ...prev, [field]: newValue }));
+
+        if (field === 'name') {
+            setIsNameValid(false); 
+            setErrors((prev) => ({ ...prev, name: undefined })); 
+        }
+
+        if (field === 'serverUrl') {
+            setIsServerValid(false); 
+            setErrors((prev) => ({ ...prev, serverUrl: undefined }));
+        }
     };
 
     const handleCheckDuplicateName = () => {
@@ -125,25 +137,37 @@ const EntityRegistrationPage = (props: Props) => {
 
     const validate = () => {
         let tempErrors: ErrorState = {};
-
+        
+        // Validate File
         if (!selectedFile) tempErrors.didDoc = 'Please select a DID document file.';
-        if (!formData.name) tempErrors.name = 'Please enter a name.';
-        if (!formData.role) tempErrors.role = 'Please select a role.';
-        if (!formData.serverUrl) tempErrors.serverUrl = 'Please enter the server URL.';
+        
+        // Validate Name
+        tempErrors.name = validateName(formData.name);
 
-        if (!formData.serverUrl) tempErrors.serverUrl = 'Please enter the server URL.';
-        else if (!urlRegex.test(formData.serverUrl) && !ipRegex.test(formData.serverUrl))
-            tempErrors.serverUrl = 'Please enter a valid URL.';
-        
-        if (!tempErrors.name) {
-            if (!isNameValid) tempErrors.name = 'Please check for duplicate names.';
-        }
-        if (!tempErrors.serverUrl) {
-            if (!isServerValid) tempErrors.serverUrl = 'Please test the server connection.';
-        }
-        
+        // Validate Role
+        if (!formData.role) tempErrors.role = 'Please select a role.';
+    
+        // Validate Server URL
+        tempErrors.serverUrl = validateServerUrl(formData.serverUrl);
+    
         setErrors(tempErrors);
-        return Object.keys(tempErrors).length === 0;
+        return Object.values(tempErrors).every((error) => !error);
+    };
+
+    const validateName = (name?: string): string | undefined => {
+        if (!name) return 'Please enter a name.';
+        if (name.length < 3 || name.length > 20) return 'Name must be between 3 and 20 characters.';
+        if (!englishRegex.test(name)) return 'Name must be in English.';
+        if (!isNameValid) return 'Please check for duplicate names.';
+        return undefined;
+    };
+
+    const validateServerUrl = (serverUrl?: string): string | undefined => {
+        if (!serverUrl) return 'Please enter the server URL.';
+        if (!urlRegex.test(serverUrl) && !ipRegex.test(serverUrl)) return 'Please enter a valid URL.';
+        if (serverUrl.length > 200) return 'URL must be less than 200 characters.';
+        if (!isServerValid) return 'Please test the server connection.';
+        return undefined;
     };
 
     const handleSubmit = async () => {
@@ -241,6 +265,12 @@ const EntityRegistrationPage = (props: Props) => {
                                 error={!!errors.name}
                                 helperText={errors.name}
                                 sx={{minWidth: 250}}
+                                slotProps={{ htmlInput: {
+                                        minLength: 3,
+                                        maxLength: 20,
+                                        },
+                                    }
+                                }
                             />
                             <Button 
                                 variant="contained" 
@@ -279,6 +309,11 @@ const EntityRegistrationPage = (props: Props) => {
                                 error={!!errors.serverUrl}
                                 helperText={errors.serverUrl}
                                 sx={{minWidth: 250}}
+                                slotProps={{ htmlInput: {
+                                    maxLength: 200,
+                                    },
+                                }
+                            }
                             />
                             <Button 
                                 variant="contained" 
