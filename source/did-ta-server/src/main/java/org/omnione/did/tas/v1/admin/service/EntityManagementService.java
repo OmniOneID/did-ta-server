@@ -29,6 +29,9 @@ import org.omnione.did.base.property.SetupProperty;
 import org.omnione.did.base.property.TasProperty;
 import org.omnione.did.base.util.BaseCoreVcUtil;
 import org.omnione.did.base.util.BaseMultibaseUtil;
+import org.omnione.did.common.exception.HttpClientException;
+import org.omnione.did.common.util.HttpClientUtil;
+import org.omnione.did.common.util.JsonUtil;
 import org.omnione.did.core.data.rest.IssueVcParam;
 import org.omnione.did.core.data.rest.SignatureVcParams;
 import org.omnione.did.data.model.did.DidDocument;
@@ -38,6 +41,7 @@ import org.omnione.did.data.model.vc.VerifiableCredential;
 import org.omnione.did.tas.v1.agent.service.FileWalletService;
 import org.omnione.did.tas.v1.agent.service.IssueVcService;
 import org.omnione.did.tas.v1.common.dto.admin.entity.EntityInfoDto;
+import org.omnione.did.tas.v1.common.dto.admin.entity.SendCertificateVcReqDto;
 import org.omnione.did.tas.v1.common.dto.admin.entity.VerifyEntityNameUniqueResDto;
 import org.omnione.did.tas.v1.common.dto.agent.common.EmptyResDto;
 import org.omnione.did.tas.v1.common.service.DidDocService;
@@ -50,6 +54,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
 
@@ -120,6 +125,7 @@ public class EntityManagementService {
             Entity entity = entityQueryService.findEntityByDidOrNull(did);
             String baseUrl = setupProperty.getUrl() + ":" + port + "/" + entityName;
             String certificateUrl = baseUrl + "/api/v1/certificate-vc";
+            String sendCertificateUrl = baseUrl + "/admin/v1/certificate-vc";
 
             if (entity == null) {
                 File didDocFile = new File(setupProperty.getPath() + entityName + ".did");
@@ -128,9 +134,15 @@ public class EntityManagementService {
                 registerEntityDidDocument_simple(didDocBytes, roleType, baseUrl, certificateUrl, entityName);
 
                 Entity updatedEntity = entityQueryService.findEntityByDid(did);
-                issueEntityCertificateVc_simple(updatedEntity);
+                VerifiableCredential verifiableCredential = issueEntityCertificateVc_simple(updatedEntity);
+
+                sendCertificateVcToEntity(sendCertificateUrl, verifiableCredential);
             } else if (entity.getStatus() == EntityStatus.CERTIFICATE_VC_REQUIRED) {
-                issueEntityCertificateVc_simple(entity);
+                VerifiableCredential verifiableCredential = issueEntityCertificateVc_simple(entity);
+                sendCertificateVcToEntity(sendCertificateUrl, verifiableCredential);
+            } else if (entity.getStatus() == EntityStatus.COMPLETED) {
+                VerifiableCredential verifiableCredential = issueEntityCertificateVc_simple(entity);
+                sendCertificateVcToEntity(sendCertificateUrl, verifiableCredential);
             }
         } catch (Exception e) {
             log.error("\t--> Failed to register entity: {}", entityName, e);
@@ -141,11 +153,13 @@ public class EntityManagementService {
         setupService.registerEntityDidDocument(didDocBytes, roleType.getRawValue(), url, certificateVcUrl, name);
     }
 
-    public void issueEntityCertificateVc_simple(Entity entity) {
+    public VerifiableCredential issueEntityCertificateVc_simple(Entity entity) {
         VerifiableCredential entityCertificateVc = generateEntityCertificateVc(entity);
         signTasCertificateVc(entityCertificateVc);
         registerEntityCertificateVcMeta(entityCertificateVc, entity);
         updateEntityStatus(entity.getId(), EntityStatus.COMPLETED);
+
+        return entityCertificateVc;
     }
 
     private VerifiableCredential generateEntityCertificateVc(Entity entity) {
@@ -190,5 +204,20 @@ public class EntityManagementService {
         entity.setStatus(entityStatus);
 
         entityRepository.save(entity);
+    }
+
+    private void sendCertificateVcToEntity(String url, VerifiableCredential entityCertificateVc) {
+        try {
+            String encodedEntityCertificateVc = BaseMultibaseUtil.encode(entityCertificateVc.toJson().getBytes());
+
+            SendCertificateVcReqDto sendCertificateVcReqDto = SendCertificateVcReqDto.builder()
+                    .certificateVc(encodedEntityCertificateVc)
+                    .build();
+
+            String request = JsonUtil.serializeToJson(sendCertificateVcReqDto);
+            HttpClientUtil.postData(url, request, EmptyResDto.class);
+        } catch (Exception e) {
+            log.error("\t--> Failed to send certificate vc to entity: {}", url, e);
+        }
     }
 }
