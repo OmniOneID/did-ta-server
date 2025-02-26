@@ -53,6 +53,7 @@ function AppContent() {
       })
       .catch((err) => {
         console.error('Failed to fetch TA information:', err);
+        setIsLoading(false);
       });
   }, []);
 
