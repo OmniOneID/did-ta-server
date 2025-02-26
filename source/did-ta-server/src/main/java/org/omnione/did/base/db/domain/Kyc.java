@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,14 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.omnione.did.base.db.domain;
 
-import org.omnione.did.base.db.constant.TasStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -35,10 +31,6 @@ import org.antlr.v4.runtime.misc.NotNull;
 
 import java.io.Serializable;
 
-/**
- * Entity class for the tas table.
- * Represents a tas entity in the database.
- */
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -46,28 +38,21 @@ import java.io.Serializable;
 @Setter
 @ToString
 @Entity
-@Table(name = "\"tas\"")
-public class Tas extends BaseEntity implements Serializable {
+@Table(name = "\"kyc\"")
+public class Kyc extends BaseEntity implements Serializable {
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
-    @Column(name = "did", nullable = false, length = 200)
-    private String did;
-
-    @NotNull
     @Column(name = "name", nullable = false, length = 200)
     private String name;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false, length = 50)
-    private TasStatus status;
+    @NotNull
+    @Column(name = "enabled", nullable = false)
+    private Boolean enabled;
 
     @Column(name = "server_url", nullable = false, length = 2000)
     private String serverUrl;
-
-    @Column(name = "certificate_url", nullable = false, length = 2000)
-    private String certificateUrl;
 }

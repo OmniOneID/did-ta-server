@@ -23,8 +23,9 @@ const EntityDetailPage = () => {
                     title: 'Notification', 
                     message: 'Invalid Path.', 
                     isModal: true 
+                },{
+                    onClose: async (result) =>  navigate('/entities/entity-management', { replace: true }),
                 });
-                navigate('/entities/entity-management', { replace: true });
                 return;
             }
 
@@ -39,8 +40,9 @@ const EntityDetailPage = () => {
                     title: 'Notification', 
                     message: 'Failed to Retrieve Entity Information.', 
                     isModal: true 
+                },{
+                    onClose: async (result) =>  navigate('/entities/entity-management', { replace: true }),
                 });
-                navigate('/entities/entity-management', { replace: true });
             } finally {
                 setIsLoading(false);
             }

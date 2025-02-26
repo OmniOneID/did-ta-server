@@ -188,8 +188,9 @@ const EntityRegistrationPage = (props: Props) => {
                 title: 'Notification',
                 message: 'Completed entity registration.',
                 isModal: true,
+            },{
+                onClose: async (result) =>  navigate('/entities/entity-management'),
             });
-            navigate('/entities/entity-management');
         } catch (error) {
             await dialogs.open(CustomDialog, {
                 title: 'Notification',
@@ -210,7 +211,7 @@ const EntityRegistrationPage = (props: Props) => {
     
         if (result) {
           navigate('/entities/entity-management');
-          }
+        }
       };
 
     const handleReset = () => {
@@ -233,107 +234,116 @@ const EntityRegistrationPage = (props: Props) => {
             <FullscreenLoader open={isLoading} />
             <Box sx={{ p: 3 }}>
                 <Typography variant="h4">Entity Registration</Typography>
-                    <Box sx={{ maxWidth: 600, margin: 'auto', mt: 2, p: 3, border: '1px solid #ccc', borderRadius: 2 }}>         
-                        <FormControl fullWidth margin="normal" error={!!errors.didDoc}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'left', mb: 1 }}>
-                                <Typography variant="body1" sx={{ mr: 5 }}>DID Document: </Typography>
+                <Box sx={{ maxWidth: 500, margin: 'auto', mt: 2, p: 3, border: '1px solid #ccc', borderRadius: 2 }}>
+                    <Typography variant="body1">
+                        Register an entity's DID Document on the blockchain. Once registration is complete, 
+                        the entity admin must submit a request for a joining certificate issuance.
+                    </Typography>
+                    <Typography variant="body1" sx={{ mt: 1 }}>
+                        Deleting a registered entity is currently not supported. This feature will be available in a future update.
+                    </Typography>
+                </Box>
+                <Box sx={{ maxWidth: 500, margin: 'auto', mt: 2, p: 3, border: '1px solid #ccc', borderRadius: 2 }}>         
+                    <FormControl fullWidth margin="normal" error={!!errors.didDoc}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'left', mb: 1 }}>
+                            <Typography variant="body1" sx={{ mr: 5 }}>DID Document: </Typography>
 
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, minWidth: 200 }}>
-                                    <Button variant="contained" component="label">
-                                        File
-                                        <input type="file" hidden accept=".did" onChange={handleFileChange} />
-                                    </Button>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, minWidth: 200 }}>
+                                <Button variant="contained" component="label">
+                                    File
+                                    <input type="file" hidden accept=".did" onChange={handleFileChange} />
+                                </Button>
 
-                                    {formData.didFileName && (
-                                        <Typography variant="body2" sx={{ color: 'red', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 200 }}>
-                                            {formData.didFileName}
-                                        </Typography>
-                                    )}
-                                </Box>
+                                {formData.didFileName && (
+                                    <Typography variant="body2" sx={{ color: 'red', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 200 }}>
+                                        {formData.didFileName}
+                                    </Typography>
+                                )}
                             </Box>
-                            {errors.didDoc && <FormHelperText>{errors.didDoc}</FormHelperText>}
-                        </FormControl>
-
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                            <TextField
-                                fullWidth
-                                label="Name"
-                                variant="outlined"
-                                margin="normal"
-                                value={formData.name}
-                                onChange={handleChange('name')}
-                                error={!!errors.name}
-                                helperText={errors.name}
-                                sx={{minWidth: 250}}
-                                slotProps={{ htmlInput: {
-                                        minLength: 3,
-                                        maxLength: 20,
-                                        },
-                                    }
-                                }
-                            />
-                            <Button 
-                                variant="contained" 
-                                onClick={handleCheckDuplicateName}
-                                disabled={!formData.name}
-                                sx={{ 
-                                    minWidth: 150,  
-                                    whiteSpace: 'nowrap', 
-                                    textTransform: 'none' 
-                                }}
-                            >
-                                Check Availability
-                            </Button>
                         </Box>
+                        {errors.didDoc && <FormHelperText>{errors.didDoc}</FormHelperText>}
+                    </FormControl>
 
-                        <FormControl fullWidth margin="normal" error={!!errors.role}>
-                            <InputLabel>Role</InputLabel>
-                            <Select value={formData.role} onChange={handleChange('role')} label="Role">
-                            {roles.map((role) => (
-                                <MenuItem key={role.value} value={role.value}>
-                                    {role.label}
-                                </MenuItem>
-                            ))}
-                            </Select>
-                            {errors.role && <FormHelperText>{errors.role}</FormHelperText>}
-                        </FormControl>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <TextField
+                            fullWidth
+                            label="Name"
+                            variant="outlined"
+                            margin="normal"
+                            value={formData.name}
+                            onChange={handleChange('name')}
+                            error={!!errors.name}
+                            helperText={errors.name}
+                            sx={{minWidth: 250}}
+                            slotProps={{ htmlInput: {
+                                    minLength: 3,
+                                    maxLength: 20,
+                                    },
+                                }
+                            }
+                        />
+                        <Button 
+                            variant="contained" 
+                            onClick={handleCheckDuplicateName}
+                            disabled={!formData.name}
+                            sx={{ 
+                                minWidth: 150,  
+                                whiteSpace: 'nowrap', 
+                                textTransform: 'none' 
+                            }}
+                        >
+                            Check Availability
+                        </Button>
+                    </Box>
 
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                            <TextField
-                                fullWidth
-                                label="URL"
-                                variant="outlined"
-                                margin="normal"
-                                value={formData.serverUrl}
-                                onChange={handleChange('serverUrl')}
-                                error={!!errors.serverUrl}
-                                helperText={errors.serverUrl}
-                                sx={{minWidth: 250}}
-                                slotProps={{ htmlInput: {
+                    <FormControl fullWidth margin="normal" error={!!errors.role}>
+                        <InputLabel>Role</InputLabel>
+                        <Select value={formData.role} onChange={handleChange('role')} label="Role">
+                        {roles.map((role) => (
+                            <MenuItem key={role.value} value={role.value}>
+                                {role.label}
+                            </MenuItem>
+                        ))}
+                        </Select>
+                        {errors.role && <FormHelperText>{errors.role}</FormHelperText>}
+                    </FormControl>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <TextField
+                            fullWidth
+                            label="URL"
+                            variant="outlined"
+                            margin="normal"
+                            value={formData.serverUrl}
+                            onChange={handleChange('serverUrl')}
+                            error={!!errors.serverUrl}
+                            helperText={errors.serverUrl}
+                            sx={{minWidth: 250}}
+                            slotProps={{ htmlInput: {
                                     maxLength: 200,
                                     },
                                 }
                             }
-                            />
-                            <Button 
-                                variant="contained" 
-                                onClick={handleTestServerConnection} 
-                                disabled={!formData.serverUrl}
-                                sx={{ 
-                                    minWidth: 150,  
-                                    whiteSpace: 'nowrap',  
-                                    textTransform: 'none'
-                                }}
-                            >
-                                Test Connection
-                            </Button>
-                        </Box>
-                    
-                        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 3 }}>
-                            <Button variant="contained" color="secondary" onClick={handleCancel}>Cancel</Button>
-                            <Button variant="contained" color="primary" onClick={handleReset}>Reset</Button>
-                            <Button variant="contained" color="primary" onClick={handleSubmit} disabled={isButtonDisabled}>Submit</Button>
-                        </Box>
+                        />
+                        <Button 
+                            variant="contained" 
+                            onClick={handleTestServerConnection} 
+                            disabled={!formData.serverUrl}
+                            sx={{ 
+                                minWidth: 150,  
+                                whiteSpace: 'nowrap',  
+                                textTransform: 'none'
+                            }}
+                        >
+                            Test Connection
+                        </Button>
+                    </Box>
+                
+                    <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 3 }}>
+                        <Button variant="contained" color="secondary" onClick={handleCancel}>Cancel</Button>
+                        <Button variant="contained" color="primary" onClick={handleReset}>Reset</Button>
+                        <Button variant="contained" color="primary" onClick={handleSubmit} disabled={isButtonDisabled}>Submit</Button>
+                    </Box>
                 </Box>
             </Box>
            

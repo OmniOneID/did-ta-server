@@ -65,7 +65,7 @@ public class BlockChainServiceImpl implements StorageService {
      */
     public ContractApi getContractApiInstance() {
         if (contractApiInstance == null) {
-            synchronized (BaseBlockChainUtil.class) {
+            synchronized (BlockChainServiceImpl.class) {
                 if (contractApiInstance == null) {
                     contractApiInstance = initBlockChain();
                 }

@@ -1,5 +1,6 @@
 import StorageIcon from '@mui/icons-material/Storage';
 import { type Navigation } from '@toolpad/core/AppProvider';
+import { SettingsApplications } from '@mui/icons-material';
 
 
 export const getNavigationByStatus = (serverStatus: string | null): Navigation=> {
@@ -16,6 +17,11 @@ export const getNavigationByStatus = (serverStatus: string | null): Navigation=>
       segment: 'entities/entity-management',
       title: 'Entity Management',
       icon: <StorageIcon />,
+    },
+    {
+      segment: 'kyc/kyc-settings',
+      title: 'KYC Settings',
+      icon: <SettingsApplications />,
     },
   ];
 };

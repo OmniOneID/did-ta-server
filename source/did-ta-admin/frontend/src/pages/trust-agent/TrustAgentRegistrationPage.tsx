@@ -29,9 +29,9 @@ const TrustAgentRegisterPage = () => {
           title: 'Notification',
           message: `Registration completed successfully.`,
           isModal: true,
+        },{
+          onClose: async (result) =>  navigate('/ta-management'),
         });
-
-        navigate('/ta-management');
       }
     } catch (err: any) {
       setIsLoading(false);

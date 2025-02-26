@@ -10,6 +10,7 @@ import TrustAgentManagementPage from './pages/trust-agent/TrustAgentManagementPa
 import TrustAgentRegistrationPage from './pages/trust-agent/TrustAgentRegistrationPage';
 import EntityDetailPage from './pages/entities/EntityDetailPage';
 import EntityRegistrationPage from './pages/entities/EntityRegistrationPage';
+import KycSettingPage from './pages/kyc/KycSettingPage';
 
 const router = createBrowserRouter([
   {
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
           {
             path: '/entities/entity-registration',
             Component: EntityRegistrationPage
+          },
+          {
+            path: '/kyc/kyc-settings',
+            Component: KycSettingPage
           }
         ],
       },

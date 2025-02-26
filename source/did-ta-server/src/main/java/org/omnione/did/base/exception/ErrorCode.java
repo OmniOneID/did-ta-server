@@ -253,6 +253,9 @@ public enum ErrorCode {
     FAILED_API_SEND_EMAIL("SSRVTRA20000", "Failed to process the 'send-email' API request.", 500),
     FAILED_API_SEND_PUSH("SSRVTRA20001", "Failed to process the 'send-push' API request.", 500),
 
+    // 16. KYC-related errors (20500 ~ 20999)
+    KYC_INFO_NOT_FOUND("SSRVTRA20500", "Failed to find KYC: KYC is not registered.", 500),
+
 
     // 99. Miscellaneous errors (90000 ~ 99999)
     FILE_NOT_FOUND("9SSRVTRA0000", "Failed to find file: requested file not found.", 400),
