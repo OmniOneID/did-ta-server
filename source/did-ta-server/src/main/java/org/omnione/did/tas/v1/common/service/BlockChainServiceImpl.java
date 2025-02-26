@@ -16,13 +16,11 @@
 
 package org.omnione.did.tas.v1.common.service;
 
-import jakarta.annotation.PostConstruct;
 import org.omnione.did.ContractApi;
 import org.omnione.did.ContractFactory;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.base.property.BlockchainProperty;
-import org.omnione.did.base.property.TasProperty;
 import org.omnione.did.base.util.BaseBlockChainUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -58,7 +56,7 @@ public class BlockChainServiceImpl implements StorageService {
      * @return a ContractApi instance.
      */
     public ContractApi initBlockChain() {
-        return ContractFactory.FABRIC.create(blockchainProperty.getPath());
+        return ContractFactory.FABRIC.create(blockchainProperty.getFilePath());
     }
 
     /**

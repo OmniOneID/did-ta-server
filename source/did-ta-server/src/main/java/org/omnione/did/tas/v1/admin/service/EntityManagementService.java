@@ -23,13 +23,10 @@ import org.omnione.did.base.db.constant.EntityStatus;
 import org.omnione.did.base.db.domain.Entity;
 import org.omnione.did.base.db.domain.Tas;
 import org.omnione.did.base.db.repository.EntityRepository;
-import org.omnione.did.base.exception.AdminErrorCode;
-import org.omnione.did.base.exception.OpenDidAdminException;
 import org.omnione.did.base.property.SetupProperty;
 import org.omnione.did.base.property.TasProperty;
 import org.omnione.did.base.util.BaseCoreVcUtil;
 import org.omnione.did.base.util.BaseMultibaseUtil;
-import org.omnione.did.common.exception.HttpClientException;
 import org.omnione.did.common.util.HttpClientUtil;
 import org.omnione.did.common.util.JsonUtil;
 import org.omnione.did.core.data.rest.IssueVcParam;
@@ -54,7 +51,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
 
@@ -123,7 +119,7 @@ public class EntityManagementService {
         try {
             String did = "did:omn:" + entityName;
             Entity entity = entityQueryService.findEntityByDidOrNull(did);
-            String baseUrl = setupProperty.getUrl() + ":" + port + "/" + entityName;
+            String baseUrl = setupProperty.getBaseUrl() + ":" + port + "/" + entityName;
             String certificateUrl = baseUrl + "/api/v1/certificate-vc";
             String sendCertificateUrl = baseUrl + "/admin/v1/certificate-vc";
 
