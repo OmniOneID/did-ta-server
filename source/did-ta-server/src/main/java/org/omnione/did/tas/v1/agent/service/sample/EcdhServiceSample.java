@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@ package org.omnione.did.tas.v1.agent.service.sample;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.omnione.did.tas.v1.common.dto.agent.entity.RequestECDHReqDto;
-import org.omnione.did.tas.v1.common.dto.agent.entity.RequestECDHResDto;
+import org.omnione.did.tas.v1.agent.dto.entity.RequestECDHReqDto;
+import org.omnione.did.tas.v1.agent.dto.entity.RequestECDHResDto;
 import org.omnione.did.tas.v1.agent.service.EcdhService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

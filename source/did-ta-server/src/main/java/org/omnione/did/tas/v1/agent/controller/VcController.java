@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,25 +21,25 @@ import org.omnione.did.tas.v1.agent.service.VcService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.omnione.did.tas.v1.common.dto.agent.vc.ConfirmIssueVcReqDto;
-import org.omnione.did.tas.v1.common.dto.agent.vc.ConfirmIssueVcResDto;
-import org.omnione.did.tas.v1.common.dto.agent.vc.ConfirmRevokeVcReqDto;
-import org.omnione.did.tas.v1.common.dto.agent.vc.ConfirmRevokeVcResDto;
-import org.omnione.did.tas.v1.common.dto.agent.vc.OfferIssueVcEmailReqDto;
-import org.omnione.did.tas.v1.common.dto.agent.vc.OfferIssueVcNotiResDto;
-import org.omnione.did.tas.v1.common.dto.agent.vc.OfferIssueVcPushReqDto;
-import org.omnione.did.tas.v1.common.dto.agent.vc.OfferIssueVcQrReqDto;
-import org.omnione.did.tas.v1.common.dto.agent.vc.OfferIssueVcResDto;
-import org.omnione.did.tas.v1.common.dto.agent.vc.ProposeIssueVcReqDto;
-import org.omnione.did.tas.v1.common.dto.agent.vc.ProposeIssueVcResDto;
-import org.omnione.did.tas.v1.common.dto.agent.vc.ProposeRevokeVcReqDto;
-import org.omnione.did.tas.v1.common.dto.agent.vc.ProposeRevokeVcResDto;
-import org.omnione.did.tas.v1.common.dto.agent.vc.RequestIssueProfileReqDto;
-import org.omnione.did.tas.v1.common.dto.agent.vc.RequestIssueProfileResDto;
-import org.omnione.did.tas.v1.common.dto.agent.vc.RequestIssueVcReqDto;
-import org.omnione.did.tas.v1.common.dto.agent.vc.RequestIssueVcResDto;
-import org.omnione.did.tas.v1.common.dto.agent.vc.RequestRevokeVcReqDto;
-import org.omnione.did.tas.v1.common.dto.agent.vc.RequestRevokeVcResDto;
+import org.omnione.did.tas.v1.agent.dto.vc.ConfirmIssueVcReqDto;
+import org.omnione.did.tas.v1.agent.dto.vc.ConfirmIssueVcResDto;
+import org.omnione.did.tas.v1.agent.dto.vc.ConfirmRevokeVcReqDto;
+import org.omnione.did.tas.v1.agent.dto.vc.ConfirmRevokeVcResDto;
+import org.omnione.did.tas.v1.agent.dto.vc.OfferIssueVcEmailReqDto;
+import org.omnione.did.tas.v1.agent.dto.vc.OfferIssueVcNotiResDto;
+import org.omnione.did.tas.v1.agent.dto.vc.OfferIssueVcPushReqDto;
+import org.omnione.did.tas.v1.agent.dto.vc.OfferIssueVcQrReqDto;
+import org.omnione.did.tas.v1.agent.dto.vc.OfferIssueVcResDto;
+import org.omnione.did.tas.v1.agent.dto.vc.ProposeIssueVcReqDto;
+import org.omnione.did.tas.v1.agent.dto.vc.ProposeIssueVcResDto;
+import org.omnione.did.tas.v1.agent.dto.vc.ProposeRevokeVcReqDto;
+import org.omnione.did.tas.v1.agent.dto.vc.ProposeRevokeVcResDto;
+import org.omnione.did.tas.v1.agent.dto.vc.RequestIssueProfileReqDto;
+import org.omnione.did.tas.v1.agent.dto.vc.RequestIssueProfileResDto;
+import org.omnione.did.tas.v1.agent.dto.vc.RequestIssueVcReqDto;
+import org.omnione.did.tas.v1.agent.dto.vc.RequestIssueVcResDto;
+import org.omnione.did.tas.v1.agent.dto.vc.RequestRevokeVcReqDto;
+import org.omnione.did.tas.v1.agent.dto.vc.RequestRevokeVcResDto;
 import org.springframework.web.bind.annotation.*;
 
 /**

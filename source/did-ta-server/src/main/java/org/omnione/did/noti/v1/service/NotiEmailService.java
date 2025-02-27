@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import org.omnione.did.base.datamodel.enums.EmailTemplateType;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.noti.v1.dto.email.RequestSendEmailReqDto;
-import org.omnione.did.tas.v1.common.dto.agent.common.EmptyResDto;
+import org.omnione.did.tas.v1.common.dto.EmptyResDto;
 import jakarta.annotation.PostConstruct;
 import jakarta.mail.Message;
 import jakarta.mail.internet.InternetAddress;

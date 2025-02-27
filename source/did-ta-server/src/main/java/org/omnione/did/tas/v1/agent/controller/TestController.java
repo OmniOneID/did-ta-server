@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,9 +25,9 @@ import org.omnione.did.tas.v1.agent.service.EntityService;
 import org.omnione.did.tas.v1.common.service.query.EntityQueryService;
 import org.omnione.did.tas.v1.common.service.query.TasQueryService;
 import org.omnione.did.tas.v1.agent.service.validator.CertificateVcValidator;
-import org.omnione.did.tas.v1.common.dto.agent.common.EmptyResDto;
-import org.omnione.did.tas.v1.common.dto.agent.vc.OfferIssueVcNotiResDto;
-import org.omnione.did.tas.v1.common.dto.agent.vc.OfferIssueVcPushReqDto;
+import org.omnione.did.tas.v1.common.dto.EmptyResDto;
+import org.omnione.did.tas.v1.agent.dto.vc.OfferIssueVcNotiResDto;
+import org.omnione.did.tas.v1.agent.dto.vc.OfferIssueVcPushReqDto;
 import org.omnione.did.tas.v1.common.service.DidDocService;
 import org.omnione.did.tas.v1.agent.service.IssueVcService;
 import org.omnione.did.tas.v1.agent.service.TestService;

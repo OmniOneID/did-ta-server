@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,10 @@ import org.omnione.did.TasApplication;
 import org.omnione.did.base.constants.UrlConstant;
 import org.omnione.did.base.datamodel.data.DidAuth;
 import org.omnione.did.base.datamodel.data.EcdhReqData;
-import org.omnione.did.tas.v1.common.dto.agent.entity.ConfirmEnrollEntityReqDto;
-import org.omnione.did.tas.v1.common.dto.agent.entity.ProposeEnrollEntityReqDto;
-import org.omnione.did.tas.v1.common.dto.agent.entity.RequestECDHReqDto;
-import org.omnione.did.tas.v1.common.dto.agent.entity.RequestEnrollEntityReqDto;
+import org.omnione.did.tas.v1.agent.dto.entity.ConfirmEnrollEntityReqDto;
+import org.omnione.did.tas.v1.agent.dto.entity.ProposeEnrollEntityReqDto;
+import org.omnione.did.tas.v1.agent.dto.entity.RequestECDHReqDto;
+import org.omnione.did.tas.v1.agent.dto.entity.RequestEnrollEntityReqDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;

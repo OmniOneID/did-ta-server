@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
 package org.omnione.did.tas.v1.agent.controller;
 
 import org.omnione.did.base.constants.UrlConstant;
-import org.omnione.did.tas.v1.common.dto.agent.user.RequestCreateTokenReqDto;
-import org.omnione.did.tas.v1.common.dto.agent.user.RequestCreateTokenResDto;
+import org.omnione.did.tas.v1.agent.dto.user.RequestCreateTokenReqDto;
+import org.omnione.did.tas.v1.agent.dto.user.RequestCreateTokenResDto;
 import org.omnione.did.tas.v1.agent.service.TokenService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,8 +30,8 @@ import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.base.util.BaseCoreDidUtil;
 import org.omnione.did.base.util.BaseCryptoUtil;
 import org.omnione.did.base.util.BaseDigestUtil;
-import org.omnione.did.tas.v1.common.dto.agent.common.EmptyResDto;
-import org.omnione.did.tas.v1.common.dto.agent.push.UpdatePushTokenReqDto;
+import org.omnione.did.tas.v1.common.dto.EmptyResDto;
+import org.omnione.did.tas.v1.agent.dto.push.UpdatePushTokenReqDto;
 import org.omnione.did.tas.v1.common.service.DidDocService;
 import org.omnione.did.tas.v1.common.service.query.UserQueryService;
 import org.omnione.did.tas.v1.agent.service.validator.DidAuthValidator;

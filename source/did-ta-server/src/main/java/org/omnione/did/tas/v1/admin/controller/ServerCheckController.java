@@ -19,12 +19,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.constants.UrlConstant;
 import org.omnione.did.tas.v1.admin.service.UrlPingChecker;
-import org.omnione.did.tas.v1.common.dto.admin.server.VerifyServerUrlReqDto;
-import org.omnione.did.tas.v1.common.dto.admin.server.VerifyServerUrlResDto;
+import org.omnione.did.tas.v1.admin.dto.server.VerifyServerUrlReqDto;
+import org.omnione.did.tas.v1.admin.dto.server.VerifyServerUrlResDto;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j

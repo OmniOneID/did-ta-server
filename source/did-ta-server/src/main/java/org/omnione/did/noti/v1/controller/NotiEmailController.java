@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package org.omnione.did.noti.v1.controller;
 import org.omnione.did.base.constants.UrlConstant;
 import org.omnione.did.noti.v1.dto.email.RequestSendEmailReqDto;
 import org.omnione.did.noti.v1.service.NotiEmailService;
-import org.omnione.did.tas.v1.common.dto.agent.common.EmptyResDto;
+import org.omnione.did.tas.v1.common.dto.EmptyResDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,13 @@
 package org.omnione.did.tas.v1.agent.controller;
 
 import org.omnione.did.base.constants.UrlConstant;
-import org.omnione.did.tas.v1.common.dto.agent.entity.ConfirmEnrollEntityReqDto;
-import org.omnione.did.tas.v1.common.dto.agent.entity.ProposeEnrollEntityReqDto;
-import org.omnione.did.tas.v1.common.dto.agent.entity.RequestEnrollEntityReqDto;
+import org.omnione.did.tas.v1.agent.dto.entity.ConfirmEnrollEntityReqDto;
+import org.omnione.did.tas.v1.agent.dto.entity.ProposeEnrollEntityReqDto;
+import org.omnione.did.tas.v1.agent.dto.entity.RequestEnrollEntityReqDto;
 import org.omnione.did.tas.v1.agent.service.EntityService;
-import org.omnione.did.tas.v1.common.dto.agent.entity.ConfirmEnrollEntityResDto;
-import org.omnione.did.tas.v1.common.dto.agent.entity.ProposeEnrollEntityResDto;
-import org.omnione.did.tas.v1.common.dto.agent.entity.RequestEnrollEntityResDto;
+import org.omnione.did.tas.v1.agent.dto.entity.ConfirmEnrollEntityResDto;
+import org.omnione.did.tas.v1.agent.dto.entity.ProposeEnrollEntityResDto;
+import org.omnione.did.tas.v1.agent.dto.entity.RequestEnrollEntityResDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

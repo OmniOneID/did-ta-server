@@ -21,8 +21,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.exception.AdminErrorCode;
 import org.omnione.did.base.exception.OpenDidAdminException;
-import org.omnione.did.tas.v1.common.dto.admin.server.VerifyServerUrlReqDto;
-import org.omnione.did.tas.v1.common.dto.admin.server.VerifyServerUrlResDto;
+import org.omnione.did.tas.v1.admin.dto.server.VerifyServerUrlReqDto;
+import org.omnione.did.tas.v1.admin.dto.server.VerifyServerUrlResDto;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;

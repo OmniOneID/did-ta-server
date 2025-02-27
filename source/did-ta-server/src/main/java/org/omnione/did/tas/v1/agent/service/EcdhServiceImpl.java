@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,8 +40,8 @@ import org.omnione.did.base.util.BaseCoreDidUtil;
 import org.omnione.did.base.util.BaseCryptoUtil;
 import org.omnione.did.base.util.BaseDigestUtil;
 import org.omnione.did.base.util.BaseMultibaseUtil;
-import org.omnione.did.tas.v1.common.dto.agent.entity.RequestECDHReqDto;
-import org.omnione.did.tas.v1.common.dto.agent.entity.RequestECDHResDto;
+import org.omnione.did.tas.v1.agent.dto.entity.RequestECDHReqDto;
+import org.omnione.did.tas.v1.agent.dto.entity.RequestECDHResDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.common.util.DateTimeUtil;

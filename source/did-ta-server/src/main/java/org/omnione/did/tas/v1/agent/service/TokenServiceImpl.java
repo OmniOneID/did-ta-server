@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,8 +46,8 @@ import org.omnione.did.base.util.BaseCoreDidUtil;
 import org.omnione.did.base.util.BaseCryptoUtil;
 import org.omnione.did.base.util.BaseDigestUtil;
 import org.omnione.did.base.util.BaseMultibaseUtil;
-import org.omnione.did.tas.v1.common.dto.agent.user.RequestCreateTokenReqDto;
-import org.omnione.did.tas.v1.common.dto.agent.user.RequestCreateTokenResDto;
+import org.omnione.did.tas.v1.agent.dto.user.RequestCreateTokenReqDto;
+import org.omnione.did.tas.v1.agent.dto.user.RequestCreateTokenResDto;
 import org.omnione.did.tas.v1.common.service.DidDocService;
 import org.omnione.did.tas.v1.common.service.query.EcdhQueryService;
 import org.omnione.did.tas.v1.common.service.query.EntityQueryService;

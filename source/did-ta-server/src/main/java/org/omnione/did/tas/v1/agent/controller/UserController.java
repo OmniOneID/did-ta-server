@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,38 +17,38 @@
 package org.omnione.did.tas.v1.agent.controller;
 import org.omnione.did.base.constants.UrlConstant;
 import org.omnione.did.tas.v1.agent.service.UserService;
-import org.omnione.did.tas.v1.common.dto.agent.common.EmptyResDto;
-import org.omnione.did.tas.v1.common.dto.agent.user.ConfirmRestoreDidDocResDto;
-import org.omnione.did.tas.v1.common.dto.agent.user.ConfirmUpdateDidDocReqDto;
-import org.omnione.did.tas.v1.common.dto.agent.user.ConfirmUpdateDidDocResDto;
-import org.omnione.did.tas.v1.common.dto.agent.user.ProposeRegisterUserReqDto;
-import org.omnione.did.tas.v1.common.dto.agent.user.ProposeRestoreDidDocReqDto;
-import org.omnione.did.tas.v1.common.dto.agent.user.ProposeRestoreDidDocResDto;
-import org.omnione.did.tas.v1.common.dto.agent.user.RequestRegisterUserReqDto;
-import org.omnione.did.tas.v1.common.dto.agent.user.RequestRegisterUserResDto;
-import org.omnione.did.tas.v1.common.dto.agent.user.UpdateUserStatusReqDto;
-import org.omnione.did.tas.v1.common.dto.agent.user.UpdateUserStatusResDto;
+import org.omnione.did.tas.v1.common.dto.EmptyResDto;
+import org.omnione.did.tas.v1.agent.dto.user.ConfirmRestoreDidDocResDto;
+import org.omnione.did.tas.v1.agent.dto.user.ConfirmUpdateDidDocReqDto;
+import org.omnione.did.tas.v1.agent.dto.user.ConfirmUpdateDidDocResDto;
+import org.omnione.did.tas.v1.agent.dto.user.ProposeRegisterUserReqDto;
+import org.omnione.did.tas.v1.agent.dto.user.ProposeRestoreDidDocReqDto;
+import org.omnione.did.tas.v1.agent.dto.user.ProposeRestoreDidDocResDto;
+import org.omnione.did.tas.v1.agent.dto.user.RequestRegisterUserReqDto;
+import org.omnione.did.tas.v1.agent.dto.user.RequestRegisterUserResDto;
+import org.omnione.did.tas.v1.agent.dto.user.UpdateUserStatusReqDto;
+import org.omnione.did.tas.v1.agent.dto.user.UpdateUserStatusResDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.omnione.did.tas.v1.common.dto.agent.user.ConfirmRegisterUserReqDto;
-import org.omnione.did.tas.v1.common.dto.agent.user.ConfirmRegisterUserResDto;
-import org.omnione.did.tas.v1.common.dto.agent.user.ConfirmRestoreDidDocReqDto;
-import org.omnione.did.tas.v1.common.dto.agent.user.OfferRestoreDidEmailReqDto;
-import org.omnione.did.tas.v1.common.dto.agent.user.OfferRestoreDidEmailResDto;
-import org.omnione.did.tas.v1.common.dto.agent.user.OfferRestoreDidPushReqDto;
-import org.omnione.did.tas.v1.common.dto.agent.user.OfferRestoreDidPushResDto;
-import org.omnione.did.tas.v1.common.dto.agent.user.ProposeRegisterUserResDto;
-import org.omnione.did.tas.v1.common.dto.agent.user.ProposeUpdateDidDocReqDto;
-import org.omnione.did.tas.v1.common.dto.agent.user.ProposeUpdateDidDocResDto;
-import org.omnione.did.tas.v1.common.dto.agent.user.RequestRestoreDidDocReqDto;
-import org.omnione.did.tas.v1.common.dto.agent.user.RequestRestoreDidDocResDto;
-import org.omnione.did.tas.v1.common.dto.agent.user.RequestUpdateDidDocReqDto;
-import org.omnione.did.tas.v1.common.dto.agent.user.RequestUpdateDidDocResDto;
-import org.omnione.did.tas.v1.common.dto.agent.user.RetrieveKycReqDto;
-import org.omnione.did.tas.v1.common.dto.agent.user.RetrieveKycResDto;
-import org.omnione.did.tas.v1.common.dto.agent.user.UpdateDidDocDeactivatedReqDto;
-import org.omnione.did.tas.v1.common.dto.agent.user.UpdateDidDocRevokedReqDto;
+import org.omnione.did.tas.v1.agent.dto.user.ConfirmRegisterUserReqDto;
+import org.omnione.did.tas.v1.agent.dto.user.ConfirmRegisterUserResDto;
+import org.omnione.did.tas.v1.agent.dto.user.ConfirmRestoreDidDocReqDto;
+import org.omnione.did.tas.v1.agent.dto.user.OfferRestoreDidEmailReqDto;
+import org.omnione.did.tas.v1.agent.dto.user.OfferRestoreDidEmailResDto;
+import org.omnione.did.tas.v1.agent.dto.user.OfferRestoreDidPushReqDto;
+import org.omnione.did.tas.v1.agent.dto.user.OfferRestoreDidPushResDto;
+import org.omnione.did.tas.v1.agent.dto.user.ProposeRegisterUserResDto;
+import org.omnione.did.tas.v1.agent.dto.user.ProposeUpdateDidDocReqDto;
+import org.omnione.did.tas.v1.agent.dto.user.ProposeUpdateDidDocResDto;
+import org.omnione.did.tas.v1.agent.dto.user.RequestRestoreDidDocReqDto;
+import org.omnione.did.tas.v1.agent.dto.user.RequestRestoreDidDocResDto;
+import org.omnione.did.tas.v1.agent.dto.user.RequestUpdateDidDocReqDto;
+import org.omnione.did.tas.v1.agent.dto.user.RequestUpdateDidDocResDto;
+import org.omnione.did.tas.v1.agent.dto.user.RetrieveKycReqDto;
+import org.omnione.did.tas.v1.agent.dto.user.RetrieveKycResDto;
+import org.omnione.did.tas.v1.agent.dto.user.UpdateDidDocDeactivatedReqDto;
+import org.omnione.did.tas.v1.agent.dto.user.UpdateDidDocRevokedReqDto;
 import org.springframework.web.bind.annotation.*;
 
 /**

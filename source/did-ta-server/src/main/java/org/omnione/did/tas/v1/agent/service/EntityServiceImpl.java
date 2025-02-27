@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,12 +36,12 @@ import org.omnione.did.base.util.BaseCoreVcUtil;
 import org.omnione.did.base.util.BaseCryptoUtil;
 import org.omnione.did.base.util.BaseMultibaseUtil;
 import org.omnione.did.base.util.BaseTasUtil;
-import org.omnione.did.tas.v1.common.dto.agent.entity.ConfirmEnrollEntityReqDto;
-import org.omnione.did.tas.v1.common.dto.agent.entity.ProposeEnrollEntityReqDto;
-import org.omnione.did.tas.v1.common.dto.agent.entity.RequestEnrollEntityReqDto;
-import org.omnione.did.tas.v1.common.dto.agent.entity.ConfirmEnrollEntityResDto;
-import org.omnione.did.tas.v1.common.dto.agent.entity.ProposeEnrollEntityResDto;
-import org.omnione.did.tas.v1.common.dto.agent.entity.RequestEnrollEntityResDto;
+import org.omnione.did.tas.v1.agent.dto.entity.ConfirmEnrollEntityReqDto;
+import org.omnione.did.tas.v1.agent.dto.entity.ProposeEnrollEntityReqDto;
+import org.omnione.did.tas.v1.agent.dto.entity.RequestEnrollEntityReqDto;
+import org.omnione.did.tas.v1.agent.dto.entity.ConfirmEnrollEntityResDto;
+import org.omnione.did.tas.v1.agent.dto.entity.ProposeEnrollEntityResDto;
+import org.omnione.did.tas.v1.agent.dto.entity.RequestEnrollEntityResDto;
 import org.omnione.did.tas.v1.common.service.StorageService;
 import org.omnione.did.tas.v1.common.service.query.EcdhQueryService;
 import org.omnione.did.tas.v1.common.service.query.EntityQueryService;

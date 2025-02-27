@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.omnione.did.tas.v1.admin.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.constants.UrlConstant.Tas;
-import org.omnione.did.tas.v1.common.dto.admin.tas.RequestTasInfoResDto;
+import org.omnione.did.tas.v1.admin.dto.tas.RequestTasInfoResDto;
 import org.omnione.did.tas.v1.admin.service.TaManagementService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;

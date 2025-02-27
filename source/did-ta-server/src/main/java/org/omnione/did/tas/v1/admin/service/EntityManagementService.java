@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.omnione.did.tas.v1.admin.service;
 
 import jakarta.transaction.Transactional;
@@ -37,10 +36,10 @@ import org.omnione.did.data.model.vc.VcMeta;
 import org.omnione.did.data.model.vc.VerifiableCredential;
 import org.omnione.did.tas.v1.agent.service.FileWalletService;
 import org.omnione.did.tas.v1.agent.service.IssueVcService;
-import org.omnione.did.tas.v1.common.dto.admin.entity.EntityInfoDto;
-import org.omnione.did.tas.v1.common.dto.admin.entity.SendCertificateVcReqDto;
-import org.omnione.did.tas.v1.common.dto.admin.entity.VerifyEntityNameUniqueResDto;
-import org.omnione.did.tas.v1.common.dto.agent.common.EmptyResDto;
+import org.omnione.did.tas.v1.admin.dto.entity.EntityInfoDto;
+import org.omnione.did.tas.v1.admin.dto.entity.SendCertificateVcReqDto;
+import org.omnione.did.tas.v1.admin.dto.entity.VerifyEntityNameUniqueResDto;
+import org.omnione.did.tas.v1.common.dto.EmptyResDto;
 import org.omnione.did.tas.v1.common.service.DidDocService;
 import org.omnione.did.tas.v1.common.service.SetupService;
 import org.omnione.did.tas.v1.common.service.StorageService;

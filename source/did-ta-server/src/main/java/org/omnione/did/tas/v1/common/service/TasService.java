@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 
 package org.omnione.did.tas.v1.common.service;
 
-import org.omnione.did.tas.v1.common.dto.agent.tas.RequestEnrollTasReqDto;
-import org.omnione.did.tas.v1.common.dto.agent.tas.RequestEnrollTasResDto;
+import org.omnione.did.tas.v1.agent.dto.tas.RequestEnrollTasReqDto;
+import org.omnione.did.tas.v1.agent.dto.tas.RequestEnrollTasResDto;
 
 /**
  * Tas service interface for managing TAS enrollments.

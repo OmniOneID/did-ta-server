@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,9 +26,9 @@ import org.omnione.did.base.exception.OpenDidAdminException;
 import org.omnione.did.base.property.SetupProperty;
 import org.omnione.did.base.property.TasProperty;
 import org.omnione.did.data.model.did.DidDocument;
-import org.omnione.did.tas.v1.common.dto.admin.tas.RequestTasInfoResDto;
-import org.omnione.did.tas.v1.common.dto.agent.tas.RequestEnrollTasReqDto;
-import org.omnione.did.tas.v1.common.dto.agent.tas.RequestEnrollTasReqDto.Request;
+import org.omnione.did.tas.v1.admin.dto.tas.RequestTasInfoResDto;
+import org.omnione.did.tas.v1.agent.dto.tas.RequestEnrollTasReqDto;
+import org.omnione.did.tas.v1.agent.dto.tas.RequestEnrollTasReqDto.Request;
 import org.omnione.did.tas.v1.common.service.DidDocService;
 import org.omnione.did.tas.v1.common.service.SetupService;
 import org.omnione.did.tas.v1.common.service.TasService;

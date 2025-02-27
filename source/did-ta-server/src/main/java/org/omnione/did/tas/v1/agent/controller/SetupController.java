@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@ package org.omnione.did.tas.v1.agent.controller;
 
 import org.omnione.did.base.constants.UrlConstant;
 import org.omnione.did.tas.v1.common.service.SetupService;
-import org.omnione.did.tas.v1.common.dto.agent.common.EmptyResDto;
-import org.omnione.did.tas.v1.common.dto.agent.setup.RemoveBlockChainIndexReqDto;
+import org.omnione.did.tas.v1.common.dto.EmptyResDto;
+import org.omnione.did.tas.v1.agent.dto.setup.RemoveBlockChainIndexReqDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestBody;

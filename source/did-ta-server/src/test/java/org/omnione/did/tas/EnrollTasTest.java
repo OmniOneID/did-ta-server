@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.omnione.did.TasApplication;
 import org.omnione.did.base.constants.UrlConstant;
-import org.omnione.did.tas.v1.common.dto.agent.tas.RequestEnrollTasReqDto;
+import org.omnione.did.tas.v1.agent.dto.tas.RequestEnrollTasReqDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;

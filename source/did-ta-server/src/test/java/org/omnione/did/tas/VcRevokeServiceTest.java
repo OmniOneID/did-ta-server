@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,11 +22,11 @@ import org.omnione.did.TasApplication;
 import org.omnione.did.base.constants.UrlConstant;
 import org.omnione.did.base.datamodel.data.EcdhReqData;
 import org.omnione.did.base.datamodel.data.ReqRevokeVc;
-import org.omnione.did.tas.v1.common.dto.agent.entity.RequestECDHReqDto;
-import org.omnione.did.tas.v1.common.dto.agent.user.RequestCreateTokenReqDto;
-import org.omnione.did.tas.v1.common.dto.agent.vc.ConfirmRevokeVcReqDto;
-import org.omnione.did.tas.v1.common.dto.agent.vc.ProposeRevokeVcReqDto;
-import org.omnione.did.tas.v1.common.dto.agent.vc.RequestRevokeVcReqDto;
+import org.omnione.did.tas.v1.agent.dto.entity.RequestECDHReqDto;
+import org.omnione.did.tas.v1.agent.dto.user.RequestCreateTokenReqDto;
+import org.omnione.did.tas.v1.agent.dto.vc.ConfirmRevokeVcReqDto;
+import org.omnione.did.tas.v1.agent.dto.vc.ProposeRevokeVcReqDto;
+import org.omnione.did.tas.v1.agent.dto.vc.RequestRevokeVcReqDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
