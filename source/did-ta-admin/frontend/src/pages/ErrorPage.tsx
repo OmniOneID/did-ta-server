@@ -1,14 +1,20 @@
 import React from 'react';
 import { Typography, Button, Box } from '@mui/material';
+import { useLocation } from 'react-router';
 
 const ErrorPage: React.FC = () => {
+  const location = useLocation();
+
   const goBackAndRefresh = () => {
-    window.history.back();
-    setTimeout(() => {
-        window.location.href = '/';
-    }, 100);
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      window.location.href = "/";
+    }
   };
 
+  const errorMessage = location.state?.message || "An unexpected error occurred. Please try again later.";
+  
   return (
     <Box
       display="flex"
@@ -22,7 +28,7 @@ const ErrorPage: React.FC = () => {
         Error
       </Typography>
       <Typography variant="body1" gutterBottom>
-        An unexpected error occurred. Please try again later.
+      {errorMessage}
       </Typography>
       <Button variant="contained" color="primary" onClick={goBackAndRefresh}>
         Go Back

@@ -172,7 +172,6 @@ const EntityRegistrationPage = (props: Props) => {
 
     const handleSubmit = async () => {
         if (!validate()) return;
-        setIsLoading(true);
         
         const formDataObj = new FormData();
         formDataObj.append('didDoc', selectedFile as File);
@@ -181,24 +180,33 @@ const EntityRegistrationPage = (props: Props) => {
         formDataObj.append('serverUrl', formData.serverUrl || '');
         formDataObj.append('certificateUrl', formData.serverUrl + '/api/v1/certificate-vc');
         
-        try {
-            await registerEntity(formDataObj);
-            setIsLoading(false);
-            await dialogs.open(CustomDialog, {
-                title: 'Notification',
-                message: 'Completed entity registration.',
-                isModal: true,
-            },{
-                onClose: async (result) =>  navigate('/entities/entity-management'),
-            });
-        } catch (error) {
-            await dialogs.open(CustomDialog, {
-                title: 'Notification',
-                message: `Failed to register entity: ${error}`,
-                isModal: true,
-            });
-        } finally {
-            setIsLoading(false);
+        const result = await dialogs.open(CustomConfirmDialog, {
+            title: 'Confirmation',
+            message: 'Are you sure you want to register Entity?',
+            isModal: true,
+        });
+
+        if (result) {
+            setIsLoading(true);
+            try {
+                await registerEntity(formDataObj);
+                setIsLoading(false);
+                await dialogs.open(CustomDialog, {
+                    title: 'Notification',
+                    message: 'Completed entity registration.',
+                    isModal: true,
+                },{
+                    onClose: async (result) =>  navigate('/entities/entity-management'),
+                });
+            } catch (error) {
+                await dialogs.open(CustomDialog, {
+                    title: 'Notification',
+                    message: `Failed to register entity: ${error}`,
+                    isModal: true,
+                });
+            } finally {
+                setIsLoading(false);
+            }
         }
     };
 
@@ -342,7 +350,7 @@ const EntityRegistrationPage = (props: Props) => {
                     <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 3 }}>
                         <Button variant="contained" color="secondary" onClick={handleCancel}>Cancel</Button>
                         <Button variant="contained" color="primary" onClick={handleReset}>Reset</Button>
-                        <Button variant="contained" color="primary" onClick={handleSubmit} disabled={isButtonDisabled}>Submit</Button>
+                        <Button variant="contained" color="primary" onClick={handleSubmit} disabled={isButtonDisabled}>Register</Button>
                     </Box>
                 </Box>
             </Box>

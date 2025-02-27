@@ -106,6 +106,7 @@ public enum ErrorCode {
     ISSUER_COMMUNICATION_ERROR("SSRVTRA15502", "Failed to communicate with issuer: unknown error occurred.", 500),
     ISSUER_INVALID_MESSAGE("SSRVTRA15503", "Failed to process message: received an invalid message from the issuer.", 500),
     EMAIL_SEND_FAILED("SSRVTRA15504", "Failed to send email.", 500),
+    KYC_COMMUNICATION_ERROR("SSRVTRA15505", "Failed to communicate with KYC server: unknown error occurred.", 500),
 
 
     // 08. Transaction-related errors (16000 ~ 16499)

@@ -15,15 +15,28 @@
  */
 package org.omnione.did.tas.v1.admin.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.constants.UrlConstant;
+import org.omnione.did.base.db.domain.Kyc;
+import org.omnione.did.base.exception.ErrorCode;
+import org.omnione.did.base.exception.OpenDidException;
+import org.omnione.did.base.response.ErrorResponse;
 import org.omnione.did.base.util.BaseMultibaseUtil;
+import org.omnione.did.common.exception.HttpClientException;
+import org.omnione.did.common.util.HttpClientUtil;
+import org.omnione.did.common.util.JsonUtil;
+import org.omnione.did.tas.v1.agent.api.dto.RetrievePiiApiReqDto;
+import org.omnione.did.tas.v1.agent.api.dto.RetrievePiiApiResDto;
 import org.omnione.did.tas.v1.common.dto.admin.entity.SendCertificateVcReqDto;
 import org.omnione.did.tas.v1.common.dto.agent.common.EmptyResDto;
+import org.omnione.did.tas.v1.common.service.query.KycQueryService;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -32,11 +45,49 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = UrlConstant.Tas.ADMIN_V1)
 public class AdminTestController {
 
+    private final KycQueryService kycQueryService;
+
     @RequestMapping(value = "/certificate-vc", method = RequestMethod.POST)
     public EmptyResDto getCertificateVc(@RequestBody SendCertificateVcReqDto sendCertificateVcReqDto) {
         byte[] decodedVc = BaseMultibaseUtil.decode(sendCertificateVcReqDto.getCertificateVc());
         log.debug("Decoded VC: {}", new String(decodedVc));
 
         return new EmptyResDto();
+    }
+
+    @RequestMapping(value = "/pii", method = RequestMethod.GET)
+    public String getUserPid(@RequestParam String userId) {
+        log.debug("pii: {}", userId);
+
+        Kyc kyc = kycQueryService.findKyc();
+
+        RetrievePiiApiReqDto apiRetrievePiiReqDto = RetrievePiiApiReqDto.builder()
+                .userId(userId)
+                .build();
+
+        try {
+            String request = JsonUtil.serializeToJson(apiRetrievePiiReqDto);
+            RetrievePiiApiResDto retrievePiiApiResDto = HttpClientUtil.postData(kyc.getServerUrl() + "/api/v1/retrieve-pii", request, RetrievePiiApiResDto.class);
+
+            return retrievePiiApiResDto.getPii();
+        }  catch (HttpClientException e) {
+            log.error("HttpClientException occurred while sending retrieve-pii request:: {}", e.getMessage(), e);
+            ErrorResponse errorResponse = convertExternalErrorResponse(e.getResponseBody());
+            throw new OpenDidException(errorResponse);
+        }  catch (Exception e) {
+            e.printStackTrace();
+            log.error("Failed to retrieve PII information: {}", e.getMessage(), e);
+            throw new OpenDidException(ErrorCode.KYC_COMMUNICATION_ERROR);
+        }
+    }
+
+    private ErrorResponse convertExternalErrorResponse(String resBody) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.readValue(resBody, ErrorResponse.class);
+        } catch (JsonProcessingException e) {
+            log.error("Failed to parse external error response: {}", resBody, e);
+            throw new OpenDidException(ErrorCode.KYC_COMMUNICATION_ERROR);
+        }
     }
 }

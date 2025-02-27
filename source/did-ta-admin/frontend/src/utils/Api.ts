@@ -7,13 +7,12 @@ const requestApi = (
 ): Promise<{ url: string; data: any }> => {
   const fullUrl = `${API_BASE_URL}/${endpoint}`;
 
-  // ✅ FormData 여부 체크
   const isFormData = body instanceof FormData;
 
   const options: RequestInit = {
     method,
     headers: isFormData
-      ? undefined // 🔥 FormData 전송 시 Content-Type 자동 설정
+      ? undefined
       : {
           "Content-Type": "application/json",
         },
@@ -26,7 +25,6 @@ const requestApi = (
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
-        // return response.json().then((data) => resolve({ url: fullUrl, data }));
         return response.text().then((text) => {
           let data = {};
           if (text) {

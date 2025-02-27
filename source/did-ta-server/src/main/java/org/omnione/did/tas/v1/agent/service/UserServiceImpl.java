@@ -17,15 +17,18 @@
 package org.omnione.did.tas.v1.agent.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.datamodel.data.DidAuth;
 import org.omnione.did.base.datamodel.data.Proof;
 import org.omnione.did.base.datamodel.data.RestoreDidOfferPayload;
 import org.omnione.did.base.datamodel.data.SignedDidDoc;
-import org.omnione.did.data.model.enums.did.DidDocStatus;
 import org.omnione.did.base.datamodel.enums.EmailTemplateType;
 import org.omnione.did.base.datamodel.enums.OfferType;
-import org.omnione.did.base.datamodel.enums.ProofPurpose;
 import org.omnione.did.base.datamodel.enums.PayloadType;
+import org.omnione.did.base.datamodel.enums.ProofPurpose;
 import org.omnione.did.base.datamodel.enums.QrType;
 import org.omnione.did.base.datamodel.enums.ServerTokenPurpose;
 import org.omnione.did.base.db.constant.AppStatus;
@@ -38,6 +41,7 @@ import org.omnione.did.base.db.constant.UserStatus;
 import org.omnione.did.base.db.constant.WalletStatus;
 import org.omnione.did.base.db.domain.App;
 import org.omnione.did.base.db.domain.DidOffer;
+import org.omnione.did.base.db.domain.Kyc;
 import org.omnione.did.base.db.domain.SubTransaction;
 import org.omnione.did.base.db.domain.Token;
 import org.omnione.did.base.db.domain.Transaction;
@@ -49,21 +53,37 @@ import org.omnione.did.base.db.repository.WalletRepository;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.base.property.EmailProperty;
+import org.omnione.did.base.response.ErrorResponse;
 import org.omnione.did.base.util.BaseBlockChainUtil;
 import org.omnione.did.base.util.BaseCoreDidUtil;
 import org.omnione.did.base.util.BaseDigestUtil;
 import org.omnione.did.base.util.BaseMultibaseUtil;
 import org.omnione.did.base.util.BaseTasDidUtil;
 import org.omnione.did.base.util.BaseTasUtil;
+import org.omnione.did.common.exception.HttpClientException;
+import org.omnione.did.common.util.DateTimeUtil;
+import org.omnione.did.common.util.DidUtil;
+import org.omnione.did.common.util.DidValidator;
+import org.omnione.did.common.util.HttpClientUtil;
+import org.omnione.did.common.util.IdGenerator;
+import org.omnione.did.common.util.JsonUtil;
+import org.omnione.did.core.manager.DidManager;
+import org.omnione.did.data.model.did.DidDocument;
+import org.omnione.did.data.model.did.InvokedDidDoc;
+import org.omnione.did.data.model.enums.did.DidDocStatus;
+import org.omnione.did.data.model.enums.vc.RoleType;
 import org.omnione.did.noti.v1.dto.email.EmailTemplate;
 import org.omnione.did.noti.v1.dto.email.RequestSendEmailReqDto;
 import org.omnione.did.noti.v1.dto.push.FcmNotificationDto;
 import org.omnione.did.noti.v1.dto.push.RequestSendPushReqDto;
 import org.omnione.did.noti.v1.service.NotiEmailService;
 import org.omnione.did.noti.v1.service.NotiPushService;
-import org.omnione.did.tas.v1.agent.api.KycFeign;
-import org.omnione.did.tas.v1.agent.api.dto.RetrievePiiApiResDto;
 import org.omnione.did.tas.v1.agent.api.dto.RetrievePiiApiReqDto;
+import org.omnione.did.tas.v1.agent.api.dto.RetrievePiiApiResDto;
+import org.omnione.did.tas.v1.agent.helper.EmailServiceHelper;
+import org.omnione.did.tas.v1.agent.helper.PushServiceHelper;
+import org.omnione.did.tas.v1.agent.service.validator.DidAuthValidator;
+import org.omnione.did.tas.v1.agent.service.validator.TokenValidator;
 import org.omnione.did.tas.v1.common.dto.agent.common.EmptyResDto;
 import org.omnione.did.tas.v1.common.dto.agent.user.ConfirmRegisterUserReqDto;
 import org.omnione.did.tas.v1.common.dto.agent.user.ConfirmRegisterUserResDto;
@@ -93,27 +113,12 @@ import org.omnione.did.tas.v1.common.dto.agent.user.UpdateDidDocDeactivatedReqDt
 import org.omnione.did.tas.v1.common.dto.agent.user.UpdateDidDocRevokedReqDto;
 import org.omnione.did.tas.v1.common.dto.agent.user.UpdateUserStatusReqDto;
 import org.omnione.did.tas.v1.common.dto.agent.user.UpdateUserStatusResDto;
-import org.omnione.did.tas.v1.agent.helper.EmailServiceHelper;
-import org.omnione.did.tas.v1.agent.helper.PushServiceHelper;
 import org.omnione.did.tas.v1.common.service.DidDocService;
 import org.omnione.did.tas.v1.common.service.StorageService;
 import org.omnione.did.tas.v1.common.service.query.DidOfferQueryService;
+import org.omnione.did.tas.v1.common.service.query.KycQueryService;
 import org.omnione.did.tas.v1.common.service.query.UserQueryService;
 import org.omnione.did.tas.v1.common.service.query.WalletQueryService;
-import org.omnione.did.tas.v1.agent.service.validator.DidAuthValidator;
-import org.omnione.did.tas.v1.agent.service.validator.TokenValidator;
-import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.omnione.did.common.util.DateTimeUtil;
-import org.omnione.did.common.util.DidUtil;
-import org.omnione.did.common.util.DidValidator;
-import org.omnione.did.common.util.IdGenerator;
-import org.omnione.did.common.util.JsonUtil;
-import org.omnione.did.core.manager.DidManager;
-import org.omnione.did.data.model.did.DidDocument;
-import org.omnione.did.data.model.did.InvokedDidDoc;
-import org.omnione.did.data.model.enums.vc.RoleType;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
@@ -142,7 +147,6 @@ public class UserServiceImpl implements UserService {
     private final WalletRepository walletRepository;
     private final AppRepository appRepository;
     private final DidDocService didDocService;
-    private final KycFeign kycFeign;
     private final SignatureService signatureService;
     private final DidAuthValidator didAuthValidator;
     private final AppQueryService appQueryService;
@@ -152,6 +156,7 @@ public class UserServiceImpl implements UserService {
     private final NotiEmailService notiEmailService;
     private final EmailProperty emailProperty;
     private final DidOfferQueryService didOfferQueryService;
+    private final KycQueryService kycQueryService;
 
     /**
      * Proposes the registration of a new user, generating a transaction ID and initializing sub-transaction.
@@ -293,8 +298,31 @@ public class UserServiceImpl implements UserService {
                 .userId(kycTxId)
                 .build();
 
-        RetrievePiiApiResDto apiRetrievePiiResDto = kycFeign.retrievePii(apiRetrievePiiReqDto);
-        return apiRetrievePiiResDto.getPii();
+        Kyc kyc = kycQueryService.findKyc();
+
+        try {
+            String request = JsonUtil.serializeToJson(apiRetrievePiiReqDto);
+            RetrievePiiApiResDto retrievePiiApiResDto = HttpClientUtil.postData(kyc.getServerUrl() + "/api/v1/retrieve-pii", request, RetrievePiiApiResDto.class);
+
+            return retrievePiiApiResDto.getPii();
+        } catch (HttpClientException e) {
+            log.error("HttpClientException occurred while sending retrieve-pii request:: {}", e.getMessage(), e);
+            ErrorResponse errorResponse = convertExternalErrorResponse(e.getResponseBody());
+            throw new OpenDidException(errorResponse);
+        } catch (Exception e) {
+            log.error("Failed to retrieve PII information: {}", e.getMessage(), e);
+            throw new OpenDidException(ErrorCode.KYC_COMMUNICATION_ERROR);
+        }
+    }
+
+    private ErrorResponse convertExternalErrorResponse(String resBody) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.readValue(resBody, ErrorResponse.class);
+        } catch (JsonProcessingException e) {
+            log.error("Failed to parse external error response: {}", resBody, e);
+            throw new OpenDidException(ErrorCode.KYC_COMMUNICATION_ERROR);
+        }
     }
 
     /**

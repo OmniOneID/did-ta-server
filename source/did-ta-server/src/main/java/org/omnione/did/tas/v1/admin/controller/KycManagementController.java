@@ -15,14 +15,19 @@
  */
 package org.omnione.did.tas.v1.admin.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.constants.UrlConstant;
 import org.omnione.did.tas.v1.admin.service.KycManagementService;
 import org.omnione.did.tas.v1.common.dto.admin.kyc.KycInfoDto;
+import org.omnione.did.tas.v1.common.dto.admin.kyc.RegisterKycReqDto;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -35,5 +40,11 @@ public class KycManagementController {
     @GetMapping(value = "/kycs")
     public KycInfoDto findKyc(@RequestParam(required = false) Long id) {
         return kycManagementService.findKyc(id);
+    }
+
+    @PostMapping(value = "/kycs")
+    @ResponseBody
+    public KycInfoDto registerKyc(@Valid @RequestBody RegisterKycReqDto registerKycReqDto) {
+        return kycManagementService.registerKyc(registerKycReqDto);
     }
 }

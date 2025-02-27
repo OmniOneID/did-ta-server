@@ -36,7 +36,10 @@ const EntityManagementPage = (props: Props) => {
         setRows(response.data.content);
         setTotalRows(response.data.totalElements);
       })
-      .catch((error) => console.error("Failed to retrieve entities. ", error))
+      .catch((error) => {
+        console.error("Failed to retrieve entities. ", error)
+        navigate('/error', { state: { message: `Failed to retrieve Entities: ${error}` } })
+      })
       .finally(() => setLoading(false));
   }, [paginationModel]);
 

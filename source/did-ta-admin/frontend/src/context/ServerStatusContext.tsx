@@ -29,11 +29,10 @@ export const ServerStatusProvider: React.FC<{ children: ReactNode }> = ({ childr
   const [isLoadingMessage, setIsLoadingMessage] = useState<string>('');
   const [taInfo, setTaInfo] = useState<TaInfoResDto | null>(null);
 
-  // ✅ useCallback을 사용하여 setIsLoading의 참조를 고정 (무한 렌더링 방지)
   const setIsLoading = useCallback((loading: boolean, message?: string) => {
     setIsLoadingState(loading);
     setIsLoadingMessage(message ?? '처리 중입니다...');
-  }, []); // 🔹 의존성 배열을 빈 배열로 설정하여 함수 참조 유지
+  }, []);
 
   return (
     <ServerStatusContext.Provider 

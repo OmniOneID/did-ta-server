@@ -13,7 +13,8 @@ import LoadingOverlay from './components/loading/LoadingOverlay';
 function AppContent() {
   const navigate = useNavigate();
   
-  const { serverStatus, setServerStatus, isLoading, setTaInfo, setIsLoading } = useServerStatus();
+  const { serverStatus, setServerStatus, setTaInfo } = useServerStatus();
+  const [isLoading, setIsLoading] = useState(true);
 
   const [session, setSessionState] = useState<Session | null>(() => {
     const storedSession = localStorage.getItem('session');
@@ -40,21 +41,33 @@ function AppContent() {
     navigate('/sign-in');
   }, [navigate]);
 
-  
   // Fetch TA information
   useEffect(() => {
-    setIsLoading(true);
-    getTaInfo()
-      .then(({ data }) => {
-        setServerStatus(data.status);
-        setTaInfo(data);
-        setNavigation(getNavigationByStatus(data.status));
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.error('Failed to fetch TA information:', err);
-        setIsLoading(false);
-      });
+    const fetchTaInfo = () => {
+      setIsLoading(true);
+      getTaInfo()
+        .then(({ data }) => {
+          setServerStatus(data.status);
+          setTaInfo(data);
+          setNavigation(getNavigationByStatus(data.status));
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          navigate('/error', { state: { message: `Failed to connect server: ${err}` } });
+          setIsLoading(false);
+        });
+    };
+
+    fetchTaInfo();
+
+    const handlePopState = (event: PopStateEvent) => {
+      fetchTaInfo();
+    };
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
   }, []);
 
   useEffect(() => {

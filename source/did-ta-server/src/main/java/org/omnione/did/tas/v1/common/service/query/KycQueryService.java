@@ -14,6 +14,10 @@ import org.springframework.stereotype.Service;
 public class KycQueryService {
     private final KycRepository kycRepository;
 
+    public Kyc findKyc(){
+        return kycRepository.findTopByOrderByIdAsc().orElseThrow(() -> new OpenDidException(ErrorCode.KYC_INFO_NOT_FOUND));
+    }
+
     public Kyc findKycOrNull(){
         return kycRepository.findTopByOrderByIdAsc().orElse(null);
     }

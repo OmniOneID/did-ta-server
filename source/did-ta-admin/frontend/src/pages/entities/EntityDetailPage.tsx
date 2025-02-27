@@ -34,17 +34,11 @@ const EntityDetailPage = () => {
             try {
                 const { data } = await getEntityInfo(numericEntityId);
                 setEntityData(data);
+                setIsLoading(false);
             } catch (err) {
                 console.error('Failed to fetch Entity information:', err);
-                await dialogs.open(CustomDialog, { 
-                    title: 'Notification', 
-                    message: 'Failed to Retrieve Entity Information.', 
-                    isModal: true 
-                },{
-                    onClose: async (result) =>  navigate('/entities/entity-management', { replace: true }),
-                });
+                navigate('/error', { state: { message: `Failed to Entity information: ${err}` } })
             } finally {
-                setIsLoading(false);
             }
         };
         fetchData();
