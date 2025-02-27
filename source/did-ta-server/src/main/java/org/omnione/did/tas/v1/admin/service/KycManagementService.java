@@ -57,12 +57,19 @@ public class KycManagementService {
      * @return the registered KYC server information.
      */
     public KycInfoDto registerKyc(RegisterKycReqDto registerKycReqDto) {
-        Kyc kyc = Optional.ofNullable(kycQueryService.findKycOrNull())
-                .orElseThrow(() -> new OpenDidAdminException(AdminErrorCode.KYC_NOT_FOUND));
+        Kyc kyc = kycQueryService.findKycOrNull();
 
-        kyc.setName(registerKycReqDto.getName());
-        kyc.setServerUrl(registerKycReqDto.getServerUrl());
-        kyc.setEnabled(true);
+        if (kyc == null) {
+            kyc = Kyc.builder()
+                    .name(registerKycReqDto.getName())
+                    .serverUrl(registerKycReqDto.getServerUrl())
+                    .enabled(true)
+                    .build();
+        } else {
+            kyc.setName(registerKycReqDto.getName());
+            kyc.setServerUrl(registerKycReqDto.getServerUrl());
+            kyc.setEnabled(true);
+        }
 
         return KycInfoDto.fromKyc(kycRepository.save(kyc));
     }
