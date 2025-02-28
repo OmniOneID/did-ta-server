@@ -19,8 +19,8 @@ package org.omnione.did.tas.v1.admin.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.omnione.did.base.exception.AdminErrorCode;
-import org.omnione.did.base.exception.OpenDidAdminException;
+import org.omnione.did.base.exception.ErrorCode;
+import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.tas.v1.admin.dto.server.VerifyServerUrlReqDto;
 import org.omnione.did.tas.v1.admin.dto.server.VerifyServerUrlResDto;
 import org.springframework.stereotype.Service;
@@ -67,7 +67,7 @@ public class UrlPingChecker {
                         .build();
             }
         } catch (IOException e) {
-            throw new OpenDidAdminException(AdminErrorCode.URL_PING_ERROR);
+            throw new OpenDidException(ErrorCode.URL_PING_ERROR);
         }
     }
 }

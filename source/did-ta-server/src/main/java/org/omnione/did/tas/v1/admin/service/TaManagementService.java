@@ -21,8 +21,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.db.constant.TasStatus;
 import org.omnione.did.base.db.domain.Tas;
-import org.omnione.did.base.exception.AdminErrorCode;
-import org.omnione.did.base.exception.OpenDidAdminException;
+import org.omnione.did.base.exception.ErrorCode;
+import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.base.property.SetupProperty;
 import org.omnione.did.base.property.TasProperty;
 import org.omnione.did.data.model.did.DidDocument;
@@ -136,7 +136,7 @@ public class TaManagementService {
 
             default:
                 log.error("TA is already registered");
-                throw new OpenDidAdminException(AdminErrorCode.TA_ALREADY_REGISTERED);
+                throw new OpenDidException(ErrorCode.TA_ALREADY_REGISTERED);
         }
     }
 
@@ -147,7 +147,7 @@ public class TaManagementService {
         File didDocFile = new File(setupProperty.getPath() + "/TAS/tas.did");
         if (!didDocFile.exists() || !didDocFile.isFile()) {
             log.error("DID Document file not found at path: {}", setupProperty.getPath());
-            throw new OpenDidAdminException(AdminErrorCode.UNKNOWN_SERVER_ERROR);
+            throw new OpenDidException(ErrorCode.FILE_NOT_FOUND);
         }
 
         try {
@@ -155,7 +155,7 @@ public class TaManagementService {
             setupService.registerTasDidDocument(didDocBytes);
         } catch (Exception e) {
             log.error("Failed to read DID Document file", e);
-            throw new OpenDidAdminException(AdminErrorCode.FAILED_TO_REGISTER_TA_DID_DOCUMENT);
+            throw new OpenDidException(ErrorCode.FAILED_TO_REGISTER_TA_DID_DOCUMENT);
         }
     }
 
@@ -172,7 +172,7 @@ public class TaManagementService {
             tasService.requestEnrollTas(requestEnrollTasReqDto);
         } catch (Exception e) {
             log.error("Failed to register TA certificate", e);
-            throw new OpenDidAdminException(AdminErrorCode.FAILED_TO_REGISTER_TA_CERTIFICATE);
+            throw new OpenDidException(ErrorCode.FAILED_TO_REGISTER_TA_CERTIFICATE);
         }
     }
 

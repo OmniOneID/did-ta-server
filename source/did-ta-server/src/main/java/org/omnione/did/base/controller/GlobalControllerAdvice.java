@@ -17,7 +17,6 @@
 package org.omnione.did.base.controller;
 
 import org.omnione.did.base.exception.ErrorCode;
-import org.omnione.did.base.exception.OpenDidAdminException;
 import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.base.response.ErrorResponse;
 import lombok.RequiredArgsConstructor;
@@ -92,16 +91,5 @@ public class GlobalControllerAdvice {
     public ResponseEntity<ErrorResponse> handleValidationException(HttpMessageNotReadableException ex) {
         ErrorResponse errorResponse = new ErrorResponse(ErrorCode.REQUEST_BODY_INVALID);
         return new ResponseEntity<>(errorResponse, HttpStatus.valueOf(500));
-    }
-
-    @ExceptionHandler(OpenDidAdminException.class)
-    public ResponseEntity<ErrorResponse> handleTasException(OpenDidAdminException ex) {
-        if (ex.getErrorResponse() != null) {
-            return new ResponseEntity<>(ex.getErrorResponse(), HttpStatus.valueOf(400));
-        }
-
-        int httpStatus = ex.getErrorCode().getHttpStatus();
-        ErrorResponse errorResponse = new ErrorResponse(ex.getErrorCode().getCode(), ex.getErrorCode().getMessage());
-        return new ResponseEntity<>(errorResponse, HttpStatus.valueOf(httpStatus));
     }
 }

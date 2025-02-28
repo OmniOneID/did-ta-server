@@ -18,7 +18,6 @@ package org.omnione.did.base.response;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.omnione.did.base.exception.AdminErrorCode;
 import org.omnione.did.base.exception.ErrorCode;
 
 /**
@@ -48,16 +47,6 @@ public class ErrorResponse {
      * @param errorCode The ErrorCode object that contains both the code and the description.
      */
     public ErrorResponse(ErrorCode errorCode) {
-        this.code = errorCode.getCode();
-        this.description = errorCode.getMessage();
-    }
-
-    /**
-     * Constructs an ErrorResponse based on the provided AdminErrorCode.
-     *
-     * @param errorCode The AdminErrorCode object that contains both the code and the description.
-     */
-    public ErrorResponse(AdminErrorCode errorCode) {
         this.code = errorCode.getCode();
         this.description = errorCode.getMessage();
     }

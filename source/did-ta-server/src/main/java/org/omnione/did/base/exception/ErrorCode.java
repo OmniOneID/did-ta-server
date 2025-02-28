@@ -76,6 +76,9 @@ public enum ErrorCode {
     INVALID_ECC_CURVE_TYPE("SSRVTRA13508", "Failed to process ECC curve: invalid curve type.", 500),
     INVALID_SYMMETRIC_CIPHER_TYPE("SSRVTRA13509", "Failed to process encryption: invalid symmetric cipher type.", 500),
     INVALID_SYMMETRIC_PADDING_TYPE("SSRVTRA13510", "Failed to process encryption: invalid symmetric padding type.", 500),
+    FAILED_TO_REGISTER_TA_CERTIFICATE("SSRVTRA13511", "Failed to register TA certificate.", 500),
+    FAILED_TO_REGISTER_TA_DID_DOCUMENT("SSRVTRA13512", "Failed to register TA DID Document.", 500),
+    TA_ALREADY_REGISTERED("SSRVTRA13513", "TA is already registered.", 400),
 
 
     // 05. Entity-related errors (14000 ~ 14499)
@@ -107,6 +110,7 @@ public enum ErrorCode {
     ISSUER_INVALID_MESSAGE("SSRVTRA15503", "Failed to process message: received an invalid message from the issuer.", 500),
     EMAIL_SEND_FAILED("SSRVTRA15504", "Failed to send email.", 500),
     KYC_COMMUNICATION_ERROR("SSRVTRA15505", "Failed to communicate with KYC server: unknown error occurred.", 500),
+    URL_PING_ERROR("SSRVTRA15506", "Failed to ping the URL.", 400),
 
 
     // 08. Transaction-related errors (16000 ~ 16499)
@@ -259,7 +263,7 @@ public enum ErrorCode {
 
 
     // 99. Miscellaneous errors (90000 ~ 99999)
-    FILE_NOT_FOUND("9SSRVTRA0000", "Failed to find file: requested file not found.", 400),
+    FILE_NOT_FOUND("SSRVTRA0000", "Failed to find file: requested file not found.", 400),
     TODO_CODE("SSRVTRA90001", "Temporary error code: to be replaced.", 400),
     UNKNOWN_SERVER_ERROR("SSRVTRA90003", "An unknown server error has occurred.", 500),
     ;
