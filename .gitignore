@@ -219,6 +219,8 @@ bower_components
 
 tsconfig.tsbuildinfo
 
+.vite/
+
 *.sublime*
 
 psd
