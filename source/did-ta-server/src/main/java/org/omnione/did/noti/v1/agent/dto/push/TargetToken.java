@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package org.omnione.did.noti.v1.dto.push;
+package org.omnione.did.noti.v1.agent.dto.push;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,7 +24,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * DTO for FCM notification.
+ * DTO for target token.
  */
 @Getter
 @Setter
@@ -33,9 +32,6 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 @Builder
-public class FcmNotificationDto {
-    @NotNull(message = "notification.title cannot be null")
-    private String title;
-    @NotNull(message = "notification.body cannot be null")
-    private String body;
+public class TargetToken {
+    private String targetToken;
 }

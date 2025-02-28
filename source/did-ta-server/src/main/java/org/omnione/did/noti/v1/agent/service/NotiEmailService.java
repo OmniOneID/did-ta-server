@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.omnione.did.noti.v1.service;
+package org.omnione.did.noti.v1.agent.service;
 
 import org.omnione.did.base.datamodel.enums.EmailTemplateType;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
-import org.omnione.did.noti.v1.dto.email.RequestSendEmailReqDto;
+import org.omnione.did.noti.v1.agent.dto.email.RequestSendEmailReqDto;
 import org.omnione.did.tas.v1.common.dto.EmptyResDto;
 import jakarta.annotation.PostConstruct;
 import jakarta.mail.Message;

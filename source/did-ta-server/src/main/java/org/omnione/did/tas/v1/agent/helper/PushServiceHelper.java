@@ -16,7 +16,6 @@
 
 package org.omnione.did.tas.v1.agent.helper;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.omnione.did.base.datamodel.data.IssueOfferPayload;
 import org.omnione.did.base.datamodel.data.OfferData;
 import org.omnione.did.base.datamodel.data.RestoreDidOfferPayload;
@@ -27,7 +26,7 @@ import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.base.util.BaseMultibaseUtil;
 import org.omnione.did.common.exception.CommonSdkException;
-import org.omnione.did.noti.v1.dto.push.FcmNotificationDto;
+import org.omnione.did.noti.v1.agent.dto.push.FcmNotificationDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.common.util.JsonUtil;

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package org.omnione.did.noti.v1.controller;
+package org.omnione.did.noti.v1.agent.controller;
 
 import org.omnione.did.base.constants.UrlConstant;
-import org.omnione.did.noti.v1.dto.email.RequestSendEmailReqDto;
-import org.omnione.did.noti.v1.service.NotiEmailService;
+import org.omnione.did.noti.v1.agent.service.NotiEmailService;
+import org.omnione.did.noti.v1.agent.dto.email.RequestSendEmailReqDto;
 import org.omnione.did.tas.v1.common.dto.EmptyResDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

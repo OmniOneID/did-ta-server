@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.omnione.did.noti.v1.controller;
+package org.omnione.did.noti.v1.agent.controller;
 
 import org.omnione.did.base.constants.UrlConstant;
-import org.omnione.did.noti.v1.dto.push.RequestSendPushReqDto;
-import org.omnione.did.noti.v1.dto.push.RequestSendPushResDto;
-import org.omnione.did.noti.v1.service.NotiPushService;
+import org.omnione.did.noti.v1.agent.dto.push.RequestSendPushReqDto;
+import org.omnione.did.noti.v1.agent.dto.push.RequestSendPushResDto;
+import org.omnione.did.noti.v1.agent.service.NotiPushService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

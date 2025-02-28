@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package org.omnione.did.noti.v1.dto.email;
+package org.omnione.did.noti.v1.agent.dto.email;
 
-import org.omnione.did.base.datamodel.enums.EmailTemplateType;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,10 +24,8 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
-import java.util.Map;
-
 /**
- * DTO for email template.
+ * DTO for email base request.
  */
 @Getter
 @Setter
@@ -36,9 +33,7 @@ import java.util.Map;
 @AllArgsConstructor
 @ToString
 @SuperBuilder
-public class EmailTemplate extends Email {
-    @NotNull(message = "templateType cannot be null")
-    private EmailTemplateType templateType;
-    @NotNull(message = "contentData cannot be null")
-    private Map<String, String> contentData;
+public class EmailBaseReqDto {
+    @NotNull(message = "senderAddress cannot be null")
+    private String senderAddress;
 }

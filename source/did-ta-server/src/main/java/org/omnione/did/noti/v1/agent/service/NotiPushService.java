@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.omnione.did.noti.v1.service;
+package org.omnione.did.noti.v1.agent.service;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
@@ -30,9 +30,9 @@ import org.omnione.did.base.db.domain.App;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.base.property.FcmProperty;
-import org.omnione.did.noti.v1.dto.push.FcmNotificationDto;
-import org.omnione.did.noti.v1.dto.push.RequestSendPushReqDto;
-import org.omnione.did.noti.v1.dto.push.RequestSendPushResDto;
+import org.omnione.did.noti.v1.agent.dto.push.FcmNotificationDto;
+import org.omnione.did.noti.v1.agent.dto.push.RequestSendPushReqDto;
+import org.omnione.did.noti.v1.agent.dto.push.RequestSendPushResDto;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

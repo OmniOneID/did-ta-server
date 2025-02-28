@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.omnione.did.noti.v1.dto.email;
+package org.omnione.did.noti.v1.agent.dto.email;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

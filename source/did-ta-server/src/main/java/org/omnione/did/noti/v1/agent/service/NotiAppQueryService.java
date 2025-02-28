@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.omnione.did.noti.v1.service;
+package org.omnione.did.noti.v1.agent.service;
 
 
 import org.omnione.did.base.db.domain.App;
