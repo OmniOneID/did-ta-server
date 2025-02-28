@@ -46,9 +46,11 @@ import org.omnione.did.base.util.BaseCoreDidUtil;
 import org.omnione.did.base.util.BaseCryptoUtil;
 import org.omnione.did.base.util.BaseDigestUtil;
 import org.omnione.did.base.util.BaseMultibaseUtil;
+import org.omnione.did.common.exception.CommonSdkException;
 import org.omnione.did.tas.v1.agent.dto.user.RequestCreateTokenReqDto;
 import org.omnione.did.tas.v1.agent.dto.user.RequestCreateTokenResDto;
 import org.omnione.did.tas.v1.common.service.DidDocService;
+import org.omnione.did.tas.v1.common.service.query.ApiQueryService;
 import org.omnione.did.tas.v1.common.service.query.EcdhQueryService;
 import org.omnione.did.tas.v1.common.service.query.EntityQueryService;
 import org.omnione.did.tas.v1.common.service.query.TasQueryService;
@@ -80,11 +82,11 @@ public class TokenServiceImpl implements TokenService {
     private final EntityQueryService entityQueryService;
     private final EcdhQueryService ecdhQueryService;
     private final TasQueryService tasQueryService;
-    private final TasProperty tasProperty;
     private final TokenRepository tokenRepository;
     private final FileWalletService fileWalletService;
     private final DidDocService didDocService;
     private final CertificateVcValidator certificateVcValidator;
+    private final ApiQueryService apiQueryService;
 
     /**
      * Handles the request to create a token.
@@ -111,7 +113,7 @@ public class TokenServiceImpl implements TokenService {
 
             // Retrieve token expiration date and time.
             log.debug("\t--> Retrieving token expiration date and time");
-            String tokenValidUntil = DateTimeUtil.addHoursToCurrentTimeString(tasProperty.getTokenExpirationTimeHours());
+            String tokenValidUntil = DateTimeUtil.addSecondsToCurrentTimeString(apiQueryService.findTokenExpirationTime());
 
             // Generate Server token data.
             log.debug("\t--> Generating Server token data");
@@ -446,7 +448,7 @@ public class TokenServiceImpl implements TokenService {
 
             // Hash with SHA-256
             return BaseDigestUtil.generateHash(jsonString);
-        } catch(JsonProcessingException e) {
+        } catch(CommonSdkException e) {
             log.error("\t--> Exception occurred during extractSignatureMessage: {}", e.getMessage(), e);
             throw new OpenDidException(ErrorCode.SIGNATURE_VERIFICATION_FAILED);
         }
@@ -547,7 +549,7 @@ public class TokenServiceImpl implements TokenService {
 
             // Hash with SHA-256
             return BaseDigestUtil.generateHash(jsonString);
-        } catch(JsonProcessingException e) {
+        } catch(CommonSdkException e) {
             throw new OpenDidException(ErrorCode.EXTRACT_SIGNATURE_MESSAGE_FAILED);
         }
     }
@@ -600,7 +602,7 @@ public class TokenServiceImpl implements TokenService {
         try {
             String jsonString = JsonUtil.serializeAndSort(serverTokenData);
             return BaseDigestUtil.generateHash(jsonString);
-        }  catch (JsonProcessingException e) {
+        }  catch (CommonSdkException e) {
             log.error("\t--> Json Processing Error: {}", e.getMessage());
             throw new OpenDidException(ErrorCode.JSON_PROCESSING_ERROR);
         } catch (Exception e) {
@@ -628,7 +630,7 @@ public class TokenServiceImpl implements TokenService {
 
             // Encrypt the ServerTokenData.
             return BaseCryptoUtil.encrypt(stdJson.getBytes(StandardCharsets.UTF_8), sessionKey, iv, symmetricCipherType, symmetricPaddingType);
-        } catch (JsonProcessingException e) {
+        } catch (CommonSdkException e) {
             log.error("\t--> Json Processing Error: {}", e.getMessage());
             throw new OpenDidException(ErrorCode.JSON_PROCESSING_ERROR);
         } catch (Exception e) {

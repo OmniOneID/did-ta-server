@@ -26,6 +26,7 @@ import org.omnione.did.base.db.domain.User;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.base.util.BaseMultibaseUtil;
+import org.omnione.did.common.exception.CommonSdkException;
 import org.omnione.did.noti.v1.dto.push.FcmNotificationDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -107,7 +108,7 @@ public class PushServiceHelper {
             pushData.put("body", entity.getName() + " has requested a certificate issuance. Please complete the certificate issuance after verification.");
 
             return pushData;
-        } catch (JsonProcessingException e) {
+        } catch (CommonSdkException e) {
             log.error("Failed to generate push data for vc issuance", e);
             throw new OpenDidException(ErrorCode.PUSH_DATA_GENERATION_FAILED);
         }
@@ -135,7 +136,7 @@ public class PushServiceHelper {
             pushData.put("body", did + " has requested DID revocation. Please complete the DID revocation after verification.");
 
             return pushData;
-        } catch (JsonProcessingException e) {
+        } catch (CommonSdkException e) {
             log.error("Failed to generate push data for DID restoration", e);
             throw new OpenDidException(ErrorCode.PUSH_DATA_GENERATION_FAILED);
         }

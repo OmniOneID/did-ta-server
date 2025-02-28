@@ -40,6 +40,7 @@ import org.omnione.did.base.util.BaseCoreDidUtil;
 import org.omnione.did.base.util.BaseCryptoUtil;
 import org.omnione.did.base.util.BaseDigestUtil;
 import org.omnione.did.base.util.BaseMultibaseUtil;
+import org.omnione.did.common.exception.CommonSdkException;
 import org.omnione.did.tas.v1.agent.dto.entity.RequestECDHReqDto;
 import org.omnione.did.tas.v1.agent.dto.entity.RequestECDHResDto;
 import lombok.RequiredArgsConstructor;
@@ -206,7 +207,7 @@ public class EcdhServiceImpl implements EcdhService {
 
             // Hash with SHA-256
             return BaseDigestUtil.generateHash(jsonString);
-        } catch(JsonProcessingException e) {
+        } catch(CommonSdkException e) {
             throw new OpenDidException(ErrorCode.SIGNATURE_VERIFICATION_FAILED);
         }
     }
@@ -496,7 +497,7 @@ public class EcdhServiceImpl implements EcdhService {
 
             // Hash with SHA-256
             return BaseDigestUtil.generateHash(jsonString);
-        } catch (JsonProcessingException e) {
+        } catch (CommonSdkException e) {
             log.error("Failed to Json Processing: {}", e.getMessage(), e);
             throw new OpenDidException(ErrorCode.JSON_PROCESSING_ERROR);
         } catch (Exception e) {

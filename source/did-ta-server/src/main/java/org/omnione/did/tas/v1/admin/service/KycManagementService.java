@@ -20,14 +20,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.db.domain.Kyc;
 import org.omnione.did.base.db.repository.KycRepository;
-import org.omnione.did.base.exception.AdminErrorCode;
-import org.omnione.did.base.exception.OpenDidAdminException;
 import org.omnione.did.tas.v1.admin.dto.kyc.KycInfoDto;
 import org.omnione.did.tas.v1.admin.dto.kyc.RegisterKycReqDto;
 import org.omnione.did.tas.v1.common.service.query.KycQueryService;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

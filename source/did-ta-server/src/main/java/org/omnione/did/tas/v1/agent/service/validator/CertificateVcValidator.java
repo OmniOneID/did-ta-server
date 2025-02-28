@@ -21,6 +21,7 @@ import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.base.property.TasProperty;
 import org.omnione.did.base.util.BaseCoreVcUtil;
+import org.omnione.did.common.exception.CommonSdkException;
 import org.omnione.did.tas.v1.agent.service.SignatureService;
 import org.omnione.did.tas.v1.common.service.DidDocService;
 import lombok.RequiredArgsConstructor;
@@ -92,7 +93,7 @@ public class CertificateVcValidator {
             certificateVc.fromJson(certificateVcJson);
 
             return certificateVc;
-        } catch (IOException | InterruptedException | HttpClientException e) {
+        } catch (CommonSdkException | HttpClientException e) {
             log.error("Certificate VC not found: {}", e.getMessage());
             throw new OpenDidException(ErrorCode.CERTIFICATE_VC_NOT_FOUND);
         }

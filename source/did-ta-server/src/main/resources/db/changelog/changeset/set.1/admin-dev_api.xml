@@ -9,7 +9,7 @@
       <column name="id" type="bigint" autoIncrement="true">
         <constraints primaryKey="true" nullable="false" />
       </column>
-      <column name="name" type="varchar(50)">
+      <column name="type" type="varchar(50)">
         <constraints nullable="false" unique="false"/>
       </column>
       <column name="config" type="text">
@@ -22,6 +22,15 @@
         <constraints nullable="true" unique="false"/>
       </column>
     </createTable>
+  </changeSet>
+
+  <changeSet id="insert-initial-api-data" author="yklee0911">
+    <insert tableName="api">
+      <column name="type" value="EXPIRATION_TIME"/>
+      <column name="config">
+        <![CDATA[{"tokenExpirationSeconds":60, "transactionExpirationSeconds":300}]]>
+      </column>
+    </insert>
   </changeSet>
 
 </databaseChangeLog>

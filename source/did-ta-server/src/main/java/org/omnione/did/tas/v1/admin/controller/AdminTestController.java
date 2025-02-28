@@ -26,12 +26,14 @@ import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.base.response.ErrorResponse;
 import org.omnione.did.base.util.BaseMultibaseUtil;
 import org.omnione.did.common.exception.HttpClientException;
+import org.omnione.did.common.util.DateTimeUtil;
 import org.omnione.did.common.util.HttpClientUtil;
 import org.omnione.did.common.util.JsonUtil;
 import org.omnione.did.tas.v1.agent.api.dto.RetrievePiiApiReqDto;
 import org.omnione.did.tas.v1.agent.api.dto.RetrievePiiApiResDto;
 import org.omnione.did.tas.v1.admin.dto.entity.SendCertificateVcReqDto;
 import org.omnione.did.tas.v1.common.dto.EmptyResDto;
+import org.omnione.did.tas.v1.common.service.query.ApiQueryService;
 import org.omnione.did.tas.v1.common.service.query.KycQueryService;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,13 +41,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+
 @Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(value = UrlConstant.Tas.ADMIN_V1)
 public class AdminTestController {
-
     private final KycQueryService kycQueryService;
+    private final ApiQueryService apiQueryService;
 
     @RequestMapping(value = "/certificate-vc", method = RequestMethod.POST)
     public EmptyResDto getCertificateVc(@RequestBody SendCertificateVcReqDto sendCertificateVcReqDto) {
@@ -89,5 +94,16 @@ public class AdminTestController {
             log.error("Failed to parse external error response: {}", resBody, e);
             throw new OpenDidException(ErrorCode.KYC_COMMUNICATION_ERROR);
         }
+    }
+
+    @RequestMapping(value = "/token-expiration", method = RequestMethod.GET)
+    public String getTokenExpirationTime() {
+        String tokenValidUntil = DateTimeUtil.addSecondsToCurrentTimeString(apiQueryService.findTokenExpirationTime());
+        return tokenValidUntil;
+    }
+
+    @RequestMapping(value = "/transaction-expiration", method = RequestMethod.GET)
+    public Instant getTransactionExpirationTime() {
+        return Instant.now().plus(apiQueryService.findTransactionExpirationTime(), ChronoUnit.SECONDS);
     }
 }

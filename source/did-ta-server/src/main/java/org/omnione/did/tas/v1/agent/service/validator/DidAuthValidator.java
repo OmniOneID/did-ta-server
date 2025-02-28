@@ -28,6 +28,7 @@ import org.omnione.did.base.util.BaseCoreDidUtil;
 import org.omnione.did.base.util.BaseCryptoUtil;
 import org.omnione.did.base.util.BaseDigestUtil;
 import org.omnione.did.base.util.BaseMultibaseUtil;
+import org.omnione.did.common.exception.CommonSdkException;
 import org.omnione.did.tas.v1.common.service.DidDocService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -126,7 +127,10 @@ public class DidAuthValidator {
 
             // Hash with SHA-256
             return BaseDigestUtil.generateHash(jsonString);
-        } catch(JsonProcessingException e) {
+        } catch (CommonSdkException e) {
+            log.error("Failed to serialize and sort signature message: {}", e.getMessage());
+            throw new OpenDidException(ErrorCode.SIGNATURE_VERIFICATION_FAILED);
+        } catch (Exception e) {
             log.error("Failed to extract signature message: {}", e.getMessage());
             throw new OpenDidException(ErrorCode.SIGNATURE_VERIFICATION_FAILED);
         }

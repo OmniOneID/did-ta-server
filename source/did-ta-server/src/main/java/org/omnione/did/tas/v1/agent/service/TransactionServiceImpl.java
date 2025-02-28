@@ -25,6 +25,7 @@ import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.omnione.did.tas.v1.common.service.query.ApiQueryService;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -41,6 +42,7 @@ import java.util.Optional;
 public class TransactionServiceImpl implements TransactionService {
     private final TransactionRepository transactionRepository;
     private final SubTransactionRepository subTransactionRepository;
+    private final ApiQueryService apiQueryService;
 
     /**
      * Finds a transaction by its transaction ID.
@@ -229,6 +231,6 @@ public class TransactionServiceImpl implements TransactionService {
      */
     @Override
     public Instant retrieveTransactionExpiredTime() {
-        return Instant.now().plus(1, ChronoUnit.DAYS);
+        return Instant.now().plus(apiQueryService.findTransactionExpirationTime(), ChronoUnit.SECONDS);
     }
 }

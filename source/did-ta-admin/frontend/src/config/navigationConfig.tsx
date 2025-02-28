@@ -23,5 +23,22 @@ export const getNavigationByStatus = (serverStatus: string | null): Navigation=>
       title: 'KYC Settings',
       icon: <SettingsApplications />,
     },
+    {
+      segment: 'api-settings',
+      title: 'API Settings',
+      icon: <SettingsApplications />,
+      children: [
+        {
+          segment: 'expiration-settings',
+          title: 'Expiration Settings',
+          icon: <SettingsApplications />,
+        },
+        {
+          segment: 'key-exchange-policy',
+          title: 'Key Exchange Policy',
+          icon: <SettingsApplications />,
+        },
+      ]
+    },
   ];
 };

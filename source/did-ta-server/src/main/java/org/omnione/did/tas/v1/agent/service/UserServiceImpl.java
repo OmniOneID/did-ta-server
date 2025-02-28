@@ -60,6 +60,7 @@ import org.omnione.did.base.util.BaseDigestUtil;
 import org.omnione.did.base.util.BaseMultibaseUtil;
 import org.omnione.did.base.util.BaseTasDidUtil;
 import org.omnione.did.base.util.BaseTasUtil;
+import org.omnione.did.common.exception.CommonSdkException;
 import org.omnione.did.common.exception.HttpClientException;
 import org.omnione.did.common.util.DateTimeUtil;
 import org.omnione.did.common.util.DidUtil;
@@ -558,7 +559,7 @@ public class UserServiceImpl implements UserService {
 
             // Hash with SHA-256
             return BaseDigestUtil.generateHash(jsonString);
-        } catch(JsonProcessingException e) {
+        } catch(CommonSdkException e) {
             log.error("\t--> Exception occurred in extractSignatureMessage: {}", e.getMessage(), e);
             throw new OpenDidException(ErrorCode.SIGNATURE_VERIFICATION_FAILED);
         }

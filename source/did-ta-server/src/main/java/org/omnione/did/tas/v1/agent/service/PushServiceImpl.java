@@ -30,6 +30,7 @@ import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.base.util.BaseCoreDidUtil;
 import org.omnione.did.base.util.BaseCryptoUtil;
 import org.omnione.did.base.util.BaseDigestUtil;
+import org.omnione.did.common.exception.CommonSdkException;
 import org.omnione.did.tas.v1.common.dto.EmptyResDto;
 import org.omnione.did.tas.v1.agent.dto.push.UpdatePushTokenReqDto;
 import org.omnione.did.tas.v1.common.service.DidDocService;
@@ -167,7 +168,7 @@ public class PushServiceImpl implements PushService {
 
             // Hash with SHA-256
             return BaseDigestUtil.generateHash(jsonString);
-        } catch(JsonProcessingException e) {
+        } catch(CommonSdkException e) {
             log.error("\t--> Exception occurred in extractSignatureMessage: {}", e.getMessage(), e);
             throw new OpenDidException(ErrorCode.SIGNATURE_VERIFICATION_FAILED);
         }

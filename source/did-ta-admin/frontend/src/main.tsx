@@ -11,6 +11,9 @@ import TrustAgentRegistrationPage from './pages/trust-agent/TrustAgentRegistrati
 import EntityDetailPage from './pages/entities/EntityDetailPage';
 import EntityRegistrationPage from './pages/entities/EntityRegistrationPage';
 import KycSettingPage from './pages/kyc/KycSettingPage';
+import ExpirationSettingsPage from './pages/api/token-expiry/ExpirationSettingsPage';
+import KeyExchangePolicyPage from './pages/api/key-exchange-policy/KeyExchangePolicyPage';
+import ApiSettingsRedirect from './pages/api/ApiSettingsPage';
 
 const router = createBrowserRouter([
   {
@@ -43,7 +46,19 @@ const router = createBrowserRouter([
           {
             path: '/kyc/kyc-settings',
             Component: KycSettingPage
-          }
+          },
+          {
+            path: '/api-settings/expiration-settings',
+            Component: ExpirationSettingsPage,
+          },
+          {
+            path: '/api-settings/key-exchange-policy',
+            Component: KeyExchangePolicyPage,
+          },
+          {
+            path: '/api-settings',
+            Component: ApiSettingsRedirect,
+          },
         ],
       },
       {

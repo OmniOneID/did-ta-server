@@ -37,6 +37,7 @@ import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.base.util.BaseCoreDidUtil;
 import org.omnione.did.base.util.BaseDigestUtil;
 import org.omnione.did.base.util.BaseMultibaseUtil;
+import org.omnione.did.common.exception.CommonSdkException;
 import org.omnione.did.tas.v1.agent.dto.wallet.RegisterWalletReqDto;
 import org.omnione.did.tas.v1.agent.dto.wallet.RegisterWalletResDto;
 import org.omnione.did.tas.v1.common.service.DidDocService;
@@ -271,7 +272,7 @@ public class WalletServiceImpl implements WalletService {
 
             // Hash with SHA-256
             return BaseDigestUtil.generateHash(jsonString);
-        } catch(JsonProcessingException e) {
+        } catch(CommonSdkException e) {
             throw new OpenDidException(ErrorCode.SIGNATURE_VERIFICATION_FAILED);
         }
     }
