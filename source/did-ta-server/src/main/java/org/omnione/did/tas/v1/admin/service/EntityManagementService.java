@@ -98,32 +98,36 @@ public class EntityManagementService {
         log.debug("=== Starting registerEntitiesSimple ===");
 
         log.debug("\t--> Registering Issuer");
-        registerEntitiesSimple("issuer", RoleType.ISSUER, "8091");
+        registerEntitiesSimple("issuer", "Issuer",RoleType.ISSUER, "8091");
 
         log.debug("\t--> Registering Verifier");
-        registerEntitiesSimple("verifier", RoleType.VERIFIER, "8092");
+        registerEntitiesSimple("verifier", "Verifier", RoleType.VERIFIER, "8092");
 
         log.debug("\t--> Registering CAS");
-        registerEntitiesSimple("cas", RoleType.APP_PROVIDER, "8094");
+        registerEntitiesSimple("cas", "CAS", RoleType.APP_PROVIDER, "8094");
 
         log.debug("\t--> Registering Wallet");
-        registerEntitiesSimple("wallet", RoleType.WALLET_PROVIDER, "8095");
+        registerEntitiesSimple("wallet", "WalletService",RoleType.WALLET_PROVIDER, "8095");
 
         log.debug("*** Finished registerEntitiesSimple ***");
 
         return EmptyResDto.builder().build();
     }
 
-    private void registerEntitiesSimple(String entityName, RoleType roleType, String port) {
+    private void registerEntitiesSimple(String entityName, String directoryPath, RoleType roleType, String port) {
         try {
             String did = "did:omn:" + entityName;
             Entity entity = entityQueryService.findEntityByDidOrNull(did);
             String baseUrl = setupProperty.getBaseUrl() + ":" + port + "/" + entityName;
+
             String certificateUrl = baseUrl + "/api/v1/certificate-vc";
             String sendCertificateUrl = baseUrl + "/admin/v1/certificate-vc";
 
+            String basePath = setupProperty.getPath() + "/" + directoryPath + "/";
+            String didDocFileName = entityName + ".did";
+
             if (entity == null) {
-                File didDocFile = new File(setupProperty.getPath() + entityName + ".did");
+                File didDocFile = new File(basePath + didDocFileName);
                 byte[] didDocBytes = Files.readAllBytes(didDocFile.toPath());
 
                 registerEntityDidDocument_simple(didDocBytes, roleType, baseUrl, certificateUrl, entityName);
