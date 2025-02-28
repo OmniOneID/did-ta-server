@@ -53,12 +53,14 @@ const ExpirationSettingsPage = (props: Props) => {
   }, []);
 
   useEffect(() => {
-    const isModified = JSON.stringify(formData) !== JSON.stringify(initialData);
-    setIsButtonDisabled(!isModified);
-  }, [formData, initialData]);
+      const isModified = Object.keys(formData).some(
+        (key) => formData[key as keyof ExpirationFormData] !== initialData[key as keyof ExpirationFormData]
+      );
+      setIsButtonDisabled(!isModified);
+    }, [formData, initialData]);
 
   const handleChange = (field: keyof ExpirationFormData) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = event.target.value;
+    const newValue = event.target.value === "" ? undefined : Number(event.target.value); 
     setFormData((prev) => ({ ...prev, [field]: newValue }));
   }   
 
@@ -139,7 +141,7 @@ const ExpirationSettingsPage = (props: Props) => {
         label="Token Timeout (seconds)"
         variant="outlined"
         margin="normal"
-        value={formData.tokenExpirationSeconds ? formData.tokenExpirationSeconds : 0}
+        value={formData.tokenExpirationSeconds ?? ""}
         onChange={handleChange('tokenExpirationSeconds')}
         error={!!errors.tokenExpirationSeconds}
         helperText={errors.tokenExpirationSeconds}
@@ -156,7 +158,7 @@ const ExpirationSettingsPage = (props: Props) => {
         label="Transaction Timeout (seconds)"
         variant="outlined"
         margin="normal"
-        value={formData.transactionExpirationSeconds? formData.transactionExpirationSeconds : 0}
+        value={formData.transactionExpirationSeconds ?? ""}
         onChange={handleChange('transactionExpirationSeconds')}
         error={!!errors.transactionExpirationSeconds}
         helperText={errors.transactionExpirationSeconds}
