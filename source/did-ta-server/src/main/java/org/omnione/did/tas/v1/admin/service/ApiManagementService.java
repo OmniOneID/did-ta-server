@@ -23,7 +23,9 @@ import org.omnione.did.base.db.domain.Api;
 import org.omnione.did.base.db.repository.ApiRepository;
 import org.omnione.did.common.util.JsonUtil;
 import org.omnione.did.tas.v1.admin.dto.api.ExpirationInfoDto;
+import org.omnione.did.tas.v1.admin.dto.api.KeyExchangePolicyInfoDto;
 import org.omnione.did.tas.v1.admin.dto.api.RegisterExpirationInfoReqDto;
+import org.omnione.did.tas.v1.admin.dto.api.RegisterKeyExchangePolicyInfoReqDto;
 import org.omnione.did.tas.v1.common.service.query.ApiQueryService;
 import org.springframework.stereotype.Service;
 
@@ -58,5 +60,30 @@ public class ApiManagementService {
 
         Api savedApi = apiRepository.save(api);
         return JsonUtil.deserializeFromJson(savedApi.getConfig(), ExpirationInfoDto.class);
+    }
+
+    public KeyExchangePolicyInfoDto findKeyExchangePolicy() {
+        Api api = apiQueryService.findApiByTypeOrNull(ApiType.KEY_EXCHANGE_POLICY);
+        if (api!= null) {
+            return JsonUtil.deserializeFromJson(api.getConfig(), KeyExchangePolicyInfoDto.class);
+        }
+
+        return KeyExchangePolicyInfoDto.builder().build();
+    }
+
+    public KeyExchangePolicyInfoDto registerKeyExchangePolicy(RegisterKeyExchangePolicyInfoReqDto registerKeyExchangePolicyInfoReqDto) {
+        Api api = apiQueryService.findApiByTypeOrNull(ApiType.KEY_EXCHANGE_POLICY);
+
+        if (api == null) {
+            api = Api.builder()
+                    .type(ApiType.KEY_EXCHANGE_POLICY)
+                    .config(JsonUtil.serializeToJson(registerKeyExchangePolicyInfoReqDto))
+                    .build();
+        } else {
+            api.setConfig(JsonUtil.serializeToJson(registerKeyExchangePolicyInfoReqDto));
+        }
+
+        Api savedApi = apiRepository.save(api);
+        return JsonUtil.deserializeFromJson(savedApi.getConfig(), KeyExchangePolicyInfoDto.class);
     }
 }

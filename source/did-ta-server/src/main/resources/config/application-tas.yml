@@ -3,7 +3,4 @@ tas:
   did: did:omn:tas
   url: http://localhost:8090
   certificate-vc: "http://127.0.0.1:8090/tas/api/v1/certificate-vc"
-  cipher-type: AES-256-CBC
-  padding-type: PKCS5
-  token-expiration-time-hours: 1
   sample-path: "./sample/data"

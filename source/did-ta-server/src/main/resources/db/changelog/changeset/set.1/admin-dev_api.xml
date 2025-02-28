@@ -31,6 +31,12 @@
         <![CDATA[{"tokenExpirationSeconds":60, "transactionExpirationSeconds":300}]]>
       </column>
     </insert>
+    <insert tableName="api">
+      <column name="type" value="KEY_EXCHANGE_POLICY"/>
+      <column name="config">
+        <![CDATA[{"cipherType":"AES-256-CBC", "paddingType":"PKCS5"}]]>
+      </column>
+    </insert>
   </changeSet>
 
 </databaseChangeLog>

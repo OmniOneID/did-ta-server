@@ -31,7 +31,7 @@ const ExpirationSettingsPage = (props: Props) => {
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
   useEffect(() => {
-    setIsLoading(false);
+    setIsLoading(true);
 
     const fetchData = async () => {
       try {
@@ -117,10 +117,9 @@ const ExpirationSettingsPage = (props: Props) => {
     }
   };
 
-  if (isLoading) return <FullscreenLoader open={isLoading} />
-  
   return (
     <>
+      <FullscreenLoader open={isLoading} />
       <Box>
         <Box sx={{ maxWidth: 500, margin: 'auto', p: 3, border: '1px solid #ccc', borderRadius: 2 }}>
           <Typography variant="body1">

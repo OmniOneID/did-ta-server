@@ -20,6 +20,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.constants.UrlConstant;
+import org.omnione.did.base.datamodel.enums.SymmetricCipherType;
+import org.omnione.did.base.datamodel.enums.SymmetricPaddingType;
 import org.omnione.did.base.db.domain.Kyc;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
@@ -105,5 +107,17 @@ public class AdminTestController {
     @RequestMapping(value = "/transaction-expiration", method = RequestMethod.GET)
     public Instant getTransactionExpirationTime() {
         return Instant.now().plus(apiQueryService.findTransactionExpirationTime(), ChronoUnit.SECONDS);
+    }
+
+    @RequestMapping(value = "/cipher-type", method = RequestMethod.GET)
+    public SymmetricCipherType getCipherType() {
+        SymmetricCipherType cipherType = apiQueryService.findCipherType();
+        return cipherType;
+    }
+
+    @RequestMapping(value = "/padding-type", method = RequestMethod.GET)
+    public SymmetricPaddingType getPaddingType() {
+        SymmetricPaddingType paddingType = apiQueryService.findPaddingType();
+        return paddingType;
     }
 }

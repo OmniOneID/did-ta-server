@@ -19,13 +19,11 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.constants.UrlConstant;
-import org.omnione.did.base.db.constant.ApiType;
-import org.omnione.did.base.db.domain.Api;
-import org.omnione.did.common.util.JsonUtil;
 import org.omnione.did.tas.v1.admin.dto.api.ExpirationInfoDto;
+import org.omnione.did.tas.v1.admin.dto.api.KeyExchangePolicyInfoDto;
 import org.omnione.did.tas.v1.admin.dto.api.RegisterExpirationInfoReqDto;
+import org.omnione.did.tas.v1.admin.dto.api.RegisterKeyExchangePolicyInfoReqDto;
 import org.omnione.did.tas.v1.admin.service.ApiManagementService;
-import org.omnione.did.tas.v1.common.service.query.ApiQueryService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -49,5 +47,16 @@ public class ApiManagementController {
     @ResponseBody
     public ExpirationInfoDto registerExpirationInfo(@Valid @RequestBody RegisterExpirationInfoReqDto registerExpirationInfoReqDto) {
         return apiManagementService.registerExpirationInfo(registerExpirationInfoReqDto);
+    }
+
+    @GetMapping(value = "/apis/key-exchange-policy")
+    public KeyExchangePolicyInfoDto findKeyExchangePolicy() {
+        return apiManagementService.findKeyExchangePolicy();
+    }
+
+    @PostMapping(value = "/apis/key-exchange-policy")
+    @ResponseBody
+    public KeyExchangePolicyInfoDto registerKeyExchangePolicy(@Valid @RequestBody RegisterKeyExchangePolicyInfoReqDto registerKeyExchangePolicyInfoReqDto) {
+        return apiManagementService.registerKeyExchangePolicy(registerKeyExchangePolicyInfoReqDto);
     }
 }

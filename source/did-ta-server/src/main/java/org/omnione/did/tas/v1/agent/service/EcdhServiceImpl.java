@@ -52,6 +52,7 @@ import org.omnione.did.common.util.JsonUtil;
 import org.omnione.did.crypto.keypair.KeyPairInterface;
 import org.omnione.did.data.model.did.DidDocument;
 import org.omnione.did.tas.v1.common.service.DidDocService;
+import org.omnione.did.tas.v1.common.service.query.ApiQueryService;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
@@ -74,6 +75,7 @@ public class EcdhServiceImpl implements EcdhService {
     private final TasProperty tasProperty;
     private final EcdhRepository ecdhRepository;
     private final FileWalletService fileWalletService;
+    private final ApiQueryService apiQueryService;
 
     /**
      * Handles the ECDH request process.
@@ -286,7 +288,7 @@ public class EcdhServiceImpl implements EcdhService {
      */
     private SymmetricCipherType getServerCipherType() {
         try {
-            return SymmetricCipherType.fromDisplayName(tasProperty.getCipherType());
+            return apiQueryService.findCipherType();
         } catch (IllegalArgumentException e) {
             throw new OpenDidException(ErrorCode.INVALID_SERVER_CONFIGURATION);
         }
@@ -300,7 +302,7 @@ public class EcdhServiceImpl implements EcdhService {
      */
     private SymmetricPaddingType determinePaddingType() {
         try {
-            return SymmetricPaddingType.fromDisplayName(tasProperty.getPaddingType());
+            return apiQueryService.findPaddingType();
         } catch (IllegalArgumentException e){
             throw new OpenDidException(ErrorCode.INVALID_SERVER_CONFIGURATION);
         }
