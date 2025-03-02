@@ -51,7 +51,7 @@ export const getNavigationByStatus = (serverStatus: string | null): Navigation=>
           icon: <SettingsApplications />,
         },
         {
-          segment: 'email-templates',
+          segment: 'email-template',
           title: 'Email Template Settings',
           icon: <SettingsApplications />,
         },

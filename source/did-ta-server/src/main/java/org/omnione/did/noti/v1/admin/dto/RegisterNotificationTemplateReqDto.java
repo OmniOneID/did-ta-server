@@ -13,16 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.omnione.did.base.db.repository;
+package org.omnione.did.noti.v1.admin.dto;
 
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
 import org.omnione.did.base.db.constant.NotificationServerType;
-import org.omnione.did.base.db.domain.NotificationServer;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.omnione.did.base.db.constant.NotificationTemplateType;
 
-import java.util.Optional;
-
-@Repository
-public interface NotificationServerRepository extends JpaRepository<NotificationServer, Long> {
-    Optional<NotificationServer> findByServerType(NotificationServerType serverType);
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+@Builder
+public class RegisterNotificationTemplateReqDto {
+    @NotNull(message = "serverType cannot be null")
+    private NotificationServerType serverType;
+    @NotNull(message = "templateType cannot be null")
+    private NotificationTemplateType templateType;
+    @NotNull(message = "template cannot be null")
+    private String template;
 }

@@ -19,9 +19,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.constants.UrlConstant;
-import org.omnione.did.noti.v1.admin.dto.EmailConfigurationDto;
-import org.omnione.did.noti.v1.admin.dto.RegisterEmailConfigurationReqDto;
-import org.omnione.did.noti.v1.admin.dto.SendTestEmailReqDto;
+import org.omnione.did.base.db.constant.NotificationServerType;
+import org.omnione.did.base.db.constant.NotificationTemplateType;
+import org.omnione.did.noti.v1.admin.dto.*;
 import org.omnione.did.noti.v1.admin.service.NotificationManagementService;
 import org.omnione.did.tas.v1.common.dto.EmptyResDto;
 import org.springframework.web.bind.annotation.*;
@@ -48,5 +48,16 @@ public class NotificationManagementController {
     @ResponseBody
     public EmptyResDto sendTestEmail(@Valid @RequestBody SendTestEmailReqDto sendTestEmailReqDto) {
         return notificationManagementService.sendTestEmail(sendTestEmailReqDto);
+    }
+
+    @GetMapping(value = "/templates")
+    public NotificationTemplateInfoDto findNotificationTemplate(@RequestParam NotificationServerType serverType, @RequestParam NotificationTemplateType templateType) {
+        return notificationManagementService.findNotificationTemplate(serverType, templateType);
+    }
+
+    @PostMapping(value = "/templates")
+    @ResponseBody
+    public NotificationTemplateInfoDto registerNotificationTemplate(@Valid @RequestBody RegisterNotificationTemplateReqDto registerNotificationTemplateReqDto) {
+        return notificationManagementService.registerNotificationTemplate(registerNotificationTemplateReqDto);
     }
 }

@@ -257,6 +257,8 @@ public enum ErrorCode {
     // 15. Notification-related errors (20000 ~ 20499)
     FAILED_API_SEND_EMAIL("SSRVTRA20000", "Failed to process the 'send-email' API request.", 500),
     FAILED_API_SEND_PUSH("SSRVTRA20001", "Failed to process the 'send-push' API request.", 500),
+    NOTIFICATION_TEMPLATE_NOT_FOUND("SSRVTRA20002", "Failed to find notification template: requested template not found.", 500),
+
 
     // 16. KYC-related errors (20500 ~ 20999)
     KYC_INFO_NOT_FOUND("SSRVTRA20500", "Failed to find KYC: KYC is not registered.", 500),

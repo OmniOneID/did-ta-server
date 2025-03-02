@@ -19,6 +19,7 @@ import jakarta.persistence.*;
 import jakarta.persistence.Entity;
 import lombok.*;
 import org.omnione.did.base.db.constant.NotificationServerType;
+import org.omnione.did.base.db.constant.NotificationTemplateType;
 
 import java.io.Serializable;
 
@@ -29,8 +30,8 @@ import java.io.Serializable;
 @Setter
 @ToString
 @Entity
-@Table(name = "\"notification_server\"")
-public class NotificationServer extends BaseEntity implements Serializable {
+@Table(name = "\"notification_template\"")
+public class NotificationTemplate extends BaseEntity implements Serializable {
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,6 +41,10 @@ public class NotificationServer extends BaseEntity implements Serializable {
     @Column(name = "server_type", nullable = false, length = 50)
     private NotificationServerType serverType;
 
-    @Column(name = "config", nullable = false)
-    private String config;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "template_type", nullable = false, length = 50)
+    private NotificationTemplateType templateType;
+
+    @Column(name = "template", nullable = false)
+    private String template;
 }

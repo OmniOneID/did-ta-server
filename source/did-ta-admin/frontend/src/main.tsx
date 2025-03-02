@@ -13,6 +13,7 @@ import EntityRegistrationPage from './pages/entities/EntityRegistrationPage';
 import ErrorPage from './pages/ErrorPage';
 import KycSettingPage from './pages/kyc/KycSettingPage';
 import EmailServerSettingsPage from './pages/notification-provider/email-server/EmailServerSettingsPage';
+import EmailTemplateSettingsPage from './pages/notification-provider/email-template/EmailTemplateSettingsPage';
 import NotificationProviderPage from './pages/notification-provider/NotificationProviderPage';
 import TrustAgentManagementPage from './pages/trust-agent/TrustAgentManagementPage';
 import TrustAgentRegistrationPage from './pages/trust-agent/TrustAgentRegistrationPage';
@@ -64,6 +65,14 @@ const router = createBrowserRouter([
           {
             path: 'noti-settings/email-server',
             Component: EmailServerSettingsPage,
+          },
+          {
+            path: 'noti-settings/email-server',
+            Component: EmailServerSettingsPage,
+          },
+          {
+            path: 'noti-settings/email-template',
+            Component: EmailTemplateSettingsPage,
           },
           {
             path: 'noti-settings',

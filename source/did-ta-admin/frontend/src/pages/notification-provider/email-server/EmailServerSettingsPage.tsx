@@ -3,7 +3,7 @@ import { Box, Button, FormControl, FormHelperText, IconButton, InputAdornment, I
 import { useDialogs } from '@toolpad/core';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { getEmailServerInfo, registerEmailServerInfo, sendTestEmail } from '../../../apis/NotiAPi';
+import { getEmailServerInfo, registerEmailServerInfo, sendTestEmail } from '../../../apis/NotiApi';
 import CustomConfirmDialog from '../../../components/dialog/CustomConfirmDialog';
 import CustomDialog from '../../../components/dialog/CustomDialog';
 import FullscreenLoader from '../../../components/loading/FullscreenLoader';

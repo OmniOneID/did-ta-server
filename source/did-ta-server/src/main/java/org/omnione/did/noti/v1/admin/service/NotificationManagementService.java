@@ -19,14 +19,16 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.db.constant.NotificationServerType;
+import org.omnione.did.base.db.constant.NotificationTemplateType;
 import org.omnione.did.base.db.domain.NotificationServer;
+import org.omnione.did.base.db.domain.NotificationTemplate;
 import org.omnione.did.base.db.repository.NotificationServerRepository;
+import org.omnione.did.base.db.repository.NotificationTemplateRepository;
 import org.omnione.did.common.util.JsonUtil;
-import org.omnione.did.noti.v1.admin.dto.EmailConfigurationDto;
-import org.omnione.did.noti.v1.admin.dto.RegisterEmailConfigurationReqDto;
-import org.omnione.did.noti.v1.admin.dto.SendTestEmailReqDto;
+import org.omnione.did.noti.v1.admin.dto.*;
 import org.omnione.did.noti.v1.agent.service.NotiEmailService;
 import org.omnione.did.noti.v1.common.service.query.NotificationServerQueryService;
+import org.omnione.did.noti.v1.common.service.query.NotificationTemplateQueryService;
 import org.omnione.did.tas.v1.common.dto.EmptyResDto;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +40,8 @@ public class NotificationManagementService {
     private final NotificationServerQueryService notificationServerQueryService;
     private final NotificationServerRepository notificationServerRepository;
     private final NotiEmailService notiEmailService;
+    private final NotificationTemplateQueryService notificationTemplateQueryService;
+    private final NotificationTemplateRepository notificationTemplateRepository;
 
     public EmailConfigurationDto findEmailConfiguration() {
         return notificationServerQueryService.findEmailConfigurationOrNull();
@@ -61,5 +65,27 @@ public class NotificationManagementService {
     public EmptyResDto sendTestEmail(SendTestEmailReqDto sendTestEmailReqDto) {
         notiEmailService.sendTestEmail(sendTestEmailReqDto);
         return EmptyResDto.builder().build();
+    }
+
+    public NotificationTemplateInfoDto findNotificationTemplate(NotificationServerType serverType, NotificationTemplateType templateType) {
+        NotificationTemplate notificationTemplate = notificationTemplateQueryService.findNotificationTemplate(serverType, templateType);
+        return NotificationTemplateInfoDto.fromNotificationTemplate(notificationTemplate);
+    }
+
+    public NotificationTemplateInfoDto registerNotificationTemplate(RegisterNotificationTemplateReqDto registerNotificationTemplateReqDto) {
+        NotificationTemplate notificationTemplate = notificationTemplateQueryService.findNotificationTemplate(registerNotificationTemplateReqDto.getServerType(), registerNotificationTemplateReqDto.getTemplateType());
+
+        if (notificationTemplate == null) {
+            notificationTemplate = notificationTemplate.builder()
+                    .serverType(registerNotificationTemplateReqDto.getServerType())
+                    .templateType(registerNotificationTemplateReqDto.getTemplateType())
+                    .template(registerNotificationTemplateReqDto.getTemplate())
+                    .build();
+        } else {
+            notificationTemplate.setTemplate(registerNotificationTemplateReqDto.getTemplate());
+        }
+
+        NotificationTemplate savedNotificationTemplate = notificationTemplateRepository.save(notificationTemplate);
+        return NotificationTemplateInfoDto.fromNotificationTemplate(savedNotificationTemplate);
     }
 }
