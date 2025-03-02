@@ -35,7 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(value = UrlConstant.Noti.V1)
+@RequestMapping(value = UrlConstant.Noti.AGENT_V1)
 public class NotiPushController {
     private final NotiPushService notiPushService;
 

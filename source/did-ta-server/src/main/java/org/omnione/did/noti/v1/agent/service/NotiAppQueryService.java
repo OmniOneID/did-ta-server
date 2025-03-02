@@ -16,36 +16,75 @@
 
 package org.omnione.did.noti.v1.agent.service;
 
-
 import org.omnione.did.base.db.domain.App;
+import org.omnione.did.base.db.repository.AppRepository;
+import org.omnione.did.base.exception.ErrorCode;
+import org.omnione.did.base.exception.OpenDidException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 /**
- * Service interface for querying App information.
+ * Implementation of the NotiAppQueryService interface.
+ * This service provides methods for querying App entities from the database
+ * based on various criteria such as user ID and App ID.
  */
-public interface NotiAppQueryService {
+@Service
+@RequiredArgsConstructor
+@Slf4j
+public class NotiAppQueryService {
+    private final AppRepository appRepository;
+
     /**
-     * Finds an App entity by the user's ID.
+     * Finds an App entity by its associated user ID.
      *
-     * @param userId The ID of the user.
+     * @param userId The user ID of the app to search for.
      * @return The App entity associated with the given user ID.
+     * @throws OpenDidException If the App entity is not found for the given user ID.
      */
-    App findByUserId(Long userId);
+    public App findByUserId(Long userId) {
+        try {
+            return appRepository.findByUserId(userId)
+                    .orElseThrow(() -> new OpenDidException(ErrorCode.APP_INFO_NOT_FOUND));
+        } catch (OpenDidException e) {
+            log.error("App not found for userId {}: {}", userId, e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Unexpected error occurred while finding App for userId {}: {}", userId, e.getMessage());
+            throw new OpenDidException(ErrorCode.APP_INFO_NOT_FOUND);
+        }
+    }
 
     /**
-     * Finds an App entity by its ID.
+     * Finds an App entity by its associated ID.
      *
-     * @param id The ID of the App.
-     * @return The App entity with the given ID.
+     * @param id The ID of the app to search for.
+     * @return The App entity associated with the given ID.
+     * @throws OpenDidException If the App entity is not found for the given ID.
      */
-    App findById(Long id);
+    public App findById(Long id) {
+        try {
+            return appRepository.findById(id)
+                    .orElseThrow(() -> new OpenDidException(ErrorCode.APP_INFO_NOT_FOUND));
+        } catch (OpenDidException e) {
+            log.error("App not found for id {}: {}", id, e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Unexpected error occurred while finding App for id {}: {}", id, e.getMessage());
+            throw new OpenDidException(ErrorCode.APP_INFO_NOT_FOUND);
+        }
+    }
 
     /**
-     * Finds a list of App entities by a list of user IDs.
+     * Finds a list of App entities by their associated user IDs.
      *
-     * @param userIds The list of user IDs.
-     * @return A list of App entities associated with the given user IDs.
+     * @param userIds The list of user IDs to search for.
+     * @return The list of App entities associated with the given user IDs.
+     *         Returns an empty list if no App entities are found.
      */
-    List<App> findByUserIds(List<Long> userIds);
+    public List<App> findByUserIds(List<Long> userIds) {
+        return appRepository.findByUserIds(userIds);
+    }
 }

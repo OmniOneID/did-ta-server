@@ -45,6 +45,3 @@ management:
 
 server:
   port: 8090
-
-kyc:
-  url: http://127.0.0.1:8094/cas

@@ -3,17 +3,19 @@ import * as ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router';
 import App from './App';
 import Layout from './layout/Layout';
+import ApiSettingsRedirect from './pages/api/ApiSettingsPage';
+import KeyExchangePolicyPage from './pages/api/key-exchange-policy/KeyExchangePolicyPage';
+import ExpirationSettingsPage from './pages/api/token-expiry/ExpirationSettingsPage';
 import SignInPage from './pages/auth/SignIn';
+import EntityDetailPage from './pages/entities/EntityDetailPage';
 import EntityManagementPage from './pages/entities/EntityManagementPage';
+import EntityRegistrationPage from './pages/entities/EntityRegistrationPage';
 import ErrorPage from './pages/ErrorPage';
+import KycSettingPage from './pages/kyc/KycSettingPage';
+import EmailServerSettingsPage from './pages/notification-provider/email-server/EmailServerSettingsPage';
+import NotificationProviderPage from './pages/notification-provider/NotificationProviderPage';
 import TrustAgentManagementPage from './pages/trust-agent/TrustAgentManagementPage';
 import TrustAgentRegistrationPage from './pages/trust-agent/TrustAgentRegistrationPage';
-import EntityDetailPage from './pages/entities/EntityDetailPage';
-import EntityRegistrationPage from './pages/entities/EntityRegistrationPage';
-import KycSettingPage from './pages/kyc/KycSettingPage';
-import ExpirationSettingsPage from './pages/api/token-expiry/ExpirationSettingsPage';
-import KeyExchangePolicyPage from './pages/api/key-exchange-policy/KeyExchangePolicyPage';
-import ApiSettingsRedirect from './pages/api/ApiSettingsPage';
 
 const router = createBrowserRouter([
   {
@@ -58,6 +60,14 @@ const router = createBrowserRouter([
           {
             path: '/api-settings',
             Component: ApiSettingsRedirect,
+          },
+          {
+            path: 'noti-settings/email-server',
+            Component: EmailServerSettingsPage,
+          },
+          {
+            path: 'noti-settings',
+            Component: NotificationProviderPage,
           },
         ],
       },

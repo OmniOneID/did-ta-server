@@ -35,7 +35,8 @@ public class UrlConstant {
      * @Note: Currently, the TAS service is handling Noti-related operations.
      */
     public static class Noti {
-        public static final String V1 = "/noti/api/v1";
+        public static final String AGENT_V1 = "/noti/api/v1";
+        public static final String ADMIN_V1 = "/noti/admin/v1";
     }
 
     /**

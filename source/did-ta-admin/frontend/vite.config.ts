@@ -1,17 +1,17 @@
 import { defineConfig } from 'vite';
 
-// https://vitejs.dev/config/
 export default defineConfig({
   server: {
     proxy: {
-      '/admin/v1': {
-        target: 'http://localhost:8090/tas',
+      // /noti/admin/v1 → http://localhost:8090/noti/admin/v1
+      '/noti/admin/v1': {
+        target: 'http://localhost:8090',
         changeOrigin: true,
-        configure: (proxy, options) => {
-          proxy.on('proxyReq', (proxyReq, req, res) => {
-            proxyReq.setHeader('Origin', 'http://localhost:8090');
-          });
-        },
+      },
+      // /tas/admin/v1 → http://localhost:8090/tas/admin/v1
+      '/tas/admin/v1': {
+        target: 'http://localhost:8090',
+        changeOrigin: true,
       },
     },
   },

@@ -14,12 +14,14 @@ const TrustAgentRegisterPage = () => {
   const dialogs = useDialogs();
   const [isLoading, setIsLoading] = useState(false);
 
+  const API_BASE_URL = "/tas/admin/v1";
+
   const handleSimpleRegistration = async () => {
     setIsLoading(true);
     setIsError(false);
     
     try {
-      const { data } = await postData('ta/register-simple', null);
+      const { data } = await postData(API_BASE_URL, 'ta/register-simple', null);
       setServerStatus(data.status);
       setTaInfo(data);
 

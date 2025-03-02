@@ -19,9 +19,11 @@ package org.omnione.did.noti.v1.agent.service;
 import org.omnione.did.base.datamodel.enums.EmailTemplateType;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
+import org.omnione.did.noti.v1.admin.dto.EmailConfigurationDto;
+import org.omnione.did.noti.v1.admin.dto.SendTestEmailReqDto;
 import org.omnione.did.noti.v1.agent.dto.email.RequestSendEmailReqDto;
+import org.omnione.did.noti.v1.common.service.query.NotificationServerQueryService;
 import org.omnione.did.tas.v1.common.dto.EmptyResDto;
-import jakarta.annotation.PostConstruct;
 import jakarta.mail.Message;
 import jakarta.mail.internet.InternetAddress;
 import lombok.RequiredArgsConstructor;
@@ -61,44 +63,60 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 public class NotiEmailService {
     private final ResourceLoader resourceLoader;
-    private final JavaMailSender javaMailSender;
+    private final NotificationServerQueryService notificationServerQueryService;
 
     /**
-     * Configures the JavaMailSender to disable SSL verification.
+     * Creates and configures a JavaMailSender instance dynamically.
+     * This method retrieves the email configuration from the database
+     * and applies the settings to the mail sender.
+     * If no configuration is found, email sending will be disabled.
      *
-     * @WARNING: This method disables SSL certificate verification and is intended
-     * for use in development or testing environments only. Disabling SSL
-     * verification can expose the application to security risks, such as
-     * man-in-the-middle (MITM) attacks. Do not use this method in production
-     * environments.
+     * @return Configured JavaMailSender instance, or null if no configuration is available.
      */
-    @PostConstruct
-    public void configureJavaMailSender() {
-        if (!(javaMailSender instanceof JavaMailSenderImpl)) {
-            return;
+    private JavaMailSender createMailSender() {
+        EmailConfigurationDto emailConfiguration = notificationServerQueryService.findEmailConfigurationOrNull();
+        if (emailConfiguration == null) {
+            log.warn("Mail configuration not found in database. Email sending is disabled.");
+            return null;
         }
-        JavaMailSenderImpl mailSender = (JavaMailSenderImpl) this.javaMailSender;
+
+        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+        mailSender.setHost(emailConfiguration.getHost());
+        mailSender.setPort(emailConfiguration.getPort());
+        mailSender.setUsername(emailConfiguration.getUsername());
+        mailSender.setPassword(emailConfiguration.getPassword());
 
         Properties props = mailSender.getJavaMailProperties();
-        props.put("mail.smtp.ssl.trust", "*");
-        props.put("mail.smtp.ssl.checkserveridentity", "false");
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", String.valueOf(emailConfiguration.getStartTlsEnabled()));
+        props.put("mail.smtp.ssl.enable", String.valueOf(emailConfiguration.getSslEnabled()));
+        props.put("mail.smtp.connectiontimeout", String.valueOf(emailConfiguration.getConnectionTimeout() * 1000));
+        props.put("mail.smtp.timeout", String.valueOf(emailConfiguration.getReadTimeout() * 1000));
+        props.put("mail.smtp.writetimeout", String.valueOf(emailConfiguration.getWriteTimeout() * 1000));
 
-        // Disable SSL verification
-        TrustManager[] trustAllCerts = new TrustManager[]{
-                new X509TrustManager() {
-                    public X509Certificate[] getAcceptedIssuers() { return null; }
-                    public void checkClientTrusted(X509Certificate[] certs, String authType) { }
-                    public void checkServerTrusted(X509Certificate[] certs, String authType) { }
-                }
-        };
-        try {
-            SSLContext sc = SSLContext.getInstance("TLS");
-            sc.init(null, trustAllCerts, new java.security.SecureRandom());
-            mailSender.getJavaMailProperties().put("mail.smtp.ssl.socketFactory", sc.getSocketFactory());
-        } catch (NoSuchAlgorithmException | KeyManagementException e) {
-            log.error("Failed to configure SSL context", e);
-            throw new OpenDidException(ErrorCode.MAIL_CONFIGURATION_FAILED);
+        if (emailConfiguration.getIgnoreSslValidation()) {
+            log.warn("SSL certificate verification has been disabled.");
+            props.put("mail.smtp.ssl.trust", "*");
+            props.put("mail.smtp.ssl.checkserveridentity", "false");
+
+            TrustManager[] trustAllCerts = new TrustManager[]{
+                    new X509TrustManager() {
+                        public X509Certificate[] getAcceptedIssuers() { return null; }
+                        public void checkClientTrusted(X509Certificate[] certs, String authType) { }
+                        public void checkServerTrusted(X509Certificate[] certs, String authType) { }
+                    }
+            };
+            try {
+                SSLContext sc = SSLContext.getInstance("TLS");
+                sc.init(null, trustAllCerts, new java.security.SecureRandom());
+                props.put("mail.smtp.ssl.socketFactory", sc.getSocketFactory());
+            } catch (NoSuchAlgorithmException | KeyManagementException e) {
+                log.error("Failed to configure SSL context", e);
+                throw new OpenDidException(ErrorCode.MAIL_CONFIGURATION_FAILED);
+            }
         }
+
+        return mailSender;
     }
 
     /**
@@ -201,6 +219,7 @@ public class NotiEmailService {
         ClassLoader originalClassLoader = currentThread.getContextClassLoader();
         currentThread.setContextClassLoader(InternetAddress.class.getClassLoader());
         try {
+            JavaMailSender javaMailSender = createMailSender();
             javaMailSender.send(mimeMessagePreparator);
         } catch (MailException e) {
             log.error("An error occurred while sending email", e);
@@ -211,4 +230,98 @@ public class NotiEmailService {
 
         return true;
     }
+
+    /**
+     * Sends a test email to the specified recipient.
+     * The email contains a simple test message.
+     *
+     * @param recipientEmail The email address of the recipient.
+     * @throws OpenDidException If an error occurs while sending the email.
+     */
+    public void sendTestEmail(String recipientEmail) {
+        JavaMailSender mailSender = createMailSender();
+        if (mailSender == null) {
+            throw new OpenDidException(ErrorCode.MAIL_CONFIGURATION_FAILED);
+        }
+
+        MimeMessagePreparator mimeMessagePreparator = mimeMessage -> {
+            mimeMessage.setFrom(new InternetAddress(notificationServerQueryService.findEmailConfigurationOrNull().getSender()));
+            mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(recipientEmail));
+            mimeMessage.setSubject("OpenDID Test Email");
+            mimeMessage.setText("This email was sent from the OpenDID TA Admin to test the email configuration.");
+            mimeMessage.setSentDate(Date.from(Instant.now()));
+        };
+
+        try {
+            mailSender.send(mimeMessagePreparator);
+            log.info("Test email successfully sent to {}", recipientEmail);
+        } catch (MailException e) {
+            log.error("An error occurred while sending the test email", e);
+            throw new OpenDidException(ErrorCode.EMAIL_SEND_FAILED);
+        }
+    }
+
+    private JavaMailSender createMailSender(SendTestEmailReqDto sendTestEmailReqDto) {
+        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+        mailSender.setHost(sendTestEmailReqDto.getHost());
+        mailSender.setPort(sendTestEmailReqDto.getPort());
+        mailSender.setUsername(sendTestEmailReqDto.getUsername());
+        mailSender.setPassword(sendTestEmailReqDto.getPassword());
+
+        Properties props = mailSender.getJavaMailProperties();
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", String.valueOf(sendTestEmailReqDto.getStartTlsEnabled()));
+        props.put("mail.smtp.ssl.enable", String.valueOf(sendTestEmailReqDto.getSslEnabled()));
+        props.put("mail.smtp.connectiontimeout", String.valueOf(sendTestEmailReqDto.getConnectionTimeout() * 1000));
+        props.put("mail.smtp.timeout", String.valueOf(sendTestEmailReqDto.getReadTimeout() * 1000));
+        props.put("mail.smtp.writetimeout", String.valueOf(sendTestEmailReqDto.getWriteTimeout() * 1000));
+
+        if (sendTestEmailReqDto.getIgnoreSslValidation()) {
+            log.warn("SSL certificate verification has been disabled.");
+            props.put("mail.smtp.ssl.trust", "*");
+            props.put("mail.smtp.ssl.checkserveridentity", "false");
+
+            TrustManager[] trustAllCerts = new TrustManager[]{
+                    new X509TrustManager() {
+                        public X509Certificate[] getAcceptedIssuers() { return null; }
+                        public void checkClientTrusted(X509Certificate[] certs, String authType) { }
+                        public void checkServerTrusted(X509Certificate[] certs, String authType) { }
+                    }
+            };
+            try {
+                SSLContext sc = SSLContext.getInstance("TLS");
+                sc.init(null, trustAllCerts, new java.security.SecureRandom());
+                props.put("mail.smtp.ssl.socketFactory", sc.getSocketFactory());
+            } catch (NoSuchAlgorithmException | KeyManagementException e) {
+                log.error("Failed to configure SSL context", e);
+                throw new OpenDidException(ErrorCode.MAIL_CONFIGURATION_FAILED);
+            }
+        }
+
+        return mailSender;
+    }
+
+    public void sendTestEmail(SendTestEmailReqDto sendTestEmailReqDto) {
+        JavaMailSender mailSender = createMailSender(sendTestEmailReqDto);
+        if (mailSender == null) {
+            throw new OpenDidException(ErrorCode.MAIL_CONFIGURATION_FAILED);
+        }
+
+        MimeMessagePreparator mimeMessagePreparator = mimeMessage -> {
+            mimeMessage.setFrom(new InternetAddress(sendTestEmailReqDto.getSender()));
+            mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(sendTestEmailReqDto.getRecipient()));
+            mimeMessage.setSubject("OpenDID Test Email");
+            mimeMessage.setText("This email was sent from the OpenDID TA Admin to test the email configuration.");
+            mimeMessage.setSentDate(Date.from(Instant.now()));
+        };
+
+        try {
+            mailSender.send(mimeMessagePreparator);
+            log.info("Test email successfully sent to {}", sendTestEmailReqDto.getRecipient());
+        } catch (MailException e) {
+            log.error("An error occurred while sending the test email", e);
+            throw new OpenDidException(ErrorCode.EMAIL_SEND_FAILED);
+        }
+    }
+
 }

@@ -1,6 +1,6 @@
+import { SettingsApplications } from '@mui/icons-material';
 import StorageIcon from '@mui/icons-material/Storage';
 import { type Navigation } from '@toolpad/core/AppProvider';
-import { SettingsApplications } from '@mui/icons-material';
 
 
 export const getNavigationByStatus = (serverStatus: string | null): Navigation=> {
@@ -36,6 +36,28 @@ export const getNavigationByStatus = (serverStatus: string | null): Navigation=>
         {
           segment: 'key-exchange-policy',
           title: 'Key Exchange Policy',
+          icon: <SettingsApplications />,
+        },
+      ]
+    },
+    {
+      segment: 'noti-settings',
+      title: 'Notification Provider Settings',
+      icon: <SettingsApplications />,
+      children: [
+        {
+          segment: 'email-server',
+          title: 'Email Server Settings',
+          icon: <SettingsApplications />,
+        },
+        {
+          segment: 'email-templates',
+          title: 'Email Template Settings',
+          icon: <SettingsApplications />,
+        },
+        {
+          segment: 'push-server',
+          title: 'Push Template Settings',
           icon: <SettingsApplications />,
         },
       ]

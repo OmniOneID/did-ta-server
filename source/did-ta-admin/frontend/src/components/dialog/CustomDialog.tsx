@@ -1,6 +1,6 @@
-import React from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import { DialogProps } from '@toolpad/core/useDialogs';
+import React from 'react';
 
 const CustomDialog: React.FC<DialogProps<{ message: string; title?: string; isModal?: boolean }, void>> = ({ 
   payload, 
@@ -23,7 +23,7 @@ const CustomDialog: React.FC<DialogProps<{ message: string; title?: string; isMo
       {payload?.title && <DialogTitle>{payload.title}</DialogTitle>}
       <DialogContent>{payload?.message}</DialogContent>
       <DialogActions>
-        <Button variant="contained" onClick={() => onClose()} autoFocus>확인</Button>
+        <Button variant="contained" onClick={() => onClose()} autoFocus>OK</Button>
       </DialogActions>
     </Dialog>
   );

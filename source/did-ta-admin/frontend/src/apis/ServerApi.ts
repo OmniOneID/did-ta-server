@@ -1,5 +1,7 @@
-import { getData, postData } from "../utils/api";
+import { postData } from "../utils/api";
+
+const API_BASE_URL = "/tas/admin/v1";
 
 export const verifyServerUrl = async (body: any) => {
-    return postData(`servers/ping`, body);
+    return postData(API_BASE_URL, `servers/ping`, body);
 }

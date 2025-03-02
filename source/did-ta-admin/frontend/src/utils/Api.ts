@@ -1,11 +1,10 @@
-const API_BASE_URL = "/admin/v1";
-
 const requestApi = (
+  baseUrl: string,
   endpoint: string,
   method: "GET" | "POST" | "PUT" | "DELETE",
   body?: any
 ): Promise<{ url: string; data: any }> => {
-  const fullUrl = `${API_BASE_URL}/${endpoint}`;
+  const fullUrl = `${baseUrl}/${endpoint}`;
 
   const isFormData = body instanceof FormData;
 
@@ -41,22 +40,22 @@ const requestApi = (
   });
 };
 
-export const getData = (endpoint: string): Promise<{ url: string; data: any }> => {
-  return requestApi(endpoint, "GET");
+export const getData = (baseUrl: string, endpoint: string): Promise<{ url: string; data: any }> => {
+  return requestApi(baseUrl, endpoint, "GET");
 };
 
-export const postData = (endpoint: string, body: any): Promise<{ url: string; data: any }> => {
-  return requestApi(endpoint, "POST", body);
+export const postData = (baseUrl: string, endpoint: string, body: any): Promise<{ url: string; data: any }> => {
+  return requestApi(baseUrl, endpoint, "POST", body);
 };
 
-export const putData = (endpoint: string, body: any): Promise<{ url: string; data: any }> => {
-  return requestApi(endpoint, "PUT", body);
+export const putData = (baseUrl: string, endpoint: string, body: any): Promise<{ url: string; data: any }> => {
+  return requestApi(baseUrl, endpoint, "PUT", body);
 };
 
-export const deleteData = (endpoint: string): Promise<{ url: string; data: any }> => {
-  return requestApi(endpoint, "DELETE");
+export const deleteData = (baseUrl: string, endpoint: string): Promise<{ url: string; data: any }> => {
+  return requestApi(baseUrl, endpoint, "DELETE");
 };
 
-export const uploadData = (endpoint: string, formData: FormData): Promise<{ url: string; data: any }> => {
-  return requestApi(endpoint, "POST", formData);
+export const uploadData = (baseUrl: string, endpoint: string, formData: FormData): Promise<{ url: string; data: any }> => {
+  return requestApi(baseUrl, endpoint, "POST", formData);
 };

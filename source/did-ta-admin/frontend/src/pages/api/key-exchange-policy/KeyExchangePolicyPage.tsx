@@ -123,7 +123,7 @@ const KeyExchangePolicyPage = (props: Props) => {
     <>
       <FullscreenLoader open={isLoading} />
       <Box>
-        <Box sx={{ maxWidth: 500, margin: 'auto', p: 3, border: '1px solid #ccc', borderRadius: 2 }}>
+        <Box sx={{ maxWidth: 500, margin: 'aut o', p: 3, border: '1px solid #ccc', borderRadius: 2 }}>
           <Typography variant="body1">
             Configure the key exchange policy used by the Trust Agent for ECDH key exchange with external entities.
           </Typography>

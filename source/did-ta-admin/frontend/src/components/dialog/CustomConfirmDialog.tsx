@@ -1,6 +1,6 @@
-import React from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, DialogContentText } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import { DialogProps } from '@toolpad/core/useDialogs';
+import React from 'react';
 
 const CustomConfirmDialog: React.FC<DialogProps<{ message: string; title?: string; isModal?: boolean }, boolean>> = ({
   payload,
@@ -22,10 +22,10 @@ const CustomConfirmDialog: React.FC<DialogProps<{ message: string; title?: strin
       </DialogContent>
       <DialogActions>
         <Button variant="contained" onClick={() => onClose(false)} color="secondary">
-          취소
+          Cancel
         </Button>
         <Button variant="contained" onClick={() => onClose(true)} color="primary" autoFocus>
-          확인
+          OK
         </Button>
       </DialogActions>
     </Dialog>

@@ -31,6 +31,7 @@ import org.omnione.did.common.exception.HttpClientException;
 import org.omnione.did.common.util.DateTimeUtil;
 import org.omnione.did.common.util.HttpClientUtil;
 import org.omnione.did.common.util.JsonUtil;
+import org.omnione.did.noti.v1.agent.service.NotiEmailService;
 import org.omnione.did.tas.v1.agent.api.dto.RetrievePiiApiReqDto;
 import org.omnione.did.tas.v1.agent.api.dto.RetrievePiiApiResDto;
 import org.omnione.did.tas.v1.admin.dto.entity.SendCertificateVcReqDto;
@@ -53,6 +54,7 @@ import java.time.temporal.ChronoUnit;
 public class AdminTestController {
     private final KycQueryService kycQueryService;
     private final ApiQueryService apiQueryService;
+    private final NotiEmailService notiEmailService;
 
     @RequestMapping(value = "/certificate-vc", method = RequestMethod.POST)
     public EmptyResDto getCertificateVc(@RequestBody SendCertificateVcReqDto sendCertificateVcReqDto) {
@@ -119,5 +121,10 @@ public class AdminTestController {
     public SymmetricPaddingType getPaddingType() {
         SymmetricPaddingType paddingType = apiQueryService.findPaddingType();
         return paddingType;
+    }
+
+    @RequestMapping(value = "/send-test-email", method = RequestMethod.GET)
+    public void sendTestEmail(@RequestParam String email) {
+        notiEmailService.sendTestEmail(email);
     }
 }
