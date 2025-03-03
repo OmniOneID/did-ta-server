@@ -19,4 +19,5 @@
   <include file="set.1/admin-dev_api.xml" relativeToChangelogFile="true" />
   <include file="set.1/admin-dev_notification_server.xml" relativeToChangelogFile="true" />
   <include file="set.1/admin-dev_notification_template.xml" relativeToChangelogFile="true" />
+  <include file="set.1/admin-dev_admin.xml" relativeToChangelogFile="true" />
 </databaseChangeLog>

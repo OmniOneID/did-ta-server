@@ -20,21 +20,20 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.constants.UrlConstant;
 import org.omnione.did.tas.v1.admin.dto.admin.AdminDto;
-import org.omnione.did.tas.v1.admin.dto.admin.RequestAdminLoginReqDto;
-import org.omnione.did.tas.v1.admin.service.SessionService;
+import org.omnione.did.tas.v1.admin.dto.admin.ResetPasswordReqDto;
+import org.omnione.did.tas.v1.admin.service.AdminManagementService;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(value = UrlConstant.Tas.ADMIN_V1)
-public class SessionController {
+public class AdminManagementController {
+    private final AdminManagementService adminManagementService;
 
-    private final SessionService sessionService;
-
-    @PostMapping(value = "/login")
+    @PostMapping(value = "/admins/reset-password")
     @ResponseBody
-    public AdminDto requestAdminLogin(@Valid @RequestBody RequestAdminLoginReqDto requestAdminLoginReqDto) {
-        return sessionService.requestAdminLogin(requestAdminLoginReqDto);
+    public AdminDto resetPassword(@Valid @RequestBody ResetPasswordReqDto resetPasswordReqDto) {
+        return adminManagementService.resetPassword(resetPasswordReqDto);
     }
 }

@@ -1,5 +1,6 @@
 import { SettingsApplications } from '@mui/icons-material';
 import StorageIcon from '@mui/icons-material/Storage';
+import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 import { type Navigation } from '@toolpad/core/AppProvider';
 
 
@@ -61,6 +62,11 @@ export const getNavigationByStatus = (serverStatus: string | null): Navigation=>
           icon: <SettingsApplications />,
         },
       ]
+    },
+    {
+      segment: 'admin-management',
+      title: 'Admin Management', 
+      icon: <SupervisorAccountIcon />,
     },
   ];
 };

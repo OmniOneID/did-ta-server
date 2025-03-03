@@ -13,28 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.omnione.did.tas.v1.admin.controller;
+package org.omnione.did.tas.v1.admin.service;
 
-import jakarta.validation.Valid;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.omnione.did.base.constants.UrlConstant;
+import org.omnione.did.base.db.domain.Admin;
 import org.omnione.did.tas.v1.admin.dto.admin.AdminDto;
 import org.omnione.did.tas.v1.admin.dto.admin.RequestAdminLoginReqDto;
-import org.omnione.did.tas.v1.admin.service.SessionService;
-import org.springframework.web.bind.annotation.*;
+import org.omnione.did.tas.v1.common.service.query.AdminQueryService;
+import org.springframework.stereotype.Service;
 
-@Slf4j
+@Service
 @RequiredArgsConstructor
-@RestController
-@RequestMapping(value = UrlConstant.Tas.ADMIN_V1)
-public class SessionController {
+@Slf4j
+@Transactional
+public class SessionService {
+    private final AdminQueryService adminQueryService;
 
-    private final SessionService sessionService;
-
-    @PostMapping(value = "/login")
-    @ResponseBody
-    public AdminDto requestAdminLogin(@Valid @RequestBody RequestAdminLoginReqDto requestAdminLoginReqDto) {
-        return sessionService.requestAdminLogin(requestAdminLoginReqDto);
+    public AdminDto requestAdminLogin(RequestAdminLoginReqDto requestAdminLoginReqDto) {
+        Admin admin = adminQueryService.findByLoginIdAndLoginPassword(requestAdminLoginReqDto.getLoginId(), requestAdminLoginReqDto.getLoginPassword());
+        return AdminDto.fromAdmin(admin);
     }
 }

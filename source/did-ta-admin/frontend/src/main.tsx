@@ -3,6 +3,7 @@ import * as ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router';
 import App from './App';
 import Layout from './layout/Layout';
+import AdminManagementPage from './pages/admins/AdminManagementPage';
 import ApiSettingsRedirect from './pages/api/ApiSettingsPage';
 import KeyExchangePolicyPage from './pages/api/key-exchange-policy/KeyExchangePolicyPage';
 import ExpirationSettingsPage from './pages/api/token-expiry/ExpirationSettingsPage';
@@ -77,6 +78,10 @@ const router = createBrowserRouter([
           {
             path: 'noti-settings',
             Component: NotificationProviderPage,
+          },
+          {
+            path: 'admin-management',
+            Component: AdminManagementPage,
           },
         ],
       },

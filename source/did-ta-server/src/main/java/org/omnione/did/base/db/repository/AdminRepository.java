@@ -15,14 +15,13 @@
  */
 package org.omnione.did.base.db.repository;
 
-import org.omnione.did.base.db.constant.ApiType;
-import org.omnione.did.base.db.domain.Api;
+import org.omnione.did.base.db.domain.Admin;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface ApiRepository extends JpaRepository<Api, Long> {
-    Optional<Api> findByType(ApiType type);
+public interface AdminRepository extends JpaRepository<Admin, Long> {
+    Optional<Admin> findByLoginIdAndLoginPassword(String loginId, String loginPassword);
 }

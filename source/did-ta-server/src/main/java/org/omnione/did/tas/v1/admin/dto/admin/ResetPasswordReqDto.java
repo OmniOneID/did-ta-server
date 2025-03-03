@@ -13,16 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.omnione.did.base.db.repository;
+package org.omnione.did.tas.v1.admin.dto.admin;
 
-import org.omnione.did.base.db.constant.ApiType;
-import org.omnione.did.base.db.domain.Api;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
-import java.util.Optional;
-
-@Repository
-public interface ApiRepository extends JpaRepository<Api, Long> {
-    Optional<Api> findByType(ApiType type);
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+@Builder
+public class ResetPasswordReqDto {
+    @NotNull(message = "loginId cannot be null")
+    private String loginId;
+    @NotNull(message = "oldPassword cannot be null")
+    private String oldPassword;
+    @NotNull(message = "newPassword cannot be null")
+    private String newPassword;
 }
