@@ -23,8 +23,10 @@ import org.omnione.did.base.db.constant.NotificationServerType;
 import org.omnione.did.base.db.constant.NotificationTemplateType;
 import org.omnione.did.noti.v1.admin.dto.*;
 import org.omnione.did.noti.v1.admin.service.NotificationManagementService;
+import org.omnione.did.noti.v1.agent.dto.email.CheckNotificationServerConfigurationResDto;
 import org.omnione.did.tas.v1.common.dto.EmptyResDto;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -59,5 +61,17 @@ public class NotificationManagementController {
     @ResponseBody
     public NotificationTemplateInfoDto registerNotificationTemplate(@Valid @RequestBody RegisterNotificationTemplateReqDto registerNotificationTemplateReqDto) {
         return notificationManagementService.registerNotificationTemplate(registerNotificationTemplateReqDto);
+    }
+
+    @GetMapping(value = "/servers/status")
+    public CheckNotificationServerConfigurationResDto checkNotificationServerConfiguration() {
+        return notificationManagementService.checkNotificationServerConfiguration();
+    }
+
+    @PostMapping(value = "/servers/push")
+    @ResponseBody
+    public void registerPushConfiguration(@RequestParam("push") MultipartFile push) {
+        notificationManagementService.registerPushConfiguration(push);
+
     }
 }

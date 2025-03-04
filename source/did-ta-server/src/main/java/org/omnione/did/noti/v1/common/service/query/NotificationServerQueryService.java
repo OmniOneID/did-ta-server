@@ -44,5 +44,4 @@ public class NotificationServerQueryService {
 
         return null;
     }
-
 }

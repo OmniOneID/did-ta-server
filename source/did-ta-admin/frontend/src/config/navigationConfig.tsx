@@ -58,7 +58,7 @@ export const getNavigationByStatus = (serverStatus: string | null): Navigation=>
         },
         {
           segment: 'push-server',
-          title: 'Push Template Settings',
+          title: 'Push Server Settings',
           icon: <SettingsApplications />,
         },
       ]

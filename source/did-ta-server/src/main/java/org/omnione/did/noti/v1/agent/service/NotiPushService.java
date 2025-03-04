@@ -26,7 +26,9 @@ import com.google.firebase.messaging.BatchResponse;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.MulticastMessage;
+import org.omnione.did.base.db.constant.NotificationServerType;
 import org.omnione.did.base.db.domain.App;
+import org.omnione.did.base.db.domain.NotificationServer;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.base.property.FcmProperty;
@@ -36,11 +38,14 @@ import org.omnione.did.noti.v1.agent.dto.push.RequestSendPushResDto;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.omnione.did.noti.v1.common.service.query.NotificationServerQueryService;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -57,6 +62,7 @@ public class NotiPushService {
     private final NotiUserQueryService notiUserQueryService;
     private final NotiAppQueryService notiAppQueryService;
     private final Environment environment;
+    private final NotificationServerQueryService notificationServerQueryService;
 
     /**
      * Initializes the Firebase application.
@@ -66,26 +72,41 @@ public class NotiPushService {
      *
      * @throws IOException If an error occurs while reading the Firebase credentials file.
      */
+
     @PostConstruct
-    public void init() throws IOException {
-        if (fcmProperty.isEnabled()) {
+    public void init() {
+        initializeFirebase();
+    }
+
+    public synchronized void initializeFirebase() {
+        try {
             List<String> activeProfiles = Arrays.asList(environment.getActiveProfiles());
-            if (!activeProfiles.contains("sample")) {
-                try (FileInputStream fileInputStream = new FileInputStream(fcmProperty.getPath())) {
-                    GoogleCredentials googleCredentials = GoogleCredentials.fromStream(fileInputStream)
-                            .createScoped(List.of(fcmProperty.getScope()));
-
-                    FirebaseOptions options = FirebaseOptions.builder()
-                            .setCredentials(googleCredentials)
-                            .build();
-
-                    if (FirebaseApp.getApps()
-                            .isEmpty()) {
-                        FirebaseApp.initializeApp(options);
-                        log.error("Firebase application has been initialized");
-                    }
-                }
+            NotificationServer notificationServer = notificationServerQueryService.findNotificationServerOrNull(NotificationServerType.PUSH);
+            if (notificationServer == null || notificationServer.getConfig() == null) {
+                log.error("FCM configuration is missing in the database.");
+                return;
             }
+
+            if (!activeProfiles.contains("sample")) {
+                String fcmConfigJson = notificationServer.getConfig();
+
+                GoogleCredentials googleCredentials = GoogleCredentials
+                        .fromStream(new ByteArrayInputStream(fcmConfigJson.getBytes(StandardCharsets.UTF_8)))
+                        .createScoped(List.of("https://www.googleapis.com/auth/cloud-platform"));
+
+                FirebaseOptions options = FirebaseOptions.builder()
+                        .setCredentials(googleCredentials)
+                        .build();
+
+                if (FirebaseApp.getApps().isEmpty()) {
+                    FirebaseApp.initializeApp(options);
+                    log.info("Firebase application has been initialized");
+                }
+
+                log.info("Firebase application is already initialized");
+            }
+        } catch (IOException e) {
+            log.error("Error initializing Firebase from database configuration", e);
         }
     }
 

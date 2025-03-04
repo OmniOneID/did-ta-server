@@ -22,3 +22,11 @@ export const getEmailTemplate = async (serverType: string, templateType: string)
 export const registerEmailTemplate = async (data: any) => {
     return postData(API_BASE_URL, `templates`, data);
 }
+
+export const getNotificationServerStatus = async () => {
+    return getData(API_BASE_URL, `servers/status`);
+}
+
+export const registerPushServerInfo = async (data: any) => {
+    return postData(API_BASE_URL, `servers/push`, data);
+};

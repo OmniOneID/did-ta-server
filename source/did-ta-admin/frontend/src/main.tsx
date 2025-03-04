@@ -18,6 +18,7 @@ import EmailTemplateSettingsPage from './pages/notification-provider/email-templ
 import NotificationProviderPage from './pages/notification-provider/NotificationProviderPage';
 import TrustAgentManagementPage from './pages/trust-agent/TrustAgentManagementPage';
 import TrustAgentRegistrationPage from './pages/trust-agent/TrustAgentRegistrationPage';
+import PushServerSettingsPage from './pages/notification-provider/push-server/PushServerSettingsPage';
 
 const router = createBrowserRouter([
   {
@@ -74,6 +75,10 @@ const router = createBrowserRouter([
           {
             path: 'noti-settings/email-template',
             Component: EmailTemplateSettingsPage,
+          },
+          {
+            path: 'noti-settings/push-server',
+            Component: PushServerSettingsPage,
           },
           {
             path: 'noti-settings',

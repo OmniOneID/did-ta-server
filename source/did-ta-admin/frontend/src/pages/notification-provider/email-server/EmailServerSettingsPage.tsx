@@ -174,7 +174,7 @@ const EmailServerSettingsPage = (props: Props) => {
                 setInitialData(response.data);
                 dialogs.open(CustomDialog, {
                     title: 'Notification',
-                    message: 'Completed Key Email Server Settings registration.',
+                    message: 'Completed to Email Server Settings registration.',
                     isModal: true,
                 });
             }).catch((error) => {
@@ -184,7 +184,7 @@ const EmailServerSettingsPage = (props: Props) => {
                     message: `Failed to register Email Server Settings: ${error}`,
                     isModal: true,
                 });
-              });
+            });
         }
     };
 
@@ -231,9 +231,7 @@ const EmailServerSettingsPage = (props: Props) => {
             } catch (error) {
                 setIsLoading(false);
                 navigate('/error', { state: { message: `Failed to retrieve Email Server Settings: ${error}` } })
-            } finally {
-                setIsLoading(false);
-            }
+            } 
         };
 
         fetchData();
@@ -252,20 +250,20 @@ const EmailServerSettingsPage = (props: Props) => {
             <FullscreenLoader open={isLoading} />
             <Box>
                 <Box sx={{ maxWidth: 500, margin: 'auto', p: 3, border: '1px solid #ccc', borderRadius: 2 }}>
-                <Typography variant="body1">
-                    This page allows you to configure the email server settings required for sending emails.
-                    You can specify the SMTP server details, authentication settings, and security options
-                    such as STARTTLS and SSL.
-                </Typography>
-                <Typography variant="body1" sx={{ mt: 1 }}>
-                    After setting up the email server, you can send a test email to verify that the configuration
-                    is correct before saving the settings.
-                </Typography>
-                <Typography variant="body1" sx={{ mt: 1 }}>
-                    If the email server uses a self-signed certificate or an untrusted SSL certificate, 
-                    you can enable the "Ignore SSL Check" option to bypass SSL validation during communication.
-                    However, this is <strong>not recommended for production environments**.</strong>
-                </Typography>
+                    <Typography variant="body1">
+                        This page allows you to configure the email server settings required for sending emails.
+                        You can specify the SMTP server details, authentication settings, and security options
+                        such as STARTTLS and SSL.
+                    </Typography>
+                    <Typography variant="body1" sx={{ mt: 1 }}>
+                        After setting up the email server, you can send a test email to verify that the configuration
+                        is correct before saving the settings.
+                    </Typography>
+                    <Typography variant="body1" sx={{ mt: 1 }}>
+                        If the email server uses a self-signed certificate or an untrusted SSL certificate, 
+                        you can enable the "Ignore SSL Check" option to bypass SSL validation during communication.
+                        However, this is <strong>not recommended for production environments**.</strong>
+                    </Typography>
                 </Box>
             </Box>
 

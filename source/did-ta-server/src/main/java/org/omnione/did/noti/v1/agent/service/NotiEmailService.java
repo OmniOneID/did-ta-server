@@ -17,12 +17,16 @@
 package org.omnione.did.noti.v1.agent.service;
 
 import org.omnione.did.base.datamodel.enums.EmailTemplateType;
+import org.omnione.did.base.db.constant.NotificationServerType;
+import org.omnione.did.base.db.constant.NotificationTemplateType;
+import org.omnione.did.base.db.domain.NotificationTemplate;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.noti.v1.admin.dto.EmailConfigurationDto;
 import org.omnione.did.noti.v1.admin.dto.SendTestEmailReqDto;
 import org.omnione.did.noti.v1.agent.dto.email.RequestSendEmailReqDto;
 import org.omnione.did.noti.v1.common.service.query.NotificationServerQueryService;
+import org.omnione.did.noti.v1.common.service.query.NotificationTemplateQueryService;
 import org.omnione.did.tas.v1.common.dto.EmptyResDto;
 import jakarta.mail.Message;
 import jakarta.mail.internet.InternetAddress;
@@ -64,6 +68,7 @@ import java.util.regex.Pattern;
 public class NotiEmailService {
     private final ResourceLoader resourceLoader;
     private final NotificationServerQueryService notificationServerQueryService;
+    private final NotificationTemplateQueryService notificationTemplateQueryService;
 
     /**
      * Creates and configures a JavaMailSender instance dynamically.
@@ -165,11 +170,13 @@ public class NotiEmailService {
      * @throws OpenDidException If an error occurs while reading the email template.
      */
     private String readEmailTemplate(EmailTemplateType templateName) {
-        Resource resource = resourceLoader.getResource("classpath:templates/" + templateName.toString().toLowerCase() + ".html");
-        try (InputStream inputStream = resource.getInputStream()) {
-            return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            log.error("An error occurred while reading email template", e);
+        if (templateName == EmailTemplateType.ISSUE_VC) {
+            NotificationTemplate notificationTemplate = notificationTemplateQueryService.findNotificationTemplate(NotificationServerType.EMAIL, NotificationTemplateType.ISSUE_VC);
+            return notificationTemplate.getTemplate();
+        } else if (templateName == EmailTemplateType.RESTORE_DID) {
+            NotificationTemplate notificationTemplate = notificationTemplateQueryService.findNotificationTemplate(NotificationServerType.EMAIL, NotificationTemplateType.RESTORE_DID);
+            return notificationTemplate.getTemplate();
+        } else {
             throw new OpenDidException(ErrorCode.EMAIL_TEMPLATE_READ_FAILED);
         }
     }
