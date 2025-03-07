@@ -13,10 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.omnione.did.base.db.domain;
 
-package org.omnione.did.list.v1.dto.vcplan;
-
-import org.omnione.did.base.datamodel.data.VcPlan;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,18 +28,25 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.List;
+import java.io.Serializable;
 
-/**
- * DTO for request VC plan list response.
- */
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @ToString
-@Builder
-public class RequestVcplanListResDto {
-    private Integer count;
-    private List<VcPlan> items;
+@Entity
+@Table(name = "\"list_allowed_ca\"")
+public class ListAllowedCa extends BaseEntity implements Serializable {
+    @Id
+    @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "wallet_id", nullable = false, length = 200)
+    private String walletId;
+
+    @Column(name = "ca_list", nullable = false)
+    private String caList;
 }

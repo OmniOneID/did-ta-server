@@ -44,7 +44,8 @@ public class UrlConstant {
      * @Note: Currently, the TAS service is handling List-related operations.
      */
     public static class List {
-        public static final String V1 = "/list/api/v1";
+        public static final String AGENT_V1 = "/list/api/v1";
+        public static final String ADMIN_V1 = "/list/admin/v1";
     }
 
     /**

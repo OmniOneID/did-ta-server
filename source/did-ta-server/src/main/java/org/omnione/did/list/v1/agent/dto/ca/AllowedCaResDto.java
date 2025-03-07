@@ -13,25 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.omnione.did.tas.v1.admin.dto.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+package org.omnione.did.list.v1.agent.dto.ca;
 
+import lombok.*;
+
+import java.util.List;
+
+/**
+ * DTO for allowed CA response.
+ */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
 @Builder
-public class RegisterEntityReqDto {
-    private String didDoc;
-    private String role;
-    private String serverUrl;
-    private String name;
-    private String certificateUrl;
+public class AllowedCaResDto {
+    private Integer count;
+    private List<String> items;
 }

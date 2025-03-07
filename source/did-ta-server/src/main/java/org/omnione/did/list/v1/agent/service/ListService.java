@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.omnione.did.list.v1.service;
+package org.omnione.did.list.v1.agent.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -22,9 +22,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.omnione.did.base.datamodel.data.VcPlan;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
-import org.omnione.did.list.v1.dto.ca.AllowedCaResDto;
-import org.omnione.did.list.v1.dto.vcplan.RequestVcplanListResDto;
-import org.omnione.did.list.v1.dto.vcplan.VcPlanResDto;
+import org.omnione.did.list.v1.agent.dto.ca.AllowedCaResDto;
+import org.omnione.did.list.v1.agent.dto.vcplan.RequestVcplanListResDto;
+import org.omnione.did.list.v1.agent.dto.vcplan.VcPlanResDto;
 import org.omnione.did.tas.v1.agent.service.FileLoaderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

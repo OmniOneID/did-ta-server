@@ -13,23 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.omnione.did.list.v1.admin.dto.allowedca;
 
-package org.omnione.did.list.v1.dto.ca;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-import lombok.*;
-
-import java.util.List;
-
-/**
- * DTO for allowed CA response.
- */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
 @Builder
-public class AllowedCaResDto {
-    private Integer count;
-    private List<String> items;
+public class RegisterAllowedCaReqDto {
+    @NotNull(message = "walletId cannot be null")
+    private String walletId;
+    @NotNull(message = "caList cannot be null")
+    private String caList;
 }

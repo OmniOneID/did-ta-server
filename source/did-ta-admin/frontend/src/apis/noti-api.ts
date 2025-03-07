@@ -1,5 +1,4 @@
 import { getData, postData } from "../utils/api";
-toString
 
 const API_BASE_URL = "/noti/admin/v1";
 

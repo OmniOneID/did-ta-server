@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.omnione.did.list.v1.dto.vcplan;
+package org.omnione.did.list.v1.agent.dto.vcplan;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;

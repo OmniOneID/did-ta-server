@@ -13,25 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.omnione.did.tas.v1.admin.dto.entity;
+package org.omnione.did.base.db.repository;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import org.omnione.did.base.db.domain.ListAllowedCa;
+import org.omnione.did.list.v1.admin.dto.allowedca.ListAllowedCaDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
-@Builder
-public class RegisterEntityReqDto {
-    private String didDoc;
-    private String role;
-    private String serverUrl;
-    private String name;
-    private String certificateUrl;
+public interface ListAllowedCaRepositoryAdmin {
+    Page<ListAllowedCa> searchAllowedCa(String searchKey, String searchValue, Pageable pageable);
 }

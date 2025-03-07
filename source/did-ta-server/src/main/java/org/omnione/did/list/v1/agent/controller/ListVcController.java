@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package org.omnione.did.list.v1.controller;
+package org.omnione.did.list.v1.agent.controller;
 
 import org.omnione.did.base.constants.UrlConstant.List;
-import org.omnione.did.list.v1.dto.ca.AllowedCaResDto;
-import org.omnione.did.list.v1.dto.vcplan.RequestVcplanListResDto;
-import org.omnione.did.list.v1.dto.vcplan.VcPlanResDto;
-import org.omnione.did.list.v1.service.ListService;
+import org.omnione.did.list.v1.agent.dto.ca.AllowedCaResDto;
+import org.omnione.did.list.v1.agent.dto.vcplan.RequestVcplanListResDto;
+import org.omnione.did.list.v1.agent.dto.vcplan.VcPlanResDto;
+import org.omnione.did.list.v1.agent.service.ListService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(value = List.V1)
+@RequestMapping(value = List.AGENT_V1)
 public class ListVcController  {
     private final ListService listService;
 

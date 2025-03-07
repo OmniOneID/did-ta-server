@@ -13,25 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.omnione.did.tas.v1.admin.dto.entity;
+package org.omnione.did.base.db.repository;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import org.omnione.did.base.db.domain.ListAllowedCa;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
-@Builder
-public class RegisterEntityReqDto {
-    private String didDoc;
-    private String role;
-    private String serverUrl;
-    private String name;
-    private String certificateUrl;
+public interface ListAllowedCaRepository extends JpaRepository<ListAllowedCa, Long>,QuerydslPredicateExecutor<ListAllowedCa>, ListAllowedCaRepositoryAdmin {
 }

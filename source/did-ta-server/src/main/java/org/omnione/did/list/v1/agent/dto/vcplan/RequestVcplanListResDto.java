@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package org.omnione.did.list.v1.dto.vcplan;
+package org.omnione.did.list.v1.agent.dto.vcplan;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.omnione.did.base.datamodel.data.VcPlan;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,8 +24,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.List;
+
 /**
- * DTO for VC plan response.
+ * DTO for request VC plan list response.
  */
 @Getter
 @Setter
@@ -34,7 +35,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 @Builder
-@JsonSerialize(using = VcPlanResSerializer.class)
-public class VcPlanResDto  {
-    private VcPlan vcPlan;
+public class RequestVcplanListResDto {
+    private Integer count;
+    private List<VcPlan> items;
 }

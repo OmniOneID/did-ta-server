@@ -64,6 +64,18 @@ export const getNavigationByStatus = (serverStatus: string | null): Navigation=>
       ]
     },
     {
+      segment: 'list-settings',
+      title: 'List Provider Settings',
+      icon: <SettingsApplications />,
+      children: [
+        {
+          segment: 'allowed-ca',
+          title: 'Allowed CA Management',
+          icon: <SettingsApplications />,
+        }
+      ]
+    },
+    {
       segment: 'admin-management',
       title: 'Admin Management', 
       icon: <SupervisorAccountIcon />,

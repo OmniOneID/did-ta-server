@@ -19,6 +19,9 @@ import NotificationProviderPage from './pages/notification-provider/Notification
 import TrustAgentManagementPage from './pages/trust-agent/TrustAgentManagementPage';
 import TrustAgentRegistrationPage from './pages/trust-agent/TrustAgentRegistrationPage';
 import PushServerSettingsPage from './pages/notification-provider/push-server/PushServerSettingsPage';
+import AllowedCaManagementPage from './pages/list-provider/allowed-ca/AllowedCaManagementPage';
+import ListProviderPage from './pages/list-provider/ListProviderPage';
+import AllowedCaRegistrationPage from './pages/list-provider/allowed-ca/AllowedCaRegistrationPage';
 
 const router = createBrowserRouter([
   {
@@ -83,6 +86,18 @@ const router = createBrowserRouter([
           {
             path: 'noti-settings',
             Component: NotificationProviderPage,
+          },
+          {
+            path: 'list-settings/allowed-ca/allowed-ca-registration',
+            Component: AllowedCaRegistrationPage,
+          },
+          {
+            path: 'list-settings/allowed-ca',
+            Component: AllowedCaManagementPage,
+          },
+          {
+            path: 'list-settings',
+            Component: ListProviderPage,
           },
           {
             path: 'admin-management',

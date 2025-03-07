@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.omnione.did.tas.v1.admin.dto.entity;
+package org.omnione.did.list.v1.admin.dto.allowedca;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,10 +29,11 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 @Builder
-public class RegisterEntityReqDto {
-    private String didDoc;
-    private String role;
-    private String serverUrl;
-    private String name;
-    private String certificateUrl;
+public class UpdateAllowedCaReqDto {
+    @NotNull(message = "id cannot be null")
+    private Long id;
+    @NotNull(message = "walletId cannot be null")
+    private String walletId;
+    @NotNull(message = "caList cannot be null")
+    private String caList;
 }

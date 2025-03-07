@@ -13,6 +13,11 @@ export default defineConfig({
         target: 'http://localhost:8090',
         changeOrigin: true,
       },
+      // /list/admin/v1 → http://localhost:8090/list/admin/v1
+      '/list/admin/v1': {
+        target: 'http://localhost:8090',
+        changeOrigin: true,
+      },
     },
   },
 });
