@@ -29,6 +29,12 @@ public class EntityRepositoryAdminImpl implements EntityRepositoryAdmin {
         QEntity entity = QEntity.entity;
         BooleanExpression predicate = buildPredicate(searchKey, searchValue);
 
+        long total = queryFactory
+                .select(entity.count())
+                .from(entity)
+                .where(predicate)
+                .fetchOne();
+
         List<Entity> results = queryFactory
                 .selectFrom(entity)
                 .where(predicate)
@@ -37,7 +43,7 @@ public class EntityRepositoryAdminImpl implements EntityRepositoryAdmin {
                 .orderBy(getOrderSpecifier(pageable, entity))
                 .fetch();
 
-        return  new PageImpl<>(results, pageable, results.size());
+        return  new PageImpl<>(results, pageable, total);
     }
 
     public BooleanExpression buildPredicate(String searchKey, String searchValue) {

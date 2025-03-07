@@ -1,4 +1,3 @@
-import DashboardIcon from '@mui/icons-material/Dashboard';
 import type { Navigation, Session } from '@toolpad/core/AppProvider';
 import { ReactRouterAppProvider } from '@toolpad/core/react-router';
 import { DialogsProvider } from '@toolpad/core/useDialogs';
@@ -6,7 +5,7 @@ import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { Outlet, useNavigate } from 'react-router';
 import { SessionContext } from './context/SessionContext';
 import { ServerStatusProvider, useServerStatus } from './context/ServerStatusContext';
-import { getTaInfo } from './apis/TaApi';
+import { getTaInfo } from './apis/ta-api';
 import { getNavigationByStatus } from './config/navigationConfig';
 import LoadingOverlay from './components/loading/LoadingOverlay';
 import { createTheme } from '@mui/material';

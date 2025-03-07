@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router';
-import { getEntityInfo } from '../../apis/EntityApi';
+import { getEntityInfo } from '../../apis/entity-api';
 import { CircularProgress, Box, Typography, TextField, Button, Popover } from '@mui/material';
 import CustomDialog from '../../components/dialog/CustomDialog';
 import { useDialogs } from '@toolpad/core/useDialogs';
@@ -37,9 +37,9 @@ const EntityDetailPage = () => {
                 setIsLoading(false);
             } catch (err) {
                 console.error('Failed to fetch Entity information:', err);
+                setIsLoading(false);
                 navigate('/error', { state: { message: `Failed to Entity information: ${err}` } })
-            } finally {
-            }
+            } 
         };
         fetchData();
     }, []);

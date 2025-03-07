@@ -5,7 +5,7 @@ import CustomConfirmDialog from '../../../components/dialog/CustomConfirmDialog'
 import CustomDialog from '../../../components/dialog/CustomDialog';
 import FullscreenLoader from '../../../components/loading/FullscreenLoader';
 import { Box, Button, FormControl, FormHelperText, Typography } from '@mui/material';
-import { getNotificationServerStatus, registerPushServerInfo } from '../../../apis/NotiApi';
+import { getNotificationServerStatus, registerPushServerInfo } from '../../../apis/noti-api';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 

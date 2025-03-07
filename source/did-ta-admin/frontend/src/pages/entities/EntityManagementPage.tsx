@@ -3,7 +3,7 @@ import { GridPaginationModel } from '@mui/x-data-grid';
 import { useDialogs } from '@toolpad/core/useDialogs';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { fetchEntities, registerEntitiesSimple } from '../../apis/EntityApi';
+import { fetchEntities, registerEntitiesSimple } from '../../apis/entity-api';
 import CustomDataGrid from '../../components/data-grid/CustomDataGrid';
 import CustomConfirmDialog from '../../components/dialog/CustomConfirmDialog';
 import FullscreenLoader from '../../components/loading/FullscreenLoader';
@@ -25,13 +25,13 @@ const EntityManagementPage = (props: Props) => {
   const [selectedRow, setSelectedRow] = useState<string | number | null>(null);
 
   const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
-    page: 1,
+    page: 0,
     pageSize: 10,
   });
 
   useEffect(() => {
     setLoading(true);
-    fetchEntities(paginationModel.page - 1, paginationModel.pageSize, null, null)
+    fetchEntities(paginationModel.page, paginationModel.pageSize, null, null)
       .then((response) => {
         setRows(response.data.content);
         setTotalRows(response.data.totalElements);

@@ -15,7 +15,7 @@ import {
 import { useDialogs } from '@toolpad/core';
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { getEmailTemplate, registerEmailTemplate } from '../../../apis/NotiApi';
+import { getEmailTemplate, registerEmailTemplate } from '../../../apis/noti-api';
 import CustomConfirmDialog from '../../../components/dialog/CustomConfirmDialog';
 import CustomDialog from '../../../components/dialog/CustomDialog';
 import FullscreenLoader from '../../../components/loading/FullscreenLoader';

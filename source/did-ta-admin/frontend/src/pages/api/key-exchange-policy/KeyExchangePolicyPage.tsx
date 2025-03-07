@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router';
 import { cipherTypes } from '../../../constants/cipher-types';
 import { paddingTypes } from '../../../constants/padding-types';
-import { getKeyExchangePolicyInfo, registerKeyExchangePolicyInfo } from '../../../apis/ApiApi';
+import { getKeyExchangePolicyInfo, registerKeyExchangePolicyInfo } from '../../../apis/api-api';
 import FullscreenLoader from '../../../components/loading/FullscreenLoader';
 import CustomConfirmDialog from '../../../components/dialog/CustomConfirmDialog';
 import CustomDialog from '../../../components/dialog/CustomDialog';

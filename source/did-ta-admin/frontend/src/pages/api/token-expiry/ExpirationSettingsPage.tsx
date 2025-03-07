@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router';
 import { useDialogs } from '@toolpad/core';
 import CustomConfirmDialog from '../../../components/dialog/CustomConfirmDialog';
 import CustomDialog from '../../../components/dialog/CustomDialog';
-import { getExpirationSettingInfo, registerExpirationSettingInfo } from '../../../apis/ApiApi';
+import { getExpirationSettingInfo, registerExpirationSettingInfo } from '../../../apis/api-api';
 
 type Props = {}
 

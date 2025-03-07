@@ -6,8 +6,8 @@ import { useDialogs } from '@toolpad/core/useDialogs';
 import { urlRegex, ipRegex, englishRegex } from '../../utils/regex';
 import CustomConfirmDialog from '../../components/dialog/CustomConfirmDialog';
 import { roles } from '../../constants/roles';
-import { registerEntity, verifyEntityNameUnique } from '../../apis/EntityApi';
-import { verifyServerUrl } from '../../apis/ServerApi';
+import { registerEntity, verifyEntityNameUnique } from '../../apis/entity-api';
+import { verifyServerUrl } from '../../apis/server-api';
 import CustomDialog from '../../components/dialog/CustomDialog';
 import FullscreenLoader from '../../components/loading/FullscreenLoader';
 

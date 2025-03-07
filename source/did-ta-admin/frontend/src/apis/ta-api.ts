@@ -5,7 +5,3 @@ const API_BASE_URL = "/tas/admin/v1";
 export const getTaInfo = async () => {
     return getData(API_BASE_URL, "ta/info");
 }
-
-export const helthCheck = async () => {
-    return getData(API_BASE_URL, "health");
-}

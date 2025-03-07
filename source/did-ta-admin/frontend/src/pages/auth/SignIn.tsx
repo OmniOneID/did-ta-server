@@ -2,7 +2,7 @@ import { AuthProvider, AuthResponse, SignInPage } from '@toolpad/core/SignInPage
 import * as React from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { requestLogin, requestPasswordReset } from '../../apis/AdminApi';
+import { requestLogin, requestPasswordReset } from '../../apis/admin-api';
 import { useSession } from '../../context/SessionContext';
 import PasswordResetDialog from './PasswordResetDialog';
 
