@@ -55,4 +55,13 @@ public class ListAllowedCaQueryService {
                 .orElseThrow(() -> new OpenDidException(ErrorCode.LIST_ALLOWED_CA_NOT_FOUND));
     }
 
+    public long countByWalletId(String walletId) {
+        return listAllowedCaRepository.countByWalletId(walletId);
+    }
+
+    public ListAllowedCa findByWalletId(String walletId) {
+        return listAllowedCaRepository.findByWalletId(walletId)
+                .orElseThrow(() -> new OpenDidException(ErrorCode.LIST_ALLOWED_CA_NOT_FOUND));
+    }
+
 }

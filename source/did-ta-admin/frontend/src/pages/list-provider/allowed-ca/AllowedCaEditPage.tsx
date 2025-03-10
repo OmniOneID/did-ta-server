@@ -1,12 +1,12 @@
 import { useDialogs } from '@toolpad/core';
 import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import FullscreenLoader from '../../../components/loading/FullscreenLoader';
 import { Box, Button, IconButton, Paper, SelectChangeEvent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CustomConfirmDialog from '../../../components/dialog/CustomConfirmDialog';
-import { registerAllowedCa, verifyWalletIdUnique } from '../../../apis/list-api';
+import { updateAllowedCa, verifyWalletIdUnique, getAllowedCaInfo } from '../../../apis/list-api';
 import CustomDialog from '../../../components/dialog/CustomDialog';
 
 type Props = {}
@@ -22,20 +22,23 @@ interface ErrorState {
     errorCaListMessage?: string;
 }
 
-
-const AllowedCaRegistrationPage = (props: Props) => {
+const AllowedCaEditPage = (props: Props) => {
+    const { id } = useParams();
     const navigate = useNavigate();
     const dialogs = useDialogs();
+
+    const numericId = id ? parseInt(id, 10) : null;
 
     const [formData, setFormData] = useState<AllowedCaFormData>({
         walletId: '',
         caList: [],
     });
 
+    const [initialData, setInitialData] = useState<AllowedCaFormData | null>(null);
     const [errors, setErrors] = useState<ErrorState>({});
     const [isButtonDisabled, setIsButtonDisabled] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
-    const [isWalletIsValid, setIsWalletIdValid] = useState(false);
+    const [isWalletIsValid, setIsWalletIdValid] = useState(true);
 
     const handleChange = (field: keyof AllowedCaFormData) => 
         (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>) => {
@@ -48,19 +51,32 @@ const AllowedCaRegistrationPage = (props: Props) => {
             }
     };
 
+    const handleCheckDuplicateWalletID = () => {
+            verifyWalletIdUnique(formData.walletId as string)
+        .then((response) => {
+            if (response.data.unique === false) {
+                setErrors((prev) => ({ ...prev, walletId: 'WalletId already exists.' }));
+                setIsWalletIdValid(false);
+            } else {        
+                setIsWalletIdValid(true);
+                setErrors((prev) => ({ ...prev, walletId: undefined }));
+            }
+        });
+    };
+
     const handleCa = () => {
         setFormData((prev) => ({ ...prev, caList: [...prev.caList, ''] }));
+    };
+
+    const handleRemoveCa = (index: number) => {
+        const newCaList = [...formData.caList];
+        newCaList.splice(index, 1);
+        setFormData((prev) => ({ ...prev, caList: newCaList }));
     };
 
     const handleCaChange = (index: number, event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const newCaList = [...formData.caList];
         newCaList[index] = event.target.value;
-        setFormData((prev) => ({ ...prev, caList: newCaList }));
-    };
-    
-    const handleRemoveCa = (index: number) => {
-        const newCaList = [...formData.caList];
-        newCaList.splice(index, 1);
         setFormData((prev) => ({ ...prev, caList: newCaList }));
     };
 
@@ -74,9 +90,9 @@ const AllowedCaRegistrationPage = (props: Props) => {
     const validate = () => {
         let tempErrors: ErrorState = {};
         tempErrors.walletId = validateWalletId(formData.walletId);
-    
+
         if (formData.caList.length === 0) {
-            tempErrors.errorCaListMessage = "At least one CA is required.";
+            tempErrors.errorCaListMessage = "At least one caList is required.";
         } else {
             const seen = new Set<string>();
             const duplicateIndices: number[] = [];
@@ -96,11 +112,19 @@ const AllowedCaRegistrationPage = (props: Props) => {
     
             tempErrors.caList = caErrors.every(err => err === "") ? undefined : caErrors;
         }
-    
+
         setErrors(tempErrors);
         return Object.values(tempErrors).every((error) => !error);
-    };
+    }
+
+    const validateItem = (item: string): { endpoint?: string } => {
+        let itemErrors: { endpoint?: string } = {};
     
+        if (!item.trim()) itemErrors.endpoint = "Ca is required.";
+    
+        return itemErrors;
+    };
+
     const validateWalletId = (walletId?: string): string | undefined => {
         if (!walletId) return 'Please enter a wallet Identifier.';
         if (walletId.length < 3 || walletId.length > 50) return 'Wallet Identifier must be between 3 and 50 characters.';
@@ -121,15 +145,16 @@ const AllowedCaRegistrationPage = (props: Props) => {
             setIsLoading(true);
 
             let requestObject = {
+                id: numericId,
                 walletId: formData.walletId,
                 caList: JSON.stringify(formData.caList),
             }
 
-            await registerAllowedCa(requestObject).then((response) => {
+            await updateAllowedCa(requestObject).then((response) => {
                 setIsLoading(false);
                 dialogs.open(CustomDialog, {
                     title: 'Notification',
-                    message: 'Allowed Ca List registration completed.',
+                    message: 'Allowed Ca List modification completed.',
                     isModal: true,
                 },{
                     onClose: async (result) =>  navigate('/list-settings/allowed-ca'),
@@ -139,41 +164,61 @@ const AllowedCaRegistrationPage = (props: Props) => {
                 setIsLoading(false);
                 dialogs.open(CustomDialog, {
                     title: 'Notification',
-                    message: `Failed to register Ca List: ${error}`,
+                    message: `Failed to modify Ca List: ${error}`,
                     isModal: true,
                 });
             });
         }
     };
-
-    const handleCheckDuplicateWalletID = () => {
-         verifyWalletIdUnique(formData.walletId as string)
-        .then((response) => {
-            if (response.data.unique === false) {
-                setErrors((prev) => ({ ...prev, walletId: 'WalletId already exists.' }));
-                setIsWalletIdValid(false);
-            } else {        
-                setIsWalletIdValid(true);
-                setErrors((prev) => ({ ...prev, walletId: undefined }));
+    
+    useEffect(() => {
+        const fetchData = async () => {
+            if (numericId === null || isNaN(numericId)) {
+                await dialogs.open(CustomDialog, { 
+                    title: 'Notification', 
+                    message: 'Invalid Path.', 
+                    isModal: true 
+                },{
+                    onClose: async () => navigate('/list-settings/allowed-ca', { replace: true }),
+                });
+                return;
             }
-        });
-    };
+
+            setIsLoading(true);
+
+            try {
+                const { data } = await getAllowedCaInfo(numericId);
+                const allowedCaData = {
+                    walletId: data.walletId,
+                    caList: JSON.parse(data.caList),
+                };
+                setFormData(allowedCaData);
+                setInitialData(allowedCaData);
+                setIsButtonDisabled(true);
+                setIsLoading(false);
+            } catch (err) {
+                  console.error('Failed to fetch Allowed CA List information:', err);
+                  setIsLoading(false);
+                  navigate('/error', { state: { message: `Failed to fetch Allowed CA List: ${err}` } });
+            }
+        };
+
+        fetchData();
+    }, [numericId]);
 
     useEffect(() => {
-        const isModified = Object.values(formData).some((value) => {
-            if (Array.isArray(value)) return value.length > 0;
-            return value !== '' && value !== undefined;
-        });
+        if (!initialData) return;
+        const isModified = JSON.stringify(formData) !== JSON.stringify(initialData);
         setIsButtonDisabled(!isModified);
-    }, [formData]);
+    }, [formData, initialData]);
 
     return (
         <>
             <FullscreenLoader open={isLoading} />
             <Box sx={{ p: 3 }}>
-                <Typography variant="h4">Allowd CA List Registration</Typography>
-                <Box sx={{ maxWidth: 500, margin: 'auto', mt: 2, p: 3, border: '1px solid #ccc', borderRadius: 2 }}>
+                <Typography variant="h4">Edit Allowd CA List</Typography>
 
+                <Box sx={{ maxWidth: 500, margin: 'auto', mt: 2, p: 3, border: '1px solid #ccc', borderRadius: 2 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                         <TextField 
                             fullWidth
@@ -181,16 +226,17 @@ const AllowedCaRegistrationPage = (props: Props) => {
                             variant="outlined"
                             margin="normal" 
                             size="small"
-                            value={formData.walletId} 
+                            value={formData.walletId || ''} 
                             onChange={handleChange('walletId')} 
                             error={!!errors.walletId} 
                             helperText={errors.walletId} 
                             sx={{minWidth: 250}}
                         />
+
                         <Button 
                             variant="contained" 
                             onClick={handleCheckDuplicateWalletID}
-                            disabled={!formData.walletId}
+                            disabled={formData?.walletId == initialData?.walletId}
                             sx={{ 
                                 minWidth: 150,  
                                 whiteSpace: 'nowrap', 
@@ -200,7 +246,6 @@ const AllowedCaRegistrationPage = (props: Props) => {
                             Check Availability
                         </Button>
                     </Box>
-                
 
                     <Typography variant="h6" sx={{ mt: 3 }}>Allowd Ca List</Typography>
                     {errors.errorCaListMessage && (
@@ -222,14 +267,7 @@ const AllowedCaRegistrationPage = (props: Props) => {
                                 {formData.caList.map((ca, index) => (
                                     <TableRow key={index}>
                                         <TableCell>
-                                            <TextField 
-                                                fullWidth 
-                                                size="small" 
-                                                value={ca} 
-                                                onChange={(event) => handleCaChange(index, event)} 
-                                                error={!!errors.caList?.[index]} 
-                                                helperText={errors.caList && errors.caList[index] ? errors.caList[index] : ""}
-                                            />
+                                            <TextField fullWidth size="small" value={ca} onChange={(event) => handleCaChange(index, event)} error={!!errors.caList?.[index]} helperText={errors.caList?.[index]} />
                                         </TableCell>
                                         <TableCell>
                                             <IconButton onClick={() => handleRemoveCa(index)} color="error">
@@ -247,13 +285,13 @@ const AllowedCaRegistrationPage = (props: Props) => {
                             Back
                         </Button>
                         <Button variant="contained" color="secondary" onClick={handleReset}>Reset</Button>
-                        <Button variant="contained" color="primary" onClick={handleSubmit} disabled={isButtonDisabled}>Register</Button>
+                        <Button variant="contained" color="primary" onClick={handleSubmit} disabled={isButtonDisabled}>Update</Button>
                     </Box>
                 </Box>
-            </Box>
 
+            </Box>
         </>
     )
 }
 
-export default AllowedCaRegistrationPage
+export default AllowedCaEditPage

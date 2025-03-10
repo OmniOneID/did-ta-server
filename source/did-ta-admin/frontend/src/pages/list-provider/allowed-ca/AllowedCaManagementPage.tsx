@@ -3,9 +3,11 @@ import { GridPaginationModel } from '@mui/x-data-grid';
 import { useDialogs } from '@toolpad/core';
 import React, { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router';
-import { fetchAllowedCaLIst } from '../../../apis/list-api';
+import { deleteAllowedCa, fetchAllowedCaLIst } from '../../../apis/list-api';
 import FullscreenLoader from '../../../components/loading/FullscreenLoader';
 import CustomDataGrid from '../../../components/data-grid/CustomDataGrid';
+import CustomConfirmDialog from '../../../components/dialog/CustomConfirmDialog';
+import CustomDialog from '../../../components/dialog/CustomDialog';
 
 type Props = {}
 
@@ -36,7 +38,35 @@ const AllowedCaManagementPage = (props: Props) => {
 
 
     const handleDelete = async () => {
-        alert("삭제");
+        const id = selectedRowData?.id as number;
+        if (id) {
+          const result = await dialogs.open(CustomConfirmDialog, {
+            title: 'Confirmation',
+            message: 'Are you sure you want to delete Allowed Ca List?',
+            isModal: true,
+          });
+
+          if (result) {
+            setLoading(true);
+            deleteAllowedCa(id)
+              .then(() => {
+                dialogs.open(CustomDialog, {
+                  title: 'Notification',
+                  message: 'Allowed Ca List delete completed.',
+                  isModal: true,
+                }, {
+                  onClose: async () => {
+                    setPaginationModel(prev => ({ ...prev }));
+                  },
+                });
+              })
+              .catch((error) => {
+                console.error("Failed to delete Allowed Ca Clist. ", error);
+                navigate('/error', { state: { message: `Failed to delete Allowed Ca List: ${error}` } });
+              })
+              .finally(() => setLoading(false));
+          }
+        }
     };
 
     useEffect(() => {
@@ -51,8 +81,7 @@ const AllowedCaManagementPage = (props: Props) => {
             navigate('/error', { state: { message: `Failed to retrieve Allowed Ca List: ${error}` } });
           })
           .finally(() => setLoading(false));
-    }, []);
-
+    }, [paginationModel]);
     
     return (
         <>
@@ -63,26 +92,24 @@ const AllowedCaManagementPage = (props: Props) => {
                     { 
                     field: 'walletId', 
                     headerName: "Wallet Identifier", 
-                    width: 200,
+                    width: 250,
                     renderCell: (params) => (
                         <Link 
                         component="button"
                         variant='body2'
-                        onClick={() => navigate(`/vp-policy-management/service-management/${params.row.id}`)}
+                        onClick={() => navigate(`/list-settings/allowed-ca/${params.row.id}`)}
                         sx={{ cursor: 'pointer', color: 'primary.main' }}
                         >
                         {params.value}
                         </Link>),
                     },
-                    { field: 'caList', headerName: "Allowed CA List", width: 200,
+                    { field: 'caList', headerName: "Allowed CA List", width: 250,
                         renderCell: (params) => {
                             let devices = [];
                         
                             try {
-                              // JSON 문자열을 배열로 변환
                               devices = JSON.parse(params.value);
                             } catch (error) {
-                              // JSON 파싱 실패 시 원래 문자열 그대로 사용
                               devices = params.value;
                             }
                         
@@ -90,10 +117,10 @@ const AllowedCaManagementPage = (props: Props) => {
                               <div>
                                 {Array.isArray(devices) ? (
                                   devices.map((device, index) => (
-                                    <div key={index}>{device}</div> // 한 줄씩 출력
+                                    <div key={index}>{device}</div>
                                   ))
                                 ) : (
-                                  <div>{devices}</div> // 단일 문자열일 경우 그대로 출력
+                                  <div>{devices}</div>
                                 )}
                               </div>
                             );
@@ -106,7 +133,7 @@ const AllowedCaManagementPage = (props: Props) => {
                 setSelectedRow={setSelectedRow}
                 onEdit={() => {
                     if (selectedRowData) {
-                    navigate(`/vp-policy-management/service-management/service-edit/${selectedRowData.id}`);
+                    navigate(`/list-settings/allowed-ca/allowed-ca-edit/${selectedRowData.id}`);
                     }
                 }}
                 onRegister={() => navigate('/list-settings/allowed-ca/allowed-ca-registration')}

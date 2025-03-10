@@ -13,15 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.omnione.did.base.db.repository;
+package org.omnione.did.list.v1.admin.dto.allowedca;
 
-import org.omnione.did.base.db.domain.ListAllowedCa;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.querydsl.QuerydslPredicateExecutor;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.util.Optional;
-
-public interface ListAllowedCaRepository extends JpaRepository<ListAllowedCa, Long>,QuerydslPredicateExecutor<ListAllowedCa>, ListAllowedCaRepositoryAdmin {
-    long countByWalletId(String walletId);
-    Optional<ListAllowedCa> findByWalletId(String walletId);
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class VerifyWalletIdUniqueResDto {
+    private boolean isUnique;
 }

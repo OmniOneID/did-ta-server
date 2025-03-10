@@ -16,12 +16,17 @@
 
 package org.omnione.did.list.v1.agent.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.omnione.did.base.datamodel.data.VcPlan;
+import org.omnione.did.base.db.domain.ListAllowedCa;
+import org.omnione.did.base.db.repository.ListAllowedCaRepository;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
+import org.omnione.did.common.exception.CommonSdkException;
+import org.omnione.did.common.util.JsonUtil;
 import org.omnione.did.list.v1.agent.dto.ca.AllowedCaResDto;
 import org.omnione.did.list.v1.agent.dto.vcplan.RequestVcplanListResDto;
 import org.omnione.did.list.v1.agent.dto.vcplan.VcPlanResDto;
@@ -33,6 +38,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -43,6 +49,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ListService {
     private final FileLoaderService fileLoaderService;
+    private final ListAllowedCaRepository listAllowedCaRepository;
 
     /**
      * Finds the list of allowed CAs for a given wallet service ID.
@@ -55,28 +62,17 @@ public class ListService {
         try {
             log.debug("=== Starting findAllowedAppList ===");
 
-            String fullFileName = "allowed-ca-" + walletServiceId + ".json";
-            String allowedCaListJson = fileLoaderService.getFileContent(fullFileName);
-
-            List<String> allowedCaList = null;
-            if (allowedCaListJson == null) {
-                log.debug("\t--> None allowed CA list found for walletIdentifier: {}", walletServiceId);
-                allowedCaList = new ArrayList<>();
-            } else {
-                log.debug("\t--> Converting allowed CA list for walletIdentifier: {}", walletServiceId);
-                allowedCaList = convertAllowedCaList(allowedCaListJson, walletServiceId);
-                log.debug("*** Finished findAllowedAppList ***");
-            }
+            Optional<ListAllowedCa> allowedCa = listAllowedCaRepository.findByWalletId(walletServiceId);
+            List<String> caList = JsonUtil.deserializeFromJson(allowedCa.get().getCaList(), new TypeReference<>() {});
 
             return AllowedCaResDto.builder()
-                    .count(allowedCaList == null ? 0 : allowedCaList.size())
-                    .items(allowedCaList)
+                    .count(caList.size())
+                    .items(caList)
                     .build();
-
-        } catch (IOException e) {
-            log.error("\t--> An unknown error occurred retrieving allowed ca list: ", e);
-            throw new OpenDidException(ErrorCode.ALLOWED_CA_RETRIEVAL_FAILED);
-        } catch (Exception e) {
+        } catch (CommonSdkException e) {
+          log.error("\t--> JSON processing error: ", e);
+            throw new OpenDidException(ErrorCode.FAILED_API_GET_ALLOWED_CA_LIST);
+        } catch (Exception e){
             log.error("\t--> An unknown error occurred retrieving allowed ca list: ", e);
             throw new OpenDidException(ErrorCode.FAILED_API_GET_ALLOWED_CA_LIST);
         }

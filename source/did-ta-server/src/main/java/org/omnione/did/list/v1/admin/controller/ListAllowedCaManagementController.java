@@ -21,6 +21,7 @@ import org.omnione.did.base.constants.UrlConstant;
 import org.omnione.did.list.v1.admin.dto.allowedca.ListAllowedCaDto;
 import org.omnione.did.list.v1.admin.dto.allowedca.RegisterAllowedCaReqDto;
 import org.omnione.did.list.v1.admin.dto.allowedca.UpdateAllowedCaReqDto;
+import org.omnione.did.list.v1.admin.dto.allowedca.VerifyWalletIdUniqueResDto;
 import org.omnione.did.list.v1.admin.service.ListAllowedCaManagementService;
 import org.omnione.did.tas.v1.common.dto.EmptyResDto;
 import org.springframework.data.domain.Page;
@@ -30,6 +31,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -58,4 +61,15 @@ public class ListAllowedCaManagementController {
     public EmptyResDto updateAllowedCa(@RequestBody UpdateAllowedCaReqDto updateAllowedCaReqDto){
         return listAllowedCaManagementService.updateAllowedCa(updateAllowedCaReqDto);
     }
+
+    @RequestMapping(value = "/allowed-cas/check-wallet-id", method = RequestMethod.GET)
+    public VerifyWalletIdUniqueResDto verifyWalletIdUnique(@RequestParam String walletId) {
+        return listAllowedCaManagementService.verifyWalletIdUnique(walletId);
+    }
+
+    @RequestMapping(value = "/allowed-cas", method = RequestMethod.DELETE)
+    public EmptyResDto deleteAllowedCa(@RequestParam Long id){
+        return listAllowedCaManagementService.deleteAllowedCa(id);
+    }
+
 }

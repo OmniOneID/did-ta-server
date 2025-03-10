@@ -23,6 +23,7 @@ import org.omnione.did.base.db.repository.ListAllowedCaRepository;
 import org.omnione.did.list.v1.admin.dto.allowedca.ListAllowedCaDto;
 import org.omnione.did.list.v1.admin.dto.allowedca.RegisterAllowedCaReqDto;
 import org.omnione.did.list.v1.admin.dto.allowedca.UpdateAllowedCaReqDto;
+import org.omnione.did.list.v1.admin.dto.allowedca.VerifyWalletIdUniqueResDto;
 import org.omnione.did.list.v1.admin.service.query.ListAllowedCaQueryService;
 import org.omnione.did.tas.v1.common.dto.EmptyResDto;
 import org.springframework.data.domain.Page;
@@ -68,5 +69,18 @@ public class ListAllowedCaManagementService {
 
     public ListAllowedCaDto findById(Long id) {
         return ListAllowedCaDto.fromListAllowedCa(listAllowedCaQueryService.findById(id));
+    }
+
+    public VerifyWalletIdUniqueResDto verifyWalletIdUnique(String walletId) {
+        long count = listAllowedCaRepository.countByWalletId(walletId);
+        return VerifyWalletIdUniqueResDto.builder()
+                .isUnique(count == 0)
+                .build();
+    }
+
+    public EmptyResDto deleteAllowedCa(Long id) {
+        listAllowedCaQueryService.findById(id);
+        listAllowedCaRepository.deleteById(id);
+        return new EmptyResDto();
     }
 }

@@ -1,4 +1,4 @@
-import { getData, postData, putData } from "../utils/api";
+import { deleteData, getData, postData, putData } from "../utils/api";
 
 const API_BASE_URL = "/list/admin/v1";
 
@@ -26,4 +26,12 @@ export const registerAllowedCa = async (data: any) => {
 
 export const updateAllowedCa = async (data: any) => {
     return putData(API_BASE_URL, 'allowed-cas', data);
+}
+
+export const verifyWalletIdUnique = async (walletId: string) => {
+    return getData(API_BASE_URL, `allowed-cas/check-wallet-id?walletId=${walletId}`);
+}
+
+export const deleteAllowedCa = async (id: number) => {  
+    return deleteData(API_BASE_URL, `allowed-cas?id=${id}`);
 }

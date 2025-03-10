@@ -22,6 +22,8 @@ import PushServerSettingsPage from './pages/notification-provider/push-server/Pu
 import AllowedCaManagementPage from './pages/list-provider/allowed-ca/AllowedCaManagementPage';
 import ListProviderPage from './pages/list-provider/ListProviderPage';
 import AllowedCaRegistrationPage from './pages/list-provider/allowed-ca/AllowedCaRegistrationPage';
+import AllowedCaEditPage from './pages/list-provider/allowed-ca/AllowedCaEditPage';
+import AllowedCaDetailPage from './pages/list-provider/allowed-ca/AllowedCaDetailPage';
 
 const router = createBrowserRouter([
   {
@@ -40,16 +42,16 @@ const router = createBrowserRouter([
             Component: TrustAgentManagementPage,
           },
           {
-            path: '/entities/entity-management',
-            Component: EntityManagementPage,
-          },
-          {
             path: '/entities/entity-management/:entityId',
             Component: EntityDetailPage
           },
           {
             path: '/entities/entity-registration',
             Component: EntityRegistrationPage
+          },
+          {
+            path: '/entities/entity-management',
+            Component: EntityManagementPage,
           },
           {
             path: '/kyc/kyc-settings',
@@ -90,6 +92,14 @@ const router = createBrowserRouter([
           {
             path: 'list-settings/allowed-ca/allowed-ca-registration',
             Component: AllowedCaRegistrationPage,
+          },
+          {
+            path: 'list-settings/allowed-ca/allowed-ca-edit/:id',
+            Component: AllowedCaEditPage
+          },
+          {
+            path: 'list-settings/allowed-ca/:id',
+            Component: AllowedCaDetailPage
           },
           {
             path: 'list-settings/allowed-ca',
