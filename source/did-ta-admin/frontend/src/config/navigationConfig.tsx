@@ -72,8 +72,13 @@ export const getNavigationByStatus = (serverStatus: string | null): Navigation=>
           segment: 'allowed-ca',
           title: 'Allowed CA Management',
           icon: <SettingsApplications />,
+        },
+        {
+          segment: 'vc-schema',
+          title: 'VC Schema Management',
+          icon: <SettingsApplications />,
         }
-      ]
+      ],
     },
     {
       segment: 'admin-management',

@@ -13,16 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.omnione.did.base.db.repository;
+package org.omnione.did.list.v1.admin.dto.vcschema;
 
-import org.omnione.did.base.db.constant.NotificationServerType;
-import org.omnione.did.base.db.domain.NotificationServer;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-import java.util.Optional;
-
-//@Repository
-public interface NotificationServerRepository extends JpaRepository<NotificationServer, Long> {
-    Optional<NotificationServer> findByServerType(NotificationServerType serverType);
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+@Builder
+public class RegisterVcSchemaFromIssuerReqDto {
+    @NotNull(message = "vcSchema cannot be null")
+    private String vcSchema;
+    @NotNull(message = "issuerDid cannot be null")
+    private String issuerDid;
 }

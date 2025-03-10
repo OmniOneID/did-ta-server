@@ -21,4 +21,6 @@
   <include file="set.1/admin-dev_notification_template.xml" relativeToChangelogFile="true" />
   <include file="set.1/admin-dev_admin.xml" relativeToChangelogFile="true" />
   <include file="set.1/admin-dev_list_allowed_ca.xml" relativeToChangelogFile="true" />
+  <include file="set.1/admin-dev_list_vc_schema.xml" relativeToChangelogFile="true" />
+  <include file="set.1/admin-dev_vc_schema.xml" relativeToChangelogFile="true" />
 </databaseChangeLog>

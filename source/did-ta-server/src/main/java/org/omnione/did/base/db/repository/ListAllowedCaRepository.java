@@ -21,7 +21,7 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
 import java.util.Optional;
 
-public interface ListAllowedCaRepository extends JpaRepository<ListAllowedCa, Long>,QuerydslPredicateExecutor<ListAllowedCa>, ListAllowedCaRepositoryAdmin {
+public interface ListAllowedCaRepository extends JpaRepository<ListAllowedCa, Long>, QuerydslPredicateExecutor<ListAllowedCa>, ListAllowedCaRepositoryAdmin {
     long countByWalletId(String walletId);
     Optional<ListAllowedCa> findByWalletId(String walletId);
 }

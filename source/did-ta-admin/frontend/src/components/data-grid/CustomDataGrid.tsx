@@ -52,7 +52,7 @@ export default function CustomDataGrid({
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
       <DataGrid
-        checkboxSelection
+        checkboxSelection={!!onEdit || !!onDelete}
         disableMultipleRowSelection
         disableRowSelectionOnClick
         rows={rows}

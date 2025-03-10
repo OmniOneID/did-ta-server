@@ -27,12 +27,8 @@ import org.omnione.did.list.v1.admin.dto.allowedca.VerifyWalletIdUniqueResDto;
 import org.omnione.did.list.v1.admin.service.query.ListAllowedCaQueryService;
 import org.omnione.did.tas.v1.common.dto.EmptyResDto;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

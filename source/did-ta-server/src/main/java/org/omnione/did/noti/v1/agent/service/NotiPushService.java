@@ -107,6 +107,8 @@ public class NotiPushService {
             }
         } catch (IOException e) {
             log.error("Error initializing Firebase from database configuration", e);
+        } catch (Exception e) {
+            log.error("An unknown error occurred while initializing Firebase", e);
         }
     }
 

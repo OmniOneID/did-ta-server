@@ -72,4 +72,6 @@ public class ListAllowedCaManagementController {
         return listAllowedCaManagementService.deleteAllowedCa(id);
     }
 
+
+
 }
