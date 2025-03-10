@@ -13,14 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.omnione.did.base.db.repository;
+package org.omnione.did.list.v1.agent.dto.vcschema;
 
-import org.omnione.did.base.db.domain.VcSchema;
-import org.omnione.did.data.model.enums.vc.VcType;
-import org.springframework.data.jpa.repository.JpaRepository;
+import lombok.*;
+import org.omnione.did.list.v1.admin.dto.vcschema.ListVcSchemaDto;
 
-import java.util.Optional;
+import java.util.List;
 
-public interface VcSchemaRepository extends JpaRepository<VcSchema, Long> {
-    Optional<VcSchema> findByType(VcType vcType);
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+@Builder
+public class RequestVcSchemaListResDto {
+    private Integer count;
+    private List<ListVcSchemaDto> vcSchemaList;
 }

@@ -237,7 +237,8 @@ public enum ErrorCode {
     FAIL_TO_OFFER_ISSUE_VC_PUSH("SSRVTRA18528", "Failed to process the 'offer-issue-vc-push' API request.", 500),
     FAIL_TO_OFFER_ISSUE_VC_EMAIL("SSRVTRA18529", "Failed to process the 'offer-issue-vc-email' API request.", 500),
     FAIL_TO_GET_VC_SCHEMA("SSRVTRA18530", "Failed to process the 'get-vc-schema' API request.", 500),
-
+    FAILED_TO_REGISTER_VC_SCHEMA_FROM_ISSUER("SSRVTRA18531", "Failed to register VC schema from issuer.", 500),
+    FAILED_TO_REGISTER_CERTIFICATE_VC_SCHEMA("SSRVTRA18532", "Failed to register certificate VC schema.", 500),
 
     // 14. Token-related errors (19000 ~ 19499)
     SERVER_TOKEN_GENERATION_FAILED("SSRVTRA19000", "Failed to generate server token.", 500),

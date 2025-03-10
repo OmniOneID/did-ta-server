@@ -18,13 +18,18 @@ package org.omnione.did.list.v1.admin.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.omnione.did.base.db.domain.Entity;
 import org.omnione.did.base.db.domain.ListVcSchema;
+import org.omnione.did.base.db.repository.ListVcSchemaRepository;
+import org.omnione.did.base.exception.ErrorCode;
+import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.base.util.BaseMultibaseUtil;
 import org.omnione.did.data.model.schema.VcSchema;
 import org.omnione.did.list.v1.admin.dto.vcschema.ListVcSchemaDto;
 import org.omnione.did.list.v1.admin.dto.vcschema.RegisterVcSchemaFromIssuerReqDto;
 import org.omnione.did.list.v1.admin.service.query.ListVcSchemaQueryService;
 import org.omnione.did.tas.v1.common.dto.EmptyResDto;
+import org.omnione.did.tas.v1.common.service.query.EntityQueryService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -35,6 +40,8 @@ import org.springframework.stereotype.Service;
 @Transactional
 public class ListVcSchemaManagementService {
     private final ListVcSchemaQueryService listVcSchemaQueryService;
+    private final ListVcSchemaRepository listVcSchemaRepository;
+    private final EntityQueryService entityQueryService;
 
     public Page<ListVcSchemaDto> searchVcSchemaList(String searchKey, String searchValue, Pageable pageable) {
         return listVcSchemaQueryService.searchVcSchemaList(searchKey, searchValue, pageable);
@@ -51,15 +58,42 @@ public class ListVcSchemaManagementService {
 
 
     public EmptyResDto registerVcSchemaFromIssuer(RegisterVcSchemaFromIssuerReqDto registerVcSchemaFromIssuerReqDto) {
+        try {
+            log.debug("=== Starting registerVcSchemaFromIssuer ===");
 
-        byte[] decodedVcSchema = BaseMultibaseUtil.decode(registerVcSchemaFromIssuerReqDto.getVcSchema());
-        log.debug("decodedVcSchema: {}", new String(decodedVcSchema));
+            log.debug("\t--> Decoding VC Schema");
+            byte[] decodedVcSchema = BaseMultibaseUtil.decode(registerVcSchemaFromIssuerReqDto.getVcSchema());
+            VcSchema vcSchema = new VcSchema();
+            vcSchema.fromJson(new String(decodedVcSchema));
+            log.debug("\t--> Decoded VC Schema: {}", vcSchema.toString());
 
-        VcSchema vcSchema = new VcSchema();
-        vcSchema.fromJson(new String(decodedVcSchema));
+            ListVcSchema.builder()
+                    .schemaId(vcSchema.getId())
+                    .issuerDid(registerVcSchemaFromIssuerReqDto.getIssuerDid())
+                    .schema(vcSchema.toJson())
+                    .build();
 
-        log.debug("vcSchema: {}", vcSchema.toString());
+            log.debug("\t--> Finding Entity by DID: {}", registerVcSchemaFromIssuerReqDto.getIssuerDid());
+            Entity entity = entityQueryService.findEntityByDid(registerVcSchemaFromIssuerReqDto.getIssuerDid());
 
+            log.debug("\t--> Inserting vc-schema");
+            listVcSchemaRepository.save(ListVcSchema.builder()
+                    .title(vcSchema.getTitle())
+                    .description(vcSchema.getDescription())
+                    .schemaId(vcSchema.getId())
+                    .issuerDid(registerVcSchemaFromIssuerReqDto.getIssuerDid())
+                    .issuerName(entity.getName())
+                    .schema(vcSchema.toJson())
+                    .build());
+
+            log.debug("*** Finished registerVcSchemaFromIssuer ***");
+        } catch (OpenDidException e) {
+            log.error("OpenDidException occurred during registerVcSchemaFromIssuer: {}", e.getErrorCode().getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to register vc schema from issuer", e);
+            throw new OpenDidException(ErrorCode.FAILED_TO_REGISTER_VC_SCHEMA_FROM_ISSUER);
+        }
 
         return EmptyResDto.builder().build();
     }

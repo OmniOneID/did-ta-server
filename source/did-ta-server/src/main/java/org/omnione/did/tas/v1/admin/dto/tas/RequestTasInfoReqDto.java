@@ -13,14 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.omnione.did.base.db.repository;
+package org.omnione.did.tas.v1.admin.dto.tas;
 
-import org.omnione.did.base.db.domain.VcSchema;
-import org.omnione.did.data.model.enums.vc.VcType;
-import org.springframework.data.jpa.repository.JpaRepository;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
-import java.util.Optional;
-
-public interface VcSchemaRepository extends JpaRepository<VcSchema, Long> {
-    Optional<VcSchema> findByType(VcType vcType);
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+@Builder
+public class RequestTasInfoReqDto {
+    @NotNull(message = "serverUrl cannot be null")
+    private String serverUrl;
 }

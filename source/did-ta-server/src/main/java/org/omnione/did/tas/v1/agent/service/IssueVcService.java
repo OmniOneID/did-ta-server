@@ -18,6 +18,7 @@ package org.omnione.did.tas.v1.agent.service;
 
 import org.omnione.did.base.db.domain.Entity;
 import org.omnione.did.base.db.domain.Tas;
+import org.omnione.did.base.db.domain.VcSchema;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.base.util.BaseCoreVcUtil;
@@ -30,6 +31,7 @@ import org.omnione.did.data.model.enums.vc.RoleType;
 import org.omnione.did.data.model.enums.vc.VcType;
 import org.omnione.did.data.model.vc.DocumentVerificationEvidence;
 import org.omnione.did.data.model.vc.VerifiableCredential;
+import org.omnione.did.tas.v1.common.service.query.VcSchemaQueryService;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
@@ -46,6 +48,7 @@ import java.util.Map;
 public class IssueVcService {
 
     private final FileLoaderService fileLoaderService;
+    private final VcSchemaQueryService vcSchemaQueryService;
 
     /**
      * Sets the certificate VC schema for the given IssueVcParam.
@@ -54,15 +57,16 @@ public class IssueVcService {
      * @throws OpenDidException if the VC schema retrieval fails
      */
     public void setCertificateVcSchema(IssueVcParam issueVcParam) {
-        String fullFileName = "schema-certificate.json";
-        String vcPlanJson = fileLoaderService.getFileContent(fullFileName);
+//        String fullFileName = "schema-certificate.json";
+//        String vcPlanJson = fileLoaderService.getFileContent(fullFileName);
+//
+//        if (vcPlanJson == null) {
+//            log.error("\t--> Failed to retrieve certificate VC schema");
+//            throw new OpenDidException(ErrorCode.VC_SCHEMA_RETRIEVAL_FAILED);
+//        }
 
-        if (vcPlanJson == null) {
-            log.error("\t--> Failed to retrieve certificate VC schema");
-            throw new OpenDidException(ErrorCode.VC_SCHEMA_RETRIEVAL_FAILED);
-        }
-
-        BaseCoreVcUtil.setVcSchema(issueVcParam, vcPlanJson);
+        VcSchema vcSchema = vcSchemaQueryService.findByVcType(VcType.CERTIFICATE_VC);
+        BaseCoreVcUtil.setVcSchema(issueVcParam, vcSchema.getSchema());
     }
 
     /**

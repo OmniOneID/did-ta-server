@@ -22,14 +22,18 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.omnione.did.base.datamodel.data.VcPlan;
 import org.omnione.did.base.db.domain.ListAllowedCa;
+import org.omnione.did.base.db.domain.ListVcSchema;
 import org.omnione.did.base.db.repository.ListAllowedCaRepository;
+import org.omnione.did.base.db.repository.ListVcSchemaRepository;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.common.exception.CommonSdkException;
 import org.omnione.did.common.util.JsonUtil;
+import org.omnione.did.list.v1.admin.dto.vcschema.ListVcSchemaDto;
 import org.omnione.did.list.v1.agent.dto.ca.AllowedCaResDto;
 import org.omnione.did.list.v1.agent.dto.vcplan.RequestVcplanListResDto;
 import org.omnione.did.list.v1.agent.dto.vcplan.VcPlanResDto;
+import org.omnione.did.list.v1.agent.dto.vcschema.RequestVcSchemaListResDto;
 import org.omnione.did.tas.v1.agent.service.FileLoaderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,6 +54,7 @@ import java.util.stream.Collectors;
 public class ListService {
     private final FileLoaderService fileLoaderService;
     private final ListAllowedCaRepository listAllowedCaRepository;
+    private final ListVcSchemaRepository listVcSchemaRepository;
 
     /**
      * Finds the list of allowed CAs for a given wallet service ID.
@@ -259,5 +264,19 @@ public class ListService {
         log.debug("result: " + vcPlanTags.stream().noneMatch(tags::contains));
 
         return vcPlanTags.stream().allMatch(tags::contains);
+    }
+
+
+    public RequestVcSchemaListResDto findVcSchemaList() {
+        List<ListVcSchema> vcSchemaList = listVcSchemaRepository.findAll();
+
+        List<ListVcSchemaDto> vcSchemaDtoList = vcSchemaList.stream()
+                .map(ListVcSchemaDto::fromVcSchemaForAgent)
+                .collect(Collectors.toList());
+
+        return RequestVcSchemaListResDto.builder()
+                .count(vcSchemaList.size())
+                .vcSchemaList(vcSchemaDtoList)
+                .build();
     }
 }

@@ -118,7 +118,7 @@ public class SetupService {
         }
     }
 
-    public EmptyResDto registerTasDidDocument(byte[] didDocBytes) {
+    public EmptyResDto registerTasDidDocument(byte[] didDocBytes, String name, String serverUrl) {
         try {
             log.debug("=== Starting registerTasDidDocument ===");
 
@@ -151,8 +151,8 @@ public class SetupService {
             log.debug("\t--> Registering TAS DID document");
             tasRepository.save(Tas.builder()
                     .did(ownerDidDoc.getId())
-                    .name(tasProperty.getName())
-                    .serverUrl(tasProperty.getUrl())
+                    .name(name)
+                    .serverUrl(serverUrl)
                     .status(TasStatus.CERTIFICATE_VC_REQUIRED)
                     .build());
 

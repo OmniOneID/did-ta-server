@@ -20,6 +20,7 @@ import org.omnione.did.base.constants.UrlConstant.List;
 import org.omnione.did.list.v1.agent.dto.ca.AllowedCaResDto;
 import org.omnione.did.list.v1.agent.dto.vcplan.RequestVcplanListResDto;
 import org.omnione.did.list.v1.agent.dto.vcplan.VcPlanResDto;
+import org.omnione.did.list.v1.agent.dto.vcschema.RequestVcSchemaListResDto;
 import org.omnione.did.list.v1.agent.service.ListService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -70,5 +71,15 @@ public class ListVcController  {
     @RequestMapping(value = "/vcplan/list", method = RequestMethod.GET)
     public RequestVcplanListResDto requestVcPlanList(@RequestParam(value = "tags[]", required = false) java.util.List<String> tags) {
         return listService.findVcPlanList(tags);
+    }
+
+    /**
+     * Retrieves a list of VC schemas.
+     *
+     * @return A {@link RequestVcSchemaListResDto} containing the list of VC schemas.
+     */
+    @RequestMapping(value = "/vcschema/list", method = RequestMethod.GET)
+    public RequestVcSchemaListResDto requestVcSchemaList() {
+        return listService.findVcSchemaList();
     }
 }

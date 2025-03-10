@@ -58,6 +58,22 @@ public class ListVcSchemaDto {
                 .build();
     }
 
+    public static ListVcSchemaDto fromVcSchemaForAgent(ListVcSchema listVcSchema) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        VcSchema vcSchema = new VcSchema();
+        vcSchema.fromJson(listVcSchema.getSchema());
+
+        return ListVcSchemaDto.builder()
+                .schemaId(listVcSchema.getSchemaId())
+                .issuerDid(listVcSchema.getIssuerDid())
+                .issuerName(listVcSchema.getIssuerName())
+                .title(listVcSchema.getTitle())
+                .description(listVcSchema.getDescription())
+                .vcSchema(vcSchema)
+                .build();
+    }
+
     private static String formatInstant(Instant instant, DateTimeFormatter formatter) {
         if (instant == null) return null;
         return LocalDateTime.ofInstant(instant, ZoneId.systemDefault()).format(formatter);

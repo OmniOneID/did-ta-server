@@ -18,8 +18,10 @@ package org.omnione.did.tas.v1.admin.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.constants.UrlConstant.Tas;
+import org.omnione.did.tas.v1.admin.dto.tas.RequestTasInfoReqDto;
 import org.omnione.did.tas.v1.admin.dto.tas.RequestTasInfoResDto;
 import org.omnione.did.tas.v1.admin.service.TaManagementService;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -54,7 +56,7 @@ public class TaManagementController {
      * @return TA information
      */
     @RequestMapping(value = "/ta/register-simple", method = RequestMethod.POST)
-    public RequestTasInfoResDto registerTaSimple() {
-        return taManagementService.registerTaSimple();
+    public RequestTasInfoResDto registerTaSimple(@RequestBody RequestTasInfoReqDto requestTasInfoReqDto) {
+        return taManagementService.registerTaSimple(requestTasInfoReqDto);
     }
 }

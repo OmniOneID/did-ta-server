@@ -21,11 +21,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.db.constant.TasStatus;
 import org.omnione.did.base.db.domain.Tas;
+import org.omnione.did.base.db.domain.VcSchema;
+import org.omnione.did.base.db.repository.VcSchemaRepository;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.base.property.SetupProperty;
 import org.omnione.did.base.property.TasProperty;
+import org.omnione.did.base.util.BaseCoreVcUtil;
 import org.omnione.did.data.model.did.DidDocument;
+import org.omnione.did.data.model.enums.vc.VcType;
+import org.omnione.did.tas.v1.admin.dto.tas.RequestTasInfoReqDto;
 import org.omnione.did.tas.v1.admin.dto.tas.RequestTasInfoResDto;
 import org.omnione.did.tas.v1.agent.dto.tas.RequestEnrollTasReqDto;
 import org.omnione.did.tas.v1.agent.dto.tas.RequestEnrollTasReqDto.Request;
@@ -33,6 +38,7 @@ import org.omnione.did.tas.v1.common.service.DidDocService;
 import org.omnione.did.tas.v1.common.service.SetupService;
 import org.omnione.did.tas.v1.common.service.TasService;
 import org.omnione.did.tas.v1.common.service.query.TasQueryService;
+import org.omnione.did.tas.v1.common.service.query.VcSchemaQueryService;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -57,6 +63,8 @@ public class TaManagementService {
     private final TasService tasService;
     private final TasProperty tasProperty;
     private final DidDocService didDocService;
+    private final VcSchemaRepository vcSchemaRepository;
+    private final VcSchemaQueryService vcSchemaQueryService;
 
     /**
      * Request TA information.
@@ -81,7 +89,7 @@ public class TaManagementService {
      *
      * @return TA information
      */
-    public RequestTasInfoResDto registerTaSimple() {
+    public RequestTasInfoResDto registerTaSimple(RequestTasInfoReqDto requestTasInfoReqDto) {
         log.debug("=== Starting registerTaSimple ===");
 
         Tas tas = tasQueryService.findTasOrNull();
@@ -89,10 +97,10 @@ public class TaManagementService {
 
         if (tas == null) {
             log.debug("\t--> TAS is not registered yet. Proceeding with new registration.");
-            registerNewTas();
+            registerNewTas(requestTasInfoReqDto);
         } else {
             log.debug("\t--> Tas is already registered.");
-            processExistingTasRegistration(tas);
+            processExistingTasRegistration(tas, requestTasInfoReqDto);
         }
 
         Tas updatedTas = tasQueryService.findTas();
@@ -107,9 +115,13 @@ public class TaManagementService {
     /**
      * Register TA with simple process. (1st development version)
      */
-    private void registerNewTas() {
+    private void registerNewTas(RequestTasInfoReqDto requestTasInfoReqDto) {
         log.debug("\t--> Registering TA DID Document");
-        registerTaDidDocument();
+        registerTaDidDocument(requestTasInfoReqDto.getServerUrl());
+
+        log.debug("\t--> Registering Certificate VC Schema");
+        registerCertificateVcSchema(requestTasInfoReqDto.getServerUrl());
+
         log.debug("\t--> Registering TA Certificate");
         registerTaCertificate();
         log.debug("*** Finished registerTaSimple ***");
@@ -120,11 +132,15 @@ public class TaManagementService {
      *
      * @param tas TA
      */
-    private void processExistingTasRegistration(Tas tas) {
+    private void processExistingTasRegistration(Tas tas, RequestTasInfoReqDto requestTasInfoReqDto) {
         switch (tas.getStatus()) {
             case DID_DOCUMENT_REQUIRED:
                 log.debug("\t--> Registering TA DID Document");
-                registerTaDidDocument();
+                registerTaDidDocument(requestTasInfoReqDto.getServerUrl());
+
+                log.debug("\t--> Registering Certificate VC Schema");
+                registerCertificateVcSchema(requestTasInfoReqDto.getServerUrl());
+
                 log.debug("\t--> Registering TA Certificate");
                 registerTaCertificate();
                 break;
@@ -143,7 +159,7 @@ public class TaManagementService {
     /**
      * Register TA DID Document.
      */
-    private void registerTaDidDocument() {
+    private void registerTaDidDocument(String serverUrl) {
         File didDocFile = new File(setupProperty.getPath() + "/TAS/tas.did");
         if (!didDocFile.exists() || !didDocFile.isFile()) {
             log.error("DID Document file not found at path: {}", setupProperty.getPath());
@@ -152,10 +168,58 @@ public class TaManagementService {
 
         try {
             byte[] didDocBytes = Files.readAllBytes(didDocFile.toPath());
-            setupService.registerTasDidDocument(didDocBytes);
+            setupService.registerTasDidDocument(didDocBytes, "tas", serverUrl);
         } catch (Exception e) {
             log.error("Failed to read DID Document file", e);
             throw new OpenDidException(ErrorCode.FAILED_TO_REGISTER_TA_DID_DOCUMENT);
+        }
+    }
+
+    private void registerCertificateVcSchema(String serverUrl) {
+        try {
+            if (vcSchemaQueryService.findByVcTypeOrNull(VcType.CERTIFICATE_VC) != null) {
+                return;
+            }
+
+            String vcSchemaJson = """
+            {
+                "@id": "%s/tas/api/v1/vc-schema?name=certificate",
+                "@schema": "https://opendid.org/schema/vc.osd",
+                "title": "OpenDID Certificate Verifiable Credential",
+                "description": "VC-formatted OpenDID enrollment certificate.",
+                "metadata": {
+                    "language": "ko",
+                    "formatVersion": "1.0"
+                },
+                "credentialSubject": {
+                    "claims": [{
+                        "namespace": {
+                            "id": "org.opendid.v1",
+                            "name": "OpenDID - Certificate Verifiable Credential"
+                        },
+                        "items": [
+                            {"id": "subject", "caption": "subject", "type": "text", "format": "plain"},
+                            {"id": "role", "caption": "role", "type": "text", "format": "plain"}
+                        ]
+                    }]
+                }
+            }
+            """.formatted(serverUrl);
+
+            org.omnione.did.data.model.schema.VcSchema vcSchema =
+                    BaseCoreVcUtil.parseVcSchema(vcSchemaJson);
+
+            vcSchemaRepository.save(VcSchema.builder()
+                    .type(VcType.CERTIFICATE_VC)
+                    .schema(vcSchema.getSchema())
+                    .schemaId(vcSchema.getId())
+                    .version(vcSchema.getMetadata().getFormatVersion())
+                    .schema(vcSchema.toJson())
+                    .build());
+
+        } catch (Exception e) {
+            log.error("Failed to register Certificate VC Schema", e);
+            throw new OpenDidException(ErrorCode.FAILED_TO_REGISTER_CERTIFICATE_VC_SCHEMA);
         }
     }
 

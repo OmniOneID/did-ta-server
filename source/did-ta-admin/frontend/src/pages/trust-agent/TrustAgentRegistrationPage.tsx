@@ -1,12 +1,21 @@
-import { Box, Button, Stack, Typography } from '@mui/material';
+import { Box, Button, Stack, TextField, Typography } from '@mui/material';
 import { useDialogs } from '@toolpad/core/useDialogs';
 import { useState } from 'react';
-import { Navigate, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
+import CustomConfirmDialog from '../../components/dialog/CustomConfirmDialog';
 import CustomDialog from '../../components/dialog/CustomDialog';
 import FullscreenLoader from '../../components/loading/FullscreenLoader';
 import { useServerStatus } from '../../context/ServerStatusContext';
 import { postData } from '../../utils/api';
-import CustomConfirmDialog from '../../components/dialog/CustomConfirmDialog';
+import { ipRegex, urlRegex } from '../../utils/regex';
+
+interface TaFormData {
+  serverUrl: string;
+}
+
+interface ErrorState {
+  serverUrl?: string;
+}
 
 const TrustAgentRegisterPage = () => {
   const navigate = useNavigate();
@@ -14,10 +23,32 @@ const TrustAgentRegisterPage = () => {
   const [isError, setIsError] = useState<boolean>(false);
   const dialogs = useDialogs();
   const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState<TaFormData>({
+    serverUrl: '',
+  });
+  const [errors, setErrors] = useState<ErrorState>({});
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
   const API_BASE_URL = "/tas/admin/v1";
 
+
+  const validate = () => {
+    let tempErrors: ErrorState = {};
+    tempErrors.serverUrl = validateServerUrl(formData.serverUrl);
+
+    setErrors(tempErrors);
+    return Object.values(tempErrors).every((error) => !error);
+  };
+
+  const validateServerUrl = (serverUrl?: string): string | undefined => {
+    if (!serverUrl) return 'Please enter a Server URL.';
+    if (!urlRegex.test(serverUrl) && !ipRegex.test(serverUrl)) return 'Please enter a valid URL.';
+    return undefined;
+};
+
   const handleSimpleRegistration = async () => {
+    if (!validate()) return;
+
     const result = await dialogs.open(CustomConfirmDialog, {
       title: 'Confirmation',
       message: 'Are you sure you want to register Trust Agent?',
@@ -29,7 +60,7 @@ const TrustAgentRegisterPage = () => {
       setIsError(false);
 
       try {
-        const { data } = await postData(API_BASE_URL, 'ta/register-simple', null);
+        const { data } = await postData(API_BASE_URL, 'ta/register-simple', formData);
         setServerStatus(data.status);
         setTaInfo(data);
   
@@ -58,9 +89,15 @@ const TrustAgentRegisterPage = () => {
     }
   };
 
-  if (serverStatus === 'COMPLETED') {
-    return <Navigate to="/ta-management" replace />;
-  }
+  const handleChange = (field: keyof TaFormData) => 
+        (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>) => {
+            const newValue = event.target.value;
+            setFormData((prev) => ({ ...prev, [field]: newValue }));
+  };
+
+  // if (serverStatus === 'COMPLETED') {
+  //   return <Navigate to="/ta-management" replace />;
+  // }
 
   return (
     <>
@@ -77,20 +114,35 @@ const TrustAgentRegisterPage = () => {
             </Typography>
           </Box>
 
-          <Box sx={{ maxWidth: 800, margin: 'auto', mt: 2, p: 3, border: '1px solid #ccc', borderRadius: 2 }}>
-            <Stack direction="row" spacing={2}>
-              <Button variant="contained" color="primary" onClick={handleSimpleRegistration}>
-                Quick Register
-              </Button>
-
-              {isError && (
-                <Button variant="contained" color="error" onClick={handleSimpleRegistration}>
-                  Retry
+          <Box sx={{ maxWidth: 500, margin: 'auto', mt: 2, p: 3, border: '1px solid #ccc', borderRadius: 2 }}>
+            <TextField 
+                fullWidth
+                label="Server URL" 
+                variant="outlined"
+                margin="normal" 
+                size="small"
+                value={formData.serverUrl} 
+                onChange={handleChange('serverUrl')} 
+                error={!!errors.serverUrl} 
+                helperText={errors.serverUrl} 
+                sx={{minWidth: 250}}
+            />
+            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 3 }}>
+              <Stack direction="row" spacing={2}>
+                <Button variant="contained" color="primary" onClick={handleSimpleRegistration}>
+                  Quick Register
                 </Button>
-              )}
-            </Stack>
+
+                {isError && (
+                  <Button variant="contained" color="error" onClick={handleSimpleRegistration}>
+                    Retry
+                  </Button>
+                )}
+              </Stack>
+            </Box>
           </Box>
         </Box>
+
         
     </>
 

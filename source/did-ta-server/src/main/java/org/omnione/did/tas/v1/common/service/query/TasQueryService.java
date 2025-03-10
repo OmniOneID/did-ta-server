@@ -34,7 +34,6 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class TasQueryService {
     private final TasRepository tasRepository;
-    private final TasProperty tasProperty;
 
     /**
      * Finds a TAS by its DID.
@@ -44,7 +43,7 @@ public class TasQueryService {
      */
     public Tas findTas() {
         try {
-            return tasRepository.findByDid(tasProperty.getDid())
+            return tasRepository.findTop1ByOrderByIdAsc()
                     .orElseThrow(() -> new OpenDidException(ErrorCode.TAS_INFO_NOT_FOUND));
         } catch (OpenDidException e) {
             log.error("TAS not found : {}", e.getMessage());
@@ -85,7 +84,7 @@ public class TasQueryService {
      */
     public Tas findTasOrNull() {
         try {
-            return tasRepository.findByDid(tasProperty.getDid()).orElse(null);
+            return tasRepository.findTop1ByOrderByIdAsc().orElse(null);
         } catch (Exception e) {
             log.error("Unexpected error occurred while finding TAS : {}", e.getMessage());
             return null;

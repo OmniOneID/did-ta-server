@@ -33,4 +33,5 @@ public interface TasRepository extends JpaRepository<Tas, Long> {
     Optional<Tas> findByDid(String did);
     long countByDid(String did);
     long countByDidAndStatus(String did, TasStatus status);
+    Optional<Tas> findTop1ByOrderByIdAsc();
 }
