@@ -10,6 +10,7 @@ import CustomConfirmDialog from '../../components/dialog/CustomConfirmDialog';
 import CustomDialog from '../../components/dialog/CustomDialog';
 import { fetchAdminList, deleteAdmin, requestPasswordResetByRoot } from '../../apis/admin-api';
 import PasswordResetDialog from '../auth/PasswordResetDialog';
+import { useSession } from '../../context/SessionContext';
 
 type Props = {}
 
@@ -29,7 +30,8 @@ const AdminManagementPage = (props: Props) => {
     const [selectedRow, setSelectedRow] = useState<string | number | null>(null);
     const [rows, setRows] = useState<AdminRow[]>([]);
     const [requirePasswordReset, setRequirePasswordReset] = useState(false);
-  
+    const { session } = useSession(); 
+
     const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
         page: 0,
         pageSize: 10,
@@ -42,6 +44,16 @@ const AdminManagementPage = (props: Props) => {
     const handleDelete = async () => {
       const id = selectedRowData?.id as number;
       if (id) {
+        
+        if (selectedRowData?.role === 'ROOT') {
+          dialogs.open(CustomDialog, {
+            title: 'Notification',
+            message: 'Root Admin cannot be deleted.',
+            isModal: true,
+          });
+          return;
+        }
+
         const result = await dialogs.open(CustomConfirmDialog, {
           title: 'Confirmation',
           message: 'Are you sure you want to delete Admin?',
@@ -160,11 +172,20 @@ const AdminManagementPage = (props: Props) => {
             //     navigate(`/list-settings/allowed-ca/allowed-ca-edit/${selectedRowData.id}`);
             //     }
             // }}
-            onRegister={() => navigate('/admin-management/admin-registration')}
-            onDelete={handleDelete}
-            additionalButtons={[
-              { label: 'Change Password', onClick: () => handleOpenPasswordDialog(), color: 'secondary', disabled: selectedRow === null, },
-            ]}
+            onRegister={session?.user?.role === 'ROOT' ? () => navigate('/admin-management/admin-registration') : undefined}
+            onDelete={session?.user?.role === 'ROOT' ? handleDelete : undefined}
+            additionalButtons={
+              session?.user?.role === 'ROOT'
+                ? [
+                    {
+                      label: 'Change Password',
+                      onClick: () => setRequirePasswordReset(true),
+                      color: 'secondary',
+                      disabled: selectedRow === null,
+                    },
+                  ]
+                : []
+            }
             paginationMode="server" 
             totalRows={totalRows} 
             paginationModel={paginationModel} 

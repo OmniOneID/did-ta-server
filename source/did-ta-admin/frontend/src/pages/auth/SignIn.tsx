@@ -45,16 +45,20 @@ export default function SignIn() {
         return {};
       }
 
-      const session = { user: { name: email } };
+      const session = {
+        user: {
+          id: data.id,  // ID 저장
+          role: data.role,  // 역할 저장
+        },
+      };
       setSession(session);
 
+      const storage = rememberMe ? localStorage : sessionStorage;
+      storage.setItem('session', JSON.stringify(session));
+      localStorage.setItem('rememberMe', rememberMe.toString());
       if (rememberMe) {
-        localStorage.setItem('session', JSON.stringify(session));
-        localStorage.setItem('rememberMe', 'true');
         localStorage.setItem('email', email);
       } else {
-        sessionStorage.setItem('session', JSON.stringify(session));
-        localStorage.removeItem('rememberMe');
         localStorage.removeItem('email');
       }
 
