@@ -47,8 +47,8 @@ export default function SignIn() {
 
       const session = {
         user: {
-          id: data.id,  // ID 저장
-          role: data.role,  // 역할 저장
+          id: data.loginId, 
+          role: data.role,
         },
       };
       setSession(session);

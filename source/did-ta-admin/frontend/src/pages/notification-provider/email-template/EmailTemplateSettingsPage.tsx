@@ -1,16 +1,16 @@
 import {
-    Box,
-    Button,
-    FormControl,
-    FormHelperText,
-    InputLabel,
-    MenuItem,
-    Select,
-    SelectChangeEvent,
-    Tab,
-    Tabs,
-    TextField,
-    useTheme,
+  Box,
+  Button,
+  FormControl,
+  FormHelperText,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  Tab,
+  Tabs,
+  TextField,
+  useTheme,
 } from '@mui/material';
 import { useDialogs } from '@toolpad/core';
 import React, { useEffect, useRef, useState } from 'react';
@@ -181,7 +181,7 @@ import FullscreenLoader from '../../../components/loading/FullscreenLoader';
               </Select>
             </FormControl>
             <Button variant="contained" onClick={handleInsertKeyword} disabled={!selectedKeyword}>
-              추가
+              Add
             </Button>
           </Box>
   
