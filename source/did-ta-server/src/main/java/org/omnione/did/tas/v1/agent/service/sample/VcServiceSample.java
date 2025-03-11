@@ -20,6 +20,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.omnione.did.base.datamodel.data.E2e;
 import org.omnione.did.base.datamodel.enums.VerifyAuthType;
+import org.omnione.did.data.model.schema.VcSchema;
 import org.omnione.did.tas.v1.agent.service.VcService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -136,7 +137,7 @@ public class VcServiceSample implements VcService {
     }
 
     @Override
-    public String requestVcSchema(String name) {
+    public Map<String, Object>  requestVcSchema(String id) {
         return null;
     }
 

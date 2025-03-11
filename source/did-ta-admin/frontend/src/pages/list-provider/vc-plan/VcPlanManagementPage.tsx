@@ -7,27 +7,28 @@ import FullscreenLoader from '../../../components/loading/FullscreenLoader';
 import CustomDataGrid from '../../../components/data-grid/CustomDataGrid';
 import CustomConfirmDialog from '../../../components/dialog/CustomConfirmDialog';
 import CustomDialog from '../../../components/dialog/CustomDialog';
-import { fetchVcSchemaList } from '../../../apis/list-api';
+import  { fetchVcPlanList } from '../../../apis/list-api';
 
 type Props = {}
 
-type VcSchemaRow = {
+type VcPlanRow = {
     id: string | number;
-    title: string;
+    vcPlanId: string;
+    name: string;
     description: string;
     issuerName: string;
     createdAt: string;
     updatedAt: string;
 };
 
-const VcSchemaManagementPage = (props: Props) => {
+const VcPlanManagementPage = (props: Props) => {
     const navigate = useNavigate();
     const dialogs = useDialogs();
     const [loading, setLoading] = useState<boolean>(false);
     const [totalRows, setTotalRows] = useState<number>(0);
     const [selectedRow, setSelectedRow] = useState<string | number | null>(null);
-    const [rows, setRows] = useState<VcSchemaRow[]>([]);
-
+    const [rows, setRows] = useState<VcPlanRow[]>([]);
+    
     const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
         page: 0,
         pageSize: 10,
@@ -44,16 +45,16 @@ const VcSchemaManagementPage = (props: Props) => {
 
     useEffect(() => {
         setLoading(true);
-        fetchVcSchemaList(paginationModel.page, paginationModel.pageSize, null, null)
-          .then((response) => {
+        fetchVcPlanList(paginationModel.page, paginationModel.pageSize, null, null)
+            .then((response) => {
             setRows(response.data.content);
             setTotalRows(response.data.totalElements);
-          })
-          .catch((error) => {
-            console.error("Failed to retrieve VC Schema List. ", error);
-            navigate('/error', { state: { message: `Failed to retrieve VC Schema List: ${error}` } });
-          })
-          .finally(() => setLoading(false));
+            })
+            .catch((error) => {
+            console.error("Failed to retrieve VC Plan List. ", error);
+            navigate('/error', { state: { message: `Failed to retrieve VC Plan List: ${error}` } });
+            })
+            .finally(() => setLoading(false));
     }, [paginationModel]);
 
     return (
@@ -63,19 +64,20 @@ const VcSchemaManagementPage = (props: Props) => {
                 rows={rows} 
                 columns={[
                     { 
-                    field: 'title', 
-                    headerName: "Title", 
+                    field: 'vcPlanId', 
+                    headerName: "ID", 
                     width: 250,
                     renderCell: (params) => (
                         <Link 
                         component="button"
                         variant='body2'
-                        onClick={() => navigate(`/list-settings/vc-schema/${params.row.id}`)}
-                        sx={{ cursor: 'pointer', color: 'primary.main', textAlign: 'left' }}
+                        onClick={() => navigate(`/list-settings/vc-plan/${params.row.id}`)}
+                        sx={{ cursor: 'pointer', color: 'primary.main' }}
                         >
                         {params.value}
                         </Link>),
                     },
+                    { field: 'name', headerName: "Name", width: 200},
                     { field: 'description', headerName: "Description", width: 250},
                     { field: 'issuerName', headerName: "Issuer", width: 100},
                     { field: 'createdAt', headerName: "Registered At", width: 100},
@@ -102,4 +104,4 @@ const VcSchemaManagementPage = (props: Props) => {
     )
 }
 
-export default VcSchemaManagementPage
+export default VcPlanManagementPage

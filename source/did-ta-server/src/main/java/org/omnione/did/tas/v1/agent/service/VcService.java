@@ -16,6 +16,7 @@
 
 package org.omnione.did.tas.v1.agent.service;
 
+import org.omnione.did.data.model.schema.VcSchema;
 import org.omnione.did.tas.v1.agent.dto.vc.ConfirmIssueVcReqDto;
 import org.omnione.did.tas.v1.agent.dto.vc.ConfirmIssueVcResDto;
 import org.omnione.did.tas.v1.agent.dto.vc.ConfirmRevokeVcReqDto;
@@ -36,6 +37,8 @@ import org.omnione.did.tas.v1.agent.dto.vc.RequestIssueVcResDto;
 import org.omnione.did.tas.v1.agent.dto.vc.RequestRevokeVcReqDto;
 import org.omnione.did.tas.v1.agent.dto.vc.RequestRevokeVcResDto;
 
+import java.util.Map;
+
 /**
  * VC service interface for handling Verifiable Credentials.
  *
@@ -49,7 +52,7 @@ public interface VcService {
     OfferIssueVcNotiResDto offerIssueVcEmail(OfferIssueVcEmailReqDto request);
     OfferIssueVcNotiResDto offerIssueVcPush(OfferIssueVcPushReqDto request);
     String requestCertificateVc();
-    String requestVcSchema(String name);
+    Map<String, Object> requestVcSchema(String id);
     ProposeRevokeVcResDto proposeRevokeVc(ProposeRevokeVcReqDto proposeRevokeVcReqDto);
     RequestRevokeVcResDto requestRevokeVc(RequestRevokeVcReqDto requestRevokeVcReqDto);
     ConfirmRevokeVcResDto confirmRevokeVc(ConfirmRevokeVcReqDto confirmRevokeVcReqDto);

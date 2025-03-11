@@ -17,6 +17,7 @@
 package org.omnione.did.tas.v1.agent.controller;
 
 import org.omnione.did.base.constants.UrlConstant;
+import org.omnione.did.data.model.schema.VcSchema;
 import org.omnione.did.tas.v1.agent.service.VcService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +42,8 @@ import org.omnione.did.tas.v1.agent.dto.vc.RequestIssueVcResDto;
 import org.omnione.did.tas.v1.agent.dto.vc.RequestRevokeVcReqDto;
 import org.omnione.did.tas.v1.agent.dto.vc.RequestRevokeVcResDto;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 /**
  * The VcController class is a controller that handles requests related to vc.
@@ -147,13 +150,12 @@ public class VcController {
     /**
      * Requests VC Schema.
      *
-     * @param name the name of the schema
+     * @param id the name of the schema ID
      * @return the response of request vc schema
      */
     @GetMapping("/vc-schema")
-    public String requestVcSchema(@RequestParam(name = "name") String name) {
-        // FIXME: Return Type VcSchema
-        return vcService.requestVcSchema(name);
+    public Map<String, Object> requestVcSchema(@RequestParam(name = "id") String id) {
+        return vcService.requestVcSchema(id);
     }
 
     /**

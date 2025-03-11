@@ -18,11 +18,9 @@ package org.omnione.did.list.v1.admin.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.constants.UrlConstant;
-import org.omnione.did.base.util.BaseMultibaseUtil;
-import org.omnione.did.data.model.schema.VcSchema;
-import org.omnione.did.list.v1.admin.dto.vcschema.ListVcSchemaDto;
-import org.omnione.did.list.v1.admin.dto.vcschema.RegisterVcSchemaFromIssuerReqDto;
-import org.omnione.did.list.v1.admin.service.ListVcSchemaManagementService;
+import org.omnione.did.list.v1.admin.dto.vcplan.ListVcPlanDto;
+import org.omnione.did.list.v1.admin.dto.vcplan.RegisterVcPlanFromIssuerReqDto;
+import org.omnione.did.list.v1.admin.service.ListVcPlanManagementService;
 import org.omnione.did.tas.v1.common.dto.EmptyResDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,27 +28,28 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(value = UrlConstant.List.ADMIN_V1)
-public class ListVcSchemaManagementController {
-    private final ListVcSchemaManagementService listVcSchemaManagementService;
+public class ListVcPlanManagementController {
+    private final ListVcPlanManagementService listVcPlanManagementService;
 
-    @GetMapping(value = "/vc-schemas/list")
-    public Page<ListVcSchemaDto> searchAllowedCaList(String searchKey, String searchValue, Pageable pageable) {
-        return listVcSchemaManagementService.searchVcSchemaList(searchKey, searchValue, pageable);
+    @GetMapping(value = "/vc-plans/list")
+    public Page<ListVcPlanDto> searchVcPlanList(String searchKey, String searchValue, Pageable pageable) {
+        return listVcPlanManagementService.searchVcPlanList(searchKey, searchValue, pageable);
     }
 
-    @GetMapping(value = "/vc-schemas")
-    public ListVcSchemaDto getVcSchema(Long id){
-        return listVcSchemaManagementService.findById(id);
+    @GetMapping(value = "/vc-plans")
+    public ListVcPlanDto getVcPlan(@RequestParam Long id) {
+        return listVcPlanManagementService.findById(id);
     }
 
-    @PostMapping(value = "/vc-schemas/public")
-    public EmptyResDto registerVcSchemaFromIssuer(@RequestBody RegisterVcSchemaFromIssuerReqDto registerVcSchemaFromIssuerReqDto) {
-        return listVcSchemaManagementService.registerVcSchemaFromIssuer(registerVcSchemaFromIssuerReqDto);
+    @PostMapping(value = "/vc-plans/public")
+    public EmptyResDto registerVcPlanFromIssuer(@RequestBody RegisterVcPlanFromIssuerReqDto registerVcPlanFromIssuerReqDto) {
+        return listVcPlanManagementService.registerVcPlanFromIssuer(registerVcPlanFromIssuerReqDto);
     }
 }

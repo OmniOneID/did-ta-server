@@ -16,12 +16,12 @@
 
 package org.omnione.did.list.v1.agent.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.omnione.did.base.datamodel.data.VcPlan;
 import org.omnione.did.base.db.domain.ListAllowedCa;
+import org.omnione.did.base.db.domain.ListVcPlan;
 import org.omnione.did.base.db.domain.ListVcSchema;
 import org.omnione.did.base.db.repository.ListAllowedCaRepository;
 import org.omnione.did.base.db.repository.ListVcSchemaRepository;
@@ -30,6 +30,7 @@ import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.common.exception.CommonSdkException;
 import org.omnione.did.common.util.JsonUtil;
 import org.omnione.did.list.v1.admin.dto.vcschema.ListVcSchemaDto;
+import org.omnione.did.list.v1.admin.service.query.ListVcPlanQueryService;
 import org.omnione.did.list.v1.agent.dto.ca.AllowedCaResDto;
 import org.omnione.did.list.v1.agent.dto.vcplan.RequestVcplanListResDto;
 import org.omnione.did.list.v1.agent.dto.vcplan.VcPlanResDto;
@@ -52,9 +53,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class ListService {
-    private final FileLoaderService fileLoaderService;
     private final ListAllowedCaRepository listAllowedCaRepository;
     private final ListVcSchemaRepository listVcSchemaRepository;
+    private final ListVcPlanQueryService listVcPlanQueryService;
 
     /**
      * Finds the list of allowed CAs for a given wallet service ID.
@@ -84,33 +85,6 @@ public class ListService {
     }
 
     /**
-     * Converts the JSON string of allowed CAs to a List of Strings.
-     *
-     * @param allowedCaList The JSON string of allowed CAs
-     * @param walletIdentifier The wallet identifier
-     * @return List<String> The list of allowed CAs
-     * @throws OpenDidException if there's an error converting the JSON string
-     */
-    private List<String> convertAllowedCaList(String allowedCaList, String walletIdentifier) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode rootNode = mapper.readTree(allowedCaList);
-
-        if (rootNode.has(walletIdentifier)) {
-            JsonNode valuesNode = rootNode.get(walletIdentifier);
-            if (valuesNode.isArray()) {
-                List alloweCaList = mapper.convertValue(valuesNode, List.class);
-                return alloweCaList;
-            } else {
-                log.error("\t--> The value for the key '{}' is not a list.", walletIdentifier);
-                throw new IOException("The value for the key '" + walletIdentifier + "' is not a list.");
-            }
-        }
-
-        log.error("\t--> Unable to find the allowed CA for walletIdentifier: {}", walletIdentifier);
-        throw new OpenDidException(ErrorCode.FAILED_TO_FIND_ALLOWED_CA);
-    }
-
-    /**
      * Finds a VC plan by its ID.
      *
      * @param vcPlanId The ID of the VC plan to find
@@ -121,64 +95,20 @@ public class ListService {
         try {
             log.debug("=== Starting findVcPlan ===");
 
-            String fullFileName = "vc-plan-" + vcPlanId + ".json";
-            String vcPlanJson = fileLoaderService.getFileContent(fullFileName);
+            ListVcPlan exisingListVcPlan = listVcPlanQueryService.findByVcPlanId(vcPlanId);
+            VcPlan vcPlan = JsonUtil.deserializeFromJson(exisingListVcPlan.getVcPlan(), VcPlan.class);
 
-            if (vcPlanJson == null) {
-                log.error("\t--> Failed to retrieve VC plan for vcPlanId: {}", vcPlanId);
-                throw new OpenDidException(ErrorCode.VC_PLAN_RETRIEVAL_FAILED);
-            }
-
-            log.debug("\t--> Converting vc plan for vcPlanId: {}", vcPlanId);
-            VcPlan vcPlan = convertVcPlan(vcPlanJson);
             log.debug("*** Finished findVcPlan ***");
 
             return VcPlanResDto.builder()
                     .vcPlan(vcPlan)
                     .build();
-
-        } catch (IOException e) {
+        } catch (OpenDidException e) {
             log.error("\t--> An unknown error occurred retrieving vc plan", e);
-            throw new OpenDidException(ErrorCode.VC_PLAN_RETRIEVAL_FAILED);
+            throw e;
         } catch (Exception e) {
             log.error("\t--> An unknown error occurred retrieving vc plan", e);
             throw new OpenDidException(ErrorCode.FAILED_API_GET_VCPLAN);
-        }
-    }
-
-    /**
-     * Converts a JSON string to a VcPlan object.
-     *
-     * @param vcPlanJson The JSON string representation of a VC plan.
-     * @return The converted VcPlan object.
-     * @throws IOException if there's an error in parsing the JSON or the value is not a valid VcPlan object.
-     */
-    private VcPlan convertVcPlan(String vcPlanJson) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        try {
-            VcPlan vcPlan = objectMapper.readValue(vcPlanJson, new TypeReference<VcPlan>() {});
-            return vcPlan;
-        } catch (IOException e) {
-            throw new IOException("The value is not a object.");
-        }
-    }
-
-    /**
-     * Converts a JSON string to a List of VcPlan objects.
-     *
-     * @param vcListJson The JSON string representation of a list of VC plans.
-     * @return The converted list of VcPlan objects.
-     * @throws IOException if there's an error in parsing the JSON or the value is not a list.
-     */
-    private List<VcPlan> convertVcPlanList(String vcListJson) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        try {
-            List<VcPlan> vcPlanList = objectMapper.readValue(vcListJson, new TypeReference<List<VcPlan>>() {});
-            return vcPlanList;
-        } catch (IOException e) {
-            throw new IOException("The value is not a list.");
         }
     }
 
@@ -194,31 +124,26 @@ public class ListService {
         try {
             log.debug("=== Starting findAllVcPlanList ===");
 
-            String fullFileName = "vc-plan-list.json";
-            String vcListJson = fileLoaderService.getFileContent(fullFileName);
+            List<ListVcPlan> exsingVcPlanList = listVcPlanQueryService.findAll();
 
-            if (vcListJson == null) {
-                log.error("\t--> Failed to retrieve VC plan list");
-                throw new OpenDidException(ErrorCode.VC_PLAN_RETRIEVAL_FAILED);
-            }
+            List<VcPlan> vcPlanList = exsingVcPlanList.stream()
+                    .map(vcPlan ->
+                            JsonUtil.deserializeFromJson(vcPlan.getVcPlan(), VcPlan.class)
+                    )
+                    .collect(Collectors.toList());
 
-            // Convert the vc plan list
-            log.debug("\t--> Converting vc plan list");
-            List<VcPlan> vcPlanList = convertVcPlanList(vcListJson);
-
-            // Filter the vc plan list based on the tags
-            log.debug("\t--> Filtering vc plan list based on the tags");
             List<VcPlan> filteredVcPlanList = filterVcPlanList(vcPlanList, tags);
 
             log.debug("*** Finished findAllVcPlanList ***");
 
             return RequestVcplanListResDto.builder()
-                    .count(filteredVcPlanList == null ? 0 : filteredVcPlanList.size())
+                    .count(filteredVcPlanList.size())
                     .items(filteredVcPlanList)
                     .build();
-        } catch (IOException e) {
+
+        } catch (OpenDidException e) {
             log.error("\t--> An unknown error occurred retrieving all vc plans", e);
-            throw new OpenDidException(ErrorCode.VC_PLAN_RETRIEVAL_FAILED);
+            throw e;
         } catch (Exception e) {
             log.error("\t--> An unknown error occurred retrieving all vc plans", e);
             throw new OpenDidException(ErrorCode.FAILED_API_GET_VCPLAN_LIST);
@@ -271,7 +196,7 @@ public class ListService {
         List<ListVcSchema> vcSchemaList = listVcSchemaRepository.findAll();
 
         List<ListVcSchemaDto> vcSchemaDtoList = vcSchemaList.stream()
-                .map(ListVcSchemaDto::fromVcSchemaForAgent)
+                .map(ListVcSchemaDto::fromListVcSchemaForAgent)
                 .collect(Collectors.toList());
 
         return RequestVcSchemaListResDto.builder()

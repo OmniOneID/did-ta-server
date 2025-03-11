@@ -15,15 +15,18 @@
  */
 package org.omnione.did.list.v1.admin.dto.vcschema;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Builder;
 import lombok.Getter;
 import org.omnione.did.base.db.domain.ListVcSchema;
+import org.omnione.did.common.util.JsonUtil;
 import org.omnione.did.data.model.schema.VcSchema;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 
 @Getter
 @Builder
@@ -34,16 +37,18 @@ public class ListVcSchemaDto {
     private final String issuerName;
     private final String title;
     private final String description;
-    private final VcSchema vcSchema;
+    private final Map<String, Object> vcSchema;
     private final String createdAt;
     private final String updatedAt;
     private final String entityName;
 
-    public static ListVcSchemaDto fromVcSchema(ListVcSchema listVcSchema) {
+    public static ListVcSchemaDto fromListVcSchema(ListVcSchema listVcSchema) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
         VcSchema vcSchema = new VcSchema();
         vcSchema.fromJson(listVcSchema.getSchema());
+
+        Map<String, Object> parsedVcSchema = parseVcSchema(listVcSchema.getSchema());
 
         return ListVcSchemaDto.builder()
                 .id(listVcSchema.getId())
@@ -52,17 +57,28 @@ public class ListVcSchemaDto {
                 .issuerName(listVcSchema.getIssuerName())
                 .title(listVcSchema.getTitle())
                 .description(listVcSchema.getDescription())
-                .vcSchema(vcSchema)
+                .vcSchema(parsedVcSchema)
                 .createdAt(formatInstant(listVcSchema.getCreatedAt(), formatter))
                 .updatedAt(formatInstant(listVcSchema.getUpdatedAt(), formatter))
                 .build();
     }
 
-    public static ListVcSchemaDto fromVcSchemaForAgent(ListVcSchema listVcSchema) {
+    private static Map<String, Object> parseVcSchema(String schemaJson) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.readValue(schemaJson, Map.class);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to parse vcSchema JSON", e);
+        }
+    }
+
+    public static ListVcSchemaDto fromListVcSchemaForAgent(ListVcSchema listVcSchema) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
         VcSchema vcSchema = new VcSchema();
         vcSchema.fromJson(listVcSchema.getSchema());
+
+        Map<String, Object> parsedVcSchema = parseVcSchema(listVcSchema.getSchema());
 
         return ListVcSchemaDto.builder()
                 .schemaId(listVcSchema.getSchemaId())
@@ -70,7 +86,7 @@ public class ListVcSchemaDto {
                 .issuerName(listVcSchema.getIssuerName())
                 .title(listVcSchema.getTitle())
                 .description(listVcSchema.getDescription())
-                .vcSchema(vcSchema)
+                .vcSchema(parsedVcSchema)
                 .build();
     }
 

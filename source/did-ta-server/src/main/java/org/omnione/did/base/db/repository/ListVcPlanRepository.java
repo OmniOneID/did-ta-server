@@ -15,13 +15,13 @@
  */
 package org.omnione.did.base.db.repository;
 
-import org.omnione.did.base.db.domain.ListVcSchema;
+import org.omnione.did.base.db.domain.ListVcPlan;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
 import java.util.Optional;
 
-public interface ListVcSchemaRepository extends JpaRepository<ListVcSchema, Long>, QuerydslPredicateExecutor<ListVcSchema>, ListVcSchemaRepositoryAdmin {
-    Optional<ListVcSchema> findBySchemaId(String schema);
-    Optional<ListVcSchema> findBySchemaIdAndIssuerDid(String schema, String issuerDid);
+public interface ListVcPlanRepository extends JpaRepository<ListVcPlan, Long>, QuerydslPredicateExecutor<ListVcPlan>, ListVcPlanRepositoryAdmin {
+    Optional<ListVcPlan> findByVcPlanId(String vcPlanId);
+    Optional<ListVcPlan> findByVcPlanIdAndIssuerDid(String vcPlanId, String issuerDid);
 }

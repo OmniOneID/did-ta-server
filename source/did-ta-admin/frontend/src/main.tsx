@@ -26,6 +26,8 @@ import AllowedCaEditPage from './pages/list-provider/allowed-ca/AllowedCaEditPag
 import AllowedCaDetailPage from './pages/list-provider/allowed-ca/AllowedCaDetailPage';
 import VcSchemaManagementPage from './pages/list-provider/vc-schema/VcSchemaManagementPage';
 import VcSchemaDetailPage from './pages/list-provider/vc-schema/VcSchemaDetailPage';
+import VcPlanManagementPage from './pages/list-provider/vc-plan/VcPlanManagementPage';
+import VcPlanDetailPage from './pages/list-provider/vc-plan/VcPlanDetailPage';
 
 const router = createBrowserRouter([
   {
@@ -118,6 +120,14 @@ const router = createBrowserRouter([
           {
             path: 'list-settings/vc-schema',
             Component: VcSchemaManagementPage,
+          },
+          {
+            path: 'list-settings/vc-plan/:id',
+            Component: VcPlanDetailPage,
+          },
+          {
+            path: 'list-settings/vc-plan',
+            Component: VcPlanManagementPage,
           },
           {
             path: 'admin-management',

@@ -57,14 +57,6 @@ public class IssueVcService {
      * @throws OpenDidException if the VC schema retrieval fails
      */
     public void setCertificateVcSchema(IssueVcParam issueVcParam) {
-//        String fullFileName = "schema-certificate.json";
-//        String vcPlanJson = fileLoaderService.getFileContent(fullFileName);
-//
-//        if (vcPlanJson == null) {
-//            log.error("\t--> Failed to retrieve certificate VC schema");
-//            throw new OpenDidException(ErrorCode.VC_SCHEMA_RETRIEVAL_FAILED);
-//        }
-
         VcSchema vcSchema = vcSchemaQueryService.findByVcType(VcType.CERTIFICATE_VC);
         BaseCoreVcUtil.setVcSchema(issueVcParam, vcSchema.getSchema());
     }

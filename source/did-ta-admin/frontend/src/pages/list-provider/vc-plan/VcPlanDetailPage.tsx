@@ -3,21 +3,22 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router';
 import { Box, Button, Popover, TextField, Typography, useTheme } from '@mui/material';
 import CustomDialog from '../../../components/dialog/CustomDialog';
-import { getVcSchemaInfo } from '../../../apis/list-api';
+import { getVcPlanInfo } from '../../../apis/list-api';
 import FullscreenLoader from '../../../components/loading/FullscreenLoader';
 
 type Props = {}
 
-interface VcSchemaFormData {
-    title: string;
+type VcPlanData = {
+    vcPlanId: string;
+    name: string;
     description: string;
     issuerName: string;
     createdAt: string;
     updatedAt: string;
-    vcSchema: string;
-}
+    vcPlan: string;
+};
 
-const VcSchemaDetailPage = (props: Props) => {
+const VcPlanDetailPage = (props: Props) => {
     const { id } = useParams();
     const navigate = useNavigate();
     const dialogs = useDialogs();
@@ -25,17 +26,18 @@ const VcSchemaDetailPage = (props: Props) => {
 
     const numericId = id ? parseInt(id, 10) : null;
     const [isLoading, setIsLoading] = useState<boolean>(true); 
-    const [formData, serFormData] = useState<VcSchemaFormData>({
-        title: '',
+    const [formData, serFormData] = useState<VcPlanData>({
+        vcPlanId: '',
+        name: '',
         description: '',
         issuerName: '',
         createdAt: '',
         updatedAt: '',
-        vcSchema: '',
+        vcPlan: '',
     });
 
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-
+    
     const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
     };
@@ -52,7 +54,7 @@ const VcSchemaDetailPage = (props: Props) => {
                     message: 'Invalid Path.', 
                     isModal: true 
                 },{
-                    onClose: async () => navigate('/list-settings/allowed-ca', { replace: true }),
+                    onClose: async () => navigate('/list-settings/vc-plan', { replace: true }),
                 });
                 return;
             }
@@ -60,32 +62,32 @@ const VcSchemaDetailPage = (props: Props) => {
             setIsLoading(true);
 
             try {
-                const { data } = await getVcSchemaInfo(numericId);
+                const { data } = await getVcPlanInfo(numericId);
                 serFormData({
-                    title: data.title,
+                    vcPlanId: data.vcPlanId,
+                    name: data.name,
                     description: data.description,
                     issuerName: data.issuerName,
                     createdAt: data.createdAt,
                     updatedAt: data.updatedAt,
-                    vcSchema: data.vcSchema,
+                    vcPlan: data.vcPlan,
                 });
                 setIsLoading(false);
             } catch (err) {
-                  console.error('Failed to fetch VC Schema information:', err);
+                  console.error('Failed to fetch VC Plan information:', err);
                   setIsLoading(false);
-                  navigate('/error', { state: { message: `Failed to fetch VC Schema: ${err}` } });
+                  navigate('/error', { state: { message: `Failed to fetch Vc Plan: ${err}` } });
             }
         };
 
         fetchData();
     }, [numericId]);
 
-
     return (
         <>
-            <FullscreenLoader open={isLoading} />
-            <Box sx={{ p: 3 }}>
-                <Typography variant="h4">VC Schema Detail Information</Typography>
+             <FullscreenLoader open={isLoading} />
+             <Box sx={{ p: 3 }}>
+                <Typography variant="h4">VC Plan Detail Information</Typography>
                 <Box sx={{ maxWidth: 500, margin: 'auto', mt: 2, p: 3, border: '1px solid #ccc', borderRadius: 2 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                         <TextField 
@@ -93,7 +95,7 @@ const VcSchemaDetailPage = (props: Props) => {
                             label="Title" 
                             variant="standard"
                             margin="normal" 
-                            value={formData.title || ''} 
+                            value={formData.vcPlanId || ''} 
                             sx={{minWidth: 250}}
                             slotProps={{ input: { readOnly: true } }} 
                         />
@@ -101,15 +103,16 @@ const VcSchemaDetailPage = (props: Props) => {
                             variant="contained" 
                             size="small" 
                             onClick={handlePopoverOpen} 
-                            disabled={!formData.title}
+                            disabled={!formData.vcPlanId}
                             sx={{ 
                                 height: '100%', 
                                 flexShrink: 0, 
                                 whiteSpace: 'nowrap', 
                                 minWidth: 'auto',
+                                textAlign: 'left',
                             }}
                         >
-                            View VC Schema
+                            View VC Plan
                         </Button>
                     </Box>
 
@@ -121,10 +124,19 @@ const VcSchemaDetailPage = (props: Props) => {
                     >
                         <Box sx={{ p: 2, maxWidth: 500 }}>
                             <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
-                            {JSON.stringify(formData.vcSchema, null, 2)}
+                            {JSON.stringify(formData.vcPlan, null, 2)}
                             </Typography>
                         </Box>
                     </Popover>
+
+                     <TextField 
+                        fullWidth
+                        label="Name" 
+                        variant="standard"
+                        margin="normal" 
+                        value={formData.name || ''} 
+                        slotProps={{ input: { readOnly: true } }} 
+                    />
 
                     <TextField 
                         fullWidth
@@ -164,8 +176,8 @@ const VcSchemaDetailPage = (props: Props) => {
                         />
                     )}
 
-                    <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 3 }}>
-                        <Button variant="contained" color="secondary" onClick={() => navigate('/list-settings/vc-schema')}>
+                     <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 3 }}>
+                        <Button variant="contained" color="secondary" onClick={() => navigate('/list-settings/vc-plan')}>
                             Back
                         </Button>
                         {/* <Button variant="contained" color="primary" onClick={() => navigate('/list-settings/vc-schema/vc-shema-edit/' + numericId)}>
@@ -173,9 +185,9 @@ const VcSchemaDetailPage = (props: Props) => {
                         </Button> */}
                     </Box>
                 </Box>
-            </Box>
+             </Box>
         </>
     )
 }
 
-export default VcSchemaDetailPage
+export default VcPlanDetailPage

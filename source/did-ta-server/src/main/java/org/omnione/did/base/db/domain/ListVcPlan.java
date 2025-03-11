@@ -37,15 +37,21 @@ import java.io.Serializable;
 @Setter
 @ToString
 @Entity
-@Table(name = "\"list_vc_schema\"")
-public class ListVcSchema extends BaseEntity implements Serializable {
+@Table(name = "\"list_vc_plan\"")
+public class ListVcPlan extends BaseEntity implements Serializable {
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "schema_id", nullable = false, length = 200)
-    private String schemaId;
+    @Column(name = "vc_plan_id", nullable = false, length = 50)
+    private String vcPlanId;
+
+    @Column(name = "name", nullable = false, length = 200)
+    private String name;
+
+    @Column(name = "description", nullable = false, length = 200)
+    private String description;
 
     @Column(name = "issuer_did", nullable = false, length = 200)
     private String issuerDid;
@@ -53,12 +59,6 @@ public class ListVcSchema extends BaseEntity implements Serializable {
     @Column(name = "issuer_name", nullable = false, length = 200)
     private String issuerName;
 
-    @Column(name = "title", nullable = false, length = 50)
-    private String title;
-
-    @Column(name = "description", nullable = false, length = 200)
-    private String description;
-
-    @Column(name = "schema", nullable = false)
-    private String schema;
+    @Column(name = "vc_plan", nullable = false)
+    private String vcPlan;
 }

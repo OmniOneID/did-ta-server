@@ -49,44 +49,30 @@ public class ListVcSchemaManagementService {
 
     public ListVcSchemaDto findById(Long id) {
         ListVcSchema listVcSchema = listVcSchemaQueryService.findById(id);
-        return ListVcSchemaDto.fromVcSchema(listVcSchema);
+        return ListVcSchemaDto.fromListVcSchema(listVcSchema);
     }
 
     public ListVcSchema findBySchemaId(String schemaId) {
         return listVcSchemaQueryService.findBySchemaId(schemaId);
     }
 
-
-    public EmptyResDto registerVcSchemaFromIssuer(RegisterVcSchemaFromIssuerReqDto registerVcSchemaFromIssuerReqDto) {
+    public EmptyResDto registerVcSchemaFromIssuer(RegisterVcSchemaFromIssuerReqDto request) {
         try {
             log.debug("=== Starting registerVcSchemaFromIssuer ===");
 
-            log.debug("\t--> Decoding VC Schema");
-            byte[] decodedVcSchema = BaseMultibaseUtil.decode(registerVcSchemaFromIssuerReqDto.getVcSchema());
-            VcSchema vcSchema = new VcSchema();
-            vcSchema.fromJson(new String(decodedVcSchema));
-            log.debug("\t--> Decoded VC Schema: {}", vcSchema.toString());
+            VcSchema vcSchema = decodeVcSchema(request.getVcSchema());
+            Entity entity = findIssuerEntity(request.getIssuerDid());
 
-            ListVcSchema.builder()
-                    .schemaId(vcSchema.getId())
-                    .issuerDid(registerVcSchemaFromIssuerReqDto.getIssuerDid())
-                    .schema(vcSchema.toJson())
-                    .build();
+            ListVcSchema existingSchema = listVcSchemaQueryService.findBySchemaIdAndIssuerDidOrNull(vcSchema.getId(), request.getIssuerDid());
 
-            log.debug("\t--> Finding Entity by DID: {}", registerVcSchemaFromIssuerReqDto.getIssuerDid());
-            Entity entity = entityQueryService.findEntityByDid(registerVcSchemaFromIssuerReqDto.getIssuerDid());
-
-            log.debug("\t--> Inserting vc-schema");
-            listVcSchemaRepository.save(ListVcSchema.builder()
-                    .title(vcSchema.getTitle())
-                    .description(vcSchema.getDescription())
-                    .schemaId(vcSchema.getId())
-                    .issuerDid(registerVcSchemaFromIssuerReqDto.getIssuerDid())
-                    .issuerName(entity.getName())
-                    .schema(vcSchema.toJson())
-                    .build());
+            if (existingSchema != null) {
+                updateExistingVcSchema(existingSchema, vcSchema);
+            } else {
+                insertNewVcSchema(request.getIssuerDid(), entity, vcSchema);
+            }
 
             log.debug("*** Finished registerVcSchemaFromIssuer ***");
+            return EmptyResDto.builder().build();
         } catch (OpenDidException e) {
             log.error("OpenDidException occurred during registerVcSchemaFromIssuer: {}", e.getErrorCode().getMessage());
             throw e;
@@ -94,7 +80,45 @@ public class ListVcSchemaManagementService {
             log.error("Failed to register vc schema from issuer", e);
             throw new OpenDidException(ErrorCode.FAILED_TO_REGISTER_VC_SCHEMA_FROM_ISSUER);
         }
-
-        return EmptyResDto.builder().build();
     }
+
+    private VcSchema decodeVcSchema(String encodedVcSchema) {
+        log.debug("\t--> Decoding VC Schema");
+        byte[] decodedData = BaseMultibaseUtil.decode(encodedVcSchema);
+        VcSchema vcSchema = new VcSchema();
+        vcSchema.fromJson(new String(decodedData));
+        log.debug("\t--> Decoded VC Schema: {}", vcSchema);
+        return vcSchema;
+    }
+
+    private Entity findIssuerEntity(String issuerDid) {
+        log.debug("\t--> Finding Entity by DID: {}", issuerDid);
+        return entityQueryService.findEntityByDid(issuerDid);
+    }
+
+    private void updateExistingVcSchema(ListVcSchema existingSchema, VcSchema vcSchema) {
+        log.debug("\t--> Updating existing vc-schema");
+
+        existingSchema.setTitle(vcSchema.getTitle());
+        existingSchema.setDescription(vcSchema.getDescription());
+        existingSchema.setSchema(vcSchema.toJson());
+
+        listVcSchemaRepository.save(existingSchema);
+    }
+
+    private void insertNewVcSchema(String issuerDid, Entity entity, VcSchema vcSchema) {
+        log.debug("\t--> Inserting vc-schema");
+
+        ListVcSchema newSchema = ListVcSchema.builder()
+                .title(vcSchema.getTitle())
+                .description(vcSchema.getDescription())
+                .schemaId(vcSchema.getId())
+                .issuerDid(issuerDid)
+                .issuerName(entity.getName())
+                .schema(vcSchema.toJson())
+                .build();
+
+        listVcSchemaRepository.save(newSchema);
+    }
+
 }

@@ -40,7 +40,7 @@ public class ListVcSchemaQueryService {
         Page<ListVcSchema> listVcSchemaPage = listVcSchemaRepository.searchListVcSchemas(searchKey, searchValue, pageable);
 
         List<ListVcSchemaDto> listVcSchemaDtos = listVcSchemaPage.getContent().stream()
-                .map(ListVcSchemaDto::fromVcSchema)
+                .map(ListVcSchemaDto::fromListVcSchema)
                 .collect(Collectors.toList());
 
         return new PageImpl<>(listVcSchemaDtos, pageable, listVcSchemaPage.getTotalElements());
@@ -54,5 +54,9 @@ public class ListVcSchemaQueryService {
     public ListVcSchema findBySchemaId(String schemaId) {
         return listVcSchemaRepository.findBySchemaId(schemaId)
                 .orElseThrow(() -> new OpenDidException(ErrorCode.VC_SCHEMA_RETRIEVAL_FAILED));
+    }
+
+    public ListVcSchema findBySchemaIdAndIssuerDidOrNull(String schemaId, String issuerDid) {
+        return listVcSchemaRepository.findBySchemaIdAndIssuerDid(schemaId, issuerDid).orElse(null);
     }
 }

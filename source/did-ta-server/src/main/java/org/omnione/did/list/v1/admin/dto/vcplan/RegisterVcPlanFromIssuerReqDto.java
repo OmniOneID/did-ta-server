@@ -13,15 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.omnione.did.base.db.repository;
+package org.omnione.did.list.v1.admin.dto.vcplan;
 
-import org.omnione.did.base.db.domain.ListVcSchema;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.querydsl.QuerydslPredicateExecutor;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-import java.util.Optional;
-
-public interface ListVcSchemaRepository extends JpaRepository<ListVcSchema, Long>, QuerydslPredicateExecutor<ListVcSchema>, ListVcSchemaRepositoryAdmin {
-    Optional<ListVcSchema> findBySchemaId(String schema);
-    Optional<ListVcSchema> findBySchemaIdAndIssuerDid(String schema, String issuerDid);
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+@Builder
+public class RegisterVcPlanFromIssuerReqDto {
+    @NotNull(message = "vcPlan cannot be null")
+    private String vcPlan;
+    @NotNull(message = "issuerDid cannot be null")
+    private String issuerDid;
 }

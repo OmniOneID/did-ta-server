@@ -77,7 +77,12 @@ export const getNavigationByStatus = (serverStatus: string | null): Navigation=>
           segment: 'vc-schema',
           title: 'VC Schema Management',
           icon: <SettingsApplications />,
-        }
+        },
+        {
+          segment: 'vc-plan',
+          title: 'VC Plan Management',
+          icon: <SettingsApplications />,
+        },
       ],
     },
     {

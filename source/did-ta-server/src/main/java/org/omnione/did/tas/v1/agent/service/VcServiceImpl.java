@@ -34,6 +34,7 @@ import org.omnione.did.base.db.constant.TransactionType;
 import org.omnione.did.base.db.domain.CertificateVc;
 import org.omnione.did.base.db.domain.Ecdh;
 import org.omnione.did.base.db.domain.Entity;
+import org.omnione.did.base.db.domain.ListVcSchema;
 import org.omnione.did.base.db.domain.SubTransaction;
 import org.omnione.did.base.db.domain.Transaction;
 import org.omnione.did.base.db.domain.User;
@@ -52,6 +53,7 @@ import org.omnione.did.data.model.enums.vc.VcStatus;
 import org.omnione.did.data.model.schema.VcSchema;
 import org.omnione.did.data.model.vc.VcMeta;
 import org.omnione.did.data.model.vc.VerifiableCredential;
+import org.omnione.did.list.v1.admin.service.query.ListVcSchemaQueryService;
 import org.omnione.did.noti.v1.agent.dto.email.EmailTemplate;
 import org.omnione.did.noti.v1.agent.dto.email.RequestSendEmailReqDto;
 import org.omnione.did.noti.v1.agent.dto.push.FcmNotificationDto;
@@ -132,6 +134,7 @@ public class VcServiceImpl implements VcService {
     private final EmailServiceHelper emailServiceHelper;
     private final EmailProperty emailProperty;
     private final StorageService storageService;
+    private final ListVcSchemaQueryService listVcSchemaQueryService;
 
     /**
      * Propose to issue a VC.
@@ -890,29 +893,33 @@ public class VcServiceImpl implements VcService {
      * @throws OpenDidException if there's an error retrieving or parsing the certificate VC
      */
     @Override
-    public String requestVcSchema(String name) {
+    public Map<String, Object> requestVcSchema(String id) {
         try {
             log.debug("=== Starting requestVcSchema ===");
 
-            // Retrieve VC Schema information.
-            log.debug("\t--> Retrieving VC Schema information");
-            String fullFileName = "schema-" + name + ".json";
-            String vcSchemaJson = fileLoaderService.getFileContent(fullFileName);
+            ListVcSchema existingListVcSchema = listVcSchemaQueryService.findBySchemaId(id);
 
-            // Parse VC Schema
-            log.debug("\t--> Parsing VC Schema");
             VcSchema vcSchema = new VcSchema();
-//            vcSchema.fromJson(vcSchemaJson);
+            vcSchema.fromJson(existingListVcSchema.getSchema());
 
             log.debug("*** Finished requestVcSchema ***");
-            // TODO: VcSchema return
-            return vcSchemaJson;
+
+            return parseVcSchemaToMap(vcSchema.toJson()); // JSON을 Map으로 변환하여 반환
         } catch (OpenDidException e) {
             log.error("An OpenDidException occurred while sending requestVcSchema request", e);
             throw e;
         } catch (Exception e) {
             log.error("An unknown error occurred while sending requestCertificateVc request", e);
             throw new OpenDidException(ErrorCode.FAIL_TO_GET_VC_SCHEMA);
+        }
+    }
+
+    private Map<String, Object> parseVcSchemaToMap(String schemaJson) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.readValue(schemaJson, Map.class);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to parse vcSchema JSON", e);
         }
     }
 
