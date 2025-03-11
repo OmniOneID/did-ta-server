@@ -46,8 +46,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Slf4j
 public class IssueVcService {
-
-    private final FileLoaderService fileLoaderService;
     private final VcSchemaQueryService vcSchemaQueryService;
 
     /**

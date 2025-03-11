@@ -17,8 +17,8 @@
 package org.omnione.did.list.v1.agent.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.datamodel.data.VcPlan;
 import org.omnione.did.base.db.domain.ListAllowedCa;
 import org.omnione.did.base.db.domain.ListVcPlan;
@@ -35,12 +35,8 @@ import org.omnione.did.list.v1.agent.dto.ca.AllowedCaResDto;
 import org.omnione.did.list.v1.agent.dto.vcplan.RequestVcplanListResDto;
 import org.omnione.did.list.v1.agent.dto.vcplan.VcPlanResDto;
 import org.omnione.did.list.v1.agent.dto.vcschema.RequestVcSchemaListResDto;
-import org.omnione.did.tas.v1.agent.service.FileLoaderService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

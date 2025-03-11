@@ -31,5 +31,4 @@ public class TasProperty {
     private String name;
     private String url;
     private String certificateVc;
-    private String samplePath;
 }

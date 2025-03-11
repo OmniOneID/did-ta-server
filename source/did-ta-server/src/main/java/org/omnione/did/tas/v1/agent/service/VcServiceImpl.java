@@ -121,7 +121,6 @@ import java.util.Map;
 @Profile("!sample")
 public class VcServiceImpl implements VcService {
     private final EntityQueryService entityQueryService;
-    private final FileLoaderService fileLoaderService;
     private final TransactionService transactionService;
     private final EcdhQueryService ecdhQueryService;
     private final DidAuthValidator didAuthValidator;
