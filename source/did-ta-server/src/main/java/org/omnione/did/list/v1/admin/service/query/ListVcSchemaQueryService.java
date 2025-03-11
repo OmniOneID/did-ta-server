@@ -34,8 +34,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class ListVcSchemaQueryService {
-    private final ListVcSchemaRepository listVcSchemaRepository;
-
     public Page<ListVcSchemaDto> searchVcSchemaList(String searchKey, String searchValue, Pageable pageable) {
         Page<ListVcSchema> listVcSchemaPage = listVcSchemaRepository.searchListVcSchemas(searchKey, searchValue, pageable);
 
@@ -45,6 +43,8 @@ public class ListVcSchemaQueryService {
 
         return new PageImpl<>(listVcSchemaDtos, pageable, listVcSchemaPage.getTotalElements());
     }
+
+    private final ListVcSchemaRepository listVcSchemaRepository;
 
     public ListVcSchema findById(Long id) {
         return listVcSchemaRepository.findById(id)

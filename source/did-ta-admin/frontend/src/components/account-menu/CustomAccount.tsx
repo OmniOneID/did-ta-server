@@ -12,6 +12,10 @@ const AccountMenu = () => {
   };
 
   const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleSignOut = () => {
     authentication?.signOut();
     setAnchorEl(null);
   };
@@ -37,7 +41,7 @@ const AccountMenu = () => {
         }}
       >
         <Box sx={{ p: 2, minWidth: 200 }}>
-          <Button fullWidth variant="outlined" sx={{ mt: 1 }} onClick={handleClose}>
+          <Button fullWidth variant="outlined" sx={{ mt: 1 }} onClick={handleSignOut}>
             Logout
           </Button>
         </Box>

@@ -72,6 +72,5 @@ public class NotificationManagementController {
     @ResponseBody
     public void registerPushConfiguration(@RequestParam("push") MultipartFile push) {
         notificationManagementService.registerPushConfiguration(push);
-
     }
 }

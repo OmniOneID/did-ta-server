@@ -269,6 +269,7 @@ public enum ErrorCode {
 
     // 17. Admin-related errors (21000 ~ 21499)
     ADMIN_INFO_NOT_FOUND("SSRVTRA21000", "Failed to find admin: admin is not registered.", 400),
+    ADMIN_ALREADY_EXISTS("SSRVTRA21001", "Failed to register admin: admin is already registered.", 400),
 
     // 99. Miscellaneous errors (90000 ~ 99999)
     FILE_NOT_FOUND("SSRVTRA0000", "Failed to find file: requested file not found.", 400),

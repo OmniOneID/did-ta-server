@@ -158,7 +158,6 @@ const EntityDetailPage = () => {
                 </Box>
             )}
 
-             {/* 🔹 버튼 영역 (가운데 정렬) */}
             <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 3 }}>
                 <Button variant="contained" color="primary" onClick={() => navigate('/entities/entity-management')}>
                     Back

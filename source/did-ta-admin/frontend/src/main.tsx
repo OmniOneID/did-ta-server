@@ -28,6 +28,8 @@ import VcSchemaManagementPage from './pages/list-provider/vc-schema/VcSchemaMana
 import VcSchemaDetailPage from './pages/list-provider/vc-schema/VcSchemaDetailPage';
 import VcPlanManagementPage from './pages/list-provider/vc-plan/VcPlanManagementPage';
 import VcPlanDetailPage from './pages/list-provider/vc-plan/VcPlanDetailPage';
+import AdminDetailPage from './pages/admins/AdminDetailPage';
+import AdminRegisterPage from './pages/admins/AdminRegisterPage';
 
 const router = createBrowserRouter([
   {
@@ -128,6 +130,14 @@ const router = createBrowserRouter([
           {
             path: 'list-settings/vc-plan',
             Component: VcPlanManagementPage,
+          },
+          {
+            path: 'admin-management/admin-registration',
+            Component: AdminRegisterPage,
+          },
+          {
+            path: 'admin-management/:id',
+            Component: AdminDetailPage,
           },
           {
             path: 'admin-management',

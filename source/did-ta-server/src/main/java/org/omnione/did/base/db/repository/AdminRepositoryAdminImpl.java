@@ -21,10 +21,9 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.omnione.did.base.db.constant.EntityStatus;
-import org.omnione.did.base.db.constant.Role;
-import org.omnione.did.base.db.domain.Entity;
-import org.omnione.did.base.db.domain.QEntity;
+import org.omnione.did.base.db.constant.AdminRole;
+import org.omnione.did.base.db.domain.Admin;
+import org.omnione.did.base.db.domain.QAdmin;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -36,48 +35,41 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-public class EntityRepositoryAdminImpl implements EntityRepositoryAdmin {
+public class AdminRepositoryAdminImpl implements AdminRepositoryAdmin {
     private final JPAQueryFactory queryFactory;
 
-    @Override
-    public Page<Entity> searchEntities(String searchKey, String searchValue, Pageable pageable) {
-        QEntity entity = QEntity.entity;
+    public Page<Admin> searchAdmins(String searchKey, String searchValue, Pageable pageable) {
+        QAdmin qAdmin = QAdmin.admin;
         BooleanExpression predicate = buildPredicate(searchKey, searchValue);
 
         long total = queryFactory
-                .select(entity.count())
-                .from(entity)
+                .select(qAdmin.count())
+                .from(qAdmin)
                 .where(predicate)
                 .fetchOne();
 
-        List<Entity> results = queryFactory
-                .selectFrom(entity)
-                .where(predicate)
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .orderBy(getOrderSpecifier(pageable, entity))
-                .fetch();
+        List<Admin> results = queryFactory
+                    .selectFrom(qAdmin)
+                    .where(predicate)
+                    .offset(pageable.getOffset())
+                    .limit(pageable.getPageSize())
+                    .orderBy(getOrderSpecifier(pageable, qAdmin))
+                    .fetch();
 
         return new PageImpl<>(results, pageable, total);
     }
 
     public BooleanExpression buildPredicate(String searchKey, String searchValue) {
-        QEntity entity = QEntity.entity;
+        QAdmin qAdmin = QAdmin.admin;
         BooleanExpression predicate = Expressions.asBoolean(true).isTrue();
 
         if (searchKey != null && searchValue != null && !searchValue.isEmpty()) {
             switch (searchKey) {
-                case "did":
-                    predicate = predicate.and(entity.did.eq(searchValue));
-                    break;
-                case "name":
-                    predicate = predicate.and(entity.name.eq(searchValue));
+                case "loginId":
+                    predicate = predicate.and(qAdmin.loginId.eq(searchValue));
                     break;
                 case "role":
-                    predicate = predicate.and(entity.role.eq(Role.valueOf(searchValue)));
-                    break;
-                case "status":
-                    predicate = predicate.and(entity.status.eq(EntityStatus.valueOf(searchValue)));
+                    predicate = predicate.and(qAdmin.role.eq(AdminRole.valueOf(searchValue)));
                     break;
                 default:
                     predicate = predicate.and(Expressions.FALSE);
@@ -87,31 +79,29 @@ public class EntityRepositoryAdminImpl implements EntityRepositoryAdmin {
         return predicate;
     }
 
-    public OrderSpecifier<?>[] getOrderSpecifier(Pageable pageable, QEntity entity) {
+    public OrderSpecifier<?>[] getOrderSpecifier(Pageable pageable, QAdmin qAdmin) {
         List<OrderSpecifier<?>> orders = new ArrayList<>();
 
         if (!pageable.getSort().isSorted()) {
-            orders.add(new OrderSpecifier<>(Order.ASC, entity.createdAt));
+            orders.add(new OrderSpecifier<>(Order.ASC, qAdmin.createdAt));
         }
 
         for (Sort.Order order: pageable.getSort()) {
             Order direction = order.isAscending() ? Order.ASC : Order.DESC;
 
             switch (order.getProperty()) {
-                case "did":
-                    orders.add(new OrderSpecifier<>(direction, entity.did));
+                case "loginId":
+                    orders.add(new OrderSpecifier<>(direction, qAdmin.loginId));
                     break;
-                case "status":
-                    orders.add(new OrderSpecifier<>(direction, entity.status));
-                    break;
-                case "name":
-                    orders.add(new OrderSpecifier<>(direction, entity.name));
+                case "role":
+                    orders.add(new OrderSpecifier<>(direction, qAdmin.role));
                     break;
                 default:
-                    orders.add(new OrderSpecifier<>(Order.ASC, entity.createdAt));
+                    orders.add(new OrderSpecifier<>(Order.ASC, qAdmin.createdAt));
                     break;
             }
         }
         return orders.toArray(new OrderSpecifier[0]);
     }
+
 }
