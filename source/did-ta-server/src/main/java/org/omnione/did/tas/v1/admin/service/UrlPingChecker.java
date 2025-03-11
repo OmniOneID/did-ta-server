@@ -38,7 +38,7 @@ import java.net.URL;
 @Transactional
 public class UrlPingChecker {
 
-    private final String HEALTH_CHECK_PATH = "/health";
+    private final String HEALTH_CHECK_PATH = "/actuator/health";
 
     /**
      * Checks if the given URL is reachable.

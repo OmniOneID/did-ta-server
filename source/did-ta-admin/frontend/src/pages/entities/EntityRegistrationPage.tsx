@@ -1,15 +1,15 @@
-import React, { useState }from 'react'
-import { TextField, Typography, SelectChangeEvent, FormControl, InputLabel, Select, MenuItem, FormHelperText, Button, Backdrop, CircularProgress } from '@mui/material'
-import Box from '@mui/material/Box'
-import { useNavigate } from 'react-router';
+import { Button, FormControl, FormHelperText, InputLabel, MenuItem, Select, SelectChangeEvent, TextField, Typography } from '@mui/material';
+import Box from '@mui/material/Box';
 import { useDialogs } from '@toolpad/core/useDialogs';
-import { urlRegex, ipRegex, englishRegex } from '../../utils/regex';
-import CustomConfirmDialog from '../../components/dialog/CustomConfirmDialog';
-import { roles } from '../../constants/roles';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router';
 import { registerEntity, verifyEntityNameUnique } from '../../apis/entity-api';
 import { verifyServerUrl } from '../../apis/server-api';
+import CustomConfirmDialog from '../../components/dialog/CustomConfirmDialog';
 import CustomDialog from '../../components/dialog/CustomDialog';
 import FullscreenLoader from '../../components/loading/FullscreenLoader';
+import { roles } from '../../constants/roles';
+import { englishRegex, ipRegex, urlRegex } from '../../utils/regex';
 
 type Props = {}
 
@@ -97,9 +97,19 @@ const EntityRegistrationPage = (props: Props) => {
             setIsServerValid(false);
             return;
         }
+
+        let baseUrl;
+        try {
+            const url = new URL(formData.serverUrl);
+            baseUrl = `${url.protocol}//${url.host}`;
+        } catch (error) {
+            setErrors((prev) => ({ ...prev, serverUrl: 'Invalid URL format.' }));
+            setIsServerValid(false);
+            return;
+        }
     
         try {
-            const response = await verifyServerUrl({ serverUrl: formData.serverUrl });
+            const response = await verifyServerUrl({ serverUrl: baseUrl });
             if (response.data.isAvailable === false) {
                 setErrors((prev) => ({ ...prev, serverUrl: 'Test Connection failed.' }));
                 setIsServerValid(false);

@@ -37,11 +37,10 @@ management:
   endpoints:
     web:
       exposure:
-        include: "health,info"
-      base-path: "/tas/health"
+        include: "health"
   endpoint:
     health:
-      show-details: "always"
+      show-details: "never"
 
 server:
   port: 8090
