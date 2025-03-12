@@ -9,6 +9,7 @@ import CustomConfirmDialog from '../../components/dialog/CustomConfirmDialog';
 import CustomDialog from '../../components/dialog/CustomDialog';
 import { verifyAdminIdUnique, registerAdmin } from '../../apis/admin-api';
 import { emailRegex } from '../../utils/regex';
+import { sha256Hash } from '../../utils/sha256-hash';
 
 type Props = {}
 
@@ -90,14 +91,6 @@ const AdminRegisterPage = (props: Props) => {
         return undefined;
     };
 
-    const hashPassword = async (password: string): Promise<string> => {
-        const encoder = new TextEncoder();
-        const data = encoder.encode(password);
-        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        return hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
-    };
-
     const handleSubmit = async () => {
         if (!validate()) return;
 
@@ -110,7 +103,7 @@ const AdminRegisterPage = (props: Props) => {
         if (result) {
             setIsLoading(true);
 
-            const hashedPassword = await hashPassword(formData.loginPassword);
+            const hashedPassword = await sha256Hash(formData.loginPassword);
             let requestObject = {
                 loginId: formData.loginId,
                 loginPassword: hashedPassword,

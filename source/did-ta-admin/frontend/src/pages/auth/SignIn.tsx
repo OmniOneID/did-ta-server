@@ -5,15 +5,7 @@ import { useNavigate } from 'react-router';
 import { requestLogin, requestPasswordReset } from '../../apis/admin-api';
 import { useSession } from '../../context/SessionContext';
 import PasswordResetDialog from './PasswordResetDialog';
-
-async function hashPassword(password: string): Promise<string> {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(password);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-  return Array.from(new Uint8Array(hashBuffer))
-    .map(b => b.toString(16).padStart(2, '0'))
-    .join('');
-}
+import { sha256Hash } from '../../utils/sha256-hash';
 
 export default function SignIn() {
   const { setSession } = useSession();
@@ -32,7 +24,7 @@ export default function SignIn() {
     try {
       const email = formData?.get('email') as string;
       const password = formData?.get('password') as string;
-      const hashedPassword = await hashPassword(password);
+      const hashedPassword = await sha256Hash(password);
 
       const { data } = await requestLogin({
         loginId: email,
@@ -73,7 +65,7 @@ export default function SignIn() {
     if (!loginData) return;
 
     try {
-      const newHashedPassword = await hashPassword(newPassword);
+      const newHashedPassword = await sha256Hash(newPassword);
       await requestPasswordReset({
         loginId: loginData.email,
         oldPassword: loginData.hashedPassword,

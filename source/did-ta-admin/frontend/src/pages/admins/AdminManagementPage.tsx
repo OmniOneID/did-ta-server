@@ -12,6 +12,7 @@ import { fetchAdminList, deleteAdmin, requestPasswordResetByRoot } from '../../a
 import PasswordResetDialog from '../auth/PasswordResetDialog';
 import { useSession } from '../../context/SessionContext';
 import { formatErrorMessage } from '../../utils/error-handler';
+import { sha256Hash } from '../../utils/sha256-hash';
 
 type Props = {}
 
@@ -96,7 +97,7 @@ const AdminManagementPage = (props: Props) => {
         });
 
         if (result) {
-          const hashedPassword = await hashPassword(newPassword);
+          const hashedPassword = await sha256Hash(newPassword);
           await requestPasswordResetByRoot({
                   loginId: selectedRowData.loginId,
                   newPassword: hashedPassword,
@@ -113,19 +114,6 @@ const AdminManagementPage = (props: Props) => {
       } finally {
         setRequirePasswordReset(false);
       }
-    };
-
-    async function hashPassword(password: string): Promise<string> {
-      const encoder = new TextEncoder();
-      const data = encoder.encode(password);
-      const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-      return Array.from(new Uint8Array(hashBuffer))
-        .map(b => b.toString(16).padStart(2, '0'))
-        .join('');
-    }
-
-    const handleOpenPasswordDialog = () => {
-      setRequirePasswordReset(true);
     };
 
     useEffect(() => {

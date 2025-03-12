@@ -7,6 +7,7 @@ import { requestPasswordReset } from '../../apis/admin-api';
 import PasswordChangeDialog from '../../pages/auth/PasswordChangeDialog';
 import CustomConfirmDialog from '../dialog/CustomConfirmDialog';
 import CustomDialog from '../dialog/CustomDialog';
+import { sha256Hash } from '../../utils/sha256-hash';
 
 const AccountMenu = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -43,8 +44,8 @@ const AccountMenu = () => {
 
     try {
       if (result) {
-        const oldHashedPassword = await hashPassword(oldPassword);
-        const newHashedPassword = await hashPassword(newPassword);
+        const oldHashedPassword = await sha256Hash(oldPassword);
+        const newHashedPassword = await sha256Hash(newPassword);
         
         if (!session || !session.user || !session.user.id) {
           console.error("Session or user ID is null. Cannot reset password.");
@@ -72,15 +73,6 @@ const AccountMenu = () => {
         });
     }
   };
-
-  async function hashPassword(password: string): Promise<string> {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(password);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    return Array.from(new Uint8Array(hashBuffer))
-      .map(b => b.toString(16).padStart(2, '0'))
-      .join('');
-  }
 
   const open = Boolean(anchorEl);
 
