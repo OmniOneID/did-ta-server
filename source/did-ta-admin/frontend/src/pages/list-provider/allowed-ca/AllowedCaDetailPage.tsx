@@ -5,7 +5,7 @@ import { Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableH
 import CustomDialog from '../../../components/dialog/CustomDialog';
 import { getAllowedCaInfo } from '../../../apis/list-api';
 import FullscreenLoader from '../../../components/loading/FullscreenLoader';
-import { formatErrorMessage } from '../../../utils/errorHandler';
+import { formatErrorMessage } from '../../../utils/error-handler';
 
 type Props = {}
 

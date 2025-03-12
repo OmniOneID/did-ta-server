@@ -9,7 +9,7 @@ import CustomDialog from '../../../components/dialog/CustomDialog';
 import FullscreenLoader from '../../../components/loading/FullscreenLoader';
 import { emailRegex, hostRegex, portRegex } from '../../../utils/regex';
 import TestEmailDialog from './TestEmailDialog';
-import { formatErrorMessage } from '../../../utils/errorHandler';
+import { formatErrorMessage } from '../../../utils/error-handler';
 
 type Props = {}
 

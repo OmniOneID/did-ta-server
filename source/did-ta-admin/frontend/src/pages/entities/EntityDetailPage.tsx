@@ -4,7 +4,7 @@ import { getEntityInfo } from '../../apis/entity-api';
 import { CircularProgress, Box, Typography, TextField, Button, Popover } from '@mui/material';
 import CustomDialog from '../../components/dialog/CustomDialog';
 import { useDialogs } from '@toolpad/core/useDialogs';
-import { formatErrorMessage } from '../../utils/errorHandler';
+import { formatErrorMessage } from '../../utils/error-handler';
 
 const EntityDetailPage = () => {
     const { entityId } = useParams();

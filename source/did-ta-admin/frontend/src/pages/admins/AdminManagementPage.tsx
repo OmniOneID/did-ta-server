@@ -11,7 +11,7 @@ import CustomDialog from '../../components/dialog/CustomDialog';
 import { fetchAdminList, deleteAdmin, requestPasswordResetByRoot } from '../../apis/admin-api';
 import PasswordResetDialog from '../auth/PasswordResetDialog';
 import { useSession } from '../../context/SessionContext';
-import { formatErrorMessage } from '../../utils/errorHandler';
+import { formatErrorMessage } from '../../utils/error-handler';
 
 type Props = {}
 

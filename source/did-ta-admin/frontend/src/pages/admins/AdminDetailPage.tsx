@@ -5,7 +5,7 @@ import { Box, Button, Popover, TextField, Typography, useTheme } from '@mui/mate
 import CustomDialog from '../../components/dialog/CustomDialog';
 import FullscreenLoader from '../../components/loading/FullscreenLoader';
 import { getAdminInfo } from '../../apis/admin-api';
-import { formatErrorMessage } from '../../utils/errorHandler';
+import { formatErrorMessage } from '../../utils/error-handler';
 
 type Props = {}
 

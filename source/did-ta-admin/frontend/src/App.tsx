@@ -9,7 +9,7 @@ import { getTaInfo } from './apis/ta-api';
 import { getNavigationByStatus } from './config/navigationConfig';
 import LoadingOverlay from './components/loading/LoadingOverlay';
 import { createTheme } from '@mui/material';
-import { formatErrorMessage } from './utils/errorHandler';
+import { formatErrorMessage } from './utils/error-handler';
 
 function AppContent() {
   const navigate = useNavigate();

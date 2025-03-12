@@ -8,7 +8,7 @@ import CustomDataGrid from '../../../components/data-grid/CustomDataGrid';
 import CustomConfirmDialog from '../../../components/dialog/CustomConfirmDialog';
 import CustomDialog from '../../../components/dialog/CustomDialog';
 import { fetchVcSchemaList } from '../../../apis/list-api';
-import { formatErrorMessage } from '../../../utils/errorHandler';
+import { formatErrorMessage } from '../../../utils/error-handler';
 
 type Props = {}
 

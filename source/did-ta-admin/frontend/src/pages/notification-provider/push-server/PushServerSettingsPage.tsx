@@ -8,7 +8,7 @@ import { Box, Button, FormControl, FormHelperText, Typography } from '@mui/mater
 import { getNotificationServerStatus, registerPushServerInfo } from '../../../apis/noti-api';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { formatErrorMessage } from '../../../utils/errorHandler';
+import { formatErrorMessage } from '../../../utils/error-handler';
 
 type Props = {}
 

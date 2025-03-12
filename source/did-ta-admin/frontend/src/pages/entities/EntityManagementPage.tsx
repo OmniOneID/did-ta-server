@@ -7,7 +7,7 @@ import { fetchEntities, registerEntitiesSimple } from '../../apis/entity-api';
 import CustomDataGrid from '../../components/data-grid/CustomDataGrid';
 import CustomConfirmDialog from '../../components/dialog/CustomConfirmDialog';
 import FullscreenLoader from '../../components/loading/FullscreenLoader';
-import { formatErrorMessage } from '../../utils/errorHandler';
+import { formatErrorMessage } from '../../utils/error-handler';
 
 type Props = {}
 

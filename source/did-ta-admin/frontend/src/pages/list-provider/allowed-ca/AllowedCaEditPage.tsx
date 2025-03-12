@@ -8,7 +8,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CustomConfirmDialog from '../../../components/dialog/CustomConfirmDialog';
 import { updateAllowedCa, verifyWalletIdUnique, getAllowedCaInfo } from '../../../apis/list-api';
 import CustomDialog from '../../../components/dialog/CustomDialog';
-import { formatErrorMessage } from '../../../utils/errorHandler';
+import { formatErrorMessage } from '../../../utils/error-handler';
 
 type Props = {}
 

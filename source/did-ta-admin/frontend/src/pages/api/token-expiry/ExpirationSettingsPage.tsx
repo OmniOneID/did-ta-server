@@ -6,7 +6,7 @@ import { useDialogs } from '@toolpad/core';
 import CustomConfirmDialog from '../../../components/dialog/CustomConfirmDialog';
 import CustomDialog from '../../../components/dialog/CustomDialog';
 import { getExpirationSettingInfo, registerExpirationSettingInfo } from '../../../apis/api-api';
-import { formatErrorMessage } from '../../../utils/errorHandler';
+import { formatErrorMessage } from '../../../utils/error-handler';
 
 type Props = {}
 
