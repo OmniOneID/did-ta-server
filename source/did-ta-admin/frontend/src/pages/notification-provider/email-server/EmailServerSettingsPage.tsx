@@ -45,18 +45,19 @@ const EmailServerSettingsPage = (props: Props) => {
     const dialogs = useDialogs();
 
     const [isLoading, setIsLoading] = useState(true);
-    const [formData, setFormData] = useState<EmailServerFormData>({ host: undefined, port: undefined, username: undefined, password: undefined, startTlsEnabled: undefined, sslEnabled: undefined, connectionTimeout: undefined, readTimeout: undefined, writeTimeout: undefined, sender: undefined, ignoreSslValidation: undefined });
+    const [formData, setFormData] = useState<EmailServerFormData>({ host: undefined, port: undefined, username: undefined, password: undefined, startTlsEnabled: true, sslEnabled: false, connectionTimeout: undefined, readTimeout: undefined, writeTimeout: undefined, sender: undefined, ignoreSslValidation: false });
     const [errors, setErrors] = useState<ErrorState>({});
     const [isEditMode, setIsEditMode] = useState(false);
-    const [initialData, setInitialData] = useState<EmailServerFormData>({ host: undefined, port: undefined, username: undefined, password: undefined, startTlsEnabled: undefined, sslEnabled: undefined, connectionTimeout: undefined, readTimeout: undefined, writeTimeout: undefined, sender: undefined, ignoreSslValidation: undefined });
+    const [initialData, setInitialData] = useState<EmailServerFormData>({ host: undefined, port: undefined, username: undefined, password: undefined, startTlsEnabled: true, sslEnabled: false, connectionTimeout: undefined, readTimeout: undefined, writeTimeout: undefined, sender: undefined, ignoreSslValidation: false });
     const [isButtonDisabled, setIsButtonDisabled] = useState(true);
     const [showPassword, setShowPassword] = useState(false);
     const [isTestDialogOpen, setIsTestDialogOpen] = useState(false);
 
-    const handleChange = (field: keyof EmailServerFormData) => (event: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = event.target.type === "checkbox" ? event.target.checked : event.target.value;
+    const handleChange = (field: keyof EmailServerFormData) => (event: React.ChangeEvent<HTMLInputElement>, checked?: boolean) => {
+        const newValue = event.target.type === "checkbox" || typeof checked === "boolean" ? checked ?? event.target.checked : event.target.value;
         setFormData((prev) => ({ ...prev, [field]: newValue }));
     };
+    
     
     const handleReset = () => {
         setFormData(initialData);
@@ -131,7 +132,7 @@ const EmailServerSettingsPage = (props: Props) => {
     };
 
     const validateEnableSsl = (sslEnabled?: boolean): string | undefined => {
-        if (sslEnabled === undefined) return 'Please select a value.';
+        if (sslEnabled === undefined || sslEnabled === null)  return 'Please select a value.';
         return undefined;
     };
 
@@ -195,6 +196,7 @@ const EmailServerSettingsPage = (props: Props) => {
 
     const handleTestEmailSubmit = async (email: string) => {
         setIsTestDialogOpen(false);
+        setIsLoading(true);
 
         const testEmailFormData = {
             ...formData,
@@ -202,19 +204,17 @@ const EmailServerSettingsPage = (props: Props) => {
         };
 
         await sendTestEmail(testEmailFormData).then((response) => {
-            setIsLoading(false);
             dialogs.open(CustomDialog, {
                 title: 'Notification',
                 message: 'Completed test email sending.',
                 isModal: true,
-            });
+            },{onClose: async (result) =>  setIsLoading(false),});
         }).catch((error) => {
-            setIsLoading(false);
             dialogs.open(CustomDialog, {
                 title: 'Notification',
                 message: `Failed to send teset email: ${error}`,
                 isModal: true,
-            });
+            },{onClose: async (result) =>  setIsLoading(false),});
           });
     };
 
@@ -222,12 +222,13 @@ const EmailServerSettingsPage = (props: Props) => {
         const fetchData = async () => {
             try {
                 const { data } = await getEmailServerInfo();
-                if (data) {
+                if (data?.host) {
                     setFormData(data);
+                    console.log(formData);
                     setInitialData(data);
                     setIsEditMode(true);
-                    setIsLoading(false);
                 }
+                setIsLoading(false);
             } catch (error) {
                 setIsLoading(false);
                 navigate('/error', { state: { message: `Failed to retrieve Email Server Settings: ${error}` } })
@@ -262,7 +263,7 @@ const EmailServerSettingsPage = (props: Props) => {
                     <Typography variant="body1" sx={{ mt: 1 }}>
                         If the email server uses a self-signed certificate or an untrusted SSL certificate, 
                         you can enable the "Ignore SSL Check" option to bypass SSL validation during communication.
-                        However, this is <strong>not recommended for production environments**.</strong>
+                        However, this is <strong>not recommended for production environments.</strong>
                     </Typography>
                 </Box>
             </Box>
@@ -467,11 +468,10 @@ const EmailServerSettingsPage = (props: Props) => {
                 </Button>
             </Box>
 
-             {/* 다이어로그 */}
             <TestEmailDialog
                 open={isTestDialogOpen}
                 onClose={() => setIsTestDialogOpen(false)}
-                onSubmit={handleTestEmailSubmit} // 부모로 이메일 전달
+                onSubmit={handleTestEmailSubmit}
             />
         </>
     )
