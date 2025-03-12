@@ -77,8 +77,18 @@ const KycSettingPage: React.FC = () => {
       return;
     }
 
+    let baseUrl;
     try {
-      const response = await verifyServerUrl({ serverUrl: formData.serverUrl });
+        const url = new URL(formData.serverUrl);
+        baseUrl = `${url.protocol}//${url.host}`;
+    } catch (error) {
+        setErrors((prev) => ({ ...prev, serverUrl: 'Invalid URL format.' }));
+        setIsServerValid(false);
+        return;
+    }
+
+    try {
+      const response = await verifyServerUrl({ serverUrl: baseUrl });
       if (response.data.isAvailable) {
         setIsServerValid(true);
         setErrors((prev) => ({ ...prev, serverUrl: undefined }));
