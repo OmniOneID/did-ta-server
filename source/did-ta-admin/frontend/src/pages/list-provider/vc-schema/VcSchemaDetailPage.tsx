@@ -138,7 +138,7 @@ const VcSchemaDetailPage = (props: Props) => {
 
                     <TextField 
                         fullWidth
-                        label="Issuer" 
+                        label="Issuer Name" 
                         variant="standard"
                         margin="normal" 
                         value={formData.issuerName || ''} 

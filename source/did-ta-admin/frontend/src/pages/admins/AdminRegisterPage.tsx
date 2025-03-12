@@ -156,6 +156,18 @@ const AdminRegisterPage = (props: Props) => {
         });
     };
 
+    const handleCancel = async () => {
+        const result = await dialogs.open(CustomConfirmDialog, {
+            title: 'Confirmation',
+            message: 'Are you sure you want to cancel admin registration?',
+            isModal: true,
+        });
+
+        if (result) {
+            navigate('/admin-management');
+        }
+    };
+
     useEffect(() => {
         const isModified = Object.entries(formData).some(([key, value]) => {
             if (key === 'role') return false;
@@ -239,8 +251,8 @@ const AdminRegisterPage = (props: Props) => {
                     />
 
                     <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 3 }}>
-                        <Button variant="contained" color="secondary" onClick={() => navigate('/list-settings/allowed-ca')}>
-                            Back
+                        <Button variant="contained" color="secondary" onClick={handleCancel}>
+                            Cancel
                         </Button>
                         <Button variant="contained" color="secondary" onClick={handleReset}>Reset</Button>
                         <Button variant="contained" color="primary" onClick={handleSubmit} disabled={isButtonDisabled}>Register</Button>

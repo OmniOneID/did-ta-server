@@ -171,6 +171,18 @@ const AllowedCaEditPage = (props: Props) => {
             });
         }
     };
+
+    const handleCancel = async () => {
+        const result = await dialogs.open(CustomConfirmDialog, {
+            title: 'Confirmation',
+            message: 'Are you sure you want to cancel Allowed Ca List modification?',
+            isModal: true,
+        });
+
+        if (result) {
+            navigate('/list-settings/allowed-ca');
+        }
+    };
     
     useEffect(() => {
         const fetchData = async () => {
@@ -282,8 +294,8 @@ const AllowedCaEditPage = (props: Props) => {
                     </TableContainer>
 
                     <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 3 }}>
-                        <Button variant="contained" color="secondary" onClick={() => navigate('/list-settings/allowed-ca')}>
-                            Back
+                        <Button variant="contained" color="secondary" onClick={handleCancel}>
+                            Cancel
                         </Button>
                         <Button variant="contained" color="secondary" onClick={handleReset}>Reset</Button>
                         <Button variant="contained" color="primary" onClick={handleSubmit} disabled={isButtonDisabled}>Update</Button>

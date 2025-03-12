@@ -1,4 +1,4 @@
-import { Box, Button, Popover, TextField, Typography } from '@mui/material';
+import { Box, Button, Popover, TextField, Typography, useMediaQuery, useTheme } from '@mui/material';
 import React, { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router';
 import { useServerStatus } from '../../context/ServerStatusContext';
@@ -8,6 +8,8 @@ export default function TrustAgentManagementPage() {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const { setServerStatus, setTaInfo, serverStatus } = useServerStatus();
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
   if (!taInfo) {
     return (
@@ -60,6 +62,15 @@ export default function TrustAgentManagementPage() {
         anchorEl={anchorEl}
         onClose={handlePopoverClose}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        slotProps={{
+          paper: {
+            sx: {
+              p: 2,
+              maxWidth: isSmallScreen ? '90vw' : 500,
+              width: '100%',
+            },
+          },
+        }}
       >
         <Box sx={{ p: 2, maxWidth: 500 }}>
           <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>

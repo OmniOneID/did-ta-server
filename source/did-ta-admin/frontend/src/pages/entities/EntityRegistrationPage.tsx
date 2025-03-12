@@ -230,7 +230,7 @@ const EntityRegistrationPage = (props: Props) => {
         if (result) {
           navigate('/entities/entity-management');
         }
-      };
+    };
 
     const handleReset = () => {
         setFormData({

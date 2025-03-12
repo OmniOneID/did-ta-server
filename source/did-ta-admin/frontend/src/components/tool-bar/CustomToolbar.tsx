@@ -55,17 +55,17 @@ export default function CustomToolbar({
 
       <Box sx={{ display: 'flex', gap: '4px', justifyContent: 'flex-end', flex: enableSearch ? 1 : 'auto', width: '100%' }}>
         {onRegister && (
-          <Button variant="contained" color="primary" onClick={onRegister}>
+          <Button variant="contained" color="primary" onClick={onRegister} size='small'>
             Register
           </Button>
         )}
         {onEdit && (
-          <Button variant="contained" color="primary" onClick={onEdit} disabled={disableEdit}>
+          <Button variant="contained" color="primary" onClick={onEdit} disabled={disableEdit} size='medium'>
             Update
           </Button>
         )}
         {onDelete && (
-          <Button variant="contained" color="error" onClick={onDelete} disabled={disableDelete}>
+          <Button variant="contained" color="error" onClick={onDelete} disabled={disableDelete} size='small'>
             Delete
           </Button>
         )}
@@ -76,6 +76,7 @@ export default function CustomToolbar({
             color={btn.color || 'primary'}
             onClick={btn.onClick}
             disabled={btn.disabled}
+            size='small'
           >
             {btn.label}
           </Button>

@@ -151,8 +151,8 @@ const AdminManagementPage = (props: Props) => {
                     </Link>),
                 },
                 { field: 'role', headerName: "Role", width: 150},
-                { field: 'createdAt', headerName: "Registered At", width: 100},
-                { field: 'updatedAt', headerName: "Updated At", width: 100},
+                { field: 'createdAt', headerName: "Registered At", width: 150},
+                { field: 'updatedAt', headerName: "Updated At", width: 150},
             ]} 
             selectedRow={selectedRow} 
             setSelectedRow={setSelectedRow}

@@ -80,7 +80,7 @@ const VcPlanManagementPage = (props: Props) => {
                     },
                     { field: 'name', headerName: "Name", width: 200},
                     { field: 'description', headerName: "Description", width: 250},
-                    { field: 'issuerName', headerName: "Issuer", width: 100},
+                    { field: 'issuerName', headerName: "Issuer Name", width: 100},
                     { field: 'createdAt', headerName: "Registered At", width: 100},
                     { field: 'updatedAt', headerName: "Updated At", width: 100},
                 ]} 

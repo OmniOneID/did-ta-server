@@ -210,12 +210,14 @@ const EmailServerSettingsPage = (props: Props) => {
                 message: 'Completed test email sending.',
                 isModal: true,
             },{onClose: async (result) =>  setIsLoading(false),});
+            setIsLoading(false)
         }).catch((error) => {
             dialogs.open(CustomDialog, {
                 title: 'Notification',
                 message: `Failed to send teset email: ${error}`,
                 isModal: true,
             },{onClose: async (result) =>  setIsLoading(false),});
+            setIsLoading(false)
           });
     };
 

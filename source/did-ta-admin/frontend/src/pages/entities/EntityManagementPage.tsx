@@ -72,7 +72,7 @@ const EntityManagementPage = (props: Props) => {
       <CustomDataGrid 
           rows={rows} 
           columns={[
-            { field: 'did', headerName: "Did", width: 200},
+            { field: 'did', headerName: "DID", width: 200},
             { 
               field: 'name', 
               headerName: "Name", 

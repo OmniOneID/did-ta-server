@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import { getEntityInfo } from '../../apis/entity-api';
-import { CircularProgress, Box, Typography, TextField, Button, Popover } from '@mui/material';
+import { CircularProgress, Box, Typography, TextField, Button, Popover, useTheme, useMediaQuery } from '@mui/material';
 import CustomDialog from '../../components/dialog/CustomDialog';
 import { useDialogs } from '@toolpad/core/useDialogs';
 import { formatErrorMessage } from '../../utils/error-handler';
@@ -16,6 +16,9 @@ const EntityDetailPage = () => {
     const [entityData, setEntityData] = useState<any>(null); 
 
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+
+    const theme = useTheme();
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
     useEffect(() => {
         const fetchData = async () => {
@@ -93,6 +96,15 @@ const EntityDetailPage = () => {
                         anchorEl={anchorEl}
                         onClose={handlePopoverClose}
                         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+                        slotProps={{
+                            paper: {
+                                sx: {
+                                p: 2,
+                                maxWidth: isSmallScreen ? '90vw' : 500,
+                                width: '100%',
+                                },
+                            },
+                        }}
                     >
                         <Box sx={{ p: 2, maxWidth: 500 }}>
                             <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
