@@ -5,6 +5,7 @@ import { Box, Button, Popover, TextField, Typography, useTheme } from '@mui/mate
 import CustomDialog from '../../components/dialog/CustomDialog';
 import FullscreenLoader from '../../components/loading/FullscreenLoader';
 import { getAdminInfo } from '../../apis/admin-api';
+import { formatErrorMessage } from '../../utils/errorHandler';
 
 type Props = {}
 
@@ -57,7 +58,7 @@ const AdminDetailPage = (props: Props) => {
             } catch (err) {
                   console.error('Failed to fetch Admin information:', err);
                   setIsLoading(false);
-                  navigate('/error', { state: { message: `Failed to fetch Admin Schema: ${err}` } });
+                  navigate('/error', { state: { message: formatErrorMessage(err, "Failed to fetch Admin Schema") } });
             }
         };
 

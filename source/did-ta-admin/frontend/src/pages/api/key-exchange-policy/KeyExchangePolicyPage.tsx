@@ -8,6 +8,7 @@ import { getKeyExchangePolicyInfo, registerKeyExchangePolicyInfo } from '../../.
 import FullscreenLoader from '../../../components/loading/FullscreenLoader';
 import CustomConfirmDialog from '../../../components/dialog/CustomConfirmDialog';
 import CustomDialog from '../../../components/dialog/CustomDialog';
+import { formatErrorMessage } from '../../../utils/errorHandler';
 
 type Props = {}
 
@@ -101,9 +102,9 @@ const KeyExchangePolicyPage = (props: Props) => {
               setIsEditMode(true);
               setIsLoading(false);
             }
-          } catch (error) {
+          } catch (err) {
             setIsLoading(false);
-            navigate('/error', { state: { message: `Failed to retrieve Key Exchange Policy Settings: ${error}` } })
+            navigate('/error', { state: { message: formatErrorMessage(err, "Failed to retrieve Key Exchange Policy Settings") } });
           } finally {
             setIsLoading(false);
           }

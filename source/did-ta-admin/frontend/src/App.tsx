@@ -9,6 +9,7 @@ import { getTaInfo } from './apis/ta-api';
 import { getNavigationByStatus } from './config/navigationConfig';
 import LoadingOverlay from './components/loading/LoadingOverlay';
 import { createTheme } from '@mui/material';
+import { formatErrorMessage } from './utils/errorHandler';
 
 function AppContent() {
   const navigate = useNavigate();
@@ -53,7 +54,7 @@ function AppContent() {
           setIsLoading(false);
         })
         .catch((err) => {
-          navigate('/error', { state: { message: `Failed to connect server: ${err}` } });
+          navigate('/error', { state: { message: formatErrorMessage(err, "Failed to fetch Trust Agent Information") } });
           setIsLoading(false);
         });
     };

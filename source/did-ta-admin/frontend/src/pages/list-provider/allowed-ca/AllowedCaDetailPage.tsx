@@ -5,6 +5,7 @@ import { Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableH
 import CustomDialog from '../../../components/dialog/CustomDialog';
 import { getAllowedCaInfo } from '../../../apis/list-api';
 import FullscreenLoader from '../../../components/loading/FullscreenLoader';
+import { formatErrorMessage } from '../../../utils/errorHandler';
 
 type Props = {}
 
@@ -51,7 +52,7 @@ const AllowedCaDetailPage = (props: Props) => {
             } catch (err) {
                   console.error('Failed to fetch Allowed CA List information:', err);
                   setIsLoading(false);
-                  navigate('/error', { state: { message: `Failed to fetch Allowed CA List: ${err}` } });
+                  navigate('/error', { state: { message: formatErrorMessage(err, "Failed to fetch Allowed CA List") } });
             }
         };
 

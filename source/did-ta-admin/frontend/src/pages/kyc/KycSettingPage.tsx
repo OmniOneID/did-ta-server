@@ -8,6 +8,7 @@ import { getKycInfo, registerKycInfo } from '../../apis/kyc-api';
 import { useDialogs } from '@toolpad/core/useDialogs';
 import CustomConfirmDialog from '../../components/dialog/CustomConfirmDialog';
 import CustomDialog from '../../components/dialog/CustomDialog';
+import { formatErrorMessage } from '../../utils/errorHandler';
 
 interface KycFormData {
   name?: string;
@@ -39,9 +40,9 @@ const KycSettingPage: React.FC = () => {
           setInitialData(data);
           setIsEditMode(true);
         }
-      } catch (error) {
+      } catch (err) {
         setIsLoading(false);
-        navigate('/error', { state: { message: `Failed to retrieve KYC: ${error}` } })
+        navigate('/error', { state: { message: formatErrorMessage(err, "Failed to fetch KYC Server Settings") } });
       } finally {
         setIsLoading(false);
       }

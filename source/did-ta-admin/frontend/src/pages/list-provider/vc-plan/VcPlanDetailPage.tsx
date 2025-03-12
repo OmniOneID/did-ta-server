@@ -5,6 +5,7 @@ import { Box, Button, Popover, TextField, Typography, useTheme } from '@mui/mate
 import CustomDialog from '../../../components/dialog/CustomDialog';
 import { getVcPlanInfo } from '../../../apis/list-api';
 import FullscreenLoader from '../../../components/loading/FullscreenLoader';
+import { formatErrorMessage } from '../../../utils/errorHandler';
 
 type Props = {}
 
@@ -76,7 +77,7 @@ const VcPlanDetailPage = (props: Props) => {
             } catch (err) {
                   console.error('Failed to fetch VC Plan information:', err);
                   setIsLoading(false);
-                  navigate('/error', { state: { message: `Failed to fetch Vc Plan: ${err}` } });
+                  navigate('/error', { state: { message: formatErrorMessage(err, "Failed to fetch Vc Plan") } });
             }
         };
 

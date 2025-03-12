@@ -8,6 +8,7 @@ import { Box, Button, FormControl, FormHelperText, Typography } from '@mui/mater
 import { getNotificationServerStatus, registerPushServerInfo } from '../../../apis/noti-api';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { formatErrorMessage } from '../../../utils/errorHandler';
 
 type Props = {}
 
@@ -139,9 +140,9 @@ const PushServerSettingsPage = (props: Props) => {
             };
 
             fetchData();
-        } catch (error) {
+        } catch (err) {
             setIsLoading(false);
-            navigate('/error', { state: { message: `Failed to Find Push Server Settings: ${error}` } })
+            navigate('/error', { state: { message: formatErrorMessage(err, "Failed to Find Push Server Settings") } });
         }
     }, []);
 

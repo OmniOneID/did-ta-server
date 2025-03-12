@@ -8,6 +8,7 @@ import FullscreenLoader from '../../../components/loading/FullscreenLoader';
 import CustomDataGrid from '../../../components/data-grid/CustomDataGrid';
 import CustomConfirmDialog from '../../../components/dialog/CustomConfirmDialog';
 import CustomDialog from '../../../components/dialog/CustomDialog';
+import { formatErrorMessage } from '../../../utils/errorHandler';
 
 type Props = {}
 
@@ -60,9 +61,9 @@ const AllowedCaManagementPage = (props: Props) => {
                   },
                 });
               })
-              .catch((error) => {
-                console.error("Failed to delete Allowed Ca Clist. ", error);
-                navigate('/error', { state: { message: `Failed to delete Allowed Ca List: ${error}` } });
+              .catch((err) => {
+                console.error("Failed to delete Allowed Ca Clist. ", err);
+                navigate('/error', { state: { message: formatErrorMessage(err, "Failed to delete Allowed Ca List") } });
               })
               .finally(() => setLoading(false));
           }
@@ -76,9 +77,9 @@ const AllowedCaManagementPage = (props: Props) => {
             setRows(response.data.content);
             setTotalRows(response.data.totalElements);
           })
-          .catch((error) => {
-            console.error("Failed to retrieve Allowed CA List. ", error);
-            navigate('/error', { state: { message: `Failed to retrieve Allowed Ca List: ${error}` } });
+          .catch((err) => {
+            console.error("Failed to fetch Allowed CA Lists. ", err);
+            navigate('/error', { state: { message: formatErrorMessage(err, "Failed to fetch Allowed Ca Lists") } });
           })
           .finally(() => setLoading(false));
     }, [paginationModel]);

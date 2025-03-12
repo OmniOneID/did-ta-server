@@ -4,6 +4,7 @@ import { getEntityInfo } from '../../apis/entity-api';
 import { CircularProgress, Box, Typography, TextField, Button, Popover } from '@mui/material';
 import CustomDialog from '../../components/dialog/CustomDialog';
 import { useDialogs } from '@toolpad/core/useDialogs';
+import { formatErrorMessage } from '../../utils/errorHandler';
 
 const EntityDetailPage = () => {
     const { entityId } = useParams();
@@ -38,7 +39,7 @@ const EntityDetailPage = () => {
             } catch (err) {
                 console.error('Failed to fetch Entity information:', err);
                 setIsLoading(false);
-                navigate('/error', { state: { message: `Failed to Entity information: ${err}` } })
+                navigate('/error', { state: { message: formatErrorMessage(err, "Failed to fetch Entity information") } });
             } 
         };
         fetchData();

@@ -9,6 +9,7 @@ import CustomDialog from '../../../components/dialog/CustomDialog';
 import FullscreenLoader from '../../../components/loading/FullscreenLoader';
 import { emailRegex, hostRegex, portRegex } from '../../../utils/regex';
 import TestEmailDialog from './TestEmailDialog';
+import { formatErrorMessage } from '../../../utils/errorHandler';
 
 type Props = {}
 
@@ -229,9 +230,9 @@ const EmailServerSettingsPage = (props: Props) => {
                     setIsEditMode(true);
                 }
                 setIsLoading(false);
-            } catch (error) {
+            } catch (err) {
                 setIsLoading(false);
-                navigate('/error', { state: { message: `Failed to retrieve Email Server Settings: ${error}` } })
+                navigate('/error', { state: { message: formatErrorMessage(err, "Failed to fetch Email Server Settings") } });
             } 
         };
 

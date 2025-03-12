@@ -8,6 +8,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CustomConfirmDialog from '../../../components/dialog/CustomConfirmDialog';
 import { updateAllowedCa, verifyWalletIdUnique, getAllowedCaInfo } from '../../../apis/list-api';
 import CustomDialog from '../../../components/dialog/CustomDialog';
+import { formatErrorMessage } from '../../../utils/errorHandler';
 
 type Props = {}
 
@@ -199,7 +200,7 @@ const AllowedCaEditPage = (props: Props) => {
             } catch (err) {
                   console.error('Failed to fetch Allowed CA List information:', err);
                   setIsLoading(false);
-                  navigate('/error', { state: { message: `Failed to fetch Allowed CA List: ${err}` } });
+                  navigate('/error', { state: { message: formatErrorMessage(err, "Failed to fetch Allowed CA List Information") } });
             }
         };
 

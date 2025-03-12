@@ -8,6 +8,7 @@ import CustomDataGrid from '../../../components/data-grid/CustomDataGrid';
 import CustomConfirmDialog from '../../../components/dialog/CustomConfirmDialog';
 import CustomDialog from '../../../components/dialog/CustomDialog';
 import { fetchVcSchemaList } from '../../../apis/list-api';
+import { formatErrorMessage } from '../../../utils/errorHandler';
 
 type Props = {}
 
@@ -49,9 +50,9 @@ const VcSchemaManagementPage = (props: Props) => {
             setRows(response.data.content);
             setTotalRows(response.data.totalElements);
           })
-          .catch((error) => {
-            console.error("Failed to retrieve VC Schema List. ", error);
-            navigate('/error', { state: { message: `Failed to retrieve VC Schema List: ${error}` } });
+          .catch((err) => {
+            console.error("Failed to fetch VC Schema List. ", err);
+            navigate('/error', { state: { message: formatErrorMessage(err, "Failed to fetch VC Schema List") } });
           })
           .finally(() => setLoading(false));
     }, [paginationModel]);

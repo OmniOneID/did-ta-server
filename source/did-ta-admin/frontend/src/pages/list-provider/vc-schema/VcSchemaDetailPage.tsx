@@ -5,6 +5,7 @@ import { Box, Button, Popover, TextField, Typography, useTheme } from '@mui/mate
 import CustomDialog from '../../../components/dialog/CustomDialog';
 import { getVcSchemaInfo } from '../../../apis/list-api';
 import FullscreenLoader from '../../../components/loading/FullscreenLoader';
+import { formatErrorMessage } from '../../../utils/errorHandler';
 
 type Props = {}
 
@@ -73,7 +74,7 @@ const VcSchemaDetailPage = (props: Props) => {
             } catch (err) {
                   console.error('Failed to fetch VC Schema information:', err);
                   setIsLoading(false);
-                  navigate('/error', { state: { message: `Failed to fetch VC Schema: ${err}` } });
+                  navigate('/error', { state: { message: formatErrorMessage(err, "Failed to fetch VC Schema") } });
             }
         };
 

@@ -11,6 +11,7 @@ import CustomDialog from '../../components/dialog/CustomDialog';
 import { fetchAdminList, deleteAdmin, requestPasswordResetByRoot } from '../../apis/admin-api';
 import PasswordResetDialog from '../auth/PasswordResetDialog';
 import { useSession } from '../../context/SessionContext';
+import { formatErrorMessage } from '../../utils/errorHandler';
 
 type Props = {}
 
@@ -74,9 +75,9 @@ const AdminManagementPage = (props: Props) => {
                 },
               });
             })
-            .catch((error) => {
-              console.error("Failed to delete Admin. ", error);
-              navigate('/error', { state: { message: `Failed to delete Admin: ${error}` } });
+            .catch((err) => {
+              console.error("Failed to delete Admin. ", err);
+              navigate('/error', { state: { message: formatErrorMessage(err, "Failed to delete Admin") } });
             })
             .finally(() => setLoading(false));
         }
@@ -134,9 +135,9 @@ const AdminManagementPage = (props: Props) => {
             setRows(response.data.content);
             setTotalRows(response.data.totalElements);
           })
-          .catch((error) => {
-            console.error("Failed to retrieve VC Schema List. ", error);
-            navigate('/error', { state: { message: `Failed to retrieve VC Schema List: ${error}` } });
+          .catch((err) => {
+            console.error("Failed to retrieve Admin List. ", err);
+            navigate('/error', { state: { message: formatErrorMessage(err, "Failed to fetch Admin List") } });
           })
           .finally(() => setLoading(false));
     }, [paginationModel]);

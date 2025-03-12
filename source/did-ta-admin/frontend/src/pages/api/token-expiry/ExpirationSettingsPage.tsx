@@ -6,6 +6,7 @@ import { useDialogs } from '@toolpad/core';
 import CustomConfirmDialog from '../../../components/dialog/CustomConfirmDialog';
 import CustomDialog from '../../../components/dialog/CustomDialog';
 import { getExpirationSettingInfo, registerExpirationSettingInfo } from '../../../apis/api-api';
+import { formatErrorMessage } from '../../../utils/errorHandler';
 
 type Props = {}
 
@@ -42,9 +43,9 @@ const ExpirationSettingsPage = (props: Props) => {
           setIsEditMode(true);
           setIsLoading(false);
         }
-      } catch (error) {
+      } catch (err) {
         setIsLoading(false);
-        navigate('/error', { state: { message: `Failed to retrieve Expiration Settings: ${error}` } })
+        navigate('/error', { state: { message: formatErrorMessage(err, "Failed to fetch Expiration Settings") } });
       } finally {
         setIsLoading(false);
       }
