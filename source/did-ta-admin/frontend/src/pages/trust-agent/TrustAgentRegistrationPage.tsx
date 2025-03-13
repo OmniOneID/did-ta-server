@@ -1,4 +1,4 @@
-import { Box, Button, SelectChangeEvent, Stack, TextField, Typography } from '@mui/material';
+import { Box, Button, SelectChangeEvent, TextField, Typography } from '@mui/material';
 import { useDialogs } from '@toolpad/core/useDialogs';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
@@ -20,7 +20,6 @@ interface ErrorState {
 const TrustAgentRegisterPage = () => {
   const navigate = useNavigate();
   const { setServerStatus, setTaInfo, serverStatus } = useServerStatus();
-  const [isError, setIsError] = useState<boolean>(false);
   const dialogs = useDialogs();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<TaFormData>({
@@ -57,7 +56,6 @@ const TrustAgentRegisterPage = () => {
 
     if (result) {
       setIsLoading(true);
-      setIsError(false);
 
       try {
         const { data } = await postData(API_BASE_URL, 'ta/register-simple', formData);
@@ -82,7 +80,6 @@ const TrustAgentRegisterPage = () => {
           isModal: true,
         });
   
-        setIsError(true);
       } finally {
         setIsLoading(false);
       }
@@ -101,52 +98,62 @@ const TrustAgentRegisterPage = () => {
 
   return (
     <>
-        <FullscreenLoader open={isLoading} />
-        <Box sx={{ p: 3 }}>
-          <Typography variant="h4">Trust Agent Quick Registration</Typography>
-
-          <Box sx={{ maxWidth: 500, margin: 'auto', p: 3, marginTop: 3, border: '1px solid #ccc', borderRadius: 2 }}>
-            <Typography variant="body1">
+      <FullscreenLoader open={isLoading} />
+      <Box sx={{ p: 3 }}>
+        <Typography variant="h4">Trust Agent Quick Registration</Typography>
+  
+        <Box
+          sx={{
+            backgroundColor: 'white',
+            p: 3,
+            borderRadius: 3,
+            margin: 'auto', 
+            mt: 3,
+            boxShadow: '0px 4px 8px 0px #0000001A',
+          }}
+        >
+          <Typography sx={{ textAlign: 'left', fontSize: '24px', fontWeight: 700 }}>
+            Trust Agent Quick Registration
+          </Typography>
+  
+          <Box sx={{ maxWidth: 500, margin: 'auto', p: 3, pl: 0 }}>
+            <Typography variant="body1" sx={{ color: '#666666' }}>
               This is a <strong>temporary registration page</strong> for the Trust Agent.
             </Typography>
-            <Typography variant="body1" sx={{ mt: 1 }}>
+            <Typography variant="body1" sx={{ mt: 1, color: '#666666' }}>
               A more detailed registration page will be updated in the second phase of development, scheduled for April.
             </Typography>
           </Box>
-
-          <Box sx={{ maxWidth: 500, margin: 'auto', mt: 2, p: 3, border: '1px solid #ccc', borderRadius: 2 }}>
-            <TextField 
-                fullWidth
-                label="Server URL" 
-                variant="outlined"
-                margin="normal" 
-                size="small"
-                value={formData.serverUrl} 
-                onChange={handleChange('serverUrl')} 
-                error={!!errors.serverUrl} 
-                helperText={errors.serverUrl} 
-                sx={{minWidth: 250}}
+  
+          <Box sx={{ maxWidth: 500, margin: 'auto', mt: 2, display: 'flex', alignItems: 'flex-start', gap: 2 }}>
+            <TextField
+              fullWidth
+              label="Server URL"
+              variant="outlined"
+              size="small"
+              value={formData.serverUrl}
+              onChange={handleChange('serverUrl')}
+              error={!!errors.serverUrl}
+              helperText={errors.serverUrl}
+              sx={{
+                minWidth: 250,
+                flex: 1,
+                minHeight: 56,
+              }}
             />
-            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 3 }}>
-              <Stack direction="row" spacing={2}>
-                <Button variant="contained" color="primary" onClick={handleSimpleRegistration}>
-                  Quick Register
-                </Button>
 
-                {isError && (
-                  <Button variant="contained" color="error" onClick={handleSimpleRegistration}>
-                    Retry
-                  </Button>
-                )}
-              </Stack>
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+              <Button variant="contained" color="primary" onClick={handleSimpleRegistration}>
+                Quick Register
+              </Button>
             </Box>
           </Box>
         </Box>
-
-        
+      </Box>
     </>
-
   );
+  
+    
 };
 
 export default TrustAgentRegisterPage;

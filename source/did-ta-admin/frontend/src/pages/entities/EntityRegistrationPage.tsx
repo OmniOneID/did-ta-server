@@ -267,7 +267,7 @@ const EntityRegistrationPage = (props: Props) => {
                             <Typography variant="body1" sx={{ mr: 5 }}>DID Document: </Typography>
 
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, minWidth: 200 }}>
-                                <Button variant="contained" component="label">
+                                <Button variant="outlined" component="label">
                                     File
                                     <input type="file" hidden accept=".did" onChange={handleFileChange} />
                                 </Button>
@@ -301,7 +301,7 @@ const EntityRegistrationPage = (props: Props) => {
                             }
                         />
                         <Button 
-                            variant="contained" 
+                            variant="outlined" 
                             onClick={handleCheckDuplicateName}
                             disabled={!formData.name}
                             sx={{ 
@@ -344,7 +344,7 @@ const EntityRegistrationPage = (props: Props) => {
                             }
                         />
                         <Button 
-                            variant="contained" 
+                            variant="outlined" 
                             onClick={handleTestServerConnection} 
                             disabled={!formData.serverUrl}
                             sx={{ 
@@ -358,9 +358,9 @@ const EntityRegistrationPage = (props: Props) => {
                     </Box>
                 
                     <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 3 }}>
-                        <Button variant="contained" color="secondary" onClick={handleCancel}>Cancel</Button>
-                        <Button variant="contained" color="primary" onClick={handleReset}>Reset</Button>
                         <Button variant="contained" color="primary" onClick={handleSubmit} disabled={isButtonDisabled}>Register</Button>
+                        <Button variant="contained" color="secondary" onClick={handleReset}>Reset</Button>                        
+                        <Button variant="outlined" color="secondary" onClick={handleCancel}>Cancel</Button>
                     </Box>
                 </Box>
             </Box>

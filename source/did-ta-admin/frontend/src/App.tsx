@@ -1,14 +1,15 @@
+import { CssBaseline, useTheme } from '@mui/material';
 import type { Navigation, Session } from '@toolpad/core/AppProvider';
 import { ReactRouterAppProvider } from '@toolpad/core/react-router';
 import { DialogsProvider } from '@toolpad/core/useDialogs';
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Outlet, useNavigate } from 'react-router';
-import { SessionContext } from './context/SessionContext';
-import { ServerStatusProvider, useServerStatus } from './context/ServerStatusContext';
 import { getTaInfo } from './apis/ta-api';
-import { getNavigationByStatus } from './config/navigationConfig';
 import LoadingOverlay from './components/loading/LoadingOverlay';
-import { createTheme } from '@mui/material';
+import { getNavigationByStatus } from './config/navigationConfig';
+import { ServerStatusProvider, useServerStatus } from './context/ServerStatusContext';
+import { SessionContext } from './context/SessionContext';
+import customTheme from './theme';
 import { formatErrorMessage } from './utils/error-handler';
 
 function AppContent() {
@@ -24,6 +25,8 @@ function AppContent() {
 
   const [navigation, setNavigation] = useState<Navigation>(getNavigationByStatus(null));
 
+  const theme = useTheme(); 
+  
   const setSession = useCallback((newSession: Session | null) => {
     setSessionState(newSession);
     if (newSession) {
@@ -83,158 +86,6 @@ function AppContent() {
     return <LoadingOverlay />;
   }
 
-  let theme = createTheme({
-    palette: {
-      primary: {
-        light: '#63ccff',
-        main: '#009be5',
-        dark: '#006db3',
-      },
-    },
-    typography: {
-      h5: {
-        fontWeight: 500,
-        fontSize: 26,
-        letterSpacing: 0.5,
-      },
-    },
-    shape: {
-      borderRadius: 8,
-    },
-    components: {
-      MuiTab: {
-        defaultProps: {
-          disableRipple: true,
-        },
-      },
-    },
-    mixins: {
-      toolbar: {
-        minHeight: 48,
-      },
-    },
-  });
-  
-  theme = {
-    ...theme,
-    components: {
-      MuiDrawer: {
-        styleOverrides: {
-          paper: {
-            backgroundColor: '#081627',
-          },
-        },
-      },
-      MuiButton: {
-        styleOverrides: {
-          root: {
-            textTransform: 'none',
-          },
-          contained: {
-            boxShadow: 'none',
-            '&:active': {
-              boxShadow: 'none',
-            },
-          },
-        },
-      },
-      MuiTabs: {
-        styleOverrides: {
-          root: {
-            marginLeft: theme.spacing(1),
-          },
-          indicator: {
-            height: 3,
-            borderTopLeftRadius: 3,
-            borderTopRightRadius: 3,
-            backgroundColor: theme.palette.common.white,
-          },
-        },
-      },
-      MuiTab: {
-        styleOverrides: {
-          root: {
-            textTransform: 'none',
-            margin: '0 16px',
-            minWidth: 0,
-            padding: 0,
-            [theme.breakpoints.up('md')]: {
-              padding: 0,
-              minWidth: 0,
-            },
-          },
-        },
-      },
-      MuiIconButton: {
-        styleOverrides: {
-          root: {
-            color: theme.palette.common.white,
-            padding: theme.spacing(1),
-          },
-        },
-      },
-      MuiTooltip: {
-        styleOverrides: {
-          tooltip: {
-            borderRadius: 4,
-          },
-        },
-      },
-      MuiDivider: {
-        styleOverrides: {
-          root: {
-            backgroundColor: 'rgb(255,255,255,0.15)',
-          },
-        },
-      },
-      MuiListItemButton: {
-        styleOverrides: {
-          root: {
-            '&.Mui-selected': {
-              color: '#4fc3f7',
-            },
-          },
-        },
-      },
-      MuiListItemText: {
-        styleOverrides: {
-          primary: {
-            fontSize: 14,
-            fontWeight: theme.typography.fontWeightMedium,
-          },
-        },
-      },
-      MuiListItemIcon: {
-        styleOverrides: {
-          root: {
-            color: 'inherit',
-            minWidth: 'auto',
-            marginRight: theme.spacing(2),
-            '& svg': {
-              color: '#b83b3b',
-              fontSize: 20,
-            },
-          },
-        },
-      },
-      MuiAvatar: {
-        styleOverrides: {
-          root: {
-            width: 32,
-            height: 32,
-          },
-        },
-      },
-      MuiSvgIcon: {
-        styleOverrides: {
-          root: {
-            color: theme.palette.mode === 'dark' ? '#fff' : '#000', // 다크 모드일 때 흰색
-          },
-        },
-      },      
-    },
-  };
-
   return (
     <SessionContext.Provider value={sessionContextValue}>
       <DialogsProvider>
@@ -242,8 +93,9 @@ function AppContent() {
           navigation={navigation}
           session={session}
           authentication={{ signIn, signOut }}
-          // theme={theme}
+          theme={customTheme}
         >
+          <CssBaseline />
           <Outlet />
         </ReactRouterAppProvider>
       </DialogsProvider>

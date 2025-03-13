@@ -32,7 +32,12 @@ export default function TrustAgentManagementPage() {
   }
 
   return (
-    <Box sx={{ maxWidth: 400, margin: 'auto', mt: 1, p: 3, border: '1px solid #ccc', borderRadius: 2 }}>
+    <Box sx={{ width: 400, margin: 'auto', mt: 1, p: 3, border: 'none', borderRadius: 2, backgroundColor: '#ffffff', boxShadow: '0px 4px 8px 0px #0000001A', }}>
+
+      <Typography sx={{ textAlign: 'left', fontSize: '24px', fontWeight: 700 }}>
+        TA Management
+      </Typography>
+
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <TextField 
           fullWidth 

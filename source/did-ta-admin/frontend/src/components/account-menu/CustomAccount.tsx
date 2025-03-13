@@ -1,13 +1,13 @@
 import SettingsIcon from '@mui/icons-material/Settings';
-import { Box, Button, IconButton, Popover } from '@mui/material';
+import { Box, Button, Popover, useTheme } from '@mui/material';
 import { useDialogs } from '@toolpad/core';
 import { AuthenticationContext, SessionContext } from '@toolpad/core/AppProvider';
 import React, { useContext, useState } from 'react';
 import { requestPasswordReset } from '../../apis/admin-api';
 import PasswordChangeDialog from '../../pages/auth/PasswordChangeDialog';
+import { sha256Hash } from '../../utils/sha256-hash';
 import CustomConfirmDialog from '../dialog/CustomConfirmDialog';
 import CustomDialog from '../dialog/CustomDialog';
-import { sha256Hash } from '../../utils/sha256-hash';
 
 const AccountMenu = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -15,6 +15,7 @@ const AccountMenu = () => {
   const session = useContext(SessionContext);
   const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
   const dialogs = useDialogs();
+  const theme = useTheme(); 
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -78,9 +79,24 @@ const AccountMenu = () => {
 
   return (
     <>
-      <IconButton onClick={handleClick} color="inherit">
-        <SettingsIcon />
-      </IconButton>
+      <Button 
+        startIcon={<SettingsIcon />}
+        onClick={handleClick} 
+        variant="contained"
+        size='small'
+        sx={{
+          width: '90px',
+          height: '32px',
+          borderRadius: '6px',
+          paddingRight: '16px',
+          paddingLeft: '16px',
+          borderWidth: '1px',
+          borderStyle: 'solid',
+          backgroundColor: `${theme.palette.mode === 'light' ? '#202B45' : '#555555'} !important`,
+        }}
+      >
+        Setting
+      </Button>
       <Popover
         open={open}
         anchorEl={anchorEl}
