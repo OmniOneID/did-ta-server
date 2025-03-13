@@ -30,6 +30,7 @@ import VcPlanManagementPage from './pages/list-provider/vc-plan/VcPlanManagement
 import VcPlanDetailPage from './pages/list-provider/vc-plan/VcPlanDetailPage';
 import AdminDetailPage from './pages/admins/AdminDetailPage';
 import AdminRegisterPage from './pages/admins/AdminRegisterPage';
+import DashboardPage from './pages/dashboard/DashboardPage';
 
 const router = createBrowserRouter([
   {
@@ -39,6 +40,10 @@ const router = createBrowserRouter([
         path: '/',
         Component: Layout,
         children: [
+          {
+            path: '/',
+            Component: DashboardPage
+          },
           {
             path: '/ta-registration',
             Component: TrustAgentRegistrationPage,
