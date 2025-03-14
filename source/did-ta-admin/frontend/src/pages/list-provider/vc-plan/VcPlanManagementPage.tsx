@@ -1,4 +1,4 @@
-import { Link } from '@mui/material';
+import { Box, Link, styled, Typography } from '@mui/material';
 import { GridPaginationModel } from '@mui/x-data-grid';
 import { useDialogs } from '@toolpad/core';
 import React, { useEffect, useMemo, useState } from 'react'
@@ -58,49 +58,68 @@ const VcPlanManagementPage = (props: Props) => {
             .finally(() => setLoading(false));
     }, [paginationModel]);
 
+    const StyledContainer = useMemo(() => styled(Box)(({ theme }) => ({
+        margin: 'auto',
+        marginTop: theme.spacing(1),
+        padding: theme.spacing(3),
+        border: 'none',
+        borderRadius: theme.shape.borderRadius,
+        backgroundColor: '#ffffff',
+        boxShadow: '0px 4px 8px 0px #0000001A',
+    })), []);
+
+    const StyledSubTitle = useMemo(() => styled(Typography)({
+        textAlign: 'left',
+        fontSize: '24px',
+        fontWeight: 700,
+    }), []);
+
     return (
         <>
             <FullscreenLoader open={loading} />
-            <CustomDataGrid 
-                rows={rows} 
-                columns={[
-                    { 
-                    field: 'vcPlanId', 
-                    headerName: "ID", 
-                    width: 250,
-                    renderCell: (params) => (
-                        <Link 
-                        component="button"
-                        variant='body2'
-                        onClick={() => navigate(`/list-settings/vc-plan/${params.row.id}`)}
-                        sx={{ cursor: 'pointer', color: 'primary.main' }}
-                        >
-                        {params.value}
-                        </Link>),
-                    },
-                    { field: 'name', headerName: "Name", width: 200},
-                    { field: 'description', headerName: "Description", width: 250},
-                    { field: 'issuerName', headerName: "Issuer Name", width: 100},
-                    { field: 'createdAt', headerName: "Registered At", width: 100},
-                    { field: 'updatedAt', headerName: "Updated At", width: 100},
-                ]} 
-                selectedRow={selectedRow} 
-                setSelectedRow={setSelectedRow}
-                // onEdit={() => {
-                //     if (selectedRowData) {
-                //     navigate(`/list-settings/allowed-ca/allowed-ca-edit/${selectedRowData.id}`);
-                //     }
-                // }}
-                // onRegister={() => navigate('/list-settings/allowed-ca/allowed-ca-registration')}
-                // onDelete={handleDelete}
-                additionalButtons={[
-                
-                ]}
-                paginationMode="server" 
-                totalRows={totalRows} 
-                paginationModel={paginationModel} 
-                setPaginationModel={setPaginationModel} 
-            />
+            <StyledContainer>
+                <StyledSubTitle>VC Plan Management</StyledSubTitle>
+                <CustomDataGrid 
+                    rows={rows} 
+                    columns={[
+                        { 
+                        field: 'vcPlanId', 
+                        headerName: "ID", 
+                        width: 250,
+                        renderCell: (params) => (
+                            <Link 
+                            component="button"
+                            variant='body2'
+                            onClick={() => navigate(`/list-settings/vc-plan/${params.row.id}`)}
+                            sx={{ cursor: 'pointer', color: 'primary.main' }}
+                            >
+                            {params.value}
+                            </Link>),
+                        },
+                        { field: 'name', headerName: "Name", width: 200},
+                        { field: 'description', headerName: "Description", width: 250},
+                        { field: 'issuerName', headerName: "Issuer Name", width: 100},
+                        { field: 'createdAt', headerName: "Registered At", width: 150},
+                        { field: 'updatedAt', headerName: "Updated At", width: 150},
+                    ]} 
+                    selectedRow={selectedRow} 
+                    setSelectedRow={setSelectedRow}
+                    // onEdit={() => {
+                    //     if (selectedRowData) {
+                    //     navigate(`/list-settings/allowed-ca/allowed-ca-edit/${selectedRowData.id}`);
+                    //     }
+                    // }}
+                    // onRegister={() => navigate('/list-settings/allowed-ca/allowed-ca-registration')}
+                    // onDelete={handleDelete}
+                    additionalButtons={[
+                    
+                    ]}
+                    paginationMode="server" 
+                    totalRows={totalRows} 
+                    paginationModel={paginationModel} 
+                    setPaginationModel={setPaginationModel} 
+                />
+            </StyledContainer>
         </>
     )
 }

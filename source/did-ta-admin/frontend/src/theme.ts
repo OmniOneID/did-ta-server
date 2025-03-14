@@ -1,3 +1,4 @@
+import { Height } from "@mui/icons-material";
 import { createTheme, ThemeOptions } from "@mui/material";
 import { DataGridProps } from "@mui/x-data-grid";
 
@@ -23,6 +24,13 @@ const customTheme: ThemeOptions & {
     fontFamily: '"SUIT", sans-serif',
   },
   components: {
+    MuiTypography: {
+      styleOverrides: {
+        h4: {
+          fontWeight: 700,
+        },
+      },
+    },
     MuiDrawer: {
       styleOverrides: {
         paper: {
@@ -33,7 +41,6 @@ const customTheme: ThemeOptions & {
           lineHeight: "150%",
           borderRadius: "8px",
           padding: "8px",
-          marginLeft: "15px",
           height: "98%",
         },
       },
@@ -69,7 +76,7 @@ const customTheme: ThemeOptions & {
     MuiSvgIcon: {
       styleOverrides: {
         root: {
-          color: "#ffffff",
+          // color: "#FF8400",
         },
       },
     },
@@ -107,6 +114,29 @@ const customTheme: ThemeOptions & {
         root: {
           backgroundColor: "#FFFFFF", 
           border: "none",
+          "& .MuiDataGrid-columnHeaderCheckbox svg": {
+            visibility: "hidden",
+            pointerEvents: "none",
+          },
+          "& .MuiDataGrid-footerContainer": {
+            display: "flex",
+            justifyContent: "center", 
+            alignItems: "center",
+          },
+          "& .MuiTablePagination-root": {
+            display: "flex",
+            justifyContent: "center", 
+            width: "100%",
+          },
+          "& .MuiTablePagination-toolbar": {
+            marginTop: "0px",
+          },
+          "& .MuiDataGrid-columnHeaderCheckbox .MuiSvgIcon-root": {
+            color: "#DEDEDE",
+          },
+          "& .MuiCheckbox-root .MuiSvgIcon-root": {
+            color: "#DEDEDE",
+          },
         },
         columnHeaders: {
           backgroundColor: "#F5F5F7",
@@ -118,6 +148,7 @@ const customTheme: ThemeOptions & {
             backgroundColor: "#F0F0F0", 
           },
         },
+        
       },
       defaultProps: {
         disableColumnMenu: true,
@@ -134,6 +165,10 @@ const customTheme: ThemeOptions & {
               backgroundColor: "rgba(255, 132, 0, 0.1)",
               borderColor: "#FF8400",
             },
+            "&.Mui-disabled": {
+              borderColor: "#D3D3D3",
+              color: "#D3D3D3",
+            },
           },
           "&.MuiButton-outlinedSecondary": {
             borderColor: "#000000",  
@@ -143,12 +178,21 @@ const customTheme: ThemeOptions & {
               backgroundColor: "#F5F5F5",
               borderColor: "#000000",
             },
+            "&.Mui-disabled": {
+              borderColor: "#D3D3D3",
+              color: "#D3D3D3",
+              backgroundColor: "#F0F0F0",
+            },
           },
           "&.MuiButton-containedPrimary": {
             backgroundColor: "#FF8400",
             color: "#FFFFFF",
             "&:hover": {
               backgroundColor: "#E67500",
+            },
+            "&.Mui-disabled": {
+              backgroundColor: "#FFD8A8",
+              color: "#FFFFFF",
             },
           },
           "&.MuiButton-containedSecondary": { 
@@ -158,6 +202,11 @@ const customTheme: ThemeOptions & {
             "&:hover": {
               backgroundColor: "#333333", 
               borderColor: "#333333",
+            },
+            "&.Mui-disabled": {
+              backgroundColor: "#A0A0A0",
+              color: "#FFFFFF",
+              borderColor: "#A0A0A0",
             },
           },
         },

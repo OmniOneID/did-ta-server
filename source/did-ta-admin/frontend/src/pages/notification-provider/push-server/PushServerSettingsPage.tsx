@@ -1,10 +1,10 @@
 import { useDialogs } from '@toolpad/core';
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router';
 import CustomConfirmDialog from '../../../components/dialog/CustomConfirmDialog';
 import CustomDialog from '../../../components/dialog/CustomDialog';
 import FullscreenLoader from '../../../components/loading/FullscreenLoader';
-import { Box, Button, FormControl, FormHelperText, Typography } from '@mui/material';
+import { Box, Button, FormControl, FormHelperText, styled, Typography } from '@mui/material';
 import { getNotificationServerStatus, registerPushServerInfo } from '../../../apis/noti-api';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -151,96 +151,123 @@ const PushServerSettingsPage = (props: Props) => {
         setIsButtonDisabled(!isModified);
     }, [formData]);
 
-
+    const StyledContainer = useMemo(() => styled(Box)(({ theme }) => ({
+        width: 500,
+        margin: 'auto',
+        marginTop: theme.spacing(1),
+        padding: theme.spacing(3),
+        border: 'none',
+        borderRadius: theme.shape.borderRadius,
+        backgroundColor: '#ffffff',
+        boxShadow: '0px 4px 8px 0px #0000001A',
+    })), []);
+            
+    const StyledSubTitle = useMemo(() => styled(Typography)({
+        textAlign: 'left',
+        fontSize: '24px',
+        fontWeight: 700,
+    }), []);
+    
+    const StyledDescription = useMemo(() => styled(Box)(({ theme }) => ({
+        maxWidth: 500, 
+        marginTop: theme.spacing(1),
+        padding: theme.spacing(0),
+    })), []);
+    
+    const StyledInputArea = useMemo(() => styled(Box)(({ theme }) => ({
+        marginTop: theme.spacing(1),
+    })), []);
 
     return (
         <>
             <FullscreenLoader open={isLoading} />
-            <Box sx={{ maxWidth: 500, margin: 'auto', mt: 2, p: 3, border: '1px solid #ccc', borderRadius: 2 }}>  
-                {!isLoading && !isPushConfigured && (
-                    <Box sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        backgroundColor: '#ffebee',
-                        border: '1px solid red',
-                        color: 'red',
-                        borderRadius: 2,
-                        p: 2,
-                        mb: 2,
-                    }}>
-                        <WarningAmberIcon sx={{ fontSize: 22, mr: 1 }} />
-                        <Typography variant="body2">
-                            Push server configuration is incomplete. Please complete the push server setup.
-                        </Typography>
-                    </Box>
-                )}
-
-                {!isLoading && isPushConfigured && (
-                    <Box sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        backgroundColor: '#e8f5e9',
-                        border: '1px solid green',
-                        color: 'green',
-                        borderRadius: 2,
-                        p: 2,
-                        mb: 2,
-                    }}>
-                        <CheckCircleIcon sx={{ fontSize: 22, mr: 1 }} />
-                        <Typography variant="body2">
-                            Push server settings have been successfully registered.
-                        </Typography>
-                    </Box>
-                )}
-
-                <FormControl fullWidth margin="normal" error={!!errors.push}>
-                    <Box sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'left',
-                        border: '1px solid #ccc',
-                        borderRadius: 2,
-                        p: 2,
-                        mb: 2
-                    }}>
-                        <Typography variant="body1" sx={{ mr: 5 }}>FCM Setting File:</Typography>
-
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                            <Button variant="contained" component="label">
-                                Select File
-                                <input type="file" hidden accept=".json" onChange={handleFileChange} ref={fileInputRef} />
-                            </Button>
-
-                            {formData.pushFileName && (
-                                <Typography variant="body2" sx={{
-                                    color: 'red',
-                                    whiteSpace: 'nowrap',
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis',
-                                    maxWidth: 150
-                                }}>
-                                    {formData.pushFileName}
+            <StyledContainer>
+                <StyledSubTitle>Push Server Settings</StyledSubTitle>
+                    <StyledDescription>
+                        {!isLoading && !isPushConfigured && (
+                            <Box sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                backgroundColor: '#ffebee',
+                                border: '1px solid red',
+                                color: 'red',
+                                borderRadius: 2,
+                                p: 2,
+                            }}>
+                                <WarningAmberIcon sx={{ fontSize: 22, mr: 1 }} />
+                                <Typography variant="body2">
+                                    Push server configuration is incomplete. Please complete the push server setup.
                                 </Typography>
-                            )}
-                        </Box>
-                    </Box>
-                    {errors.push && <FormHelperText>{errors.push}</FormHelperText>}
-                </FormControl>
+                            </Box>
+                        )}
 
-                <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 3 }}>
-                    <Button variant="contained" color="secondary" onClick={handleReset}>
-                        Reset
-                    </Button>
-                    <Button 
-                        variant="contained" 
-                        color="primary" 
-                        onClick={handleSubmit}
-                        disabled={isButtonDisabled}
-                    >
-                        {isEditMode ? 'Update' : 'Register'}
-                    </Button>
-                </Box>
-            </Box>
+                        {!isLoading && isPushConfigured && (
+                            <Box sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                backgroundColor: '#e8f5e9',
+                                border: '1px solid green',
+                                color: 'green',
+                                borderRadius: 2,
+                                p: 2,
+                            }}>
+                                <CheckCircleIcon sx={{ fontSize: 22, mr: 1 }} />
+                                <Typography variant="body2">
+                                    Push server settings have been successfully registered.
+                                </Typography>
+                            </Box>
+                        )}
+                    </StyledDescription>
+
+                    <StyledInputArea>
+                        <FormControl fullWidth margin="normal" error={!!errors.push}>
+                            <Box sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'left',
+                                border: '1px solid #ccc',
+                                borderRadius: 2,
+                                p: 2,
+                            }}>
+                                <Typography variant="body1" sx={{ mr: 5 }}>FCM Setting File:</Typography>
+
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                    <Button variant="contained" component="label">
+                                        Select File
+                                        <input type="file" hidden accept=".json" onChange={handleFileChange} ref={fileInputRef} />
+                                    </Button>
+
+                                    {formData.pushFileName && (
+                                        <Typography variant="body2" sx={{
+                                            color: 'red',
+                                            whiteSpace: 'nowrap',
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis',
+                                            maxWidth: 150
+                                        }}>
+                                            {formData.pushFileName}
+                                        </Typography>
+                                    )}
+                                </Box>
+                            </Box>
+                            {errors.push && <FormHelperText>{errors.push}</FormHelperText>}
+                        </FormControl>
+
+                        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 2 }}>
+                            <Button variant="contained" color="secondary" onClick={handleReset}>
+                                Reset
+                            </Button>
+                            <Button 
+                                variant="contained" 
+                                color="primary" 
+                                onClick={handleSubmit}
+                                disabled={isButtonDisabled}
+                            >
+                                {isEditMode ? 'Update' : 'Register'}
+                            </Button>
+                        </Box>
+                    </StyledInputArea>
+            </StyledContainer>
         </>
     )
 }

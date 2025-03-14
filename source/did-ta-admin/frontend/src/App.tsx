@@ -1,4 +1,4 @@
-import { CssBaseline, useTheme } from '@mui/material';
+import { CssBaseline, GlobalStyles, useTheme } from '@mui/material';
 import type { Navigation, Session } from '@toolpad/core/AppProvider';
 import { ReactRouterAppProvider } from '@toolpad/core/react-router';
 import { DialogsProvider } from '@toolpad/core/useDialogs';
@@ -106,6 +106,7 @@ function AppContent() {
 export default function App() {
   return (
     <ServerStatusProvider>
+      <GlobalStyles styles={{ body: { padding: "10px" } }} />
       <AppContent />
     </ServerStatusProvider>
   );

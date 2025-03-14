@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Button, TextField, Typography } from '@mui/material';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Box, Button, styled, TextField, Typography } from '@mui/material';
 import { useNavigate } from 'react-router';
 import FullscreenLoader from '../../components/loading/FullscreenLoader';
 import { urlRegex, ipRegex } from '../../utils/regex';
@@ -167,11 +167,40 @@ const KycSettingPage: React.FC = () => {
       } 
   };
 
+  const StyledContainer = useMemo(() => styled(Box)(({ theme }) => ({
+      width: 500,
+      margin: 'auto',
+      marginTop: theme.spacing(1),
+      padding: theme.spacing(3),
+      border: 'none',
+      borderRadius: theme.shape.borderRadius,
+      backgroundColor: '#ffffff',
+      boxShadow: '0px 4px 8px 0px #0000001A',
+    })), []);
+        
+  const StyledSubTitle = useMemo(() => styled(Typography)({
+      textAlign: 'left',
+      fontSize: '24px',
+      fontWeight: 700,
+  }), []);
+  
+  const StyledDescription = useMemo(() => styled(Box)(({ theme }) => ({
+      maxWidth: 500, 
+      marginTop: theme.spacing(1),
+      padding: theme.spacing(0),
+  })), []);
+  
+  const StyledInputArea = useMemo(() => styled(Box)(({ theme }) => ({
+      marginTop: theme.spacing(2),
+  })), []);
+
   return (
     <>
       <FullscreenLoader open={isLoading} />
-      <Box>
-        <Box sx={{ maxWidth: 500, margin: 'auto', p: 3, border: '1px solid #ccc', borderRadius: 2 }}>
+      <StyledContainer>
+        <StyledSubTitle>KYC Settings</StyledSubTitle>
+
+        <StyledDescription>
           <Typography variant="body1">
             The Trust Agent requires users' Personally Identifiable Information (PII) and retrieves it from a pre-integrated KYC server.
           </Typography>
@@ -193,9 +222,9 @@ const KycSettingPage: React.FC = () => {
             >
             http://{'{IP}'}:8094/cas
           </Box>
-        </Box>
+        </StyledDescription>
 
-        <Box sx={{ maxWidth: 500, margin: 'auto', mt: 2, p: 3, border: '1px solid #ccc', borderRadius: 2 }}>
+        <StyledInputArea>
           <TextField
             fullWidth
             label="Name"
@@ -221,7 +250,7 @@ const KycSettingPage: React.FC = () => {
               sx={{ maxLength: 200 }}
             />
             <Button 
-              variant="contained" 
+              variant="outlined" 
               onClick={handleTestServerConnection} 
               disabled={!formData.serverUrl}
               sx={{ minWidth: 150, whiteSpace: 'nowrap', textTransform: 'none' }}
@@ -231,20 +260,20 @@ const KycSettingPage: React.FC = () => {
           </Box>
 
           <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 3 }}>
+            <Button 
+                variant="contained" 
+                color="primary" 
+                onClick={handleSubmit}
+                disabled={isButtonDisabled}
+              >
+              {isEditMode ? 'Update' : 'Register'}
+            </Button>
             <Button variant="contained" color="secondary" onClick={handleReset}>
               Reset
             </Button>
-            <Button 
-              variant="contained" 
-              color="primary" 
-              onClick={handleSubmit}
-              disabled={isButtonDisabled}
-            >
-              {isEditMode ? 'Update' : 'Register'}
-            </Button>
           </Box>
-        </Box>
-      </Box>
+        </StyledInputArea>
+      </StyledContainer>
     </>
   );
 };

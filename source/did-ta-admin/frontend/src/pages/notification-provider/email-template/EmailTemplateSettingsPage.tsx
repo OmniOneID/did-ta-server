@@ -7,13 +7,15 @@ import {
   MenuItem,
   Select,
   SelectChangeEvent,
+  styled,
   Tab,
   Tabs,
   TextField,
+  Typography,
   useTheme,
 } from '@mui/material';
 import { useDialogs } from '@toolpad/core';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { getEmailTemplate, registerEmailTemplate } from '../../../apis/noti-api';
 import CustomConfirmDialog from '../../../components/dialog/CustomConfirmDialog';
@@ -150,11 +152,30 @@ import FullscreenLoader from '../../../components/loading/FullscreenLoader';
         }
       }
     };
+
+    const StyledContainer = useMemo(() => styled(Box)(({ theme }) => ({
+      width: 650,
+      margin: 'auto',
+      marginTop: theme.spacing(1),
+      padding: theme.spacing(3),
+      border: 'none',
+      borderRadius: theme.shape.borderRadius,
+      backgroundColor: '#ffffff',
+      boxShadow: '0px 4px 8px 0px #0000001A',
+    })), []);
+          
+    const StyledSubTitle = useMemo(() => styled(Typography)({
+      textAlign: 'left',
+      fontSize: '24px',
+      fontWeight: 700,
+    }), []);
   
     return (
       <>
         <FullscreenLoader open={isLoading} />
-        <Box>
+        <StyledContainer>
+          <StyledSubTitle>Email Template Settings</StyledSubTitle>
+
           <Box sx={{ borderBottom: 1, borderColor: 'divider', display: 'flex', justifyContent: 'flex-start' }}>
             <Tabs value={tabIndex} onChange={handleTabChange} variant="scrollable" scrollButtons="auto" sx={{ minWidth: 200 }}>
               <Tab label="VC Issuance" value="ISSUE_VC" />
@@ -214,15 +235,15 @@ import FullscreenLoader from '../../../components/loading/FullscreenLoader';
             </FormControl>
   
             <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 2 }}>
-              <Button variant="contained" color="secondary" onClick={handleReset}>
-                Reset
-              </Button>
               <Button variant="contained" color="primary" onClick={handleSubmit} disabled={formData.content === originalContent}>
                 Update
               </Button>
+              <Button variant="contained" color="secondary" onClick={handleReset}>
+                Reset
+              </Button>
             </Box>
           </Box>
-        </Box>
+        </StyledContainer>
       </>
     );
   };

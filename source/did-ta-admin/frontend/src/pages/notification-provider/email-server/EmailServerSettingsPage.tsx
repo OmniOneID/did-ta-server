@@ -1,7 +1,7 @@
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { Box, Button, FormControl, FormHelperText, IconButton, InputAdornment, InputLabel, OutlinedInput, Switch, TextField, Typography } from '@mui/material';
+import { Box, Button, FormControl, FormHelperText, IconButton, InputAdornment, InputLabel, OutlinedInput, styled, Switch, TextField, Typography } from '@mui/material';
 import { useDialogs } from '@toolpad/core';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { getEmailServerInfo, registerEmailServerInfo, sendTestEmail } from '../../../apis/noti-api';
 import CustomConfirmDialog from '../../../components/dialog/CustomConfirmDialog';
@@ -248,12 +248,39 @@ const EmailServerSettingsPage = (props: Props) => {
         setIsButtonDisabled(!isModified);
     }, [formData, initialData]);
  
+    const StyledContainer = useMemo(() => styled(Box)(({ theme }) => ({
+        width: 500,
+        margin: 'auto',
+        marginTop: theme.spacing(1),
+        padding: theme.spacing(3),
+        border: 'none',
+        borderRadius: theme.shape.borderRadius,
+        backgroundColor: '#ffffff',
+        boxShadow: '0px 4px 8px 0px #0000001A',
+    })), []);
+            
+    const StyledSubTitle = useMemo(() => styled(Typography)({
+        textAlign: 'left',
+        fontSize: '24px',
+        fontWeight: 700,
+    }), []);
+    
+    const StyledDescription = useMemo(() => styled(Box)(({ theme }) => ({
+        maxWidth: 500, 
+        marginTop: theme.spacing(1),
+        padding: theme.spacing(0),
+    })), []);
+    
+    const StyledInputArea = useMemo(() => styled(Box)(({ theme }) => ({
+        marginTop: theme.spacing(2),
+    })), []);
 
     return (
         <>
             <FullscreenLoader open={isLoading} />
-            <Box>
-                <Box sx={{ maxWidth: 500, margin: 'auto', p: 3, border: '1px solid #ccc', borderRadius: 2 }}>
+            <StyledContainer>
+                <StyledSubTitle>Email Server Settings</StyledSubTitle>
+                <StyledDescription>
                     <Typography variant="body1">
                         This page allows you to configure the email server settings required for sending emails.
                         You can specify the SMTP server details, authentication settings, and security options
@@ -268,214 +295,217 @@ const EmailServerSettingsPage = (props: Props) => {
                         you can enable the "Ignore SSL Check" option to bypass SSL validation during communication.
                         However, this is <strong>not recommended for production environments.</strong>
                     </Typography>
-                </Box>
-            </Box>
+                </StyledDescription>
+                <StyledInputArea>
+                    <TextField
+                        fullWidth
+                        label="Host"
+                        variant="outlined"
+                        margin="normal"
+                        value={formData.host ?? ""}
+                        onChange={handleChange('host')}
+                        error={!!errors.host}
+                        helperText={errors.host}
+                        sx={{ maxLength: 200 }}
+                    />
 
-            <TextField
-                fullWidth
-                label="Host"
-                variant="outlined"
-                margin="normal"
-                value={formData.host ?? ""}
-                onChange={handleChange('host')}
-                error={!!errors.host}
-                helperText={errors.host}
-                sx={{ maxLength: 200 }}
-            />
+                    <TextField
+                        fullWidth
+                        label="Port"
+                        variant="outlined"
+                        margin="normal"
+                        value={formData.port ?? ""}
+                        onChange={handleChange('port')}
+                        error={!!errors.port}
+                        helperText={errors.port}
+                        type='number'
+                        slotProps={{ htmlInput: {
+                            min: 1,
+                            max: 65535,
+                        },
+                        }}
+                    />
 
-            <TextField
-                fullWidth
-                label="Port"
-                variant="outlined"
-                margin="normal"
-                value={formData.port ?? ""}
-                onChange={handleChange('port')}
-                error={!!errors.port}
-                helperText={errors.port}
-                type='number'
-                slotProps={{ htmlInput: {
-                    min: 1,
-                    max: 65535,
-                },
-                }}
-            />
+                    <TextField
+                        fullWidth
+                        label="User Name"
+                        variant="outlined"
+                        margin="normal"
+                        value={formData.username ?? ""}
+                        onChange={handleChange('username')}
+                        error={!!errors.username}
+                        helperText={errors.username}
+                        sx={{ minLength: 4, maxLength: 256 }}
+                    />
 
-            <TextField
-                fullWidth
-                label="User Name"
-                variant="outlined"
-                margin="normal"
-                value={formData.username ?? ""}
-                onChange={handleChange('username')}
-                error={!!errors.username}
-                helperText={errors.username}
-                sx={{ minLength: 4, maxLength: 256 }}
-            />
-
-            <FormControl fullWidth margin="normal" error={!!errors.password}>
-                <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
-                <OutlinedInput
-                    id="outlined-adornment-password"
-                    type={showPassword ? 'text' : 'password'}
-                    value={formData.password ?? ""}
-                    onChange={handleChange('password')}
-                    endAdornment={
-                    <InputAdornment position="end">
-                        <IconButton
-                            aria-label={showPassword ? 'hide the password' : 'display the password'}
-                            onClick={handleClickShowPassword}
-                            edge="end"
-                        >
-                            {showPassword ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                    </InputAdornment>
-                    }
-                    label="Password"
-                    inputProps={{ minLength: 8, maxLength: 128 }}
-                />
-                {errors.password && <FormHelperText>{errors.password}</FormHelperText>}
-            </FormControl>
-
-            <TextField
-                fullWidth
-                label="Sender"
-                variant="outlined"
-                margin="normal"
-                value={formData.sender ?? ""}
-                onChange={handleChange('sender')}
-                error={!!errors.sender}
-                helperText={errors.sender}
-                sx={{ minLength: 6, maxLength: 254 }}
-                type='email'
-            />
-
-            <FormControl fullWidth variant="outlined" sx={{ mt: 2 }} error={!!errors.startTlsEnabled}>
-                <InputLabel shrink>Enable STARTTLS</InputLabel>
-                <OutlinedInput
-                    notched
-                    label="Enable STARTTLS"
-                    startAdornment={
-                        <Switch
-                            checked={formData.startTlsEnabled ?? false}
-                            onChange={handleChange("startTlsEnabled")}
-                            color="primary"
-                            sx={{ transform: "scale(1.2)", mr: 1 }} 
+                    <FormControl fullWidth margin="normal" error={!!errors.password}>
+                        <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+                        <OutlinedInput
+                            id="outlined-adornment-password"
+                            type={showPassword ? 'text' : 'password'}
+                            value={formData.password ?? ""}
+                            onChange={handleChange('password')}
+                            endAdornment={
+                            <InputAdornment position="end">
+                                <IconButton
+                                    aria-label={showPassword ? 'hide the password' : 'display the password'}
+                                    onClick={handleClickShowPassword}
+                                    edge="end"
+                                >
+                                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                                </IconButton>
+                            </InputAdornment>
+                            }
+                            label="Password"
+                            inputProps={{ minLength: 8, maxLength: 128 }}
                         />
-                    }
-                />
-                {errors.startTlsEnabled && <FormHelperText>{errors.startTlsEnabled}</FormHelperText>}
-            </FormControl>
+                        {errors.password && <FormHelperText>{errors.password}</FormHelperText>}
+                    </FormControl>
 
-            <FormControl fullWidth variant="outlined" sx={{ mt: 2 }} error={!!errors.sslEnabled}>
-                <InputLabel shrink>Enable SSL</InputLabel>
-                <OutlinedInput
-                    notched
-                    label="Enable SSL"
-                    startAdornment={
-                        <Switch
-                            checked={formData.sslEnabled ?? false}
-                            onChange={handleChange("sslEnabled")}
-                            color="primary"
-                            sx={{ transform: "scale(1.2)", mr: 1 }} 
+                    <TextField
+                        fullWidth
+                        label="Sender"
+                        variant="outlined"
+                        margin="normal"
+                        value={formData.sender ?? ""}
+                        onChange={handleChange('sender')}
+                        error={!!errors.sender}
+                        helperText={errors.sender}
+                        sx={{ minLength: 6, maxLength: 254 }}
+                        type='email'
+                    />
+
+                    <FormControl fullWidth variant="outlined" sx={{ mt: 2 }} error={!!errors.startTlsEnabled}>
+                        <InputLabel shrink>Enable STARTTLS</InputLabel>
+                        <OutlinedInput
+                            notched
+                            label="Enable STARTTLS"
+                            startAdornment={
+                                <Switch
+                                    checked={formData.startTlsEnabled ?? false}
+                                    onChange={handleChange("startTlsEnabled")}
+                                    color="primary"
+                                    sx={{ transform: "scale(1.2)", mr: 1 }} 
+                                />
+                            }
                         />
-                    }
-                />
-                {errors.sslEnabled && <FormHelperText>{errors.sslEnabled}</FormHelperText>}
-            </FormControl>
+                        {errors.startTlsEnabled && <FormHelperText>{errors.startTlsEnabled}</FormHelperText>}
+                    </FormControl>
 
-            <TextField
-                fullWidth
-                label="Connection Timeout (seconds)"
-                variant="outlined"
-                margin="normal"
-                value={formData.connectionTimeout ?? ""}
-                onChange={handleChange('connectionTimeout')}
-                error={!!errors.connectionTimeout}
-                helperText={errors.connectionTimeout}
-                type='number'
-                slotProps={{ htmlInput: {
-                    min: 1,
-                    max: 300,
-                },
-                }}
-            />
-
-            <TextField
-                fullWidth
-                label="Read Timeout (seconds)"
-                variant="outlined"
-                margin="normal"
-                value={formData.readTimeout ?? ""}
-                onChange={handleChange('readTimeout')}
-                error={!!errors.readTimeout}
-                helperText={errors.readTimeout}
-                type='number'
-                slotProps={{ htmlInput: {
-                    min: 1,
-                    max: 600,
-                },
-                }}
-            />
-
-            <TextField
-                fullWidth
-                label="Write Timeout (seconds)"
-                variant="outlined"
-                margin="normal"
-                value={formData.writeTimeout ?? ""}
-                onChange={handleChange('writeTimeout')}
-                error={!!errors.writeTimeout}
-                helperText={errors.writeTimeout}
-                type='number'
-                slotProps={{ htmlInput: {
-                    min: 1,
-                    max: 600,
-                },
-                }}
-            />
-
-            <FormControl fullWidth variant="outlined" sx={{ mt: 2 }} error={!!errors.ignoreSslValidation}>
-                <InputLabel shrink>Turn Off SSL Check (For Testing)</InputLabel>
-                <OutlinedInput
-                    notched
-                    label="Turn Off SSL Check (For Testing)"
-                    startAdornment={
-                        <Switch
-                            checked={formData.ignoreSslValidation ?? false}
-                            onChange={handleChange("ignoreSslValidation")}
-                            color="primary"
-                            sx={{ transform: "scale(1.2)", mr: 1 }} 
+                    <FormControl fullWidth variant="outlined" sx={{ mt: 2 }} error={!!errors.sslEnabled}>
+                        <InputLabel shrink>Enable SSL</InputLabel>
+                        <OutlinedInput
+                            notched
+                            label="Enable SSL"
+                            startAdornment={
+                                <Switch
+                                    checked={formData.sslEnabled ?? false}
+                                    onChange={handleChange("sslEnabled")}
+                                    color="primary"
+                                    sx={{ transform: "scale(1.2)", mr: 1 }} 
+                                />
+                            }
                         />
-                    }
-                />
-                {errors.ignoreSslValidation && <FormHelperText>{errors.ignoreSslValidation}</FormHelperText>}
-            </FormControl>
+                        {errors.sslEnabled && <FormHelperText>{errors.sslEnabled}</FormHelperText>}
+                    </FormControl>
 
-            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 3 }}>
-                <Button 
-                    variant="contained" 
-                    color="primary" 
-                    onClick={handleTest}>
-                    Test
-                </Button>
-                <Button variant="contained" color="secondary" onClick={handleReset}>
-                    Reset
-                </Button>
-                <Button 
-                    variant="contained" 
-                    color="primary" 
-                    onClick={handleSubmit}
-                    disabled={isButtonDisabled}
-                >
-                    {isEditMode ? 'Update' : 'Register'}
-                </Button>
-            </Box>
+                    <TextField
+                        fullWidth
+                        label="Connection Timeout (seconds)"
+                        variant="outlined"
+                        margin="normal"
+                        value={formData.connectionTimeout ?? ""}
+                        onChange={handleChange('connectionTimeout')}
+                        error={!!errors.connectionTimeout}
+                        helperText={errors.connectionTimeout}
+                        type='number'
+                        slotProps={{ htmlInput: {
+                            min: 1,
+                            max: 300,
+                        },
+                        }}
+                    />
 
-            <TestEmailDialog
-                open={isTestDialogOpen}
-                onClose={() => setIsTestDialogOpen(false)}
-                onSubmit={handleTestEmailSubmit}
-            />
+                    <TextField
+                        fullWidth
+                        label="Read Timeout (seconds)"
+                        variant="outlined"
+                        margin="normal"
+                        value={formData.readTimeout ?? ""}
+                        onChange={handleChange('readTimeout')}
+                        error={!!errors.readTimeout}
+                        helperText={errors.readTimeout}
+                        type='number'
+                        slotProps={{ htmlInput: {
+                            min: 1,
+                            max: 600,
+                        },
+                        }}
+                    />
+
+                    <TextField
+                        fullWidth
+                        label="Write Timeout (seconds)"
+                        variant="outlined"
+                        margin="normal"
+                        value={formData.writeTimeout ?? ""}
+                        onChange={handleChange('writeTimeout')}
+                        error={!!errors.writeTimeout}
+                        helperText={errors.writeTimeout}
+                        type='number'
+                        slotProps={{ htmlInput: {
+                            min: 1,
+                            max: 600,
+                        },
+                        }}
+                    />
+
+                    <FormControl fullWidth variant="outlined" sx={{ mt: 2 }} error={!!errors.ignoreSslValidation}>
+                        <InputLabel shrink>Turn Off SSL Check (For Testing)</InputLabel>
+                        <OutlinedInput
+                            notched
+                            label="Turn Off SSL Check (For Testing)"
+                            startAdornment={
+                                <Switch
+                                    checked={formData.ignoreSslValidation ?? false}
+                                    onChange={handleChange("ignoreSslValidation")}
+                                    color="primary"
+                                    sx={{ transform: "scale(1.2)", mr: 1 }} 
+                                />
+                            }
+                        />
+                        {errors.ignoreSslValidation && <FormHelperText>{errors.ignoreSslValidation}</FormHelperText>}
+                    </FormControl>
+
+                    <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 3 }}>
+                        <Button 
+                                variant="contained" 
+                                color="primary" 
+                                onClick={handleSubmit}
+                                disabled={isButtonDisabled}
+                            >
+                            {isEditMode ? 'Update' : 'Register'}
+                        </Button>
+                        <Button variant="contained" color="secondary" onClick={handleReset}>
+                            Reset
+                        </Button>
+                        <Button 
+                            variant="contained" 
+                            color="primary" 
+                            onClick={handleTest}>
+                            Test
+                        </Button>
+                        
+                        
+                    </Box>
+
+                    <TestEmailDialog
+                        open={isTestDialogOpen}
+                        onClose={() => setIsTestDialogOpen(false)}
+                        onSubmit={handleTestEmailSubmit}
+                    />
+            </StyledInputArea>
+            </StyledContainer>
         </>
     )
 }

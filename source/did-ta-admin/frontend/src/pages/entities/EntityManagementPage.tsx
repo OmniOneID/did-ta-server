@@ -1,7 +1,7 @@
-import { Box, Link, Typography } from '@mui/material';
+import { Box, Link, styled, Typography } from '@mui/material';
 import { GridPaginationModel } from '@mui/x-data-grid';
 import { useDialogs } from '@toolpad/core/useDialogs';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { fetchEntities, registerEntitiesSimple } from '../../apis/entity-api';
 import CustomDataGrid from '../../components/data-grid/CustomDataGrid';
@@ -65,10 +65,20 @@ const EntityManagementPage = (props: Props) => {
     }
   };
 
+  const StyledContainer = useMemo(() => styled(Box)(({ theme }) => ({
+    margin: 'auto',
+    marginTop: theme.spacing(1),
+    padding: theme.spacing(3),
+    border: 'none',
+    borderRadius: theme.shape.borderRadius,
+    backgroundColor: '#ffffff',
+    boxShadow: '0px 4px 8px 0px #0000001A',
+  })), []);
+
   return (
     <>
       <FullscreenLoader open={loading} />
-      <Box sx={{ margin: 'auto', mt: 1, p: 3, border: 'none', borderRadius: 2, backgroundColor: '#ffffff', boxShadow: '0px 4px 8px 0px #0000001A', }}>
+      <StyledContainer>
         <Typography sx={{ textAlign: 'left', fontSize: '24px', fontWeight: 700 }}>
           Entity Management
         </Typography>
@@ -123,7 +133,7 @@ const EntityManagementPage = (props: Props) => {
             paginationModel={paginationModel} 
             setPaginationModel={setPaginationModel} 
           />
-        </Box>
+        </StyledContainer>
     </>
   )
 }

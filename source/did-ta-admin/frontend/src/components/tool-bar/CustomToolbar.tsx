@@ -53,7 +53,7 @@ export default function CustomToolbar({
         </Box>
       )}
 
-      <Box sx={{ display: 'flex', gap: '4px', justifyContent: 'flex-start', flex: enableSearch ? 1 : 'auto', width: '100%' }}>
+      <Box sx={{ display: 'flex', gap: '4px', justifyContent: 'flex-start', flex: enableSearch ? 1 : 'auto', width: '100%', mb: 1 }}>
         {onRegister && (
           <Button variant="contained" color="primary" onClick={onRegister} size='small'>
             Register

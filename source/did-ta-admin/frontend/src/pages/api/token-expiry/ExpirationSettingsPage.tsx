@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import FullscreenLoader from '../../../components/loading/FullscreenLoader';
-import { Box, Button, TextField, Typography } from '@mui/material';
+import { Box, Button, styled, TextField, Typography } from '@mui/material';
 import { useNavigate } from 'react-router';
 import { useDialogs } from '@toolpad/core';
 import CustomConfirmDialog from '../../../components/dialog/CustomConfirmDialog';
@@ -120,11 +120,40 @@ const ExpirationSettingsPage = (props: Props) => {
     }
   };
 
+  const StyledContainer = useMemo(() => styled(Box)(({ theme }) => ({
+    width: 500,
+    margin: 'auto',
+    marginTop: theme.spacing(1),
+    padding: theme.spacing(3),
+    border: 'none',
+    borderRadius: theme.shape.borderRadius,
+    backgroundColor: '#ffffff',
+    boxShadow: '0px 4px 8px 0px #0000001A',
+  })), []);
+        
+  const StyledSubTitle = useMemo(() => styled(Typography)({
+      textAlign: 'left',
+      fontSize: '24px',
+      fontWeight: 700,
+  }), []);
+  
+  const StyledDescription = useMemo(() => styled(Box)(({ theme }) => ({
+      maxWidth: 500, 
+      marginTop: theme.spacing(1),
+      padding: theme.spacing(0),
+  })), []);
+  
+  const StyledInputArea = useMemo(() => styled(Box)(({ theme }) => ({
+      marginTop: theme.spacing(2),
+  })), []);
+
   return (
     <>
       <FullscreenLoader open={isLoading} />
-      <Box>
-        <Box sx={{ maxWidth: 500, margin: 'auto', p: 3, border: '1px solid #ccc', borderRadius: 2 }}>
+      <StyledContainer>
+        <StyledSubTitle>Expiration Settings</StyledSubTitle>
+    
+        <StyledDescription>
           <Typography variant="body1">
             Configure the expiration times managed by the Trust Agent.
           </Typography>
@@ -134,56 +163,58 @@ const ExpirationSettingsPage = (props: Props) => {
           <Typography variant="body1" sx={{ mt: 1 }}>
             <strong>Transaction Timeout (seconds)</strong>: Sets the expiration time for transactions managed by the TA.
           </Typography>
-        </Box>
-      </Box>
+        </StyledDescription>
 
-      <TextField
-        fullWidth
-        label="Token Timeout (seconds)"
-        variant="outlined"
-        margin="normal"
-        value={formData.tokenExpirationSeconds ?? ""}
-        onChange={handleChange('tokenExpirationSeconds')}
-        error={!!errors.tokenExpirationSeconds}
-        helperText={errors.tokenExpirationSeconds}
-        type='number'
-        slotProps={{ htmlInput: {
-          min: 10,
-          max: 600,
-          },
-        }}
-      />
+        <StyledInputArea>
+          <TextField
+            fullWidth
+            label="Token Timeout (seconds)"
+            variant="outlined"
+            margin="normal"
+            value={formData.tokenExpirationSeconds ?? ""}
+            onChange={handleChange('tokenExpirationSeconds')}
+            error={!!errors.tokenExpirationSeconds}
+            helperText={errors.tokenExpirationSeconds}
+            type='number'
+            slotProps={{ htmlInput: {
+              min: 10,
+              max: 600,
+              },
+            }}
+          />
 
-      <TextField
-        fullWidth
-        label="Transaction Timeout (seconds)"
-        variant="outlined"
-        margin="normal"
-        value={formData.transactionExpirationSeconds ?? ""}
-        onChange={handleChange('transactionExpirationSeconds')}
-        error={!!errors.transactionExpirationSeconds}
-        helperText={errors.transactionExpirationSeconds}
-        type='number'
-        slotProps={{ htmlInput: {
-          min: 60,
-          max: 3600,
-          },
-        }}
-      />
+          <TextField
+            fullWidth
+            label="Transaction Timeout (seconds)"
+            variant="outlined"
+            margin="normal"
+            value={formData.transactionExpirationSeconds ?? ""}
+            onChange={handleChange('transactionExpirationSeconds')}
+            error={!!errors.transactionExpirationSeconds}
+            helperText={errors.transactionExpirationSeconds}
+            type='number'
+            slotProps={{ htmlInput: {
+              min: 60,
+              max: 3600,
+              },
+            }}
+          />
 
-      <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 3 }}>
-        <Button variant="contained" color="secondary" onClick={handleReset}>
-          Reset
-        </Button>
-        <Button 
-          variant="contained" 
-          color="primary" 
-          onClick={handleSubmit}
-          disabled={isButtonDisabled}
-        >
-          {isEditMode ? 'Update' : 'Register'}
-        </Button>
-      </Box>
+          <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 3 }}>
+            <Button 
+              variant="contained" 
+              color="primary" 
+              onClick={handleSubmit}
+              disabled={isButtonDisabled}
+            >
+              {isEditMode ? 'Update' : 'Register'}
+            </Button>
+            <Button variant="contained" color="secondary" onClick={handleReset}>
+              Reset
+            </Button>
+          </Box>
+        </StyledInputArea>
+      </StyledContainer>
     </>
   )
 }

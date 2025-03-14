@@ -1,8 +1,8 @@
 import { useDialogs } from '@toolpad/core';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router';
 import FullscreenLoader from '../../../components/loading/FullscreenLoader';
-import { Box, Button, IconButton, Paper, SelectChangeEvent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
+import { Box, Button, IconButton, Paper, SelectChangeEvent, styled, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography, useTheme } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CustomConfirmDialog from '../../../components/dialog/CustomConfirmDialog';
@@ -26,6 +26,7 @@ interface ErrorState {
 const AllowedCaRegistrationPage = (props: Props) => {
     const navigate = useNavigate();
     const dialogs = useDialogs();
+    const theme = useTheme();
 
     const [formData, setFormData] = useState<AllowedCaFormData>({
         walletId: '',
@@ -179,13 +180,34 @@ const AllowedCaRegistrationPage = (props: Props) => {
         setIsButtonDisabled(!isModified);
     }, [formData]);
 
+    const StyledContainer = useMemo(() => styled(Box)(({ theme }) => ({
+        width: 500,
+        margin: 'auto',
+        marginTop: theme.spacing(1),
+        padding: theme.spacing(3),
+        border: 'none',
+        borderRadius: theme.shape.borderRadius,
+        backgroundColor: '#ffffff',
+        boxShadow: '0px 4px 8px 0px #0000001A',
+    })), []);
+    
+    const StyledTitle = useMemo(() => styled(Typography)({
+        textAlign: 'left',
+        fontSize: '24px',
+        fontWeight: 700,
+    }), []);
+    
+    const StyledInputArea = useMemo(() => styled(Box)(({ theme }) => ({
+        marginTop: theme.spacing(2),
+    })), []);
+
     return (
         <>
             <FullscreenLoader open={isLoading} />
-            <Box sx={{ p: 3 }}>
-                <Typography variant="h4">Allowd CA List Registration</Typography>
-                <Box sx={{ maxWidth: 500, margin: 'auto', mt: 2, p: 3, border: '1px solid #ccc', borderRadius: 2 }}>
-
+            <Typography variant="h4">Allowed CA Management</Typography>
+            <StyledContainer>
+                <StyledTitle>Allowd CA Registration</StyledTitle>
+                <StyledInputArea>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                         <TextField 
                             fullWidth
@@ -225,15 +247,15 @@ const AllowedCaRegistrationPage = (props: Props) => {
                     <TableContainer component={Paper}>
                         <Table>
                             <TableHead>
-                                <TableRow>
-                                    <TableCell>CA</TableCell>
+                                <TableRow sx={{ backgroundColor: theme.palette.mode === "dark" ? theme.palette.background.paper : "#f5f5f5" }}>
+                                    <TableCell sx={{ width: '80%' }}>CA</TableCell>
                                     <TableCell>Delete</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
                                 {formData.caList.map((ca, index) => (
                                     <TableRow key={index}>
-                                        <TableCell>
+                                        <TableCell sx={{ verticalAlign: 'top', width: '80%' }}>
                                             <TextField 
                                                 fullWidth 
                                                 size="small" 
@@ -243,8 +265,8 @@ const AllowedCaRegistrationPage = (props: Props) => {
                                                 helperText={errors.caList && errors.caList[index] ? errors.caList[index] : ""}
                                             />
                                         </TableCell>
-                                        <TableCell>
-                                            <IconButton onClick={() => handleRemoveCa(index)} color="error">
+                                        <TableCell sx={{ verticalAlign: 'top', width: '20%', textAlign: 'center' }}>
+                                            <IconButton onClick={() => handleRemoveCa(index)} sx={{ color: '#FF8400' }}>
                                                 <DeleteIcon />
                                             </IconButton>
                                         </TableCell>
@@ -255,14 +277,14 @@ const AllowedCaRegistrationPage = (props: Props) => {
                     </TableContainer>
 
                     <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 3 }}>
-                        <Button variant="contained" color="secondary" onClick={handleCancel}>
+                        <Button variant="contained" color="primary" onClick={handleSubmit} disabled={isButtonDisabled}>Register</Button>
+                        <Button variant="contained" color="secondary" onClick={handleReset}>Reset</Button>
+                        <Button variant="outlined" color="secondary" onClick={handleCancel}>
                             Cancel
                         </Button>
-                        <Button variant="contained" color="secondary" onClick={handleReset}>Reset</Button>
-                        <Button variant="contained" color="primary" onClick={handleSubmit} disabled={isButtonDisabled}>Register</Button>
                     </Box>
-                </Box>
-            </Box>
+                </StyledInputArea>
+            </StyledContainer>
 
         </>
     )

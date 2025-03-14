@@ -1,7 +1,7 @@
 import { useDialogs } from '@toolpad/core';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router';
-import { Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography, useTheme } from '@mui/material';
+import { Box, Button, Paper, styled, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography, useTheme } from '@mui/material';
 import CustomDialog from '../../../components/dialog/CustomDialog';
 import { getAllowedCaInfo } from '../../../apis/list-api';
 import FullscreenLoader from '../../../components/loading/FullscreenLoader';
@@ -50,60 +50,84 @@ const AllowedCaDetailPage = (props: Props) => {
                 });
                 setIsLoading(false);
             } catch (err) {
-                  console.error('Failed to fetch Allowed CA List information:', err);
-                  setIsLoading(false);
-                  navigate('/error', { state: { message: formatErrorMessage(err, "Failed to fetch Allowed CA List") } });
+                    console.error('Failed to fetch Allowed CA List information:', err);
+                    setIsLoading(false);
+                    navigate('/error', { state: { message: formatErrorMessage(err, "Failed to fetch Allowed CA List") } });
             }
         };
 
         fetchData();
     }, [numericId]);
 
+    const StyledContainer = useMemo(() => styled(Box)(({ theme }) => ({
+        width: 500,
+        margin: 'auto',
+        marginTop: theme.spacing(1),
+        padding: theme.spacing(3),
+        border: 'none',
+        borderRadius: theme.shape.borderRadius,
+        backgroundColor: '#ffffff',
+        boxShadow: '0px 4px 8px 0px #0000001A',
+    })), []);
     
-  return (
-    <>
-        <FullscreenLoader open={isLoading} />
-        <Box sx={{ p: 3 }}>
-            <Typography variant="h4">Allowd CA List Detail Information</Typography>
-            <TextField 
-                fullWidth
-                label="Wallet Identifier" 
-                variant="standard"
-                margin="normal" 
-                value={formData.walletId || ''} 
-                sx={{minWidth: 250}}
-            />
+    const StyledTitle = useMemo(() => styled(Typography)({
+        textAlign: 'left',
+        fontSize: '24px',
+        fontWeight: 700,
+    }), []);
+    
+    const StyledInputArea = useMemo(() => styled(Box)(({ theme }) => ({
+        marginTop: theme.spacing(2),
+    })), []);
+    
+    return (
+        <>
+            <FullscreenLoader open={isLoading} />
+            <Typography variant="h4">Allowed CA Management</Typography>
+            <StyledContainer>
+                <StyledTitle>Allowed CA Detail Information</StyledTitle>
+                <TextField 
+                    fullWidth
+                    label="Wallet Identifier" 
+                    variant="standard"
+                    margin="normal" 
+                    value={formData.walletId || ''} 
+                    sx={{minWidth: 250}}
+                />
 
-            <Typography variant="h6" sx={{ mt: 3 }}>Allowd Ca List</Typography>
-            <TableContainer component={Paper}>
-                <Table>
-                    <TableHead>
-                        <TableRow sx={{ backgroundColor: theme.palette.mode === "dark" ? theme.palette.background.paper : "#f5f5f5" }}>
-                            <TableCell>CA</TableCell> 
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {formData.caList?.map((ca, index) => (
-                            <TableRow key={index}>
-                                <TableCell>
-                                    <TextField fullWidth size="small" value={ca} />
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 3 }}>
-                <Button variant="contained" color="secondary" onClick={() => navigate('/list-settings/allowed-ca')}>
-                    Back
-                </Button>
-                <Button variant="contained" color="primary" onClick={() => navigate('/list-settings/allowed-ca/allowed-ca-edit/' + numericId)}>
-                    Edit
-                </Button>
-            </Box>
-        </Box>
-    </>
-  )
+                <Typography variant="h6" sx={{ mt: 3 }}>Allowd Ca List</Typography>
+
+                <StyledInputArea>
+                    <TableContainer component={Paper}>
+                        <Table>
+                            <TableHead>
+                                <TableRow sx={{ backgroundColor: theme.palette.mode === "dark" ? theme.palette.background.paper : "#f5f5f5" }}>
+                                    <TableCell>CA</TableCell> 
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {formData.caList?.map((ca, index) => (
+                                    <TableRow key={index}>
+                                        <TableCell>
+                                            <TextField fullWidth size="small" value={ca} />
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                    <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 3 }}>
+                        <Button variant="outlined" color="primary" onClick={() => navigate('/list-settings/allowed-ca')}>
+                            Back
+                        </Button>
+                        <Button variant="outlined" color="primary" onClick={() => navigate('/list-settings/allowed-ca/allowed-ca-edit/' + numericId)}>
+                            Go to Edit
+                        </Button>
+                    </Box>
+                </StyledInputArea>
+            </StyledContainer>
+        </>
+    )
 }
 
 export default AllowedCaDetailPage

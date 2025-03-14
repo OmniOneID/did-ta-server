@@ -1,7 +1,7 @@
-import { Button, FormControl, FormHelperText, InputLabel, MenuItem, Select, SelectChangeEvent, TextField, Typography } from '@mui/material';
+import { Button, FormControl, FormHelperText, InputLabel, MenuItem, Select, SelectChangeEvent, styled, TextField, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import { useDialogs } from '@toolpad/core/useDialogs';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { registerEntity, verifyEntityNameUnique } from '../../apis/entity-api';
 import { verifyServerUrl } from '../../apis/server-api';
@@ -223,7 +223,7 @@ const EntityRegistrationPage = (props: Props) => {
     const handleCancel = async () => {
         const result = await dialogs.open(CustomConfirmDialog, {
           title: 'Confirmation',
-          message: 'Are you sure you want to cancel entity registration',
+          message: 'Are you sure you want to cancel entity registration?',
           isModal: true,
         });
     
@@ -247,12 +247,40 @@ const EntityRegistrationPage = (props: Props) => {
         setFileName('');
     };
 
+    const StyledContainer = useMemo(() => styled(Box)(({ theme }) => ({
+        width: 500,
+        margin: 'auto',
+        marginTop: theme.spacing(3),
+        padding: theme.spacing(3),
+        border: 'none',
+        borderRadius: theme.shape.borderRadius,
+        backgroundColor: '#ffffff',
+        boxShadow: '0px 4px 8px 0px #0000001A',
+    })), []);
+      
+    const StyledSubTitle = useMemo(() => styled(Typography)({
+        textAlign: 'left',
+        fontSize: '24px',
+        fontWeight: 700,
+    }), []);
+
+    const StyledDescription = useMemo(() => styled(Box)(({ theme }) => ({
+        maxWidth: 500, 
+        marginTop: theme.spacing(1),
+        padding: theme.spacing(0),
+    })), []);
+
+    const StyledInputArea = useMemo(() => styled(Box)(({ theme }) => ({
+        marginTop: theme.spacing(2),
+    })), []);
+
     return (
         <>
             <FullscreenLoader open={isLoading} />
-            <Box sx={{ p: 3 }}>
-                <Typography variant="h4">Entity Registration</Typography>
-                <Box sx={{ maxWidth: 500, margin: 'auto', mt: 2, p: 3, border: '1px solid #ccc', borderRadius: 2 }}>
+            <Typography variant="h4">Entity Management</Typography>
+            <StyledContainer>
+                <StyledSubTitle>Entity Registration</StyledSubTitle>
+                <StyledDescription>
                     <Typography variant="body1">
                         Register an entity's DID Document on the blockchain. Once registration is complete, 
                         the entity admin must submit a request for a joining certificate issuance.
@@ -260,8 +288,8 @@ const EntityRegistrationPage = (props: Props) => {
                     <Typography variant="body1" sx={{ mt: 1 }}>
                         Deleting a registered entity is currently not supported. This feature will be available in a future update.
                     </Typography>
-                </Box>
-                <Box sx={{ maxWidth: 500, margin: 'auto', mt: 2, p: 3, border: '1px solid #ccc', borderRadius: 2 }}>         
+                </StyledDescription>
+                <StyledInputArea>         
                     <FormControl fullWidth margin="normal" error={!!errors.didDoc}>
                         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'left', mb: 1 }}>
                             <Typography variant="body1" sx={{ mr: 5 }}>DID Document: </Typography>
@@ -362,9 +390,8 @@ const EntityRegistrationPage = (props: Props) => {
                         <Button variant="contained" color="secondary" onClick={handleReset}>Reset</Button>                        
                         <Button variant="outlined" color="secondary" onClick={handleCancel}>Cancel</Button>
                     </Box>
-                </Box>
-            </Box>
-           
+                </StyledInputArea>
+            </StyledContainer>
         </>
     )
 }

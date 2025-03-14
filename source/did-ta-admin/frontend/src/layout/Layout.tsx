@@ -5,6 +5,7 @@ import { Navigate, Outlet, useNavigate } from 'react-router';
 import logo from '../assets/logo.svg';
 import CustomAccount from '../components/account-menu/CustomAccount';
 import { useSession } from '../context/SessionContext';
+import { useEffect } from 'react';
 
 export default function Layout() {
   const { session } = useSession();
@@ -58,7 +59,6 @@ export default function Layout() {
           borderTopLeftRadius: '8px',
           borderTopRightRadius: '8px',
           paddingTop: '10px',
-          marginLeft: '15px',
         },
         '& .MuiToolbar-root': {
           width: {
@@ -79,7 +79,7 @@ export default function Layout() {
         toolbarAccount: () => <CustomAccount />,
       }}
     >
-      <PageContainer breadcrumbs={[]}>
+      <PageContainer breadcrumbs={[]} >
         <Outlet />
       </PageContainer>
     </DashboardLayout>

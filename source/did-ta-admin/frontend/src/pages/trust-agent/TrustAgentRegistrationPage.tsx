@@ -1,6 +1,6 @@
-import { Box, Button, SelectChangeEvent, TextField, Typography } from '@mui/material';
+import { Box, Button, SelectChangeEvent, styled, TextField, Typography } from '@mui/material';
 import { useDialogs } from '@toolpad/core/useDialogs';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import CustomConfirmDialog from '../../components/dialog/CustomConfirmDialog';
 import CustomDialog from '../../components/dialog/CustomDialog';
@@ -96,36 +96,54 @@ const TrustAgentRegisterPage = () => {
   //   return <Navigate to="/ta-management" replace />;
   // }
 
+  const StyledContainer = useMemo(() => styled(Box)(({ theme }) => ({
+    backgroundColor: 'white',
+    padding: theme.spacing(3),
+    borderRadius: theme.shape.borderRadius,
+    margin: 'auto',
+    marginTop: theme.spacing(3),
+    boxShadow: '0px 4px 8px 0px #0000001A',
+  })), []);
+  
+  const StyledSubTitle = useMemo(() => styled(Typography)(({ theme }) => ({
+    textAlign: 'left',
+    fontSize: '24px',
+    fontWeight: 700,
+  })), []);
+
+  const StyledDescription = useMemo(() => styled(Box)(({ theme }) => ({
+    maxWidth: 500, 
+    marginTop: theme.spacing(1),
+    padding: theme.spacing(0),
+  })), []);
+
+  const StyledInputArea = useMemo(() => styled(Box)(({ theme }) => ({
+    maxWidth: 500, 
+    margin: 'auto', 
+    marginTop: theme.spacing(2), 
+    display: 'flex', 
+    alignItems: 'flex-start', 
+    gap: theme.spacing(2), 
+  })), []);
+
   return (
     <>
       <FullscreenLoader open={isLoading} />
-      <Box sx={{ p: 3 }}>
-        <Typography variant="h4">Trust Agent Quick Registration</Typography>
+      <Typography variant="h4">TA Management</Typography>
   
-        <Box
-          sx={{
-            backgroundColor: 'white',
-            p: 3,
-            borderRadius: 3,
-            margin: 'auto', 
-            mt: 3,
-            boxShadow: '0px 4px 8px 0px #0000001A',
-          }}
-        >
-          <Typography sx={{ textAlign: 'left', fontSize: '24px', fontWeight: 700 }}>
-            Trust Agent Quick Registration
-          </Typography>
+        <StyledContainer>
+          <StyledSubTitle>Trust Agent Quick Registration</StyledSubTitle>
   
-          <Box sx={{ maxWidth: 500, margin: 'auto', p: 3, pl: 0 }}>
+          <StyledDescription>
             <Typography variant="body1" sx={{ color: '#666666' }}>
               This is a <strong>temporary registration page</strong> for the Trust Agent.
             </Typography>
             <Typography variant="body1" sx={{ mt: 1, color: '#666666' }}>
               A more detailed registration page will be updated in the second phase of development, scheduled for April.
             </Typography>
-          </Box>
+          </StyledDescription>
   
-          <Box sx={{ maxWidth: 500, margin: 'auto', mt: 2, display: 'flex', alignItems: 'flex-start', gap: 2 }}>
+          <StyledInputArea>
             <TextField
               fullWidth
               label="Server URL"
@@ -147,9 +165,8 @@ const TrustAgentRegisterPage = () => {
                 Quick Register
               </Button>
             </Box>
-          </Box>
-        </Box>
-      </Box>
+          </StyledInputArea>
+        </StyledContainer>
     </>
   );
   

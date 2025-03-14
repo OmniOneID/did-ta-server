@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import { getEntityInfo } from '../../apis/entity-api';
-import { CircularProgress, Box, Typography, TextField, Button, Popover, useTheme, useMediaQuery } from '@mui/material';
+import { CircularProgress, Box, Typography, TextField, Button, Popover, useTheme, useMediaQuery, styled } from '@mui/material';
 import CustomDialog from '../../components/dialog/CustomDialog';
 import { useDialogs } from '@toolpad/core/useDialogs';
 import { formatErrorMessage } from '../../utils/error-handler';
+import FullscreenLoader from '../../components/loading/FullscreenLoader';
 
 const EntityDetailPage = () => {
     const { entityId } = useParams();
@@ -56,30 +57,49 @@ const EntityDetailPage = () => {
         setAnchorEl(null);
     };
 
+    const StyledContainer = styled(Box)(({ theme }) => ({
+        width: 500,
+        margin: 'auto',
+        marginTop: theme.spacing(1),
+        padding: theme.spacing(3),
+        border: 'none',
+        borderRadius: theme.shape.borderRadius,
+        backgroundColor: '#ffffff',
+        boxShadow: '0px 4px 8px 0px #0000001A',
+    }));
+
+    const StyledTitle = styled(Typography)({
+        textAlign: 'left',
+        fontSize: '24px',
+        fontWeight: 700,
+    });
+
+    const StyledInputArea = styled(Box)(({ theme }) => ({
+        marginTop: theme.spacing(2),
+    }));
+
     return (
-        <Box sx={{ p: 3 }}>
-            <Typography variant="h4">Entity Detail Information</Typography>
-    
-            {isLoading ? (
-                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '300px' }}>
-                    <CircularProgress />
-                </Box>
-            ) : (
-                <Box sx={{ maxWidth: 400, margin: 'auto', mt: 1, p: 3, border: '1px solid #ccc', borderRadius: 2 }}>
+        <>
+            <FullscreenLoader open={isLoading} />
+            <Typography variant="h4">Entity Management</Typography>
+            <StyledContainer>
+                <StyledTitle>Entity Detail Information</StyledTitle>
+        
+                <StyledInputArea>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <TextField 
                             fullWidth 
                             label="DID" 
                             variant="standard" 
                             margin="normal" 
-                            value={entityData.did}
+                            value={entityData?.did || ''}
                             slotProps={{ input: { readOnly: true } }} 
                         />
                         <Button 
                             variant="outlined" 
                             size="small" 
                             onClick={handlePopoverOpen} 
-                            disabled={entityData.didDocument ? false : true}
+                            disabled={entityData?.didDocument ? false : true}
                             sx={{
                                 height: '100%', 
                                 flexShrink: 0, 
@@ -93,22 +113,30 @@ const EntityDetailPage = () => {
 
                     <Popover
                         open={Boolean(anchorEl)}
-                        anchorEl={anchorEl}
                         onClose={handlePopoverClose}
-                        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+                        anchorReference="none"
+                        sx={{
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        height: "80vh",
+                        }}
                         slotProps={{
-                            paper: {
-                                sx: {
-                                p: 2,
-                                maxWidth: isSmallScreen ? '90vw' : 500,
-                                width: '100%',
-                                },
+                        paper: {
+                            sx: {
+                            maxWidth: 500,
+                            width: "80vw",
+                            padding: 3,
+                            height: { xs: "auto", md: "100vh" },
+                            overflowY: "auto",
                             },
+                        },
                         }}
                     >
                         <Box sx={{ p: 2, maxWidth: 500 }}>
                             <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
-                            {JSON.stringify(entityData.didDocument, null, 2)}
+                            {JSON.stringify(entityData?.didDocument || '', null, 2)}
                             </Typography>
                         </Box>
                     </Popover>
@@ -118,7 +146,7 @@ const EntityDetailPage = () => {
                         label="Name" 
                         variant="standard" 
                         margin="normal" 
-                        value={entityData.name} 
+                        value={entityData?.name || ''} 
                         slotProps={{ input: { readOnly: true } }} 
                     />
 
@@ -127,7 +155,7 @@ const EntityDetailPage = () => {
                         label="Role" 
                         variant="standard" 
                         margin="normal" 
-                        value={entityData.role} 
+                        value={entityData?.role || ''} 
                         slotProps={{ input: { readOnly: true } }} 
                     />
 
@@ -136,7 +164,7 @@ const EntityDetailPage = () => {
                         label="Status" 
                         variant="standard" 
                         margin="normal" 
-                        value={entityData.status} 
+                        value={entityData?.status || ''} 
                         slotProps={{ input: { readOnly: true } }} 
                     />
 
@@ -145,7 +173,7 @@ const EntityDetailPage = () => {
                         label="Server URL" 
                         variant="standard" 
                         margin="normal" 
-                        value={entityData.serverUrl} 
+                        value={entityData?.serverUrl} 
                         slotProps={{ input: { readOnly: true } }} 
                     />
 
@@ -154,30 +182,29 @@ const EntityDetailPage = () => {
                         label="Registered At" 
                         variant="standard" 
                         margin="normal" 
-                        value={entityData.createdAt} 
+                        value={entityData?.createdAt || ''} 
                         slotProps={{ input: { readOnly: true } }} 
                     />
 
-                    {entityData.updatedAt && (
+                    {entityData?.updatedAt && (
                         <TextField 
                             fullWidth 
                             label="Updated At" 
                             variant="standard" 
                             margin="normal" 
-                            value={entityData.updatedAt} 
+                            value={entityData?.updatedAt || ''} 
                             slotProps={{ input: { readOnly: true } }} 
                         />
                     )}
+                </StyledInputArea>
+                <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 3 }}>
+                    <Button variant="outlined" color="primary" onClick={() => navigate('/entities/entity-management')}>
+                        Back
+                    </Button>
                 </Box>
-            )}
 
-            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 3 }}>
-                <Button variant="contained" color="primary" onClick={() => navigate('/entities/entity-management')}>
-                    Back
-                </Button>
-            </Box>
-
-        </Box>
+            </StyledContainer>
+        </>
     );
     
 };
