@@ -85,11 +85,11 @@ const PasswordResetDialog: React.FC<PasswordResetDialogProps> = ({ open, onClose
         />
       </DialogContent>
       <DialogActions>
-        <Button variant="contained" onClick={onClose} color="secondary">
-          Cancel
-        </Button>
         <Button variant="contained" onClick={handleConfirm} color="primary" disabled={isButtonDisabled}>
           Update
+        </Button>
+        <Button variant="contained" onClick={onClose} color="secondary">
+          Cancel
         </Button>
       </DialogActions>
     </Dialog>

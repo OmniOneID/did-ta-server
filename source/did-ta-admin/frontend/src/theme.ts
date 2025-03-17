@@ -184,48 +184,53 @@ const customTheme: ThemeOptions & {
               backgroundColor: "rgba(255, 132, 0, 0.1)",
               borderColor: "#FF8400",
             },
-            "&.Mui-disabled": {
-              borderColor: "#D3D3D3",
-              color: "#D3D3D3",
-            },
           },
-          "&.MuiButton-outlinedSecondary": {
-            borderColor: "#000000",  
-            color: "#000000",        
-            backgroundColor: "#FFFFFF", 
-            "&:hover": {
-              backgroundColor: "#F5F5F5",
-              borderColor: "#000000",
-            },
-            "&.Mui-disabled": {
-              borderColor: "#D3D3D3",
-              color: "#D3D3D3",
-              backgroundColor: "#F0F0F0",
-            },
-          },
+    
           "&.MuiButton-containedPrimary": {
             backgroundColor: "#FF8400",
             color: "#FFFFFF",
             "&:hover": {
               backgroundColor: "#E67500",
             },
-            "&.Mui-disabled": {
-              backgroundColor: "#FFD8A8",
-              color: "#FFFFFF",
-            },
           },
-          "&.MuiButton-containedSecondary": { 
-            backgroundColor: "#000000",  
-            borderColor: "#000000",      
-            color: "#FFFFFF",           
+    
+          "&.MuiButton-containedSecondary": {
+            backgroundColor: "#000000",
+            borderColor: "#000000",
+            color: "#FFFFFF",
             "&:hover": {
-              backgroundColor: "#333333", 
+              backgroundColor: "#333333",
               borderColor: "#333333",
             },
+          },
+    
+          "&.Mui-disabled": {
+            backgroundColor: "#D3D3D3", 
+            color: "#FFFFFF", 
+            borderColor: "#D3D3D3", 
+          },
+    
+          "&.MuiButton-containedError": {
+            backgroundColor: "#ED207B",
+            color: "#FFFFFF",
+            "&:hover": {
+              backgroundColor: "#D81B6E",
+            },
             "&.Mui-disabled": {
-              backgroundColor: "#A0A0A0",
-              color: "#FFFFFF",
-              borderColor: "#A0A0A0",
+              backgroundColor: "#D3D3D3 !important", 
+              color: "#FFFFFF !important", 
+            },
+          },
+          "&.MuiButton-outlinedError": {
+            borderColor: "#ED207B",
+            color: "#ED207B",
+            "&:hover": {
+              backgroundColor: "rgba(237, 32, 123, 0.1)",
+            },
+            "&.Mui-disabled": {
+              backgroundColor: "#D3D3D3 !important",
+              color: "#FFFFFF !important",
+              borderColor: "#D3D3D3 !important",
             },
           },
         },
