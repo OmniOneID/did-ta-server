@@ -1,13 +1,13 @@
-import { useDialogs } from '@toolpad/core';
-import React, { useEffect, useMemo, useState } from 'react'
-import { useNavigate, useParams } from 'react-router';
-import FullscreenLoader from '../../../components/loading/FullscreenLoader';
-import { Box, Button, IconButton, Paper, SelectChangeEvent, styled, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography, useTheme } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { Box, Button, IconButton, Paper, SelectChangeEvent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography, styled, useTheme } from '@mui/material';
+import { useDialogs } from '@toolpad/core';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useNavigate, useParams } from 'react-router';
+import { getAllowedCaInfo, updateAllowedCa, verifyWalletIdUnique } from '../../../apis/list-api';
 import CustomConfirmDialog from '../../../components/dialog/CustomConfirmDialog';
-import { updateAllowedCa, verifyWalletIdUnique, getAllowedCaInfo } from '../../../apis/list-api';
 import CustomDialog from '../../../components/dialog/CustomDialog';
+import FullscreenLoader from '../../../components/loading/FullscreenLoader';
 import { formatErrorMessage } from '../../../utils/error-handler';
 
 type Props = {}
@@ -316,8 +316,8 @@ const AllowedCaEditPage = (props: Props) => {
                     </TableContainer>
 
                     <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 3 }}>
-                        <Button variant="contained" color="secondary" onClick={handleReset}>Reset</Button>
                         <Button variant="contained" color="primary" onClick={handleSubmit} disabled={isButtonDisabled}>Update</Button>
+                        <Button variant="contained" color="secondary" onClick={handleReset}>Reset</Button>
                         <Button variant="outlined" color="secondary" onClick={handleCancel}>Cancel</Button>
                     </Box>
                 </StyledInputArea>
