@@ -93,6 +93,9 @@ const AccountMenu = () => {
           borderWidth: '1px',
           borderStyle: 'solid',
           backgroundColor: `${theme.palette.mode === 'light' ? '#202B45' : '#555555'} !important`,
+          "&:hover": {
+            backgroundColor: "#4E546B !important", // hover 시 배경색 변경
+          },
         }}
       >
         Setting
@@ -110,12 +113,17 @@ const AccountMenu = () => {
           horizontal: 'right',
         }}
       >
-        <Box sx={{ p: 2, minWidth: 200 }}>
-          <Button fullWidth variant="contained" sx={{ mt: 1 }} onClick={handleOpenPasswordDialog}>
+        <Box sx={{ p: 1, minWidth: 200 }}>
+          <Button 
+            fullWidth 
+            variant="text" 
+            sx={{ 
+              color: '#000',
+              height: '32px',
+            }} 
+            onClick={handleOpenPasswordDialog}
+          >
             Change Password
-          </Button>
-          <Button fullWidth variant="contained" sx={{ mt: 1 }} onClick={handleSignOut}>
-            Logout
           </Button>
         </Box>
       </Popover>

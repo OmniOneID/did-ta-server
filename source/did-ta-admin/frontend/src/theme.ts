@@ -43,6 +43,25 @@ const customTheme: ThemeOptions & {
           padding: "8px",
           height: "98%",
         },
+        root: {
+          "&.MuiDrawer-root .MuiPaper-root .MuiBox-root": {
+            height: "auto",
+            minHeight: "auto",
+          },
+          "&.MuiDrawer-root .MuiPaper-root .MuiBox-root .MuiList-root": {
+            marginBottom: '16px',
+          },
+          "&.MuiDrawer-root .MuiPaper-root .MuiBox-root .MuiStack-root hr": {
+            display: "none",
+          },
+          "&.MuiDrawer-root .MuiPaper-root .MuiBox-root .MuiStack-root button": {
+            border: "1px solid #D3D5DB", 
+            color: "#ffffff",
+            "&:hover": {
+              backgroundColor: "#4E546B",
+            },
+          },
+        },
       },
     },
     MuiListItemButton: {

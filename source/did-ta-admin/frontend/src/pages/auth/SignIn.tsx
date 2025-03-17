@@ -83,8 +83,8 @@ export default function SignIn() {
     }
   };
 
-  const Title = () => <p style={{ fontWeight: 700, fontSize: '28px', lineHeight: '150%', margin: 0 }}>Sign in</p>;
-  const SubTitle = () => <p style={{ fontSize: '14px', marginBottom: 16 }}>Welcome to OpenDID TA Admin Console</p>;
+  const Title = () => <p style={{ fontWeight: 700, fontSize: '32px', lineHeight: '150%', margin: 0 }}>TA Admin Console Login</p>;
+  const SubTitle = () => <p style={{ fontSize: '14px', marginBottom: 16, marginTop: 8 }}>Welcome, please sign in to continue</p>;
 
   return (
     <>

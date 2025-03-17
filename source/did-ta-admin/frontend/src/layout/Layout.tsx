@@ -6,6 +6,7 @@ import logo from '../assets/logo.svg';
 import CustomAccount from '../components/account-menu/CustomAccount';
 import { useSession } from '../context/SessionContext';
 import { useEffect } from 'react';
+import CustomFooterAccount from '../components/account-menu/CustomFooterAccount';
 
 export default function Layout() {
   const { session } = useSession();
@@ -77,6 +78,7 @@ export default function Layout() {
       slots={{
         appTitle: CustomAppTitle,
         toolbarAccount: () => <CustomAccount />,
+        sidebarFooter: () => <CustomFooterAccount />,
       }}
     >
       <PageContainer breadcrumbs={[]} >
