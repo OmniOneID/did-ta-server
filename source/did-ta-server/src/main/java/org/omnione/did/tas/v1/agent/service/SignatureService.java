@@ -18,9 +18,9 @@ package org.omnione.did.tas.v1.agent.service;
 
 import org.omnione.did.base.datamodel.enums.ProofPurpose;
 import org.omnione.did.base.datamodel.enums.ProofType;
+import org.omnione.did.base.db.domain.Tas;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
-import org.omnione.did.base.property.TasProperty;
 import org.omnione.did.base.util.BaseCoreDidUtil;
 import org.omnione.did.base.util.BaseCryptoUtil;
 import org.omnione.did.base.util.BaseDigestUtil;
@@ -34,6 +34,7 @@ import org.omnione.did.data.model.did.InvokedDidDoc;
 import org.omnione.did.data.model.did.VerificationMethod;
 import org.omnione.did.tas.v1.common.service.DidDocService;
 import org.omnione.did.tas.v1.common.service.StorageService;
+import org.omnione.did.tas.v1.common.service.query.TasQueryService;
 import org.springframework.stereotype.Service;
 
 /**
@@ -44,9 +45,10 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class SignatureService {
     private final DidDocService didDocService;
-    private final TasProperty tasProperty;
     private final FileWalletService fileWalletService;
     private final StorageService storageService;
+    private final TasQueryService tasQueryService;
+
     /**
      * Verifies a signature using the provided public key, signature, and message.
      *
@@ -83,8 +85,11 @@ public class SignatureService {
      * @return InvokedDidDoc The signed invoked DID document
      */
     public InvokedDidDoc signInvokedDidDoc(DidDocument ownerDidDoc) {
+        // Retrieve TAS.
+        Tas existedTas = tasQueryService.findTas();
+
         // Find TAS DID Document.
-        DidDocument tasDidDocument = didDocService.getDidDocument(tasProperty.getDid());
+        DidDocument tasDidDocument = didDocService.getDidDocument(existedTas.getDid());
 
         // Generate the signature message.
         DidDocument didDocument = removeProof(ownerDidDoc);
@@ -120,7 +125,8 @@ public class SignatureService {
      * @return InvokedDidDoc The unsigned invoked DID document
      */
     private InvokedDidDoc generateInvokedDidDoc(DidDocument tasDidDocument, DidDocument didDocument) {
-        return BaseTasDidUtil.generateInvokedDocumentSignatureMessage(tasDidDocument, didDocument, ProofType.SECP_256R1_SIGNATURE_2018, tasProperty.getCertificateVc());
+        Tas existedTas = tasQueryService.findTas();
+        return BaseTasDidUtil.generateInvokedDocumentSignatureMessage(tasDidDocument, didDocument, ProofType.SECP_256R1_SIGNATURE_2018, existedTas.getCertificateUrl());
     }
 
     /**
@@ -211,8 +217,11 @@ public class SignatureService {
      */
     public InvokedDidDoc signEntityInvokedDidDoc(DidDocument entityOwnerDidDoc) {
         try {
+            // Retrieve TAS.
+            Tas existedTas = tasQueryService.findTas();
+
             // Retrievie TAS DID Document.
-            DidDocument tasDidDoc = storageService.findDidDoc(tasProperty.getDid());
+            DidDocument tasDidDoc = storageService.findDidDoc(existedTas.getDid());
 
             // Generate the signature message.
             DidDocument didDocument = removeProof(entityOwnerDidDoc);

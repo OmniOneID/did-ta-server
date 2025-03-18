@@ -31,7 +31,6 @@ import org.omnione.did.base.db.domain.Transaction;
 import org.omnione.did.base.db.repository.EntityRepository;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
-import org.omnione.did.base.property.TasProperty;
 import org.omnione.did.base.util.BaseCoreVcUtil;
 import org.omnione.did.base.util.BaseCryptoUtil;
 import org.omnione.did.base.util.BaseMultibaseUtil;
@@ -78,7 +77,6 @@ public class EntityServiceImpl implements EntityService {
     private final TasQueryService tasQueryService;
     private final StorageService storageService;
     private final IssueVcService issueVcService;
-    private final TasProperty tasProperty;
     private final FileWalletService fileWalletService;
 
     /**
@@ -139,6 +137,10 @@ public class EntityServiceImpl implements EntityService {
         try {
             log.debug("=== Starting requestEnrollEntity ===");
 
+            // Retrieve TAS information.
+            log.debug("\t--> Retrieving TAS information");
+            Tas existedTas = tasQueryService.findTas();
+
             // Retrieve Transaction information.
             log.debug("\t--> Retrieving transaction information for txId: {}", requestEnrollEntityReqDto.getTxId());
             Transaction transaction = transactionService.findTransactionByTxId(requestEnrollEntityReqDto.getTxId());
@@ -162,10 +164,10 @@ public class EntityServiceImpl implements EntityService {
 
             // Generate Entity certificate VC.
             log.debug("\t--> Generating Entity certificate VC");
-            VerifiableCredential entityCertificateVc = generateEntityCertificateVc(entity);
+            VerifiableCredential entityCertificateVc = generateEntityCertificateVc(entity, existedTas);
 
             log.debug("\t--> Signing TAS certificate VC.");
-            signTasCertificateVc(entityCertificateVc);
+            signTasCertificateVc(entityCertificateVc, existedTas);
 
             // Register Entity certificate VC meta.
             log.debug("\t--> Registering Entity certificate VC meta");
@@ -248,12 +250,11 @@ public class EntityServiceImpl implements EntityService {
      * @param entity The entity for which to generate the certificate
      * @return VerifiableCredential The generated entity certificate VC
      */
-    private VerifiableCredential generateEntityCertificateVc(Entity entity) {
-        Tas tas = tasQueryService.findTas();
+    private VerifiableCredential generateEntityCertificateVc(Entity entity, Tas tas) {
         IssueVcParam issueVcParam = new IssueVcParam();
 
         issueVcService.setCertificateVcSchema(issueVcParam);
-        issueVcService.setIssuer(issueVcParam, tas, tasProperty.getCertificateVc());
+        issueVcService.setIssuer(issueVcParam, tas, tas.getCertificateUrl());
         issueVcService.setEntityClaimInfo(issueVcParam, entity);
         issueVcService.setCertificateVcTypes(issueVcParam);
         issueVcService.setCertificateEvidence(issueVcParam, tas);
@@ -267,8 +268,8 @@ public class EntityServiceImpl implements EntityService {
      *
      * @param entityCertificateVc The VC to sign
      */
-    private void signTasCertificateVc(VerifiableCredential entityCertificateVc) {
-        DidDocument tasDidDoc = storageService.findDidDoc(tasProperty.getDid());
+    private void signTasCertificateVc(VerifiableCredential entityCertificateVc, Tas tas) {
+        DidDocument tasDidDoc = storageService.findDidDoc(tas.getDid());
         List<SignatureVcParams> SignatureParamslist = extractVcSignatureMessage(tasDidDoc, entityCertificateVc);
 
         for(SignatureVcParams signatureParam : SignatureParamslist) {

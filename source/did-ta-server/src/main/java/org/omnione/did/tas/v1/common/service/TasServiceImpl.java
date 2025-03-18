@@ -29,7 +29,6 @@ import org.omnione.did.base.db.repository.CertificateVcRepository;
 import org.omnione.did.base.db.repository.TasRepository;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
-import org.omnione.did.base.property.TasProperty;
 import org.omnione.did.base.util.BaseCoreVcUtil;
 import org.omnione.did.base.util.BaseMultibaseUtil;
 import org.omnione.did.tas.v1.agent.dto.tas.RequestEnrollTasReqDto;
@@ -63,7 +62,6 @@ public class TasServiceImpl implements TasService {
     private final TasQueryService tasQueryService;
     private final TransactionService transactionService;
     private final StorageService storageService;
-    private final TasProperty tasProperty;
     private final CertificateVcRepository certificateVcRepository;
     private final IssueVcService issueVcService;
     private final FileWalletService fileWalletService;
@@ -90,26 +88,27 @@ public class TasServiceImpl implements TasService {
             log.debug("\t--> Comparing passwords.");
             verifyTasPassword(requestEnrollTasReqDto.getRequest().getPassword(), tasPassword);
 
+            // Find TAS.
+            Tas existedTas = tasQueryService.findTas();
+
             // Verify TAS status.
             log.debug("\t--> Validating TAS status.");
-            verifyCertificateVcIssuance();
+            verifyCertificateVcIssuance(existedTas);
 
             // Generate TAS certificate VC.
             log.debug("\t--> Generating TAS certificate VC.");
-            VerifiableCredential tasCertificateVc = generateTasCertificateVc();
+            VerifiableCredential tasCertificateVc = generateTasCertificateVc(existedTas);
 
             log.debug("\t--> Signing TAS certificate VC.");
-            signTasCertificateVc(tasCertificateVc);
+            signTasCertificateVc(tasCertificateVc, existedTas);
 
             // Register TAS certificate VC meta.
             log.debug("\t--> Registering TAS certificate VC meta.");
-            Tas tas = tasQueryService.findTas();
-            registerTasCertificateVcMeta(tasCertificateVc, tas);
+            registerTasCertificateVcMeta(tasCertificateVc, existedTas);
 
             // Publish TAS certificate VC.
             log.debug("\t--> Publishing TAS certificate VC.");
-            String tasCertificateVcUrl = publishTasCertificateVc(tasCertificateVc);
-            log.debug("\t--> TAS certificate VC URL: {}", tasCertificateVcUrl);
+            publishTasCertificateVc(tasCertificateVc);
 
             // Generate transaction code.
             log.debug("\t--> Generating transaction code.");
@@ -118,10 +117,6 @@ public class TasServiceImpl implements TasService {
             // Update the status of TAS.
             log.debug("\t--> Updating TAS status. (status: COMPLETED)");
             updateTasStatus(TasStatus.COMPLETED);
-
-            // Update Tas certificate vc URL.
-            log.debug("\t--> Updating TAS certificate VC URL.");
-            updateTasCertificateVcUrl(tasCertificateVcUrl);
 
             // Insert transaction information.
             log.debug("\t--> Inserting transaction information.");
@@ -144,7 +139,7 @@ public class TasServiceImpl implements TasService {
             );
 
             return RequestEnrollTasResDto.builder()
-                    .certVcRef(tasCertificateVcUrl)
+                    .certVcRef(existedTas.getCertificateUrl())
                     .txId(txId)
                     .build();
         } catch (OpenDidException e) {
@@ -183,8 +178,7 @@ public class TasServiceImpl implements TasService {
      *
      * @throws OpenDidException if the TAS is already registered
      */
-    private void verifyCertificateVcIssuance() {
-        Tas tas = tasQueryService.findTas();
+    private void verifyCertificateVcIssuance(Tas tas) {
         if (tas.getStatus() == TasStatus.COMPLETED) {
             throw new OpenDidException(ErrorCode.TAS_ALREADY_REGISTERED);
         }
@@ -195,12 +189,10 @@ public class TasServiceImpl implements TasService {
      *
      * @return VerifiableCredential The generated TAS certificate VC
      */
-    private VerifiableCredential generateTasCertificateVc() {
-        Tas tas = tasQueryService.findTas();
-
+    private VerifiableCredential generateTasCertificateVc(Tas tas) {
         IssueVcParam issueVcParam = new IssueVcParam();
         issueVcService.setCertificateVcSchema(issueVcParam);
-        issueVcService.setIssuer(issueVcParam, tas, tasProperty.getCertificateVc());
+        issueVcService.setIssuer(issueVcParam, tas, tas.getCertificateUrl());
         issueVcService.setTasClaimInfo(issueVcParam, tas);
         issueVcService.setCertificateVcTypes(issueVcParam);
         issueVcService.setCertificateEvidence(issueVcParam, tas);
@@ -214,8 +206,8 @@ public class TasServiceImpl implements TasService {
      *
      * @param tasCertificateVc The TAS certificate VC to be signed
      */
-    private void signTasCertificateVc(VerifiableCredential tasCertificateVc) {
-        DidDocument tasDidDoc = storageService.findDidDoc(tasProperty.getDid());
+    private void signTasCertificateVc(VerifiableCredential tasCertificateVc, Tas tas) {
+        DidDocument tasDidDoc = storageService.findDidDoc(tas.getDid());
         List<SignatureVcParams> SignatureParamslist = extractVcSignatureMessage(tasDidDoc, tasCertificateVc);
 
         for(SignatureVcParams signatureParam : SignatureParamslist) {
@@ -247,8 +239,8 @@ public class TasServiceImpl implements TasService {
      * @param tas The TAS object
      */
     private void registerTasCertificateVcMeta(VerifiableCredential verifiableCredential, Tas tas) {
-        VcMeta vcMeta = BaseCoreVcUtil.generateVcMeta(verifiableCredential, tasProperty.getCertificateVc());
-        log.debug("tas.getCertificateUrl(): {}", tasProperty.getCertificateVc());
+        VcMeta vcMeta = BaseCoreVcUtil.generateVcMeta(verifiableCredential, tas.getCertificateUrl());
+        log.debug("tas.getCertificateUrl(): {}", tas.getCertificateUrl());
         log.debug("vcMeta: {}", vcMeta.toJson());
         storageService.registerVcMeta(vcMeta);
     }
@@ -259,12 +251,10 @@ public class TasServiceImpl implements TasService {
      * @param tasCertificateVc The TAS certificate VC to be published
      * @return String The URL of the published certificate VC
      */
-    private String publishTasCertificateVc(VerifiableCredential tasCertificateVc) {
+    private void publishTasCertificateVc(VerifiableCredential tasCertificateVc) {
         certificateVcRepository.save(CertificateVc.builder()
                 .vc(tasCertificateVc.toJson())
                 .build());
-
-        return tasProperty.getCertificateVc();
     }
 
     /**

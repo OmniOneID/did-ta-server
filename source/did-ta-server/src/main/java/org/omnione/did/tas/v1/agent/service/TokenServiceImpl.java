@@ -41,7 +41,6 @@ import org.omnione.did.base.db.domain.Transaction;
 import org.omnione.did.base.db.repository.TokenRepository;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
-import org.omnione.did.base.property.TasProperty;
 import org.omnione.did.base.util.BaseCoreDidUtil;
 import org.omnione.did.base.util.BaseCryptoUtil;
 import org.omnione.did.base.util.BaseDigestUtil;
@@ -79,7 +78,6 @@ import java.nio.charset.StandardCharsets;
 public class TokenServiceImpl implements TokenService {
     private final TransactionService transactionService;
     private final WalletQueryService walletQueryService;
-    private final EntityQueryService entityQueryService;
     private final EcdhQueryService ecdhQueryService;
     private final TasQueryService tasQueryService;
     private final TokenRepository tokenRepository;

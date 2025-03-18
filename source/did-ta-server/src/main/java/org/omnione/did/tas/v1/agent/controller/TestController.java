@@ -20,7 +20,6 @@ import org.omnione.did.base.constants.UrlConstant;
 import org.omnione.did.base.db.domain.Entity;
 import org.omnione.did.base.db.domain.Tas;
 import org.omnione.did.base.db.domain.User;
-import org.omnione.did.base.property.TasProperty;
 import org.omnione.did.tas.v1.agent.service.EntityService;
 import org.omnione.did.tas.v1.common.service.query.EntityQueryService;
 import org.omnione.did.tas.v1.common.service.query.TasQueryService;
@@ -65,7 +64,6 @@ public class TestController {
     private final EntityService entityService;
     private final TasQueryService tasQueryService;
     private final IssueVcService issueVcService;
-    private final TasProperty tasProperty;
 
     /**
      * Finds a DID document based on the provided DID.
@@ -158,7 +156,7 @@ public class TestController {
         IssueVcParam issueVcParam = new IssueVcParam();
 
         issueVcService.setCertificateVcSchema(issueVcParam);
-        issueVcService.setIssuer(issueVcParam, tas, tasProperty.getCertificateVc());
+        issueVcService.setIssuer(issueVcParam, tas, tas.getCertificateUrl());
         issueVcService.setEntityClaimInfo(issueVcParam, entity);
         issueVcService.setCertificateVcTypes(issueVcParam);
         issueVcService.setCertificateEvidence(issueVcParam, tas);

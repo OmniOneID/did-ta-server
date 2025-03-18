@@ -41,58 +41,6 @@ public class SetupController {
     private final SetupService setupService;
 
     /**
-     * Registers a TAS DID document.
-     *
-     * @param didDoc The TAS DID document to register.
-     * @return EmptyResDto A response DTO representing an empty object.
-     */
-    @RequestMapping(value = "/tas/diddoc", method = RequestMethod.POST)
-    public EmptyResDto registerTasDidDocument(@RequestParam("diddoc") MultipartFile didDoc) {
-        return setupService.registerTasDidDocument(didDoc);
-    }
-
-    /**
-     * Updates a TAS DID document.
-     *
-     * @param didDoc The TAS DID document to update.
-     * @return EmptyResDto A response DTO representing an empty object.
-     */
-    @RequestMapping(value = "/tas/diddoc", method = RequestMethod.PATCH)
-    public EmptyResDto updateTasDidDocument(@RequestParam("diddoc") MultipartFile didDoc) {
-        return setupService.updateTasDidDocument(didDoc);
-    }
-
-    /**
-     * Registers an entity DID document.
-     *
-     * @param didDoc The entity DID document to register.
-     * @param roleType The role type of the entity.
-     * @param serverUrl The server URL of the entity.
-     * @param name The name of the entity.
-     * @return EmptyResDto A response DTO representing an empty object.
-     */
-    @RequestMapping(value = "/entity/diddoc", method = RequestMethod.POST)
-    public EmptyResDto registerEntityDidDocument(@RequestParam("diddoc") MultipartFile didDoc,
-                                                 @RequestParam("roleType") String roleType,
-                                                 @RequestParam("serverUrl") String serverUrl,
-                                                 @RequestParam("name") String name,
-                                                 @RequestParam("certificateUrl") String certificateUrl) {
-        return setupService.registerEntityDidDocument(didDoc, roleType, serverUrl, certificateUrl, name);
-    }
-
-    /**
-     * Updates an entity DID document.
-     *
-     * @param didDoc The entity DID document to update.
-     * @param roleType The role type of the entity.
-     * @return EmptyResDto A response DTO representing an empty object.
-     */
-    @RequestMapping(value = "/entity/diddoc", method = RequestMethod.PATCH)
-    public EmptyResDto updateEntityDidDocument(@RequestParam("diddoc") MultipartFile didDoc, @RequestBody String roleType) {
-        return null;
-    }
-
-    /**
      * Removes a blockchain index.
      * This method is intended for testing purposes and should be used with caution.
      *

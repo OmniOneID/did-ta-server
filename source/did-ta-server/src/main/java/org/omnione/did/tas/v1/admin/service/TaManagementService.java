@@ -26,7 +26,6 @@ import org.omnione.did.base.db.repository.VcSchemaRepository;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.base.property.SetupProperty;
-import org.omnione.did.base.property.TasProperty;
 import org.omnione.did.base.util.BaseCoreVcUtil;
 import org.omnione.did.data.model.did.DidDocument;
 import org.omnione.did.data.model.enums.vc.VcType;
@@ -61,7 +60,6 @@ public class TaManagementService {
     private final SetupProperty setupProperty;
     private final SetupService setupService;
     private final TasService tasService;
-    private final TasProperty tasProperty;
     private final DidDocService didDocService;
     private final VcSchemaRepository vcSchemaRepository;
     private final VcSchemaQueryService vcSchemaQueryService;
@@ -72,16 +70,16 @@ public class TaManagementService {
      * @return TA information
      */
     public RequestTasInfoResDto requestTaInfo() {
-        Tas tas = tasQueryService.findTasOrNull();
-        log.debug("\t--> Found TAS: {}", tas);
+        Tas existedTas = tasQueryService.findTasOrNull();
+        log.debug("\t--> Found TAS: {}", existedTas);
 
-        if (tas == null || tas.getStatus() == TasStatus.DID_DOCUMENT_REQUIRED) {
-            return RequestTasInfoResDto.fromEntity(tas);
+        if (existedTas == null || existedTas.getStatus() == TasStatus.DID_DOCUMENT_REQUIRED) {
+            return RequestTasInfoResDto.fromEntity(existedTas);
         }
 
         log.debug("\t--> Finding TAS DID Document");
-        DidDocument tasDidDocument = findTasDidDocument();
-        return RequestTasInfoResDto.fromEntity(tas, tasDidDocument);
+        DidDocument tasDidDocument = findTasDidDocument(existedTas);
+        return RequestTasInfoResDto.fromEntity(existedTas, tasDidDocument);
     }
 
     /**
@@ -106,7 +104,7 @@ public class TaManagementService {
         Tas updatedTas = tasQueryService.findTas();
 
         log.debug("\t--> Finding TAS DID Document");
-        DidDocument tasDidDocument = findTasDidDocument();
+        DidDocument tasDidDocument = findTasDidDocument(updatedTas);
 
         log.debug("*** Finished registerTaSimple ***");
         return RequestTasInfoResDto.fromEntity(updatedTas, tasDidDocument);
@@ -168,7 +166,8 @@ public class TaManagementService {
 
         try {
             byte[] didDocBytes = Files.readAllBytes(didDocFile.toPath());
-            setupService.registerTasDidDocument(didDocBytes, "tas", serverUrl);
+            String certificateUrl = serverUrl + "/tas/api/v1/certificate-vc";
+            setupService.registerTasDidDocument(didDocBytes, "tas", serverUrl, certificateUrl);
         } catch (Exception e) {
             log.error("Failed to read DID Document file", e);
             throw new OpenDidException(ErrorCode.FAILED_TO_REGISTER_TA_DID_DOCUMENT);
@@ -245,7 +244,7 @@ public class TaManagementService {
      *
      * @return TAS DID Document
      */
-    private DidDocument findTasDidDocument() {
-        return didDocService.getDidDocument(tasProperty.getDid());
+    private DidDocument findTasDidDocument(Tas tas) {
+        return didDocService.getDidDocument(tas.getDid());
     }
 }

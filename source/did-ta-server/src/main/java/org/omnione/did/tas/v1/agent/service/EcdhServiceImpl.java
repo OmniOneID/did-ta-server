@@ -31,11 +31,11 @@ import org.omnione.did.base.db.constant.SubTransactionType;
 import org.omnione.did.base.db.constant.TransactionStatus;
 import org.omnione.did.base.db.domain.Ecdh;
 import org.omnione.did.base.db.domain.SubTransaction;
+import org.omnione.did.base.db.domain.Tas;
 import org.omnione.did.base.db.domain.Transaction;
 import org.omnione.did.base.db.repository.EcdhRepository;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
-import org.omnione.did.base.property.TasProperty;
 import org.omnione.did.base.util.BaseCoreDidUtil;
 import org.omnione.did.base.util.BaseCryptoUtil;
 import org.omnione.did.base.util.BaseDigestUtil;
@@ -53,6 +53,7 @@ import org.omnione.did.crypto.keypair.KeyPairInterface;
 import org.omnione.did.data.model.did.DidDocument;
 import org.omnione.did.tas.v1.common.service.DidDocService;
 import org.omnione.did.tas.v1.common.service.query.ApiQueryService;
+import org.omnione.did.tas.v1.common.service.query.TasQueryService;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
@@ -72,10 +73,10 @@ public class EcdhServiceImpl implements EcdhService {
 
     private final TransactionService transactionService;
     private final DidDocService didDocService;
-    private final TasProperty tasProperty;
     private final EcdhRepository ecdhRepository;
     private final FileWalletService fileWalletService;
     private final ApiQueryService apiQueryService;
+    private final TasQueryService tasQueryService;
 
     /**
      * Handles the ECDH request process.
@@ -345,80 +346,84 @@ public class EcdhServiceImpl implements EcdhService {
      * @return RequestECDHResDto The ECDH response DTO
      */
     private RequestECDHResDto generateSessionKeyAndResponseData(RequestECDHReqDto requestECDHReqDto, Transaction transaction,  SubTransaction lastSubTransaction) {
-            // Get client public key.
-            byte[] clientPublicKey = BaseMultibaseUtil.decode(requestECDHReqDto.getReqEcdh().getPublicKey());
 
-            // Generate server key pair.
-            KeyPairInterface keyPairInterface = BaseCryptoUtil.generateKeyPair(requestECDHReqDto.getReqEcdh().getCurve());
-            byte[] serverPublicKey = ((ECPublicKey) keyPairInterface.getPublicKey()).getEncoded();
-            byte[] serverPrivateKey = ((ECPrivateKey) keyPairInterface.getPrivateKey()).getEncoded();
-            byte[] compressPublicKey = BaseCryptoUtil.compressPublicKey(serverPublicKey, requestECDHReqDto.getReqEcdh().getCurve());
+        // Retrieve TAS information.
+        Tas existedTas = tasQueryService.findTas();
 
-            String encodedServerPublicKey = BaseMultibaseUtil.encode(compressPublicKey);
+        // Get client public key.
+        byte[] clientPublicKey = BaseMultibaseUtil.decode(requestECDHReqDto.getReqEcdh().getPublicKey());
 
-            // Generate serverNonce.
-            byte[] serverNonce = BaseCryptoUtil.generateNonce(16);
-            String encodedServerNonce = BaseMultibaseUtil.encode(serverNonce);
+        // Generate server key pair.
+        KeyPairInterface keyPairInterface = BaseCryptoUtil.generateKeyPair(requestECDHReqDto.getReqEcdh().getCurve());
+        byte[] serverPublicKey = ((ECPublicKey) keyPairInterface.getPublicKey()).getEncoded();
+        byte[] serverPrivateKey = ((ECPrivateKey) keyPairInterface.getPrivateKey()).getEncoded();
+        byte[] compressPublicKey = BaseCryptoUtil.compressPublicKey(serverPublicKey, requestECDHReqDto.getReqEcdh().getCurve());
 
-            // Merge clientNonce and serverNonce.
-            validateClientNonce(requestECDHReqDto.getReqEcdh().getClientNonce());
+        String encodedServerPublicKey = BaseMultibaseUtil.encode(compressPublicKey);
 
-            byte[] mergedNonce = mergeNonces(requestECDHReqDto.getReqEcdh().getClientNonce(), serverNonce);
-            String encodedMergedNonce = BaseMultibaseUtil.encode(mergedNonce);
+        // Generate serverNonce.
+        byte[] serverNonce = BaseCryptoUtil.generateNonce(16);
+        String encodedServerNonce = BaseMultibaseUtil.encode(serverNonce);
 
-            // Choose Cipher algorithm and padding type.
-            SymmetricCipherType symmetricCipherType = determineCipherType(requestECDHReqDto.getReqEcdh().getCandidate());
-            SymmetricPaddingType symmetricPaddingType = determinePaddingType();
+        // Merge clientNonce and serverNonce.
+        validateClientNonce(requestECDHReqDto.getReqEcdh().getClientNonce());
 
-            // Generate session key.
-            byte[] sessionKey = generateSessionKey(clientPublicKey, serverPrivateKey, mergedNonce, symmetricCipherType, requestECDHReqDto.getReqEcdh().getCurve());
-            String encodedSessionKey = BaseMultibaseUtil.encode(sessionKey);
+        byte[] mergedNonce = mergeNonces(requestECDHReqDto.getReqEcdh().getClientNonce(), serverNonce);
+        String encodedMergedNonce = BaseMultibaseUtil.encode(mergedNonce);
 
-            // Insert ECDH information
-            insertEcdh(requestECDHReqDto.getReqEcdh().getClient(), encodedSessionKey, encodedMergedNonce, symmetricCipherType, symmetricPaddingType, transaction.getId());
+        // Choose Cipher algorithm and padding type.
+        SymmetricCipherType symmetricCipherType = determineCipherType(requestECDHReqDto.getReqEcdh().getCandidate());
+        SymmetricPaddingType symmetricPaddingType = determinePaddingType();
 
-            // Retrieve TAS did document.
-            String tasDid = tasProperty.getDid();
-            DidDocument tasDidDocument = didDocService.getDidDocument(tasDid);
+        // Generate session key.
+        byte[] sessionKey = generateSessionKey(clientPublicKey, serverPrivateKey, mergedNonce, symmetricCipherType, requestECDHReqDto.getReqEcdh().getCurve());
+        String encodedSessionKey = BaseMultibaseUtil.encode(sessionKey);
 
-            // Generate AccEcdh
-            AccEcdh unsignedAccEcdh = AccEcdh.builder()
-                    .server(tasDid)
-                    .serverNonce(encodedServerNonce)
-                    .publicKey(encodedServerPublicKey)
-                    .cipher(symmetricCipherType)
-                    .padding(symmetricPaddingType)
-                    .proof(Proof.builder()
-                            .type(ProofType.SECP_256R1_SIGNATURE_2018)
-                            .created(DateTimeUtil.getCurrentUTCTimeString())
-                            .verificationMethod(didDocService.getVerificationMethod(tasDidDocument, ProofPurpose.KEY_AGREEMENT))
-                            .proofPurpose(ProofPurpose.KEY_AGREEMENT)
-                            .proofValue(null)
-                            .build())
-                    .build();
+        // Insert ECDH information
+        insertEcdh(requestECDHReqDto.getReqEcdh().getClient(), encodedSessionKey, encodedMergedNonce, symmetricCipherType, symmetricPaddingType, transaction.getId());
 
-            // Extract the signature message.
-            byte[] signatureMessage = extractSignatureMessage(unsignedAccEcdh);
+        // Retrieve TAS did document.
+        String tasDid = existedTas.getDid();
+        DidDocument tasDidDocument = didDocService.getDidDocument(tasDid);
 
-            // Sign AccEcdh.
-            String proofValue = sign(signatureMessage, ProofPurpose.KEY_AGREEMENT);
+        // Generate AccEcdh
+        AccEcdh unsignedAccEcdh = AccEcdh.builder()
+                .server(tasDid)
+                .serverNonce(encodedServerNonce)
+                .publicKey(encodedServerPublicKey)
+                .cipher(symmetricCipherType)
+                .padding(symmetricPaddingType)
+                .proof(Proof.builder()
+                        .type(ProofType.SECP_256R1_SIGNATURE_2018)
+                        .created(DateTimeUtil.getCurrentUTCTimeString())
+                        .verificationMethod(didDocService.getVerificationMethod(tasDidDocument, ProofPurpose.KEY_AGREEMENT))
+                        .proofPurpose(ProofPurpose.KEY_AGREEMENT)
+                        .proofValue(null)
+                        .build())
+                .build();
 
-            // Re-gegenrate AccEcdh with proofValue.
-            AccEcdh signedAccEcdh = addProofValue(unsignedAccEcdh, proofValue);
+        // Extract the signature message.
+        byte[] signatureMessage = extractSignatureMessage(unsignedAccEcdh);
 
-            // Insert sub-transaction information.
-            transactionService.insertSubTransaction(SubTransaction.builder()
-                    .transactionId(transaction.getId())
-                    .step(lastSubTransaction.getStep() + 1)
-                    .type(SubTransactionType.REQUEST_ECDH)
-                    .status(SubTransactionStatus.COMPLETED)
-                    .build()
-            );
+        // Sign AccEcdh.
+        String proofValue = sign(signatureMessage, ProofPurpose.KEY_AGREEMENT);
 
-            return RequestECDHResDto.builder()
-                    .txId(requestECDHReqDto.getTxId())
-                    .accEcdh(signedAccEcdh)
-                    .build();
+        // Re-gegenrate AccEcdh with proofValue.
+        AccEcdh signedAccEcdh = addProofValue(unsignedAccEcdh, proofValue);
+
+        // Insert sub-transaction information.
+        transactionService.insertSubTransaction(SubTransaction.builder()
+                .transactionId(transaction.getId())
+                .step(lastSubTransaction.getStep() + 1)
+                .type(SubTransactionType.REQUEST_ECDH)
+                .status(SubTransactionStatus.COMPLETED)
+                .build()
+        );
+
+        return RequestECDHResDto.builder()
+                .txId(requestECDHReqDto.getTxId())
+                .accEcdh(signedAccEcdh)
+                .build();
     }
 
     /**

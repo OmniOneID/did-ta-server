@@ -23,7 +23,6 @@ import org.omnione.did.base.db.domain.Entity;
 import org.omnione.did.base.db.domain.Tas;
 import org.omnione.did.base.db.repository.EntityRepository;
 import org.omnione.did.base.property.SetupProperty;
-import org.omnione.did.base.property.TasProperty;
 import org.omnione.did.base.util.BaseCoreVcUtil;
 import org.omnione.did.base.util.BaseMultibaseUtil;
 import org.omnione.did.common.util.HttpClientUtil;
@@ -64,7 +63,6 @@ public class EntityManagementService {
     private final SetupService setupService;
     private final TasQueryService tasQueryService;
     private final IssueVcService issueVcService;
-    private final TasProperty tasProperty;
     private final StorageService storageService;
     private final FileWalletService fileWalletService;
     private final EntityRepository entityRepository;
@@ -97,24 +95,28 @@ public class EntityManagementService {
 
         log.debug("=== Starting registerEntitiesSimple ===");
 
+        // Retrieve TAS
+        log.debug("\t--> Retrieving TAS");
+        Tas existedTas = tasQueryService.findTas();
+
         log.debug("\t--> Registering Issuer");
-        registerEntitiesSimple("issuer", "Issuer",RoleType.ISSUER, "8091");
+        registerEntitiesSimple("issuer", "Issuer",RoleType.ISSUER, "8091", existedTas);
 
         log.debug("\t--> Registering Verifier");
-        registerEntitiesSimple("verifier", "Verifier", RoleType.VERIFIER, "8092");
+        registerEntitiesSimple("verifier", "Verifier", RoleType.VERIFIER, "8092", existedTas);
 
         log.debug("\t--> Registering CAS");
-        registerEntitiesSimple("cas", "CAS", RoleType.APP_PROVIDER, "8094");
+        registerEntitiesSimple("cas", "CAS", RoleType.APP_PROVIDER, "8094", existedTas);
 
         log.debug("\t--> Registering Wallet");
-        registerEntitiesSimple("wallet", "WalletService",RoleType.WALLET_PROVIDER, "8095");
+        registerEntitiesSimple("wallet", "WalletService",RoleType.WALLET_PROVIDER, "8095", existedTas);
 
         log.debug("*** Finished registerEntitiesSimple ***");
 
         return EmptyResDto.builder().build();
     }
 
-    private void registerEntitiesSimple(String entityName, String directoryPath, RoleType roleType, String port) {
+    private void registerEntitiesSimple(String entityName, String directoryPath, RoleType roleType, String port, Tas tas) {
         try {
             String did = "did:omn:" + entityName;
             Entity entity = entityQueryService.findEntityByDidOrNull(did);
@@ -133,14 +135,14 @@ public class EntityManagementService {
                 registerEntityDidDocument_simple(didDocBytes, roleType, baseUrl, certificateUrl, entityName);
 
                 Entity updatedEntity = entityQueryService.findEntityByDid(did);
-                VerifiableCredential verifiableCredential = issueEntityCertificateVc_simple(updatedEntity);
+                VerifiableCredential verifiableCredential = issueEntityCertificateVc_simple(updatedEntity, tas);
 
                 sendCertificateVcToEntity(sendCertificateUrl, verifiableCredential);
             } else if (entity.getStatus() == EntityStatus.CERTIFICATE_VC_REQUIRED) {
-                VerifiableCredential verifiableCredential = issueEntityCertificateVc_simple(entity);
+                VerifiableCredential verifiableCredential = issueEntityCertificateVc_simple(entity, tas);
                 sendCertificateVcToEntity(sendCertificateUrl, verifiableCredential);
             } else if (entity.getStatus() == EntityStatus.COMPLETED) {
-                VerifiableCredential verifiableCredential = issueEntityCertificateVc_simple(entity);
+                VerifiableCredential verifiableCredential = issueEntityCertificateVc_simple(entity, tas);
                 sendCertificateVcToEntity(sendCertificateUrl, verifiableCredential);
             }
         } catch (Exception e) {
@@ -152,21 +154,20 @@ public class EntityManagementService {
         setupService.registerEntityDidDocument(didDocBytes, roleType.getRawValue(), url, certificateVcUrl, name);
     }
 
-    public VerifiableCredential issueEntityCertificateVc_simple(Entity entity) {
-        VerifiableCredential entityCertificateVc = generateEntityCertificateVc(entity);
-        signTasCertificateVc(entityCertificateVc);
+    public VerifiableCredential issueEntityCertificateVc_simple(Entity entity, Tas tas) {
+        VerifiableCredential entityCertificateVc = generateEntityCertificateVc(entity, tas);
+        signTasCertificateVc(entityCertificateVc, tas);
         registerEntityCertificateVcMeta(entityCertificateVc, entity);
         updateEntityStatus(entity.getId(), EntityStatus.COMPLETED);
 
         return entityCertificateVc;
     }
 
-    private VerifiableCredential generateEntityCertificateVc(Entity entity) {
-        Tas tas = tasQueryService.findTas();
+    private VerifiableCredential generateEntityCertificateVc(Entity entity, Tas tas) {
         IssueVcParam issueVcParam = new IssueVcParam();
 
         issueVcService.setCertificateVcSchema(issueVcParam);
-        issueVcService.setIssuer(issueVcParam, tas, tasProperty.getCertificateVc());
+        issueVcService.setIssuer(issueVcParam, tas, tas.getCertificateUrl());
         issueVcService.setEntityClaimInfo(issueVcParam, entity);
         issueVcService.setCertificateVcTypes(issueVcParam);
         issueVcService.setCertificateEvidence(issueVcParam, tas);
@@ -175,8 +176,8 @@ public class EntityManagementService {
         return issueVcService.generateEntityCertificateVc(issueVcParam, entity);
     }
 
-    private void signTasCertificateVc(VerifiableCredential entityCertificateVc) {
-        DidDocument tasDidDoc = storageService.findDidDoc(tasProperty.getDid());
+    private void signTasCertificateVc(VerifiableCredential entityCertificateVc, Tas tas) {
+        DidDocument tasDidDoc = storageService.findDidDoc(tas.getDid());
         List<SignatureVcParams> SignatureParamslist = extractVcSignatureMessage(tasDidDoc, entityCertificateVc);
 
         for(SignatureVcParams signatureParam : SignatureParamslist) {

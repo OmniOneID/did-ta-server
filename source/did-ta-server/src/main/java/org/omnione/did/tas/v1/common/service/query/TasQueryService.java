@@ -21,7 +21,6 @@ import org.omnione.did.base.db.domain.Tas;
 import org.omnione.did.base.db.repository.TasRepository;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
-import org.omnione.did.base.property.TasProperty;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

@@ -17,9 +17,9 @@
 package org.omnione.did.tas.v1.agent.service.validator;
 
 import org.omnione.did.base.datamodel.enums.ProofPurpose;
+import org.omnione.did.base.db.domain.Tas;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
-import org.omnione.did.base.property.TasProperty;
 import org.omnione.did.base.util.BaseCoreVcUtil;
 import org.omnione.did.common.exception.CommonSdkException;
 import org.omnione.did.tas.v1.agent.service.SignatureService;
@@ -32,6 +32,7 @@ import org.omnione.did.common.util.DidValidator;
 import org.omnione.did.common.util.HttpClientUtil;
 import org.omnione.did.data.model.did.DidDocument;
 import org.omnione.did.data.model.vc.VerifiableCredential;
+import org.omnione.did.tas.v1.common.service.query.TasQueryService;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -45,8 +46,7 @@ import java.io.IOException;
 public class CertificateVcValidator {
 
     private final DidDocService didDocService;
-    private final TasProperty tasProperty;
-    private final SignatureService signatureService;
+    private final TasQueryService tasQueryService;
 
     /**
      * Validates a Certificate VC.
@@ -56,9 +56,14 @@ public class CertificateVcValidator {
      * @throws OpenDidException if validation fails
      */
     public void validateCertificateVc(String certificateVcUrl, String providerDid) {
+
+        // Retrieve TAS
+        log.debug("\t-->Retrieving TAS");
+        Tas existedTas = tasQueryService.findTas();
+
         // Get TAS DID Document
         log.debug("\t-->Getting TAS DID Document");
-        DidDocument tasDidDoc = didDocService.getDidDocument(tasProperty.getDid());
+        DidDocument tasDidDoc = didDocService.getDidDocument(existedTas.getDid());
 
         // Get Certificate VC using URL
         log.debug("\t-->Getting Certificate VC");
