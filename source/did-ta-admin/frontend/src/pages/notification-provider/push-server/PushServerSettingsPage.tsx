@@ -254,9 +254,6 @@ const PushServerSettingsPage = (props: Props) => {
                         </FormControl>
 
                         <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 2 }}>
-                            <Button variant="contained" color="secondary" onClick={handleReset}>
-                                Reset
-                            </Button>
                             <Button 
                                 variant="contained" 
                                 color="primary" 
@@ -264,6 +261,9 @@ const PushServerSettingsPage = (props: Props) => {
                                 disabled={isButtonDisabled}
                             >
                                 {isEditMode ? 'Update' : 'Register'}
+                            </Button>
+                            <Button variant="contained" color="secondary" onClick={handleReset}>
+                                Reset
                             </Button>
                         </Box>
                     </StyledInputArea>

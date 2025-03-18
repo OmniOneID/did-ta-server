@@ -267,7 +267,7 @@ const AllowedCaRegistrationPage = (props: Props) => {
                                         </TableCell>
                                         <TableCell sx={{ verticalAlign: 'top', width: '20%', textAlign: 'center' }}>
                                             <IconButton onClick={() => handleRemoveCa(index)} sx={{ color: '#FF8400' }}>
-                                                <DeleteIcon />
+                                                <DeleteIcon sx={{ color: '#FF8400' }} />
                                             </IconButton>
                                         </TableCell>
                                     </TableRow>
