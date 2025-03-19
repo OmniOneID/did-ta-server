@@ -1,7 +1,2 @@
-fcm:
-  enabled: false
-  path:
-  scope: https://www.googleapis.com/auth/cloud-platform
-
 email:
   sender: "noreply_opendid@omnione.net"

@@ -13,22 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.omnione.did.tas.v1.admin.dto.entity;
 
-package org.omnione.did.base.property;
-
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import lombok.ToString;
 
-/**
- * Property class for tas.
- */
 @Getter
 @Setter
-@ConfigurationProperties(prefix = "tas")
-public class TasProperty {
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+@Builder
+public class SendEntityInfoReqDto {
     private String did;
     private String name;
-    private String url;
-    private String certificateVc;
+    private String serverUrl;
+    private String certificateUrl;
 }

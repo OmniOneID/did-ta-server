@@ -33,6 +33,7 @@ import org.omnione.did.data.model.did.DidDocument;
 import org.omnione.did.data.model.enums.vc.RoleType;
 import org.omnione.did.data.model.vc.VcMeta;
 import org.omnione.did.data.model.vc.VerifiableCredential;
+import org.omnione.did.tas.v1.admin.dto.entity.SendEntityInfoReqDto;
 import org.omnione.did.tas.v1.agent.service.FileWalletService;
 import org.omnione.did.tas.v1.agent.service.IssueVcService;
 import org.omnione.did.tas.v1.admin.dto.entity.EntityInfoDto;
@@ -91,6 +92,9 @@ public class EntityManagementService {
                 .build();
     }
 
+    /**
+     * This method is temporarily used before the completion of Admin Phase 2 development.
+     */
     public EmptyResDto registerEntitiesSimple() {
 
         log.debug("=== Starting registerEntitiesSimple ===");
@@ -120,33 +124,67 @@ public class EntityManagementService {
         try {
             String did = "did:omn:" + entityName;
             Entity entity = entityQueryService.findEntityByDidOrNull(did);
-            String baseUrl = setupProperty.getBaseUrl() + ":" + port + "/" + entityName;
-
-            String certificateUrl = baseUrl + "/api/v1/certificate-vc";
-            String sendCertificateUrl = baseUrl + "/admin/v1/certificate-vc";
-
-            String basePath = setupProperty.getPath() + "/" + directoryPath + "/";
-            String didDocFileName = entityName + ".did";
+            BaseUrls baseUrls = constructBaseUrls(entityName, directoryPath, port);
 
             if (entity == null) {
-                File didDocFile = new File(basePath + didDocFileName);
-                byte[] didDocBytes = Files.readAllBytes(didDocFile.toPath());
-
-                registerEntityDidDocument_simple(didDocBytes, roleType, baseUrl, certificateUrl, entityName);
-
-                Entity updatedEntity = entityQueryService.findEntityByDid(did);
-                VerifiableCredential verifiableCredential = issueEntityCertificateVc_simple(updatedEntity, tas);
-
-                sendCertificateVcToEntity(sendCertificateUrl, verifiableCredential);
-            } else if (entity.getStatus() == EntityStatus.CERTIFICATE_VC_REQUIRED) {
-                VerifiableCredential verifiableCredential = issueEntityCertificateVc_simple(entity, tas);
-                sendCertificateVcToEntity(sendCertificateUrl, verifiableCredential);
-            } else if (entity.getStatus() == EntityStatus.COMPLETED) {
-                VerifiableCredential verifiableCredential = issueEntityCertificateVc_simple(entity, tas);
-                sendCertificateVcToEntity(sendCertificateUrl, verifiableCredential);
+                registerNewEntity(did, roleType, baseUrls, entityName, tas);
+            } else {
+                registerOrUpdateEntity(entity, tas, baseUrls);
             }
+
+            sendEntityInfoToEntity(baseUrls.entityInfoUrl, SendEntityInfoReqDto.builder()
+                    .did(did)
+                    .name(entityName)
+                    .serverUrl(baseUrls.baseUrl)
+                    .certificateUrl(baseUrls.certificateUrl)
+                    .build());
         } catch (Exception e) {
             log.error("\t--> Failed to register entity: {}", entityName, e);
+        }
+    }
+
+    private void registerNewEntity(String did, RoleType roleType, BaseUrls baseUrls, String entityName, Tas tas) throws Exception {
+        File didDocFile = new File(baseUrls.didDocFilePath);
+        byte[] didDocBytes = Files.readAllBytes(didDocFile.toPath());
+
+        registerEntityDidDocument_simple(didDocBytes, roleType, baseUrls.baseUrl, baseUrls.certificateUrl, entityName);
+
+        Entity updatedEntity = entityQueryService.findEntityByDid(did);
+        VerifiableCredential verifiableCredential = issueEntityCertificateVc_simple(updatedEntity, tas);
+        sendCertificateVcToEntity(baseUrls.sendCertificateUrl, verifiableCredential);
+    }
+
+    private void registerOrUpdateEntity(Entity entity, Tas tas, BaseUrls baseUrls) {
+        if (entity.getStatus() == EntityStatus.CERTIFICATE_VC_REQUIRED || entity.getStatus() == EntityStatus.COMPLETED) {
+            VerifiableCredential verifiableCredential = issueEntityCertificateVc_simple(entity, tas);
+            sendCertificateVcToEntity(baseUrls.sendCertificateUrl, verifiableCredential);
+        }
+    }
+
+    private BaseUrls constructBaseUrls(String entityName, String directoryPath, String port) {
+        String baseUrl = setupProperty.getBaseUrl() + ":" + port + "/" + entityName;
+        return new BaseUrls(
+                baseUrl,
+                baseUrl + "/api/v1/certificate-vc",
+                baseUrl + "/admin/v1/certificate-vc",
+                baseUrl + "/admin/v1/entity-info",
+                setupProperty.getPath() + "/" + directoryPath + "/" + entityName + ".did"
+        );
+    }
+
+    private static class BaseUrls {
+        private final String baseUrl;
+        private final String certificateUrl;
+        private final String sendCertificateUrl;
+        private final String entityInfoUrl;
+        private final String didDocFilePath;
+
+        public BaseUrls(String baseUrl, String certificateUrl, String sendCertificateUrl, String entityInfoUrl, String didDocFilePath) {
+            this.baseUrl = baseUrl;
+            this.certificateUrl = certificateUrl;
+            this.sendCertificateUrl = sendCertificateUrl;
+            this.entityInfoUrl = entityInfoUrl;
+            this.didDocFilePath = didDocFilePath;
         }
     }
 
@@ -219,5 +257,19 @@ public class EntityManagementService {
         } catch (Exception e) {
             log.error("\t--> Failed to send certificate vc to entity: {}", url, e);
         }
+    }
+
+    /**
+     * This method is temporarily used before the completion of Admin Phase 2 development.
+     * TA sends the entity information to each entity server.
+     */
+    private void sendEntityInfoToEntity(String url, SendEntityInfoReqDto sendEntityInfoReqDto) {
+        try {
+            String request = JsonUtil.serializeToJson(sendEntityInfoReqDto);
+            HttpClientUtil.postData(url, request, EmptyResDto.class);
+        } catch (Exception e) {
+            log.error("\t--> Failed to send entity info to entity: {}", url, e);
+        }
+
     }
 }

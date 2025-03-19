@@ -90,6 +90,7 @@ public class TaManagementService {
     public RequestTasInfoResDto registerTaSimple(RequestTasInfoReqDto requestTasInfoReqDto) {
         log.debug("=== Starting registerTaSimple ===");
 
+        log.debug("\t--> Finding TAS");
         Tas tas = tasQueryService.findTasOrNull();
         log.debug("\t--> Found TAS: {}", tas);
 

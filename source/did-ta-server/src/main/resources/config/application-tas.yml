@@ -1,6 +1,0 @@
-tas:
-  name: raonsecure
-  did: did:omn:tas
-  url: http://localhost:8090
-  certificate-vc: "http://127.0.0.1:8090/tas/api/v1/certificate-vc"
-  sample-path: "./sample/data"
