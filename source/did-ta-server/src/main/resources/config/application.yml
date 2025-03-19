@@ -2,7 +2,7 @@ spring:
   application:
     name: Tas
   profiles:
-    active: dev, test
+    active: sample
     group:
         dev:
           - auth
@@ -10,8 +10,6 @@ spring:
           - wallet
           - logging
           - spring-docs
-          - notification
-          - tas
           - setup
           - blockchain
         sample:
@@ -20,8 +18,6 @@ spring:
           - wallet
           - logging
           - spring-docs
-          - notification
-          - tas
           - setup
   jackson:
     default-property-inclusion: non_null

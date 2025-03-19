@@ -214,8 +214,11 @@ public class NotiEmailService {
      * @throws OpenDidException If an error occurs while sending the email.
      */
     private boolean sendEmail(RequestSendEmailReqDto requestSendEmailReqDto, String emailContent) {
+        EmailConfigurationDto emailConfigurationDto = notificationServerQueryService.findEmailConfiguration();
+        String sender = requestSendEmailReqDto.getSenderAddress() != null ? requestSendEmailReqDto.getSenderAddress() : emailConfigurationDto.getSender();
+
         MimeMessagePreparator mimeMessagePreparator = mimeMessage -> {
-            mimeMessage.setFrom(new InternetAddress(requestSendEmailReqDto.getSenderAddress()));
+            mimeMessage.setFrom(new InternetAddress(sender));
             mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(requestSendEmailReqDto.getEmail().getRecipientAddress()));
             mimeMessage.setSubject(requestSendEmailReqDto.getEmail().getTitle());
             mimeMessage.setContent(emailContent, "text/html; charset=utf-8");

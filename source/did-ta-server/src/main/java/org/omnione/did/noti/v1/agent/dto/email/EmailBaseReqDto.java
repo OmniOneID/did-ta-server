@@ -34,6 +34,5 @@ import lombok.experimental.SuperBuilder;
 @ToString
 @SuperBuilder
 public class EmailBaseReqDto {
-    @NotNull(message = "senderAddress cannot be null")
     private String senderAddress;
 }

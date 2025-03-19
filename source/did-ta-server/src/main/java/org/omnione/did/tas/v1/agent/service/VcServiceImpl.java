@@ -40,7 +40,6 @@ import org.omnione.did.base.db.domain.Transaction;
 import org.omnione.did.base.db.domain.User;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
-import org.omnione.did.base.property.EmailProperty;
 import org.omnione.did.base.response.ErrorResponse;
 import org.omnione.did.base.util.BaseMultibaseUtil;
 import org.omnione.did.common.exception.HttpClientException;
@@ -131,7 +130,6 @@ public class VcServiceImpl implements VcService {
     private final CertificateVcQueryService certificateVcQueryService;
     private final PushServiceHelper pushServiceHelper;
     private final EmailServiceHelper emailServiceHelper;
-    private final EmailProperty emailProperty;
     private final StorageService storageService;
     private final ListVcSchemaQueryService listVcSchemaQueryService;
 
@@ -719,7 +717,6 @@ public class VcServiceImpl implements VcService {
                             .contentData(emailData)
                             .templateType(EmailTemplateType.ISSUE_VC)
                             .build())
-                    .senderAddress(emailProperty.getSender())
                     .build());
 
             log.debug("*** Finished offerIssueVcEmail ***");

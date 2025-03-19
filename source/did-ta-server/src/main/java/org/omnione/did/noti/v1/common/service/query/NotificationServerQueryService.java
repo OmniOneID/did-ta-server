@@ -20,6 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.db.constant.NotificationServerType;
 import org.omnione.did.base.db.domain.NotificationServer;
 import org.omnione.did.base.db.repository.NotificationServerRepository;
+import org.omnione.did.base.exception.ErrorCode;
+import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.common.util.JsonUtil;
 import org.omnione.did.noti.v1.admin.dto.EmailConfigurationDto;
 import org.springframework.stereotype.Service;
@@ -43,5 +45,12 @@ public class NotificationServerQueryService {
         }
 
         return null;
+    }
+
+    public EmailConfigurationDto findEmailConfiguration() {
+        NotificationServer notificationServer = notificationServerRepository.findByServerType(NotificationServerType.EMAIL)
+                .orElseThrow(() -> new OpenDidException(ErrorCode.NOTIFICATION_EMAIL_CONFIGURATION_NOT_FOUND));
+
+        return JsonUtil.deserializeFromJson(notificationServer.getConfig(), EmailConfigurationDto.class);
     }
 }

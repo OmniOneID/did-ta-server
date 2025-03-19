@@ -52,7 +52,6 @@ import org.omnione.did.base.db.repository.UserRepository;
 import org.omnione.did.base.db.repository.WalletRepository;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
-import org.omnione.did.base.property.EmailProperty;
 import org.omnione.did.base.response.ErrorResponse;
 import org.omnione.did.base.util.BaseBlockChainUtil;
 import org.omnione.did.base.util.BaseCoreDidUtil;
@@ -155,7 +154,6 @@ public class UserServiceImpl implements UserService {
     private final NotiPushService notiPushService;
     private final EmailServiceHelper emailServiceHelper;
     private final NotiEmailService notiEmailService;
-    private final EmailProperty emailProperty;
     private final DidOfferQueryService didOfferQueryService;
     private final KycQueryService kycQueryService;
 
@@ -1514,7 +1512,6 @@ public class UserServiceImpl implements UserService {
                             .contentData(emailData)
                             .templateType(EmailTemplateType.RESTORE_DID)
                             .build())
-                    .senderAddress(emailProperty.getSender())
                     .build());
 
             // Insert DID offer information.
