@@ -1,3 +1,3 @@
 wallet:
-  file-path: /Users/yundabal/git/OpensourceRND/Etc/did-env/tool/sample/tas.wallet
+  file-path: ./tas.wallet
   password: 1234
