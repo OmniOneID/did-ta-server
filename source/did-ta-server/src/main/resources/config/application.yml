@@ -42,6 +42,5 @@ management:
     shutdown:
       enabled: true
 
-
 server:
   port: 8090
