@@ -1,7 +1,7 @@
 import { Box, Button, SelectChangeEvent, styled, TextField, Typography } from '@mui/material';
 import { useDialogs } from '@toolpad/core/useDialogs';
 import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { Navigate, useNavigate } from 'react-router';
 import CustomConfirmDialog from '../../components/dialog/CustomConfirmDialog';
 import CustomDialog from '../../components/dialog/CustomDialog';
 import FullscreenLoader from '../../components/loading/FullscreenLoader';
@@ -92,10 +92,6 @@ const TrustAgentRegisterPage = () => {
             setFormData((prev) => ({ ...prev, [field]: newValue }));
   };
 
-  if (serverStatus === 'COMPLETED') {
-    return <Navigate to="/ta-management" replace />;
-  }
-
   const StyledContainer = useMemo(() => styled(Box)(({ theme }) => ({
     backgroundColor: 'white',
     padding: theme.spacing(3),
@@ -125,6 +121,10 @@ const TrustAgentRegisterPage = () => {
     alignItems: 'flex-start', 
     gap: theme.spacing(2), 
   })), []);
+
+  // if (serverStatus === 'COMPLETED') {
+  //   return <Navigate to="/ta-management" replace />;
+  // }
 
   return (
     <>
