@@ -79,7 +79,7 @@ public class SetupService {
 
             // Sign DID document.
             log.debug("\t--> Signing DID document");
-            InvokedDidDoc invokedDidDoc = signatureService.signTasInvokedDidDoc(ownerDidDoc);
+            InvokedDidDoc invokedDidDoc = signatureService.signTasInvokedDidDoc(ownerDidDoc, certificateUrl);
 
             // Upload User DID document.
             log.debug("\t--> Uploading wallet DID document");

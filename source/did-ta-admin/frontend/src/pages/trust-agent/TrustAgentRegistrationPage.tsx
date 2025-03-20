@@ -63,7 +63,7 @@ const TrustAgentRegisterPage = () => {
         setTaInfo(data);
   
         if (data.status === 'COMPLETED') {
-  
+          setIsLoading(false);
           await dialogs.open(CustomDialog, {
             title: 'Notification',
             message: `Registration completed successfully.`,
@@ -92,9 +92,9 @@ const TrustAgentRegisterPage = () => {
             setFormData((prev) => ({ ...prev, [field]: newValue }));
   };
 
-  // if (serverStatus === 'COMPLETED') {
-  //   return <Navigate to="/ta-management" replace />;
-  // }
+  if (serverStatus === 'COMPLETED') {
+    return <Navigate to="/ta-management" replace />;
+  }
 
   const StyledContainer = useMemo(() => styled(Box)(({ theme }) => ({
     backgroundColor: 'white',

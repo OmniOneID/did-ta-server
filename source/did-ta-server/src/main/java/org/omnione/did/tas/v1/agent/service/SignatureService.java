@@ -130,6 +130,18 @@ public class SignatureService {
     }
 
     /**
+     * Generates an unsigned invoked DID document.
+     *
+     * @param tasDidDocument The TAS DID document
+     * @param didDocument The DID document to invoke
+     * @param certificateUrl The certificate URL
+     * @return InvokedDidDoc The unsigned invoked DID document
+     */
+    private InvokedDidDoc generateInvokedDidDoc(DidDocument tasDidDocument, DidDocument didDocument, String certificateUrl) {
+        return BaseTasDidUtil.generateInvokedDocumentSignatureMessage(tasDidDocument, didDocument, ProofType.SECP_256R1_SIGNATURE_2018, certificateUrl);
+    }
+
+    /**
      * Generates a signature message from an unsigned invoked DID document.
      *
      * @param unsignedInvokedDidDoc The unsigned invoked DID document
@@ -188,6 +200,31 @@ public class SignatureService {
             // Generate the signature message.
             DidDocument didDocument = removeProof(tasOwnerDidDoc);
             InvokedDidDoc unsignedInvokedDidDoc = generateInvokedDidDoc(tasOwnerDidDoc, didDocument);
+            String signatureMessage = generateSignatureMessage(unsignedInvokedDidDoc);
+
+            // Sing data.
+            String proofValue = signDidDoc(tasOwnerDidDoc, signatureMessage, ProofPurpose.CAPABILITY_INVOCATION);
+
+            // generate signed invoked did document.
+            InvokedDidDoc signedInvokedDidDoc = generateSignedInvokedDidDoc(unsignedInvokedDidDoc, proofValue);
+
+            // Get the Assertion public key.
+            String encodedInvokePublicKey = BaseCoreDidUtil.getPublicKey(tasOwnerDidDoc, "invoke");
+            verifySignature(encodedInvokePublicKey, signedInvokedDidDoc.getProof().getProofValue(), BaseDigestUtil.generateHash(signatureMessage), ProofType.fromDisplayName(signedInvokedDidDoc.getProof().getType()));
+
+            return signedInvokedDidDoc;
+        } catch (OpenDidException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new OpenDidException(ErrorCode.INVOKED_DOCUMENT_GENERATION_FAILED);
+        }
+    }
+
+    public InvokedDidDoc signTasInvokedDidDoc(DidDocument tasOwnerDidDoc, String certificateUrl) {
+        try {
+            // Generate the signature message.
+            DidDocument didDocument = removeProof(tasOwnerDidDoc);
+            InvokedDidDoc unsignedInvokedDidDoc = generateInvokedDidDoc(tasOwnerDidDoc, didDocument, certificateUrl);
             String signatureMessage = generateSignatureMessage(unsignedInvokedDidDoc);
 
             // Sing data.
