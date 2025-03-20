@@ -16,6 +16,7 @@
 
 package org.omnione.did.tas.v1.common.service;
 
+import jakarta.annotation.PreDestroy;
 import org.omnione.did.base.datamodel.enums.ProofPurpose;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
@@ -142,6 +143,22 @@ public class DidDocServiceImpl implements DidDocService {
     private void refreshAllDidDocuments() {
         for (String did : didDocCache.getAllDids()) {
             updateDidDocument(did);
+        }
+    }
+
+    @PreDestroy
+    public void shutdownScheduler() {
+        log.info("Shutting down DID Document scheduler...");
+        scheduler.shutdown();
+        try {
+            if (!scheduler.awaitTermination(5, TimeUnit.SECONDS)) {
+                log.warn("Scheduler did not terminate in time, forcing shutdown...");
+                scheduler.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            log.error("Scheduler shutdown interrupted", e);
+            scheduler.shutdownNow();
+            Thread.currentThread().interrupt();
         }
     }
 }
