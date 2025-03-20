@@ -210,7 +210,7 @@ import FullscreenLoader from '../../../components/loading/FullscreenLoader';
             <FormControl fullWidth margin="normal" error={!!errors.content}>
               <TextField
                 inputRef={inputRef}
-                label="Content"
+                label="Content *"
                 variant="filled"
                 multiline
                 minRows={20}

@@ -167,7 +167,7 @@ const KeyExchangePolicyPage = (props: Props) => {
         
         <StyledInputArea>
           <FormControl fullWidth margin="normal" error={!!errors.cipherType}>
-            <InputLabel>Cipher Type</InputLabel>
+            <InputLabel>Cipher Type *</InputLabel>
             <Select value={formData.cipherType ? formData.cipherType : ''} onChange={handleChange('cipherType')} label="Cipher Type">
             {cipherTypes.map((cipherType) => (
                 <MenuItem key={cipherType.value} value={cipherType.value}>
@@ -179,7 +179,7 @@ const KeyExchangePolicyPage = (props: Props) => {
           </FormControl>
 
           <FormControl fullWidth margin="normal" error={!!errors.paddingType}>
-            <InputLabel>Padding Type</InputLabel>
+            <InputLabel>Padding Type *</InputLabel>
             <Select value={formData.paddingType ? formData.paddingType : ''} onChange={handleChange('paddingType')} label="Padding Type">
             {paddingTypes.map((paddingType) => (
                 <MenuItem key={paddingType.value} value={paddingType.value}>

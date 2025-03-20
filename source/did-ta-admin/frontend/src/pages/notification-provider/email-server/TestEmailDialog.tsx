@@ -66,7 +66,7 @@ const TestEmailDialog: React.FC<TestEmailDialogProps> = ({ open, onClose, onSubm
         </DialogContentText>
         <TextField
           fullWidth
-          label="Recipient Email"
+          label="Recipient Email *"
           variant="outlined"
           margin="normal"
           value={email}

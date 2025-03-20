@@ -227,7 +227,7 @@ const KycSettingPage: React.FC = () => {
         <StyledInputArea>
           <TextField
             fullWidth
-            label="Name"
+            label="Name *"
             variant="outlined"
             margin="normal"
             value={formData.name}
@@ -240,7 +240,7 @@ const KycSettingPage: React.FC = () => {
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <TextField
               fullWidth
-              label="Server URL"
+              label="Server URL *"
               variant="outlined"
               margin="normal"
               value={formData.serverUrl}

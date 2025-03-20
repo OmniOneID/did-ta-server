@@ -229,7 +229,7 @@ const PushServerSettingsPage = (props: Props) => {
                                 borderRadius: 2,
                                 p: 2,
                             }}>
-                                <Typography variant="body1" sx={{ mr: 5 }}>FCM Setting File:</Typography>
+                                <Typography variant="body1" sx={{ mr: 5 }}>FCM Setting File *</Typography>
 
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                                     <Button variant="contained" component="label">

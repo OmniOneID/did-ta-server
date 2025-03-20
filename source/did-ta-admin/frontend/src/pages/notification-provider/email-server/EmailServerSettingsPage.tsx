@@ -299,7 +299,7 @@ const EmailServerSettingsPage = (props: Props) => {
                 <StyledInputArea>
                     <TextField
                         fullWidth
-                        label="Host"
+                        label="Host *"
                         variant="outlined"
                         margin="normal"
                         value={formData.host ?? ""}
@@ -311,7 +311,7 @@ const EmailServerSettingsPage = (props: Props) => {
 
                     <TextField
                         fullWidth
-                        label="Port"
+                        label="Port *"
                         variant="outlined"
                         margin="normal"
                         value={formData.port ?? ""}
@@ -328,7 +328,7 @@ const EmailServerSettingsPage = (props: Props) => {
 
                     <TextField
                         fullWidth
-                        label="User Name"
+                        label="User Name *"
                         variant="outlined"
                         margin="normal"
                         value={formData.username ?? ""}
@@ -339,7 +339,7 @@ const EmailServerSettingsPage = (props: Props) => {
                     />
 
                     <FormControl fullWidth margin="normal" error={!!errors.password}>
-                        <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+                        <InputLabel htmlFor="outlined-adornment-password">Password *</InputLabel>
                         <OutlinedInput
                             id="outlined-adornment-password"
                             type={showPassword ? 'text' : 'password'}
@@ -364,7 +364,7 @@ const EmailServerSettingsPage = (props: Props) => {
 
                     <TextField
                         fullWidth
-                        label="Sender"
+                        label="Sender *"
                         variant="outlined"
                         margin="normal"
                         value={formData.sender ?? ""}
@@ -376,7 +376,7 @@ const EmailServerSettingsPage = (props: Props) => {
                     />
 
                     <FormControl fullWidth variant="outlined" sx={{ mt: 2 }} error={!!errors.startTlsEnabled}>
-                        <InputLabel shrink>Enable STARTTLS</InputLabel>
+                        <InputLabel shrink>Enable STARTTLS *</InputLabel>
                         <OutlinedInput
                             notched
                             label="Enable STARTTLS"
@@ -393,7 +393,7 @@ const EmailServerSettingsPage = (props: Props) => {
                     </FormControl>
 
                     <FormControl fullWidth variant="outlined" sx={{ mt: 2 }} error={!!errors.sslEnabled}>
-                        <InputLabel shrink>Enable SSL</InputLabel>
+                        <InputLabel shrink>Enable SSL *</InputLabel>
                         <OutlinedInput
                             notched
                             label="Enable SSL"
@@ -411,7 +411,7 @@ const EmailServerSettingsPage = (props: Props) => {
 
                     <TextField
                         fullWidth
-                        label="Connection Timeout (seconds)"
+                        label="Connection Timeout (seconds) *"
                         variant="outlined"
                         margin="normal"
                         value={formData.connectionTimeout ?? ""}
@@ -428,7 +428,7 @@ const EmailServerSettingsPage = (props: Props) => {
 
                     <TextField
                         fullWidth
-                        label="Read Timeout (seconds)"
+                        label="Read Timeout (seconds) *"
                         variant="outlined"
                         margin="normal"
                         value={formData.readTimeout ?? ""}
@@ -445,7 +445,7 @@ const EmailServerSettingsPage = (props: Props) => {
 
                     <TextField
                         fullWidth
-                        label="Write Timeout (seconds)"
+                        label="Write Timeout (seconds) *"
                         variant="outlined"
                         margin="normal"
                         value={formData.writeTimeout ?? ""}
@@ -464,7 +464,7 @@ const EmailServerSettingsPage = (props: Props) => {
                         <InputLabel shrink>Turn Off SSL Check (For Testing)</InputLabel>
                         <OutlinedInput
                             notched
-                            label="Turn Off SSL Check (For Testing)"
+                            label="Turn Off SSL Check (For Testing) *"
                             startAdornment={
                                 <Switch
                                     checked={formData.ignoreSslValidation ?? false}

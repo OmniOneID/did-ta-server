@@ -67,7 +67,7 @@ const PasswordResetDialog: React.FC<PasswordResetDialogProps> = ({ open, onClose
       <DialogContent sx={{ px: 2 }}>
         <TextField
           fullWidth
-          label="New Password"
+          label="New Password *"
           type="password"
           variant="outlined"
           margin="normal"
@@ -78,7 +78,7 @@ const PasswordResetDialog: React.FC<PasswordResetDialogProps> = ({ open, onClose
         />
         <TextField
           fullWidth
-          label="Confirm Password"
+          label="Confirm Password *"
           type="password"
           variant="outlined"
           margin="normal"

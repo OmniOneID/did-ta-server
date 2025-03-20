@@ -292,7 +292,7 @@ const EntityRegistrationPage = (props: Props) => {
                 <StyledInputArea>         
                     <FormControl fullWidth margin="normal" error={!!errors.didDoc}>
                         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'left', mb: 1 }}>
-                            <Typography variant="body1" sx={{ mr: 5 }}>DID Document: </Typography>
+                            <Typography variant="body1" sx={{ mr: 5 }}>DID Document *</Typography>
 
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, minWidth: 200 }}>
                                 <Button variant="outlined" component="label">
@@ -313,7 +313,7 @@ const EntityRegistrationPage = (props: Props) => {
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                         <TextField
                             fullWidth
-                            label="Name"
+                            label="Name *"
                             variant="outlined"
                             margin="normal"
                             value={formData.name}
@@ -343,7 +343,7 @@ const EntityRegistrationPage = (props: Props) => {
                     </Box>
 
                     <FormControl fullWidth margin="normal" error={!!errors.role}>
-                        <InputLabel>Role</InputLabel>
+                        <InputLabel>Role *</InputLabel>
                         <Select value={formData.role} onChange={handleChange('role')} label="Role">
                         {roles.map((role) => (
                             <MenuItem key={role.value} value={role.value}>
@@ -357,7 +357,7 @@ const EntityRegistrationPage = (props: Props) => {
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                         <TextField
                             fullWidth
-                            label="URL"
+                            label="URL *"
                             variant="outlined"
                             margin="normal"
                             value={formData.serverUrl}

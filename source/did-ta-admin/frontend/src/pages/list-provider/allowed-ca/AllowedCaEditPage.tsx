@@ -257,7 +257,7 @@ const AllowedCaEditPage = (props: Props) => {
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                         <TextField 
                             fullWidth
-                            label="Wallet Identifier" 
+                            label="Wallet Identifier *" 
                             variant="outlined"
                             margin="normal" 
                             size="small"
@@ -302,7 +302,15 @@ const AllowedCaEditPage = (props: Props) => {
                                 {formData.caList.map((ca, index) => (
                                     <TableRow key={index}>
                                         <TableCell sx={{ verticalAlign: 'top', width: '80%' }}>
-                                            <TextField fullWidth size="small" value={ca} onChange={(event) => handleCaChange(index, event)} error={!!errors.caList?.[index]} helperText={errors.caList?.[index]} />
+                                            <TextField 
+                                                fullWidth 
+                                                label="CA *"
+                                                size="small" 
+                                                value={ca} 
+                                                onChange={(event) => handleCaChange(index, event)} 
+                                                error={!!errors.caList?.[index]} 
+                                                helperText={errors.caList?.[index]} 
+                                            />
                                         </TableCell>
                                         <TableCell sx={{ verticalAlign: 'top', width: '20%', textAlign: 'center' }}>
                                             <IconButton onClick={() => handleRemoveCa(index)} sx={{ color: '#FF8400' }}>

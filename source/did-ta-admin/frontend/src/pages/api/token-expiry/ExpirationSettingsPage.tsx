@@ -168,7 +168,7 @@ const ExpirationSettingsPage = (props: Props) => {
         <StyledInputArea>
           <TextField
             fullWidth
-            label="Token Timeout (seconds)"
+            label="Token Timeout (seconds) *"
             variant="outlined"
             margin="normal"
             value={formData.tokenExpirationSeconds ?? ""}
@@ -185,7 +185,7 @@ const ExpirationSettingsPage = (props: Props) => {
 
           <TextField
             fullWidth
-            label="Transaction Timeout (seconds)"
+            label="Transaction Timeout (seconds) *"
             variant="outlined"
             margin="normal"
             value={formData.transactionExpirationSeconds ?? ""}

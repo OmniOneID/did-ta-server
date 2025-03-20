@@ -211,7 +211,7 @@ const AllowedCaRegistrationPage = (props: Props) => {
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                         <TextField 
                             fullWidth
-                            label="Wallet Identifier" 
+                            label="Wallet Identifier *" 
                             variant="outlined"
                             margin="normal" 
                             size="small"
@@ -258,6 +258,7 @@ const AllowedCaRegistrationPage = (props: Props) => {
                                         <TableCell sx={{ verticalAlign: 'top', width: '80%' }}>
                                             <TextField 
                                                 fullWidth 
+                                                label="CA *"
                                                 size="small" 
                                                 value={ca} 
                                                 onChange={(event) => handleCaChange(index, event)} 
