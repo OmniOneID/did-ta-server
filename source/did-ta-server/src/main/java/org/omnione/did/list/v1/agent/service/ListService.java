@@ -23,6 +23,7 @@ import org.omnione.did.base.datamodel.data.VcPlan;
 import org.omnione.did.base.db.domain.ListAllowedCa;
 import org.omnione.did.base.db.domain.ListVcPlan;
 import org.omnione.did.base.db.domain.ListVcSchema;
+import org.omnione.did.base.db.domain.Tas;
 import org.omnione.did.base.db.repository.ListAllowedCaRepository;
 import org.omnione.did.base.db.repository.ListVcSchemaRepository;
 import org.omnione.did.base.exception.ErrorCode;
@@ -32,9 +33,11 @@ import org.omnione.did.common.util.JsonUtil;
 import org.omnione.did.list.v1.admin.dto.vcschema.ListVcSchemaDto;
 import org.omnione.did.list.v1.admin.service.query.ListVcPlanQueryService;
 import org.omnione.did.list.v1.agent.dto.ca.AllowedCaResDto;
+import org.omnione.did.list.v1.agent.dto.server.RequestTaDidResDto;
 import org.omnione.did.list.v1.agent.dto.vcplan.RequestVcplanListResDto;
 import org.omnione.did.list.v1.agent.dto.vcplan.VcPlanResDto;
 import org.omnione.did.list.v1.agent.dto.vcschema.RequestVcSchemaListResDto;
+import org.omnione.did.tas.v1.common.service.query.TasQueryService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -52,6 +55,7 @@ public class ListService {
     private final ListAllowedCaRepository listAllowedCaRepository;
     private final ListVcSchemaRepository listVcSchemaRepository;
     private final ListVcPlanQueryService listVcPlanQueryService;
+    private final TasQueryService tasQueryService;
 
     /**
      * Finds the list of allowed CAs for a given wallet service ID.
@@ -198,6 +202,14 @@ public class ListService {
         return RequestVcSchemaListResDto.builder()
                 .count(vcSchemaList.size())
                 .vcSchemaList(vcSchemaDtoList)
+                .build();
+    }
+
+    // @TODO: Change the logic to actually retrieve the DID
+    public RequestTaDidResDto requestTaDid() {
+        Tas existedTasInfo = tasQueryService.findTas();
+        return RequestTaDidResDto.builder()
+                .did(existedTasInfo.getDid())
                 .build();
     }
 }
