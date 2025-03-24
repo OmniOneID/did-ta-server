@@ -8,7 +8,7 @@ import { getTaInfo } from './apis/ta-api';
 import LoadingOverlay from './components/loading/LoadingOverlay';
 import { getNavigationByStatus } from './config/navigationConfig';
 import { ServerStatusProvider, useServerStatus } from './context/ServerStatusContext';
-import { SessionContext } from './context/SessionContext';
+import { ExtendedSession, SessionContext } from './context/SessionContext';
 import customTheme from './theme';
 import { formatErrorMessage } from './utils/error-handler';
 
@@ -18,7 +18,7 @@ function AppContent() {
   const { serverStatus, setServerStatus, setTaInfo } = useServerStatus();
   const [isLoading, setIsLoading] = useState(true);
 
-  const [session, setSessionState] = useState<Session | null>(() => {
+  const [session, setSessionState] = useState<ExtendedSession | null>(() => {
     const storedSession = localStorage.getItem('session');
     return storedSession ? JSON.parse(storedSession) : null;
   });
@@ -27,7 +27,7 @@ function AppContent() {
 
   const theme = useTheme(); 
   
-  const setSession = useCallback((newSession: Session | null) => {
+  const setSession = useCallback((newSession: ExtendedSession | null) => {
     setSessionState(newSession);
     if (newSession) {
       localStorage.setItem('session', JSON.stringify(newSession));
