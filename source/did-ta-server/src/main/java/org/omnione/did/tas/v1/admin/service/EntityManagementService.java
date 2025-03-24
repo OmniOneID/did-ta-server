@@ -110,7 +110,7 @@ public class EntityManagementService {
         registerEntitiesSimple("verifier", "Verifier", RoleType.VERIFIER, "8092", existedTas);
 
         log.debug("\t--> Registering CAS");
-        registerEntitiesSimple("cas", "CAS", RoleType.APP_PROVIDER, "8094", existedTas);
+        registerEntitiesSimple("cas", "CA", RoleType.APP_PROVIDER, "8094", existedTas);
 
         log.debug("\t--> Registering Wallet");
         registerEntitiesSimple("wallet", "Wallet",RoleType.WALLET_PROVIDER, "8095", existedTas);

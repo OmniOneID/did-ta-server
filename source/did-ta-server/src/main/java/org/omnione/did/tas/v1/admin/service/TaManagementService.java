@@ -159,7 +159,7 @@ public class TaManagementService {
      * Register TA DID Document.
      */
     private void registerTaDidDocument(String serverUrl) {
-        File didDocFile = new File(setupProperty.getPath() + "/TAS/tas.did");
+        File didDocFile = new File(setupProperty.getPath() + "/TA/tas.did");
         if (!didDocFile.exists() || !didDocFile.isFile()) {
             log.error("DID Document file not found at path: {}", setupProperty.getPath());
             throw new OpenDidException(ErrorCode.FILE_NOT_FOUND);
