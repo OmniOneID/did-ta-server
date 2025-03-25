@@ -1,4 +1,4 @@
-import { Stack, useTheme } from '@mui/material';
+import { Stack, Typography, useTheme } from '@mui/material';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import { PageContainer } from '@toolpad/core/PageContainer';
 import { Navigate, Outlet, useNavigate } from 'react-router';
@@ -20,13 +20,25 @@ export default function Layout() {
   const CustomAppTitle = () => {
     return (
       <Stack 
-        direction="row" 
-        alignItems="center"
+        direction="column" 
+        alignItems="flex-start"
         spacing={2}
         sx={{ cursor: 'pointer'}}
         onClick={() => navigate('/')}
       >
          <img src={logo} alt="OpenDID Logo" style={{ height: '20px', width: '140px' }} />
+         <span
+            style={{
+              color: '#FFFFFF',
+              fontSize: '1.00rem',
+              fontWeight: 500,
+              lineHeight: 1.2,
+              letterSpacing: '0.3px',
+              marginTop: '2px',
+            }}
+          >
+            TA Admin
+          </span>
       </Stack>
     );
   };
