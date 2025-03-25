@@ -4,7 +4,17 @@ import { type Navigation } from '@toolpad/core/AppProvider';
 
 export const getNavigationByStatus = (serverStatus: string | null): Navigation=> {
   if (serverStatus !== 'COMPLETED') {
-    return [{ segment: 'ta-registration', title: 'TA Registration', icon: <StorageIcon /> }];
+    return [
+      {
+        kind: 'divider',
+      },
+      { 
+        segment: 'ta-registration', title: 'TA Registration', icon: <StorageIcon /> 
+      },
+      {
+        kind: 'divider',
+      },
+    ];
   } 
   return [
     {
