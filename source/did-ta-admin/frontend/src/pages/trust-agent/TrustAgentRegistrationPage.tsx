@@ -129,10 +129,9 @@ const TrustAgentRegisterPage = () => {
   return (
     <>
       <FullscreenLoader open={isLoading} />
-      <Typography variant="h4">TA Management</Typography>
   
         <StyledContainer>
-          <StyledSubTitle>Trust Agent Quick Registration</StyledSubTitle>
+          <StyledSubTitle>Trust Agent Registration</StyledSubTitle>
   
           <StyledDescription>
             <Typography variant="body1" sx={{ color: '#666666' }}>

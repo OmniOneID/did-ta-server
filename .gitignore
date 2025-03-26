@@ -227,6 +227,8 @@ psd
 thumb
 sketch
 
+src/main/resources/static/
+
 ### VisualStudioCode ###
 .vscode/*
 !.vscode/settings.json
