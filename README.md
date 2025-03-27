@@ -1,7 +1,7 @@
-TAS(Trust Agent Service) Server
+TA(Trust Agent) Server
 ==
 
-Welcome to the TAS Server Repository. <br>
+Welcome to the TA Server Repository. <br>
 This repository contains the source code, documentation, and related resources for the TAS Server.
 
 ## Folder Structure
@@ -20,86 +20,55 @@ did-ta-server
 ├── RELEASE-PROCESS.md
 ├── SECURITY.md
 ├── docs
-│   └── api
-│       └── TAS_API_ko.md
-│   └── errorCode
-│       └── TAS_ErrorCode.md
-│   └── installation
-│       └── OpenDID_TASServer_InstallationAndOperation_Guide.md
-│   └── db
-│       └── OpenDID_TableDefinition_TAS.md
+│   └── api
+│       └── TAS_API_ko.md
+│   └── errorCode
+│       └── TAS_ErrorCode.md
+│   └── installation
+│       └── OpenDID_TASServer_InstallationAndOperation_Guide.md
+│   └── db
+│       └── OpenDID_TableDefinition_TAS.md
 └── source
+    └── did-ta-admin
+        ├── frontend
     └── did-ta-server
-        ├── gradle
-        ├── libs
-            └── did-sdk-common-1.0.0.jar
-            └── did-blockchain-sdk-server-1.0.0.jar
-            └── did-core-sdk-server-1.0.0.jar
-            └── did-crypto-sdk-server-1.0.0.jar
-            └── did-datamodel-sdk-server-1.0.0.jar
-            └── did-wallet-sdk-server-1.0.0.jar
-        ├── sample
-        └── src
-        └── build.gradle
-        └── README.md
-        └── README_ko.md
 ```
 
 <br/>
 
 Below is a description of each folder and file in the directory:
 
-| Name                             | Description                                     |
-| -------------------------------- | ----------------------------------------------- |
-| CHANGELOG.md                     | Version-specific changes in the project         |
-| CODE_OF_CONDUCT.md               | Code of conduct for contributors                |
-| CONTRIBUTING.md                  | Contribution guidelines and procedures          |
-| LICENSE                          | License                                         |
-| dependencies-license.md          | Licenses for the project’s dependency libraries |
-| MAINTAINERS.md                   | Guidelines for project maintainers              |
-| RELEASE-PROCESS.md               | Procedures for releasing new versions           |
-| SECURITY.md                      | Security policies and vulnerability reporting   |
-| docs                             | Documentation                                   |
-| ┖ api                            | API guide documentation                         |
-| ┖ errorCode                      | Error codes and troubleshooting guides          |
-| ┖ installation                   | Installation and setup instructions             |
-| ┖ db                             | Database ERD,  Table Specifications             |
-| source                           | Server source code project                      |
-| ┖ did-ta-server                  | TAS Server source code and build files          |
-| &nbsp;&nbsp;&nbsp;┖ gradle       | Gradle build configurations and scripts         |
-| &nbsp;&nbsp;&nbsp;┖ libs         | External libraries and dependencies             |
-| &nbsp;&nbsp;&nbsp;┖ sample       | Sample files                                    |
-| &nbsp;&nbsp;&nbsp;┖ src          | Main source code directory                      |
-| &nbsp;&nbsp;&nbsp;┖ build.gradle | Gradle build configuration file                 |
-| &nbsp;&nbsp;&nbsp;┖ README.md    | Overview and instructions for the source code   |
+| Name                         | Description                                     |
+| ---------------------------- | ----------------------------------------------- |
+| CHANGELOG.md                 | Version-specific changes in the project         |
+| CODE_OF_CONDUCT.md           | Code of conduct for contributors                |
+| CONTRIBUTING.md              | Contribution guidelines and procedures          |
+| LICENSE                      | License                                         |
+| dependencies-license.md      | Licenses for the project’s dependency libraries |
+| MAINTAINERS.md               | Guidelines for project maintainers              |
+| RELEASE-PROCESS.md           | Procedures for releasing new versions           |
+| SECURITY.md                  | Security policies and vulnerability reporting   |
+| docs                         | Documentation                                   |
+| ┖ api                        | API guide documentation                         |
+| ┖ errorCode                  | Error codes and troubleshooting guides          |
+| ┖ installation               | Installation and setup instructions             |
+| ┖ db                         | Database ERD,  Table Specifications             |
+| source                       | Source code for the server and admin console    |
+| ┖ did-ta-server              | TA Server source code                           |
+| ┖ did-ta-admin               | TA Admin source code                            |
+| &nbsp;&nbsp;&nbsp;┖ frontend | TA Admin frontend source code                   |
 
 <br/>
-
-
-## Libraries
-
-Libraries used in this project are organized into two main categories:
-
-1. **Open DID Libraries**: These libraries are developed by the Open DID project and are available in the [libs folder](source/did-ta-server/libs). They include:
-
-   - `did-sdk-common-1.0.0.jar`
-   - `did-blockchain-sdk-server-1.0.0.jar`
-   - `did-core-sdk-server-1.0.0.jar`
-   - `did-crypto-sdk-server-1.0.0.jar`
-   - `did-datamodel-sdk-server-1.0.0.jar`
-   - `did-wallet-sdk-server-1.0.0.jar`
-
-2. **Third-Party Libraries**: These libraries are open-source dependencies managed via the [build.gradle](source/did-ta-server/build.gradle) file. For a detailed list of third-party libraries and their licenses, please refer to the [dependencies-license.md](dependencies-license.md) file.
 
 ## Installation And Operation Guide
 
 For detailed instructions on installing and configuring the TA Server, please refer to the guide below:
-- [OpenDID TAS Server Installation and Operation Guide](docs/installation/OpenDID_TASServer_InstallationAndOperation_Guide.md)  
+- [OpenDID TA Server Installation and Operation Guide](docs/installation/OpenDID_TASServer_InstallationAndOperation_Guide.md)  
 
 ## API Reference
 
-- **TAS API**: Detailed reference for the TAS Server's API endpoints and usage.
-  - [TAS API Reference](docs/api/TAS_API_ko.md)
+- **TA API**: Detailed reference for the TA Server's API endpoints and usage.
+  - [TA API Reference](docs/api/TAS_API_ko.md)
 
 ## Change Log
 
