@@ -22,6 +22,15 @@
         <constraints nullable="true" unique="false"/>
       </column>
     </createTable>
+
+  </changeSet>
+
+  <changeSet id="insert-initial-list_allowed_ca" author="yklee0911">
+    <insert tableName="list_allowed_ca">
+      <column name="wallet_id" value="org.omnione.did.sdk.wallet"/>
+      <column name="ca_list" value='["org.omnione.did.ca"]'/>
+      <column name="created_at" valueDate="NOW()"/>
+    </insert>
   </changeSet>
 
 </databaseChangeLog>

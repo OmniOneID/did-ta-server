@@ -121,7 +121,7 @@ const VcPlanDetailPage = (props: Props) => {
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                         <TextField 
                             fullWidth
-                            label="Title" 
+                            label="ID" 
                             variant="standard"
                             margin="normal" 
                             value={formData.vcPlanId || ''} 

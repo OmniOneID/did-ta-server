@@ -181,7 +181,7 @@ const AllowedCaEditPage = (props: Props) => {
         });
 
         if (result) {
-            navigate('/list-settings/allowed-ca');
+            navigate(-1);
         }
     };
     

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Stack, Typography, Avatar, Button, Divider } from '@mui/material';
+import { Stack, Typography, Avatar, Button, Divider, Box } from '@mui/material';
 import { SessionContext } from '@toolpad/core/AppProvider';
 import { SignOutButton } from '@toolpad/core/Account';
 import { useContext, useEffect, useState } from 'react';
@@ -20,7 +20,7 @@ export default function CustomFooterAccount() {
   }, [session?.user]);
 
   return (
-    <Stack spacing={1} sx={{ p: 2 }}>
+    <Stack spacing={1} sx={{ pl: 2, m:0 }}>
         <Stack direction="row" spacing={1} alignItems="center">
             <Avatar
             src={user?.image || ''}
@@ -33,9 +33,8 @@ export default function CustomFooterAccount() {
         </Stack>
 
         <Divider />
-        <SignOutButton
-            
-        />
+
+        <SignOutButton/>
     </Stack>
   );
 }
