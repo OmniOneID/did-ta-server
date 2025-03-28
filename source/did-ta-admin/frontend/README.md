@@ -89,9 +89,7 @@ For a detailed list of third-party libraries and their licenses, please refer to
 ## Documentation
 
 Refer to the following documents for more detailed information:
-
-- [OpenDID TA Admin Console Installation Guide](../../../docs/installation/OpenDID_TAServer_Installation_Guide.md)  
-  Installation and configuration instructions for this frontend application.
+- [OpenDID TA Admin Console Operation Guide](../../../docs/admin/OpenDID_TAAdmin_Operation_Guide_ko.md)
 
 ## Contributing
 
