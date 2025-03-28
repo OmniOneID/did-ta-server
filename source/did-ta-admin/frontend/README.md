@@ -8,7 +8,6 @@ Here's an overview of the directory structure.
 
 ```
 did-ta-admin/frontend
-├── dist
 ├── public
 ├── src
 │   ├── apis
@@ -74,22 +73,16 @@ Below is a description of each folder and file in the `src` directory:
 
 ## Libraries
 
-Libraries used in this project are organized into two main categories:
+Libraries used in this project are third-party open-source dependencies managed via the [package.json](./package.json) file. Major frameworks and tools include:
 
-1. **OpenDID Internal Libraries**  
-   - `opendid-ta-admin`: Admin SDK used to communicate with the TA Server  
-   - `core-vite-auth`: Authentication utility package used in Vite-based projects
-
-2. **Third-Party Libraries**  
-   These libraries are open-source dependencies managed via the [package.json](./package.json) file. Major frameworks and tools include:
-
-   - `React` (v19)
-   - `Vite` (v5)
-   - `TypeScript`
-   - `MUI` (Material UI v6, including X-DataGrid and X-Charts)
-   - `Styled-Components`
-   - `React Router v7`
-   - `@emotion/react`, `@emotion/styled`
+- `React` (v19)
+- `Vite` (v5)
+- `TypeScript`
+- `MUI` (Material UI v6, including X-DataGrid and X-Charts)
+- `Styled-Components`
+- `React Router v7`
+- `@emotion/react`, `@emotion/styled`
+- `core-vite-auth`: Authentication utility package for Vite-based applications
 
 For a detailed list of third-party libraries and their licenses, please refer to the [dependencies-license.md](../../../dependencies-license.md) file.
 
