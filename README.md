@@ -20,6 +20,8 @@ did-ta-server
 ├── RELEASE-PROCESS.md
 ├── SECURITY.md
 ├── docs
+│   └── admin
+│       └── OpenDID_TAAdmin_Operation_Guide_ko.md
 │   └── api
 │       └── TAS_API_ko.md
 │   └── errorCode
@@ -49,6 +51,7 @@ Below is a description of each folder and file in the directory:
 | RELEASE-PROCESS.md           | Procedures for releasing new versions           |
 | SECURITY.md                  | Security policies and vulnerability reporting   |
 | docs                         | Documentation                                   |
+| ┖ admin                      | Admin Console guide documentation              |
 | ┖ api                        | API guide documentation                         |
 | ┖ errorCode                  | Error codes and troubleshooting guides          |
 | ┖ installation               | Installation and setup instructions             |
@@ -62,8 +65,11 @@ Below is a description of each folder and file in the directory:
 
 ## Installation And Operation Guide
 
-For detailed instructions on installing and configuring the TA Server, please refer to the guide below:
-- [OpenDID TA Server Installation and Operation Guide](docs/installation/OpenDID_TASServer_InstallationAndOperation_Guide.md)  
+For detailed instructions on installing the TA Server, please refer to the guide below:
+- [OpenDID TA Server Installation Guide](docs/installation/OpenDID_TAServer_Installation_Guide.md)  
+
+For detailed instructions on operating the TA Admin Console, please refer to the guide below:  
+- [OpenDID TA Admin Console Operation Guide](docs/admin/OpenDID_TAAdmin_Operation_Guide_ko.md)
 
 ## API Reference
 
