@@ -393,6 +393,10 @@ This document provides an overview of the third-party libraries used in this rep
 | yaml@1.10.2 | undefined | ISC | https://github.com/eemeli/yaml |
 | yaml@2.5.1 | undefined | ISC | https://github.com/eemeli/yaml |
 
+## The SIL Open Font License
+**SUIT**:(https://noonnu.cc/en/font_page/845)
+> - **SUIT-Regular** : SUIT is open source. You can use, modify, and redistribute it freely under the SIL Open Font License. The Korean glyphs are based on **Bongodik**.
+
 
 ## Additional License Notice
 

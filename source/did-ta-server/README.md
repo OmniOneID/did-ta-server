@@ -1,13 +1,13 @@
-# TAS Server Source Code
+# TA Server Source Code
 
-Welcome to the TAS Server source code repository. This directory contains the core source code and build configurations for the TAS Server.
+Welcome to the TA Server source code repository. This directory contains the core source code and build configurations for the TAS Server.
 
 ## Directory Structure
 
 Here's an overview of the directory structure.
 
 ```
-did-tas-server
+did-ta-server
 ├── gradle
 ├── libs
     └── did-sdk-common-1.0.0.jar
@@ -26,15 +26,15 @@ did-tas-server
 
 Below is a description of each folder and file in the directory:
 
-| Name           | Description                                   |
-| -------------- | --------------------------------------------- |
-| did-tas-server | TA Server source code and build files         |
-| ┖ gradle       | Gradle build configurations and scripts       |
-| ┖ libs         | External libraries and dependencies           |
-| ┖ sample       | Sample files                                  |
-| ┖ src          | Main source code directory                    |
-| ┖ build.gradle | Gradle build configuration file               |
-| ┖ README.md    | Overview and instructions for the source code |
+| Name          | Description                                  |
+| ------------- | -------------------------------------------- |
+| did-ta-server | TA Server source code and build files        |
+| ┖ gradle      | Gradle build configurations and scripts      |
+| ┖ libs        | External libraries and dependencies          |
+| ┖ sample      | Sample files                                 |
+| ┖ src         | Main source code directory                   |
+| ┖ build.gradle | Gradle build configuration file              |
+| ┖ README.md   | Overview and instructions for the source code |
 
 
 ## Libraries
@@ -50,7 +50,7 @@ Libraries used in this project are organized into two main categories:
    - `did-datamodel-sdk-server-1.0.0.jar`
    - `did-wallet-sdk-server-1.0.0.jar`
 
-2. **Third-Party Libraries**: These libraries are open-source dependencies managed via the [build.gradle](build.gradle) file. For a detailed list of third-party libraries and their licenses, please refer to the [LICENSE-dependencies.md](../../LICENSE-dependencies.md) file.
+2. **Third-Party Libraries**: These libraries are open-source dependencies managed via the [build.gradle](build.gradle) file. For a detailed list of third-party libraries and their licenses, please refer to the [dependencies-license.md](../../dependencies-license.md) file.
 
 
 ## Documenttation
@@ -60,7 +60,7 @@ Refer to the following documents for more detailed information:
 - [API Reference](../../docs/api/TAS_API_ko.md)  
   Detailed reference for the TAS Server's API endpoints.
 
-- [OpenDID TAS Server Installation and Operation Guide](../../docs/installation/OpenDID_TASServer_InstallationAndOperation_Guide.md)  
+- [OpenDID TA Server Installation and Operation Guide](../../docs/installation/OpenDID_TAServer_Installation_Guide.md)  
   Installation and configuration instructions.
 
 ## Contributing
