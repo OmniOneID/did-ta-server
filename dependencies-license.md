@@ -397,7 +397,6 @@ This document provides an overview of the third-party libraries used in this rep
 **SUIT**:(https://noonnu.cc/en/font_page/845)
 > - **SUIT-Regular** : SUIT is open source. You can use, modify, and redistribute it freely under the SIL Open Font License. The Korean glyphs are based on **Bongodik**.
 
-
 ## Additional License Notice
 
 This project uses data from [caniuse-lite](https://github.com/browserslist/caniuse-lite), which is licensed under the [Creative Commons Attribution 4.0 International (CC-BY-4.0)](https://creativecommons.org/licenses/by/4.0/) license.
@@ -405,7 +404,6 @@ This project uses data from [caniuse-lite](https://github.com/browserslist/caniu
 © 2009 The caniuse project (https://caniuse.com/)
 
 This project does not modify the original data and credits the original authors with full copyright ownership.
-
 
 ## robust-predicates
 
