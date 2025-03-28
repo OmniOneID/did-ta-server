@@ -22,9 +22,12 @@ import org.omnione.did.base.db.constant.EntityStatus;
 import org.omnione.did.base.db.domain.Entity;
 import org.omnione.did.base.db.domain.Tas;
 import org.omnione.did.base.db.repository.EntityRepository;
+import org.omnione.did.base.exception.ErrorCode;
+import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.base.property.SetupProperty;
 import org.omnione.did.base.util.BaseCoreVcUtil;
 import org.omnione.did.base.util.BaseMultibaseUtil;
+import org.omnione.did.common.exception.HttpClientException;
 import org.omnione.did.common.util.HttpClientUtil;
 import org.omnione.did.common.util.JsonUtil;
 import org.omnione.did.core.data.rest.IssueVcParam;
@@ -138,8 +141,12 @@ public class EntityManagementService {
                     .serverUrl(baseUrls.baseUrl)
                     .certificateUrl(baseUrls.certificateUrl)
                     .build());
+        } catch (OpenDidException e) {
+            log.error("\t--> Failed to register entity: {}", entityName, e);
+            throw e;
         } catch (Exception e) {
             log.error("\t--> Failed to register entity: {}", entityName, e);
+            throw new OpenDidException(ErrorCode.FAILED_TO_REGISTER_QUICK_ENTITY);
         }
     }
 
@@ -254,8 +261,12 @@ public class EntityManagementService {
 
             String request = JsonUtil.serializeToJson(sendCertificateVcReqDto);
             HttpClientUtil.postData(url, request, EmptyResDto.class);
+        } catch (OpenDidException e) {
+            log.error("\t--> [NON-CRITICAL] Failed to send VC to entity: {}", url, e);
+        } catch (HttpClientException e) {
+            log.warn("\t--> [NON-CRITICAL] HTTP error while sending VC to entity [{}]", url, e);
         } catch (Exception e) {
-            log.error("\t--> Failed to send certificate vc to entity: {}", url, e);
+            log.warn("\t--> [NON-CRITICAL] Unexpected error while sending VC to entity: {}", url, e);
         }
     }
 
@@ -267,9 +278,10 @@ public class EntityManagementService {
         try {
             String request = JsonUtil.serializeToJson(sendEntityInfoReqDto);
             HttpClientUtil.postData(url, request, EmptyResDto.class);
+        } catch (HttpClientException e) {
+            log.warn("\t--> [NON-CRITICAL] Failed to send entity info via HTTP: {}", url, e);
         } catch (Exception e) {
-            log.error("\t--> Failed to send entity info to entity: {}", url, e);
+            log.warn("\t--> [NON-CRITICAL] Unexpected error while sending entity info to entity: {}", url, e);
         }
-
     }
 }

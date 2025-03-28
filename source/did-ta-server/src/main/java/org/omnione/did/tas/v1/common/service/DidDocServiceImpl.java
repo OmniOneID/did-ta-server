@@ -24,6 +24,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.data.model.did.DidDocument;
+import org.omnione.exception.BlockChainException;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.Executors;
@@ -104,16 +105,11 @@ public class DidDocServiceImpl implements DidDocService {
 
     @Override
     public DidDocument getDidDocumentOrNull(String did) {
-        try {
-            if (shouldUpdate(did)) {
-                updateDidDocument(did);
-            }
-
-            return didDocCache.getDidDoc(did);
-        } catch (Exception e) {
-            log.error("Failed to retrieve DID Document for DID: {}", did, e);
-            return null;
+        if (shouldUpdate(did)) {
+            updateDidDocument(did);
         }
+
+        return didDocCache.getDidDoc(did);
     }
 
     /**

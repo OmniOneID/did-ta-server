@@ -47,9 +47,11 @@ public class UrlPingChecker {
      * @return a response DTO indicating if the URL is reachable
      */
     public VerifyServerUrlResDto isUrlReachable(VerifyServerUrlReqDto verifyServerUrlReqDto) {
+        HttpURLConnection connection = null;
+
         try {
             URL url = new URL(verifyServerUrlReqDto.getServerUrl() + HEALTH_CHECK_PATH);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("HEAD");
             connection.setConnectTimeout(3000);
             connection.setReadTimeout(3000);
@@ -68,6 +70,10 @@ public class UrlPingChecker {
             }
         } catch (IOException e) {
             throw new OpenDidException(ErrorCode.URL_PING_ERROR);
+        } finally {
+            if (connection != null) {
+                connection.disconnect();
+            }
         }
     }
 }

@@ -84,7 +84,7 @@ public class NotificationManagementService {
         NotificationTemplate notificationTemplate = notificationTemplateQueryService.findNotificationTemplate(registerNotificationTemplateReqDto.getServerType(), registerNotificationTemplateReqDto.getTemplateType());
 
         if (notificationTemplate == null) {
-            notificationTemplate = notificationTemplate.builder()
+            notificationTemplate = NotificationTemplate.builder()
                     .serverType(registerNotificationTemplateReqDto.getServerType())
                     .templateType(registerNotificationTemplateReqDto.getTemplateType())
                     .template(registerNotificationTemplateReqDto.getTemplate())

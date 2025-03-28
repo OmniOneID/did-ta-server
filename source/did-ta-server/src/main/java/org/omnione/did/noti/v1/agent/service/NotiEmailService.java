@@ -230,6 +230,11 @@ public class NotiEmailService {
         currentThread.setContextClassLoader(InternetAddress.class.getClassLoader());
         try {
             JavaMailSender javaMailSender = createMailSender();
+            if (javaMailSender == null) {
+                log.error("JavaMailSender is null");
+                throw new OpenDidException(ErrorCode.EMAIL_SEND_FAILED);
+            }
+
             javaMailSender.send(mimeMessagePreparator);
         } catch (MailException e) {
             log.error("An error occurred while sending email", e);

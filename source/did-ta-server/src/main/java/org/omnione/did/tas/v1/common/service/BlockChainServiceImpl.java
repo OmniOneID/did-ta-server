@@ -46,7 +46,7 @@ import org.springframework.stereotype.Service;
 @Profile("!repository")
 public class BlockChainServiceImpl implements StorageService {
 
-    private ContractApi contractApiInstance = null;
+    private final ContractApi contractApi;
 
     private final BlockchainProperty blockchainProperty;
 
@@ -59,20 +59,6 @@ public class BlockChainServiceImpl implements StorageService {
         return ContractFactory.FABRIC.create(blockchainProperty.getFilePath());
     }
 
-    /**
-     * Resets the ContractApi instance.
-     * Use this method to reinitialize the blockchain connection.
-     */
-    public ContractApi getContractApiInstance() {
-        if (contractApiInstance == null) {
-            synchronized (BlockChainServiceImpl.class) {
-                if (contractApiInstance == null) {
-                    contractApiInstance = initBlockChain();
-                }
-            }
-        }
-        return contractApiInstance;
-    }
 
     /**
      * Registers a DID document on the blockchain.
@@ -84,7 +70,6 @@ public class BlockChainServiceImpl implements StorageService {
     @Override
     public void registerDidDoc(InvokedDidDoc invokedDidDoc, RoleType roleType) {
         try {
-            ContractApi contractApi = getContractApiInstance();
             contractApi.registDidDoc(invokedDidDoc, roleType);
         } catch (BlockChainException e) {
             log.error("Failed to register DID Document: " + e.getMessage());
@@ -106,7 +91,6 @@ public class BlockChainServiceImpl implements StorageService {
     @Override
     public DidDocument updateDidDocStatus(String didKeyURl, DidDocStatus didDocStatus) {
         try {
-            ContractApi contractApi = getContractApiInstance();
             return (DidDocument) contractApi.updateDidDocStatus(didKeyURl, didDocStatus);
         } catch (BlockChainException e) {
             log.error("Failed to update DID Document: " + e.getMessage());
@@ -127,7 +111,6 @@ public class BlockChainServiceImpl implements StorageService {
     @Override
     public DidDocument findDidDoc(String didKeyUrl) {
         try {
-            ContractApi contractApi = getContractApiInstance();
             DidDocAndStatus didDocAndStatus = (DidDocAndStatus) contractApi.getDidDoc(didKeyUrl);
 
             return didDocAndStatus.getDocument();
@@ -149,7 +132,6 @@ public class BlockChainServiceImpl implements StorageService {
     @Override
     public void registerVcMeta(VcMeta vcMeta) {
         try {
-            ContractApi contractApi = getContractApiInstance();
             contractApi.registVcMetadata(vcMeta);
         } catch (BlockChainException e) {
             log.error("Failed to register VC Meta: " + e.getMessage());
@@ -170,7 +152,6 @@ public class BlockChainServiceImpl implements StorageService {
     @Override
     public VcMeta findVcMeta(String vcId) {
         try {
-            ContractApi contractApi = getContractApiInstance();
             return (VcMeta) contractApi.getVcMetadata(vcId);
         } catch (BlockChainException e) {
             log.error("Failed to find VC Meta: " + e.getMessage());
@@ -190,7 +171,6 @@ public class BlockChainServiceImpl implements StorageService {
      */
     public void updateVcStatus(String vcId, VcStatus vcStatus) {
         try {
-            ContractApi contractApi = getContractApiInstance();
             contractApi.updateVcStatus(vcId, vcStatus);
         } catch (BlockChainException e) {
             log.error("Failed to update VC Status: " + e.getMessage());
@@ -210,7 +190,7 @@ public class BlockChainServiceImpl implements StorageService {
      */
     public void removeIndex(String index) {
         try {
-            FabricContractApi fabricContractApi = (FabricContractApi)getContractApiInstance();
+            FabricContractApi fabricContractApi = (FabricContractApi) contractApi;
             fabricContractApi.removeIndex(index);
         } catch (BlockChainException e) {
             log.error("Failed to remove index: " + e.getMessage());
@@ -226,7 +206,7 @@ public class BlockChainServiceImpl implements StorageService {
      */
     public void removeIndexAll() {
         try {
-            FabricContractApi fabricContractApi = (FabricContractApi)getContractApiInstance();
+            FabricContractApi fabricContractApi = (FabricContractApi) contractApi;
             fabricContractApi.removeAll();
         } catch (BlockChainException e) {
             log.error("Failed to remove index: " + e.getMessage());

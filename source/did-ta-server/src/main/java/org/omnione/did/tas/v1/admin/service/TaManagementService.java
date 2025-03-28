@@ -16,9 +16,11 @@
 
 package org.omnione.did.tas.v1.admin.service;
 
+import com.google.gson.JsonParseException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.apache.bcel.classfile.Module.Open;
 import org.omnione.did.base.db.constant.TasStatus;
 import org.omnione.did.base.db.domain.Tas;
 import org.omnione.did.base.db.domain.VcSchema;
@@ -38,9 +40,11 @@ import org.omnione.did.tas.v1.common.service.SetupService;
 import org.omnione.did.tas.v1.common.service.TasService;
 import org.omnione.did.tas.v1.common.service.query.TasQueryService;
 import org.omnione.did.tas.v1.common.service.query.VcSchemaQueryService;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 
 /**
@@ -169,8 +173,14 @@ public class TaManagementService {
             byte[] didDocBytes = Files.readAllBytes(didDocFile.toPath());
             String certificateUrl = serverUrl + "/tas/api/v1/certificate-vc";
             setupService.registerTasDidDocument(didDocBytes, "tas", serverUrl, certificateUrl);
+        } catch (IOException e) {
+            log.error("I/O error while reading TA DID Document file", e);
+            throw new OpenDidException(ErrorCode.FILE_IO_ERROR);
+        } catch (OpenDidException e) {
+            log.error("OpenDID error while registering TA DID Document", e);
+            throw e;
         } catch (Exception e) {
-            log.error("Failed to read DID Document file", e);
+            log.error("Unexpected error while registering TA DID Document", e);
             throw new OpenDidException(ErrorCode.FAILED_TO_REGISTER_TA_DID_DOCUMENT);
         }
     }
@@ -182,29 +192,29 @@ public class TaManagementService {
             }
 
             String vcSchemaJson = """
-            {
-                "@id": "%s/tas/api/v1/vc-schema?name=certificate",
-                "@schema": "https://opendid.org/schema/vc.osd",
-                "title": "OpenDID Certificate Verifiable Credential",
-                "description": "VC-formatted OpenDID enrollment certificate.",
-                "metadata": {
-                    "language": "ko",
-                    "formatVersion": "1.0"
-                },
-                "credentialSubject": {
-                    "claims": [{
-                        "namespace": {
-                            "id": "org.opendid.v1",
-                            "name": "OpenDID - Certificate Verifiable Credential"
+                    {
+                        "@id": "%s/tas/api/v1/vc-schema?name=certificate",
+                        "@schema": "https://opendid.org/schema/vc.osd",
+                        "title": "OpenDID Certificate Verifiable Credential",
+                        "description": "VC-formatted OpenDID enrollment certificate.",
+                        "metadata": {
+                            "language": "ko",
+                            "formatVersion": "1.0"
                         },
-                        "items": [
-                            {"id": "subject", "caption": "subject", "type": "text", "format": "plain"},
-                            {"id": "role", "caption": "role", "type": "text", "format": "plain"}
-                        ]
-                    }]
-                }
-            }
-            """.formatted(serverUrl);
+                        "credentialSubject": {
+                            "claims": [{
+                                "namespace": {
+                                    "id": "org.opendid.v1",
+                                    "name": "OpenDID - Certificate Verifiable Credential"
+                                },
+                                "items": [
+                                    {"id": "subject", "caption": "subject", "type": "text", "format": "plain"},
+                                    {"id": "role", "caption": "role", "type": "text", "format": "plain"}
+                                ]
+                            }]
+                        }
+                    }
+                    """.formatted(serverUrl);
 
             org.omnione.did.data.model.schema.VcSchema vcSchema =
                     BaseCoreVcUtil.parseVcSchema(vcSchemaJson);
@@ -213,12 +223,18 @@ public class TaManagementService {
                     .type(VcType.CERTIFICATE_VC)
                     .schema(vcSchema.getSchema())
                     .schemaId(vcSchema.getId())
-                    .version(vcSchema.getMetadata().getFormatVersion())
+                    .version(vcSchema.getMetadata()
+                            .getFormatVersion())
                     .schema(vcSchema.toJson())
                     .build());
-
+        } catch (JsonParseException | ClassCastException e) {
+            log.error("Failed to parse Certificate VC Schema JSON", e);
+            throw new OpenDidException(ErrorCode.PARSE_VC_SCHEMA_FAILED);
+        } catch (DataAccessException e) {
+            log.error("Database error while saving Certificate VC Schema", e);
+            throw new OpenDidException(ErrorCode.DB_ERROR_ON_VC_SCHEMA_SAVE);
         } catch (Exception e) {
-            log.error("Failed to register Certificate VC Schema", e);
+            log.error("Unexpected error while registering Certificate VC Schema", e);
             throw new OpenDidException(ErrorCode.FAILED_TO_REGISTER_CERTIFICATE_VC_SCHEMA);
         }
     }
@@ -230,12 +246,17 @@ public class TaManagementService {
         try {
             RequestEnrollTasReqDto requestEnrollTasReqDto = RequestEnrollTasReqDto.builder()
                     .id("12345")
-                    .request(Request.builder().password("VoOyEuOyal").build())
+                    .request(Request.builder()
+                            .password("VoOyEuOyal")
+                            .build())
                     .build();
 
             tasService.requestEnrollTas(requestEnrollTasReqDto);
+        } catch (OpenDidException e) {
+            log.error("Failed to enroll TA", e);
+            throw e;
         } catch (Exception e) {
-            log.error("Failed to register TA certificate", e);
+            log.error("Unexpected error while enrolling TA", e);
             throw new OpenDidException(ErrorCode.FAILED_TO_REGISTER_TA_CERTIFICATE);
         }
     }

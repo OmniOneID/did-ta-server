@@ -36,7 +36,7 @@ public enum ErrorCode {
     DID_OFFER_SAVE_FAILED("SSRVTRA11000", "Failed to save DID offer.", 500),
     DID_OFFER_NOT_FOUND("SSRVTRA11001", "Failed to find DID offer.", 400),
     PUSH_TOKEN_UPDATE_FAILED("SSRVTRA11002", "Failed to update push token.", 500),
-
+    DB_ERROR_ON_VC_SCHEMA_SAVE("SSRVTRA11003", "Failed to save VC schema.", 500),
 
     // 3. Error during API processing (12000 ~ 12999)
     PARSE_VC_SCHEMA_FAILED("SSRVTRA12000", "Failed to parse VC Schema.", 500),
@@ -90,7 +90,7 @@ public enum ErrorCode {
     FAIL_TO_PROPOSE_ENROLL_ENTITY("SSRVTRA14005", "Failed to process the 'propose-enroll-entity' API request.", 500),
     ENROLL_REQUEST_ENTITY_DID_MISMATCH("SSRVTRA14006", "The provided DID does not match the entity that requested registration.", 400),
     FAIL_TO_REQUEST_ENROLL_ENTITY("SSRVTRA14007", "Failed to process the 'request-enroll-entity' API request.", 500),
-
+    FAILED_TO_REGISTER_QUICK_ENTITY("SSRVTRA14008", "Failed to register quick entity.", 500),
 
     // 06. Blockchain-related errors (15000 ~ 15499)
     BLOCKCHAIN_INITIALIZATION_FAILED("SSRVTRA15000", "Failed to initialize blockchain.", 500),
@@ -240,6 +240,8 @@ public enum ErrorCode {
     FAILED_TO_REGISTER_VC_SCHEMA_FROM_ISSUER("SSRVTRA18531", "Failed to register VC schema from issuer.", 500),
     FAILED_TO_REGISTER_CERTIFICATE_VC_SCHEMA("SSRVTRA18532", "Failed to register certificate VC schema.", 500),
     FAILED_TO_REGISTER_VC_PLAN_FROM_ISSUER("SSRVTRA18533", "Failed to register VC plan from issuer.", 500),
+    INVALID_VC_SCHEMA("SSRVTRA18534", "Failed to process VC schema: invalid schema.", 400),
+
 
     // 14. Token-related errors (19000 ~ 19499)
     SERVER_TOKEN_GENERATION_FAILED("SSRVTRA19000", "Failed to generate server token.", 500),
@@ -275,7 +277,9 @@ public enum ErrorCode {
     // 99. Miscellaneous errors (90000 ~ 99999)
     FILE_NOT_FOUND("SSRVTRA0000", "Failed to find file: requested file not found.", 400),
     TODO_CODE("SSRVTRA90001", "Temporary error code: to be replaced.", 400),
+    FILE_IO_ERROR("SSRVTRA90002", "Failed to process file: I/O error occurred.", 500),
     UNKNOWN_SERVER_ERROR("SSRVTRA90003", "An unknown server error has occurred.", 500),
+
     ;
 
     private final String code;

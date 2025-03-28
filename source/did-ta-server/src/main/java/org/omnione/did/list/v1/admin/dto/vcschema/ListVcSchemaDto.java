@@ -15,10 +15,13 @@
  */
 package org.omnione.did.list.v1.admin.dto.vcschema;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Builder;
 import lombok.Getter;
 import org.omnione.did.base.db.domain.ListVcSchema;
+import org.omnione.did.base.exception.ErrorCode;
+import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.common.util.JsonUtil;
 import org.omnione.did.data.model.schema.VcSchema;
 
@@ -64,11 +67,11 @@ public class ListVcSchemaDto {
     }
 
     private static Map<String, Object> parseVcSchema(String schemaJson) {
+        ObjectMapper objectMapper = new ObjectMapper();
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
             return objectMapper.readValue(schemaJson, Map.class);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to parse vcSchema JSON", e);
+        } catch (JsonProcessingException e) {
+            throw new OpenDidException(ErrorCode.INVALID_VC_SCHEMA);
         }
     }
 

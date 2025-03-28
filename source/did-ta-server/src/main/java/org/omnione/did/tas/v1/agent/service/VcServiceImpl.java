@@ -914,8 +914,12 @@ public class VcServiceImpl implements VcService {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             return objectMapper.readValue(schemaJson, Map.class);
+        } catch (JsonProcessingException e) {
+            log.error("Failed to parse VC schema JSON (invalid format): {}", schemaJson, e);
+            throw new OpenDidException(ErrorCode.INVALID_VC_SCHEMA);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to parse vcSchema JSON", e);
+            log.error("Unexpected error while parsing VC schema JSON", e);
+            throw new OpenDidException(ErrorCode.INVALID_VC_SCHEMA);
         }
     }
 
