@@ -15,10 +15,10 @@ puppeteer:
         fullPage: false
 ---
 
-Open DID TAS Server Installation And Operation Guide
+Open DID TA Server Installation Guide
 ==
 
-- Date: 2024-09-02
+- Date: 2025-03-31
 - Version: v1.0.0
 
 목차
@@ -26,22 +26,19 @@ Open DID TAS Server Installation And Operation Guide
 
 - [1. 소개](#1-소개)
   - [1.1. 개요](#11-개요)
-  - [1.2. TAS 서버 정의](#12-tas-서버-정의)
+  - [1.2. TA 서버 정의](#12-ta-서버-정의)
   - [1.3. 시스템 요구 사항](#13-시스템-요구-사항)
 - [2. 사전 준비 사항](#2-사전-준비-사항)
   - [2.1. Git 설치](#21-git-설치)
   - [2.2. PostgreSQL 설치](#22-postgresql-설치)
+  - [2.3. Node.js 설치](#23-nodejs-설치)
 - [3. GitHub에서 소스 코드 복제하기](#3-github에서-소스-코드-복제하기)
   - [3.1. 소스코드 복제](#31-소스코드-복제)
   - [3.2. 디렉토리 구조](#32-디렉토리-구조)
 - [4. 서버 구동 방법](#4-서버-구동-방법)
   - [4.1. IntelliJ IDEA로 구동하기 (Gradle 지원)](#41-intellij-idea로-구동하기-gradle-지원)
-    - [4.1.1. IntelliJ IDEA 설치 및 설정](#411-intellij-idea-설치-및-설정)
-    - [4.1.2. IntelliJ에서 프로젝트 열기](#412-intellij에서-프로젝트-열기)
-    - [4.1.3. Gradle 빌드](#413-gradle-빌드)
-    - [4.1.4. 서버 구동](#414-서버-구동)
-    - [4.1.5. 데이터베이스 설치](#415-데이터베이스-설치)
-    - [4.1.6. 서버 설정](#416-서버-설정)
+    - [4.1.1. IntelliJ IDEA에서 백엔드(Spring Boot) 실행](#411-intellij-idea에서-백엔드spring-boot-실행)
+    - [4.1.2. VS Code에서 프론트엔드(React) 실행](#412-vs-code에서-프론트엔드react-실행)
   - [4.2. 콘솔 명령어로 구동하기](#42-콘솔-명령어로-구동하기)
     - [4.2.1. Gradle 빌드 명령어](#421-gradle-빌드-명령어)
     - [4.2.2. 서버 구동 방법](#422-서버-구동-방법)
@@ -53,8 +50,8 @@ Open DID TAS Server Installation And Operation Guide
     - [5.1.1. Spring 기본 설정](#511-spring-기본-설정)
     - [5.1.2. Jackson 기본 설정](#512-jackson-기본-설정)
     - [5.1.3. Servlet 설정](#513-servlet-설정)
-    - [5.1.4. 서버 설정](#514-서버-설정)
-    - [5.1.5. kyc 설정](#515-kyc-설정)
+    - [5.1.4. Actuator 설정](#514-actuator-설정)
+    - [5.1.5. 서버 설정](#515-서버-설정)
   - [5.2. application-auth.yml](#52-application-authyml)
     - [5.2.1. 토큰 사용 여부 설정](#521-토큰-사용-여부-설정)
   - [5.3. database.yml](#53-databaseyml)
@@ -62,21 +59,13 @@ Open DID TAS Server Installation And Operation Guide
     - [5.3.2. 데이터소스 설정](#532-데이터소스-설정)
     - [5.3.3. JPA 설정](#533-jpa-설정)
   - [5.4. application-logging.yml](#54-application-loggingyml)
-    - [5.4.1. 로깅 설정](#541-로깅-설정)
-  - [5.5. application-notification.yml](#55-application-notificationyml)
-    - [5.5.1. 이메일 설정](#551-이메일-설정)
-    - [5.5.1. FCM 설정](#551-fcm-설정)
-  - [5.6. application-spring-docs.yml](#56-application-spring-docsyml)
-  - [5.7. applicaiton-wallet.yml](#57-applicaiton-walletyml)
-    - [5.7.1. Wallet 접속 정보 설정](#571-wallet-접속-정보-설정)
-  - [5.8. applicaiton-tas.yml](#58-applicaiton-tasyml)
-    - [5.8.1. TAS 정보 설정](#581-tas-정보-설정)
-  - [5.9. blockchain.properties](#59-blockchainproperties)
-    - [5.9.1. 블록체인 연동 설정](#591-블록체인-연동-설정)
-  - [5.10. 샘플 데이터](#510-샘플-데이터)
-    - [5.10.1. Allowed CA 샘플 데이터](#5101-allowed-ca-샘플-데이터)
-    - [5.11.1. VC Schema 샘플 데이터](#5111-vc-schema-샘플-데이터)
-    - [5.11.2. VC Plan 샘플 데이터](#5112-vc-plan-샘플-데이터)
+    - [5.4.1. Logging Configuration](#541-logging-configuration)
+  - [5.5. application-spring-docs.yml](#55-application-spring-docsyml)
+  - [5.6. applicaiton-wallet.yml](#56-applicaiton-walletyml)
+    - [5.6.1. Wallet 접속 정보 설정](#561-wallet-접속-정보-설정)
+  - [5.7. applicaiton-blockchain.yml](#57-applicaiton-blockchainyml)
+  - [5.8. blockchain.properties](#58-blockchainproperties)
+    - [5.8.1. 블록체인 연동 설정](#581-블록체인-연동-설정)
 - [6. 프로파일 설정 및 사용](#6-프로파일-설정-및-사용)
   - [6.1. 프로파일 개요 (`sample`, `dev`)](#61-프로파일-개요-sample-dev)
     - [6.1.1. `sample` 프로파일](#611-sample-프로파일)
@@ -100,15 +89,16 @@ Open DID TAS Server Installation And Operation Guide
 # 1. 소개
 
 ## 1.1. 개요
-본 문서는 TAS(Trust Agent Service) 서버의 설치 및 구동에 관한 가이드를 제공합니다. TAS의 설치 과정, 설정 방법, 그리고 구동 절차를 단계별로 설명하여, 사용자가 이를 효율적으로 설치하고 운영할 수 있도록 안내합니다.
+본 문서는 Open DID TA 서버의 설치, 설정 및 구동 방법에 대한 가이드를 제공합니다. TA 서버는 Spring Boot 기반의 백엔드와 React 기반의 Admin console 프론트엔드로 구성되어 있으며, Gradle 빌드를 통해 통합 배포가 가능합니다. 설치 과정, 환경 설정, Docker 실행 방법, 프로파일 설정까지 단계별로 설명되어 있어, 사용자가 효율적으로 서버를 설치하고 실행할 수 있도록 안내합니다.
 
-OpenDID의 전체 설치에 대한 가이드는 [Open DID Installation Guide]를 참고해 주세요.
+- OpenDID의 전체 설치에 대한 가이드는 [Open DID Installation Guide]를 참고해 주세요.
+- Admin console에 대한 가이드는 [Open DID Admin Console Guide]를 참고해 주세요.
 
 <br/>
 
-## 1.2. TAS 서버 정의
+## 1.2. TA 서버 정의
 
-TAS 서버는 Trust Agent Service 서버로, Open DID 내에서 서버와 사용자의 신뢰 관계를 구축하는 중추적인 역할을 합니다. TAS 서버는 구성요소들이 요청한 데이터를 검증하고, 검증이 통과된 데이터를 서명하여 블록체인에 등록합니다. 이 과정을 통해 신뢰할 수 있는 데이터가 블록체인에 저장되며, TAS는 이러한 신뢰 체인을 구축하는 핵심적인 역할을 수행합니다.
+TA 서버는 Trust Agent 서버로, Open DID 내에서 서버와 사용자의 신뢰 관계를 구축하는 중추적인 역할을 합니다. TA 서버는 구성요소들이 요청한 데이터를 검증하고, 검증이 통과된 데이터를 서명하여 블록체인에 등록합니다. 이 과정을 통해 신뢰할 수 있는 데이터가 블록체인에 저장되며, TA는 이러한 신뢰 체인을 구축하는 핵심적인 역할을 수행합니다.
 
 <br/>
 
@@ -140,7 +130,7 @@ git --version
 <br/>
 
 ## 2.2. PostgreSQL 설치
-TAS 서버를 구동하려면 데이터베이스 설치가 필요하며, Open DID에서는 PostgreSQL을 사용합니다.
+TA 서버를 구동하려면 데이터베이스 설치가 필요하며, Open DID에서는 PostgreSQL을 사용합니다.
 
 > **참고 링크**
 - [PostgreSQL 설치 가이드 문서](https://www.postgresql.org/download/)
@@ -148,6 +138,28 @@ TAS 서버를 구동하려면 데이터베이스 설치가 필요하며, Open DI
 
 <br/>
 
+## 2.3. Node.js 설치
+React 기반의 TA Admin Console을 실행하려면 `Node.js`와 `npm`이 필요합니다.
+
+npm(Node Package Manager)은 프론트엔드 개발에 필요한 의존성들을 설치하고 관리하는 데 사용됩니다.
+
+설치가 완료되면 다음 명령어로 정상적으로 설치되었는지 확인할 수 있습니다:
+
+```bash
+node --version
+npm --version
+```
+
+---
+> **참고 링크**  
+> - [Node.js 공식 다운로드 페이지](https://nodejs.org/)  
+> - LTS(Long Term Support) 버전 설치를 권장합니다.  
+
+> 설치 확인 팁  
+> `node -v`와 `npm -v` 명령어를 입력했을 때 버전 정보가 출력되면 정상적으로 설치된 것입니다.
+---
+
+<br/>
 
 # 3. GitHub에서 소스 코드 복제하기
 
@@ -155,7 +167,7 @@ TAS 서버를 구동하려면 데이터베이스 설치가 필요하며, Open DI
 
 `git clone` 명령은 GitHub에 호스팅된 원격 저장소에서 로컬 컴퓨터로 소스 코드를 복제하는 명령어입니다. 이 명령을 사용하면 프로젝트의 전체 소스 코드와 관련 파일들을 로컬에서 작업할 수 있게 됩니다. 복제한 후에는 저장소 내에서 필요한 작업을 진행할 수 있으며, 변경 사항은 다시 원격 저장소에 푸시할 수 있습니다.
 
-터미널을 열고 다음 명령어를 실행하여 TAS 서버의 리포지토리를 로컬 컴퓨터에 복사합니다.
+터미널을 열고 다음 명령어를 실행하여 TA 서버의 리포지토리를 로컬 컴퓨터에 복사합니다.
 ```bash
 # Git 저장소에서 리포지토리 복제
 git clone https://github.com/OmniOneID/did-ta-server.git
@@ -206,6 +218,8 @@ did-ta-server
         └── src
         └── build.gradle
         └── README.md
+    └── did-ta-admin        
+        ├── frontend
 ```
 
 | Name                    | Description                              |
@@ -223,13 +237,15 @@ did-ta-server
 | ┖ installation          | 설치 및 설정 가이드                      |
 | ┖ db                    | 데이터베이스 ERD, 테이블 명세서          |
 | source                  | 소스 코드                                |
-| ┖ did-tas-server        | TAS 서버 소스 코드 및 빌드 파일          |
+| ┖ did-tas-server        | TA 서버 소스 코드 및 빌드 파일           |
 | ┖ gradle                | Gradle 빌드 설정 및 스크립트             |
 | ┖ libs                  | 외부 라이브러리 및 의존성                |
 | ┖ sample                | 샘플 파일                                |
 | ┖ src                   | 주요 소스 코드 디렉토리                  |
 | ┖ build.gradle          | Gradle 빌드 설정 파일                    |
 | ┖ README.md             | 소스 코드 개요 및 안내                   |
+| ┖ did-ta-admin          | TA Admin 소스코드                        |
+| ┖ frontend              | TA Admin 프론트엔드 소스 코드            |
 
 <br/>
 
@@ -247,49 +263,81 @@ did-ta-server
    
 ## 4.1. IntelliJ IDEA로 구동하기 (Gradle 지원)
 
-IntelliJ IDEA는 Java 개발에 널리 사용되는 통합 개발 환경(IDE)으로, Gradle과 같은 빌드 도구를 지원하여 프로젝트 설정 및 의존성 관리가 매우 용이합니다. Open DID의 서버는 Gradle을 사용하여 빌드되므로, IntelliJ IDEA에서 쉽게 프로젝트를 설정하고 서버를 실행할 수 있습니다.
+Open DID 프로젝트는 백엔드(Spring Boot 기반)와 프론트엔드(React 기반)로 구성되어 있으며, 각각 IntelliJ IDEA와 VS Code에서 개발 및 실행할 수 있습니다.
 
-### 4.1.1. IntelliJ IDEA 설치 및 설정
+### 4.1.1. IntelliJ IDEA에서 백엔드(Spring Boot) 실행
+
+#### 4.1.1.1. IntelliJ IDEA 설치 및 설정
 1. IntelliJ를 설치합니다. (설치 방법은 아래 링크를 참조)
 
 > **참고 링크**
 > - [IntelliJ IDEA 다운로드](https://www.jetbrains.com/idea/download/)
 
-### 4.1.2. IntelliJ에서 프로젝트 열기
+#### 4.1.1.2. 프로젝트 열기
 - IntelliJ를 실행시키고 `File -> New -> Project from Existing Sources`를 선택합니다. 파일 선택 창이 나타나면 [3.1. 소스코드 복제](#31-소스코드-복제) 에서 복제한 리포지토리에서 'source/did-tas-server' 폴더를 선택합니다.
 - 프로젝트를 열면 build.gradle 파일이 자동으로 인식됩니다.
 - Gradle이 자동으로 필요한 의존성 파일들을 다운로드하며, 이 과정이 완료될 때까지 기다립니다.
 
-### 4.1.3. Gradle 빌드
+#### 4.1.1.3. Gradle 빌드
 - IntelliJ IDEA의 `Gradle` 탭에서 `Tasks -> build -> build`를 실행합니다. 
 - 빌드가 성공적으로 완료되면, 프로젝트가 실행 가능한 상태로 준비됩니다.
 
-### 4.1.4. 서버 구동
+#### 4.1.1.4. 서버 구동
 - IntelliJ IDEA의 Gradle 탭에서 Tasks -> application -> bootRun을 선택하고 실행합니다.
 - Gradle이 자동으로 서버를 빌드하고 실행합니다.
 - 콘솔 로그에서 "Started [ApplicationName] in [time] seconds" 메시지를 확인하여 서버가 정상적으로 실행되었는지 확인합니다.
 - 서버가 정상적으로 구동되면, 브라우저에서 http://localhost:8090/swagger-ui/index.html 주소로 이동하여 Swagger UI를 통해 API 문서가 제대로 표시되는지 확인합니다.
 
 > **주의**
-> - TAS 서버는 초기에 sample 프로파일로 설정되어 있습니다.
+> - TA 서버는 초기에 sample 프로파일로 설정되어 있습니다.
 > - sample 프로파일로 설정시, 필수 설정(예: 데이터베이스)을 무시하고 서버가 구동됩니다. 자세한 내용은 [6. 프로파일 설정 및 사용](#6-프로파일-설정-및-사용) 장을 참고해 주세요.
 
+#### 4.1.1.5. 데이터베이스 설치
+TA 서버는 운영에 필요한 데이터를 데이터베이스에 저장하므로, 서버를 운영하려면 반드시 데이터베이스가 설치되어야 합니다. Open DID의 서버는 PostgreSQL 데이터베이스를 사용합니다. PostgreSQL 서버의 설치 방법은 여러가지가 있지만, Docker를 이용한 설치가 가장 간편하고 쉽습니다. PostgreSQL의 설치 방법은 [2.2. PostgreSQL 설치](#22-postgresql-설치) 장을 참고해 주세요.
 
-### 4.1.5. 데이터베이스 설치
-TAS 서버는 운영에 필요한 데이터를 데이터베이스에 저장하므로, 서버를 운영하려면 반드시 데이터베이스가 설치되어야 합니다. Open DID의 서버는 PostgreSQL 데이터베이스를 사용합니다. PostgreSQL 서버의 설치 방법은 여러가지가 있지만, Docker를 이용한 설치가 가장 간편하고 쉽습니다. PostgreSQL의 설치 방법은 [2.2. PostgreSQL 설치](#22-postgresql-설치) 장을 참고해 주세요.
-
-<br/>
-
-### 4.1.6. 서버 설정
+#### 4.1.1.6. 서버 설정
 - 서버는 배포 환경에 맞게 필요한 설정을 수정해야 하며, 이를 통해 서버가 안정적으로 작동할 수 있도록 해야 합니다. 예를 들어, 데이터베이스 연결 정보, 포트 번호, 이메일 연동 정보 등 각 환경에 맞는 구성 요소들을 조정해야 합니다.
 - 서버의 설정 파일은 `src/main/resource/config` 경로에 위치해 있습니다.
 - 자세한 설정 방법은 [5. 설정 가이드](#5-설정-가이드) 를 참고해 주세요.
 
 <br/>
 
+### 4.1.2. VS Code에서 프론트엔드(React) 실행
+
+TA 어드민 콘솔은 React 기반이며, VS Code에서 별도로 실행할 수 있습니다. 프론트엔드 개발 또는 UI 확인 시 유용합니다.
+
+#### 4.1.2.1. VS Code 설치
+
+- [VS Code 다운로드](https://code.visualstudio.com/)
+
+#### 4.1.2.2. 프로젝트 열기
+
+- VS Code에서 `source/did-issuer-admin` 디렉토리 열기
+
+#### 4.1.2.3. 의존성 설치
+
+```bash
+npm install
+```
+
+#### 4.1.2.4. 개발 서버 실행
+
+```bash
+npm run dev
+```
+
+- 기본 접속 URL: [http://localhost:5173](http://localhost:5173)
+
+> 📌 **참고:**  
+> 백엔드(Spring Boot 서버)는 별도로 실행되어 있어야 하며,  
+> 프론트엔드에서 API 서버 주소는 `vite.config.ts` 파일 또는 설정 파일을 통해 지정할 수 있습니다.
+
+<br/>
+
 ## 4.2. 콘솔 명령어로 구동하기
 
 콘솔 명령어를 사용하여 Open DID 서버를 구동하는 방법을 안내합니다. Gradle을 이용해 프로젝트를 빌드하고, 생성된 JAR 파일을 사용하여 서버를 구동하는 과정을 설명합니다.
+- Gradle 빌드시 프론트엔드(Admin Console)가 자동으로 함께 빌드되며, 정적 리소스로 포함됩니다.
 
 ### 4.2.1. Gradle 빌드 명령어
 
@@ -305,7 +353,10 @@ TAS 서버는 운영에 필요한 데이터를 데이터베이스에 저장하�
     ./gradlew clean build
   ```
   > 참고
-  > - gradlew은 Gradle Wrapper의 줄임말로, 프로젝트에서 Gradle을 실행하는 데 사용되는 스크립트입니다. 로컬에 Gradle이 설치되어 있지 않더라도, 프로젝트에서 지정한 버전의 Gradle을 자동으로 다운로드하고 실행할 수 있도록 해줍니다. 따라서 개발자는 Gradle 설치 여부와 상관없이 동일한 환경에서 프로젝트를 빌드할 수 있게 됩니다.
+  > - gradlew은 Gradle Wrapper의 줄임말로, 프로젝트에서 Gradle을 실행하는 데 사용되는 스크립트입니다. 로컬에 Gradle이 설치되어 있지 않더라도, 프로젝트에서 지정한 버전의 Gradle을 자동으로 다운로드하고 실행할 수 있도록 해줍니다. 따라서 개발자는 Gradle 설치 여부와 상관없이 동일한 환경에서 프로젝트를 빌드할 수 있게 됩니다.   
+  > - 참고: 프론트엔드 빌드가 필요 없는 경우(예: 백엔드만 테스트하거나 프론트엔드 결과물을 이미 포함하고 있는 경우)는 다음과 같이 옵션을 추가하여 프론트엔드 빌드를 생략할 수 있습니다.  
+  >   - `./gradlew clean build -DskipFrontendBuild=true`
+
 
 - 빌드된 폴더로 이동하여 JAR 파일이 생성된 것을 확인합니다.
     ```shell
@@ -326,13 +377,13 @@ java -jar did-tas-server-1.0.0.jar
 - 서버가 정상적으로 구동되면, 브라우저에서 http://localhost:8090/swagger-ui/index.html 주소로 이동하여 Swagger UI를 통해 API 문서가 제대로 표시되는지 확인합니다.
 
 > **주의**
-> - TAS 서버는 초기에 sample 프로파일로 설정되어 있습니다.
+> - TA 서버는 초기에 sample 프로파일로 설정되어 있습니다.
 > - sample 프로파일로 설정시, 필수 설정(예: 데이터베이스)을 무시하고 서버가 구동됩니다. 자세한 내용은 [6. 프로파일 설정 및 사용](#6-프로파일-설정-및-사용) 장을 참고해 주세요.
 
 <br/>
 
 ### 4.2.3. 데이터베이스 설치
-TAS 서버는 운영에 필요한 데이터를 데이터베이스에 저장하므로, 서버를 운영하려면 반드시 데이터베이스가 설치되어야 합니다. Open DID의 서버는 PostgreSQL 데이터베이스를 사용합니다. PostgreSQL 서버의 설치 방법은 여러가지가 있지만, Docker를 이용한 설치가 가장 간편하고 쉽습니다. PostgreSQL의 설치 방법은 [2.2. PostgreSQL 설치](#22-postgresql-설치) 장을 참고해 주세요.
+TA 서버는 운영에 필요한 데이터를 데이터베이스에 저장하므로, 서버를 운영하려면 반드시 데이터베이스가 설치되어야 합니다. Open DID의 서버는 PostgreSQL 데이터베이스를 사용합니다. PostgreSQL 서버의 설치 방법은 여러가지가 있지만, Docker를 이용한 설치가 가장 간편하고 쉽습니다. PostgreSQL의 설치 방법은 [2.2. PostgreSQL 설치](#22-postgresql-설치) 장을 참고해 주세요.
 
 <br/>
 
@@ -420,21 +471,33 @@ Servlet 설정은 파일 업로드와 같은 웹 요청 처리를 제어합니�
 
 <br/>
 
-### 5.1.4. 서버 설정 
+
+### 5.1.4. Actuator 설정
+Spring Boot Actuator는 애플리케이션의 상태를 모니터링하고 관리할 수 있는 다양한 엔드포인트를 제공합니다. 보안상 민감할 수 있는 정보를 다루기 때문에 필요한 엔드포인트만 노출하고, 세부 정보를 제한하는 것이 일반적입니다.
+
+* `management.endpoints.web.exposure.include`: 🔒  
+    - 외부에 노출할 Actuator 엔드포인트를 지정합니다.  
+    - 예시: `health`, `shutdown`
+
+* `management.endpoint.health.show-details`: 🔒  
+    - health 엔드포인트의 상세 정보를 얼마나 노출할지 설정합니다.  
+    - 예시: `never` (기본값, 인증되지 않은 사용자에게 세부 정보 미노출)
+
+* `management.endpoint.shutdown.enabled`: 🔒  
+    - `/actuator/shutdown` 엔드포인트 활성화 여부를 설정합니다.  
+    - 예시: `true` (shutdown 기능을 활성화하여 원격 종료 가능)
+
+---
+> 운영 환경에서는 보안상의 이유로 `shutdown` 엔드포인트를 활성화하지 않는 것을 권장합니다.  
+> Orchestrator를 사용하는 경우 서버를 구동 및 정지하기 위해서는 해당 Actuator 설정이 필요합니다.
+---
+
+### 5.1.5. 서버 설정 
 서버 설정은 애플리케이션이 요청을 수신할 포트 번호 등을 정의합니다.
 
 * `server.port`:  
-    - 애플리케이션이 실행될 포트 번호입니다. TAS 서버의 기본 포트는 8090 입니다.
+    - 애플리케이션이 실행될 포트 번호입니다. TA 서버의 기본 포트는 8090 입니다.
     - 값 : 8090
-
-<br/>
-
-### 5.1.5. kyc 설정 
-KYC 서버 정보를 설정하며, Open DID에서는 KYC 기능을 CAS 서버로 대체하여 사용합니다.
-
-* `kyc.url`:  
-    - KYC 서버의 URL입니다. Open DID에서는 KYC가 구현체마다 다르기 때문에 구체적으로 정의하지 않습니다. 임시로 CAS 서버가 KYC 역할을 대신하므로, CAS 서버의 URL을 입력해 주세요.
-    - 예시: `http://192.168.1.1:8094/cas`
 
 <br/>
 
@@ -483,15 +546,22 @@ iquibase는 데이터베이스 마이그레이션을 관리하는 도구로, 데
 
 * `spring.datasource.url`:  
     - 데이터베이스 연결 URL입니다. 애플리케이션이 연결할 데이터베이스의 위치와 이름을 지정합니다. 
-    - 예시: `jdbc:postgresql://localhost:5432/tas_db`
+    - 예시: `jdbc:postgresql://localhost:5432/tas`
 
 * `spring.datasource.username`:  
     - 데이터베이스 접속 사용자 이름입니다.
-    - 예시: `tas`
+    - 예시: `omn`
 
 * `spring.datasource.password`:  
     - 데이터베이스 접속 비밀번호입니다.
-    - 예시: `taspassword`
+    - 예시: `omn`
+
+---
+> Orchestrator를 통해 Database를 설치한 경우, 기본 접속 정보는 다음과 같이 설정됩니다.  
+> - `url`: `jdbc:postgresql://localhost:5432/tas`  
+> - `username`: `omn`  
+> - `password`: `omn`
+---
 
 <br/>
 
@@ -521,21 +591,25 @@ JPA 설정은 애플리케이션의 데이터베이스와 상호작용하는 방
 <br/>
 
 ## 5.4. application-logging.yml
-- 역할: 로그 그룹과 로그 레벨을 설정합니다. 이 설정 파일을 통해 특정 패키지나 모듈에 대해 로그 그룹을 정의하고, 각 그룹에 대한 로그 레벨을 개별적으로 지정할 수 있습니다.
 
-- 위치: `src/main/resources/config`
-  
-### 5.4.1. 로깅 설정
+- Purpose: Defines log groups and log levels. This configuration file allows you to group specific packages or modules under a log group and assign individual log levels to each group.
 
-- 로그 그룹: logging.group 아래에 원하는 패키지를 그룹화하여 관리할 수 있습니다. 예를 들어, util 그룹에 org.omnione.did.base.util 패키지를 포함하고, 다른 패키지도 각각의 그룹으로 정의합니다.
+- Location: `src/main/resources/config`
 
-- 로그 레벨: logging.level 설정을 통해 각 그룹에 대해 로그 레벨을 지정할 수 있습니다. debug, info, warn, error 등 다양한 로그 레벨을 설정하여 원하는 수준의 로그를 출력할 수 있습니다. 예를 들어, tas, aop 등의 그룹에 debug 레벨을 설정하여 해당 패키지에서 디버그 정보를 출력하도록 할 수 있습니다.
+### 5.4.1. Logging Configuration
 
-* `logging.level`: 
-    - 로그 레벨을 설정합니다.
-    - 레벨을 debug 설정함으로써, 지정된 패키지에 대해 DEBUG 레벨 이상(INFO, WARN, ERROR, FATAL)의 모든 로그 메시지를 볼 수 있습니다.
+- **Log Groups**: You can group desired packages using `logging.group`.  
+  For example, the `util` group may include the package `org.omnione.did.base.util`, and other groups can be defined similarly.
 
-전체 예시:
+- **Log Levels**: You can specify log levels for each group using `logging.level`.  
+  Levels such as `debug`, `info`, `warn`, `error`, etc., can be set to control the verbosity of logs.  
+  For example, setting the `tas` and `aop` groups to `debug` will output detailed debug information from those packages.
+
+* `logging.level`:  
+    - Sets the log level.  
+    - Setting it to `debug` allows viewing all messages at DEBUG level and above (INFO, WARN, ERROR, FATAL).
+
+Full example:
 ```yaml
 logging:
   group:
@@ -559,143 +633,57 @@ logging:
 
 <br/>
 
+## 5.5. application-spring-docs.yml
 
-## 5.5. application-notification.yml
-- 역할: 이메일 및 FCM(Firebase Cloud Messaging) 설정을 관리합니다.
+- Purpose: Manages settings for SpringDoc and Swagger UI in the application.
 
-- 위치: `src/main/resources/config`
+- Location: `src/main/resources/config`
 
-### 5.5.1. 이메일 설정
-* `spring.mail.host`:  
-    - 이메일 발송을 위한 SMTP 서버의 호스트를 지정합니다.
-    - 예시: smtp.gmail.com
+* `springdoc.swagger-ui.path`: 🔒  
+  - Defines the URL path for accessing Swagger UI.  
+  - Example: `/swagger-ui.html`
 
-* `spring.mail.port`: 
-    - SMTP 서버의 포트 번호 지정합니다.
-    - 예시: 587
+* `springdoc.swagger-ui.groups-order`: 🔒  
+  - Specifies the order in which API groups appear in Swagger UI.  
+  - Example: `ASC`
 
-* `spring.mail.username`:  
-    - SMTP 서버에 접속할 때 사용할 사용자 이름을 지정합니다.
-    - 예시: your-email@gmail.com
+* `springdoc.swagger-ui.operations-sorter`: 🔒  
+  - Sorts API endpoints in Swagger UI by HTTP method.  
+  - Example: `method`
 
-* `spring.mail.password`:  
-    - SMTP 서버에 접속할 때 사용할 비밀번호를 지정합니다.
-    - 예시: your_password
+* `springdoc.swagger-ui.disable-swagger-default-url`: 🔒  
+  - Disables the default Swagger URL.  
+  - Example: `true`
 
-* `spring.mail.properties.mail.debug`:  
-    - 이메일 발송 시 디버그 모드를 설정합니다. false로 설정하면 디버그 정보가 출력되지 않습니다.
-    - 예시: false
+* `springdoc.swagger-ui.display-request-duration`: 🔒  
+  - Whether to display request duration in Swagger UI.  
+  - Example: `true`
 
-* `spring.mail.properties.mail.smtp.auth`:  
-    - SMTP 인증을 활성화할지 여부를 설정합니다.
-    - 예시: true
+* `springdoc.api-docs.path`: 🔒  
+  - Defines the path where API documentation is served.  
+  - Example: `/api-docs`
 
-* `spring.mail.properties.mail.smtp.starttls.enable`:  
-    - STARTTLS 보안 프로토콜을 활성화할지 여부를 설정합니다.
-    - 예시: true
+* `springdoc.show-actuator`: 🔒  
+  - Determines whether to include Actuator endpoints in the API documentation.  
+  - Example: `true`
 
-* `spring.mail.properties.mail.smtp.starttls.required`:  
-    - STARTTLS를 필수로 사용할지 여부를 설정합니다.
-    - 예시: true
+* `springdoc.default-consumes-media-type`: 🔒  
+  - Sets the default media type for request bodies in the API docs.  
+  - Example: `application/json`
 
-* `spring.mail.properties.mail.smtp.connectiontimeout`:  
-    - SMTP 서버에 연결할 때 사용할 시간 제한(밀리초)을 지정합니다.
-    - 예시: 5000
-
-* `spring.mail.properties.mail.smtp.timeout`:  
-    - SMTP 통신 시간 제한(밀리초)을 지정합니다.
-    - 예시: 5000
-
-* `spring.mail.properties.mail.smtp.writetimeout`:  
-    - SMTP 쓰기 시간 제한(밀리초)을 지정합니다.
-    - 예시: 5000
-
-* `spring.mail.properties.mail.smtp.ssl.trust`:  
-    - SSL을 사용할 때 신뢰할 호스트를 지정합니다.
-    - 예시: smtp.gmail.com
-
-* `spring.mail.properties.mail.smtp.ssl.enable`:  
-    - SSL을 활성화할지 여부를 설정합니다.
-    - 예시: true
-
-* `spring.mail.properties.mail.smtp.ssl.enable`:  
-    - SSL을 활성화할지 여부를 설정합니다.
-    - 예시: true
-
-* `email.sender`:  
-    - 이메일 발송 시 사용할 발신자의 이메일 주소를 지정합니다.
-    - 예시: `noreply_opendid@omnione.net`
-
+* `springdoc.default-produces-media-type`: 🔒  
+  - Sets the default media type for response bodies in the API docs.  
+  - Example: `application/json`
 
 <br/>
 
-### 5.5.1. FCM 설정
-* `fcm.enabled`:  
-    - FCM 기능을 활성화할지 여부를 설정합니다. false로 설정 시 FCM을 사용하지 않습니다.
-    - 예시: false
 
-* `fcm.path`:  
-    - FCM 인증서의 경로를 지정합니다.
-    - 예시: /your-fcm-auth-path
-
-* `fcm.scope`:  
-    - FCM 인증 범위를 설정합니다.
-    - 예시: `https://www.googleapis.com/auth/cloud-platform`
-
-* `fcm.scope`:  
-    - FCM 인증 범위를 설정합니다.
-    - 예시: `https://www.googleapis.com/auth/cloud-platform`
-
-
-## 5.6. application-spring-docs.yml
-- 역할: 애플리케이션에서 SpringDoc 및 Swagger UI 설정을 관리합니다.
-
-- 위치: `src/main/resources/config`
-
-* `springdoc.swagger-ui.path`: 🔒
-  - Swagger UI에 접근할 수 있는 URL 경로를 정의합니다.
-  - 예시: `/swagger-ui.html`
-
-* `springdoc.swagger-ui.groups-order`: 🔒
-  - Swagger UI에서 API 그룹을 표시하는 순서를 지정합니다.
-  - 예시: `ASC`
-
-* `springdoc.swagger-ui.operations-sorter`: 🔒
-  - Swagger UI에서 HTTP 메서드 기준으로 API 엔드포인트를 정렬합니다.
-  - 예시: `method`
-
-* `springdoc.swagger-ui.disable-swagger-default-url`: 🔒
-  - 기본 Swagger URL을 비활성화합니다.
-  - 예시: `true`
-
-* `springdoc.swagger-ui.display-request-duration`: 🔒
-  - Swagger UI에 요청 시간을 표시할지 여부를 설정합니다.
-  - 예시: `true`
-
-* `springdoc.api-docs.path`: 🔒
-  - API 문서가 제공되는 경로를 정의합니다.
-  - 예시: `/api-docs`
-
-* `springdoc.show-actuator`: 🔒
-  - API 문서에서 Actuator 엔드포인트를 표시할지 여부를 설정합니다.
-  - 예시: `true`
-
-* `springdoc.default-consumes-media-type`: 🔒
-  - API 문서에서 요청 본문의 기본 미디어 타입을 설정합니다.
-  - 예시: `application/json`
-
-* `springdoc.default-produces-media-type`: 🔒
-  - API 문서에서 응답 본문의 기본 미디어 타입을 설정합니다.
-  - 예시: `application/json`
-
-<br/>
-
-## 5.7. applicaiton-wallet.yml
+## 5.6. applicaiton-wallet.yml
 - 역할: 서버에서 사용하는 월렛 파일 정보를 설정합니다.
 
 - 위치: `src/main/resources/config`
 
-### 5.7.1. Wallet 접속 정보 설정
+### 5.6.1. Wallet 접속 정보 설정
 
 * `wallet.file-path`:  
     - 월렛 파일의 경로를 지정합니다. 파일 월렛을 저장하는 파일의 위치를 지정합니다. 이 파일은 개인키 등 중요한 정보를 포함할 수 있습니다. *반드시 절대경로로 입력해야합니다*
@@ -705,50 +693,27 @@ logging:
     - 월렛 접근에 사용되는 비밀번호입니다. 월렛 파일의 접근시 사용되는 비밀번호입니다. 높은 보안이 요구되는 정보입니다.
     - 예시: `your_secure_wallet_password`
 
-## 5.8. applicaiton-tas.yml
-이 설정 파일은 TAS 서버의 기본 정보와 암호화 설정, 토큰 만료 시간 등을 정의합니다. 
-
-### 5.8.1. TAS 정보 설정
-
-- 위치: `src/main/resources/config`
-
-* `tas.name`: 
-  - TAS 서버의 이름을 지정합니다. 해당 값은 가입증명서 VC에서 name의 값으로 사용 됩니다.
-  - 예시: raonsecure
-
-* `tas.did`: 
-  - TAS 서버의 DID를 설정합니다.
-  - 예시: did:omn:tas
-
-* `tas.certificate-vc`: 
-  - TAS 서버의 가입증명서 VC 조회 API를 설정합니다. 
-  - 포맷: {TAS 도메인}/tas/api/v1/certificate-vc
-  - 예시: http://192.168.1.1:8090/tas/api/v1/certificate-vc
-
-* `tas.cipher-type:`: 🔒
-  - TAS 서버에서 사용할 암호화 알고리즘을 지정합니다.
-  - 예시: AES-256-CBC
-
-* `tas.padding-type:`: 🔒
-  - 암호화에서 사용할 패딩 방식을 지정합니다.
-  - 예시: PKCS5
-
-* `tas.token-expiration-time-hours:`: 
-  - 인증 토큰의 만료 시간을 시간 단위로 설정합니다.
-  - 예시: 1
-
-* `tas.sample-path`: 
-  - 설명: 샘플 데이터를 저장할 경로를 설정합니다. sample 폴더는 소스 폴더의 루트 경로에 위치해 있습니다.
-  - 예시: ./sample/data
+---
+> Orchestrator를 통해 월렛 파일을 생성하는 경우, 기본 비밀번호는 다음과 같이 설정됩니다.
+> - `password`: `omnioneopendid12!@`
+---
 
 <br/>
 
-## 5.9. blockchain.properties
-- 역할: TAS 서버에서 연동할 블록체인 서버 정보를 설정합니다. [Open DID Installation Guide]의 '5.1.1. Hyperledger Fabric 테스트 네트워크 설치'에 따라 Hyperledger Fabric 테스트 네트워크를 설치하면, 개인 키, 인증서, 서버 접속 정보 설정 파일이 자동으로 생성됩니다. blockchain.properties에서는 이들 파일이 위치한 경로와, Hyperledger Fabric 테스트 네트워크 설치 시 입력한 네트워크 이름을 설정합니다. 또한, '5.1.2. Open DID 체인코드 배포'에서 배포한 Open DID의 체인코드 이름도 설정합니다.
+## 5.7. applicaiton-blockchain.yml
+- 역할: 블록체인 연동 정보가 설정되어 있는 파일의 경로를 설정합니다.
 
-- 위치: `src/main/resources/properties`
+* `blockchain.file-path`:  
+    - 블록체인 설정 파일(`blockchain.properties`)의 경로를 지정합니다.  
+    - 절대경로 또는 상대경로 모두 사용 가능합니다.  
+    - 예시: `/path/to/your/blockchain.properties`
 
-### 5.9.1. 블록체인 연동 설정 
+<br/>
+
+## 5.8. blockchain.properties
+- 역할: TA 서버에서 연동할 블록체인 서버 정보를 설정합니다. [Open DID Installation Guide]의 '5.1.1. Hyperledger Fabric 테스트 네트워크 설치'에 따라 Hyperledger Fabric 테스트 네트워크를 설치하면, 개인 키, 인증서, 서버 접속 정보 설정 파일이 자동으로 생성됩니다. blockchain.properties에서는 이들 파일이 위치한 경로와, Hyperledger Fabric 테스트 네트워크 설치 시 입력한 네트워크 이름을 설정합니다. 또한, '5.1.2. Open DID 체인코드 배포'에서 배포한 Open DID의 체인코드 이름도 설정합니다.
+
+### 5.8.1. 블록체인 연동 설정 
 
 * `fabric.configFilePath:`: 
   - Hyperledger Fabric의 접속 정보 파일이 위치한 경로를 설정합니다. 해당 파일은 Hyperledger Fabric 테스트 네트워크 설치시 자동으로 생성되며, 기본 파일명은 'connection-org1.json' 입니다.
@@ -772,158 +737,12 @@ logging:
 
 <br/>
 
-## 5.10. 샘플 데이터
-
-Open DID에서는 관리자 포털이 표준 규격에 포함되지 않기 때문에, TA 서버에서 필요한 여러 설정을 샘플 데이터로 작성하며, 이는 sample 폴더 내의 JSON 파일에 포함되어 있습니다.
-
-또한, TA는 List 사업자의 역할도 겸임하여 앱에서 필요한 다양한 데이터를 제공하며, 샘플 데이터는 주로 이 List 사업자와 관련된 설정을 포함하고 있습니다.
-
-### 5.10.1. Allowed CA 샘플 데이터
-
-Wallet에서 허용하는 App의 패키지명을 설정하는 파일입니다. `sample/data/allowed-ca` 디렉토리에 위치하며, 파일명은 'allowed-ca-월렛SDK식별자명' 형식으로 작성되어 있습니다.
-
-- `allowed-ca-org.omnione.did.sdk.wallet.json` 🔒
-
-    ```json
-    {
-      "org.omnione.did.sdk.wallet": ["org.omnione.did.ca"]
-    }
-    ```
-
-  위 JSON 데이터는 `org.omnione.did.sdk.wallet` 식별자를 가진 월렛 SDK에서 `org.omnione.did.ca` 패키지의 앱을 허용한다는 것을 나타냅니다.
-
-
-<br/>
-
-### 5.11.1. VC Schema 샘플 데이터
-
-Open DID에서 발급하는 VC의 스키마를 설정하는 파일입니다. `sample/data/schema` 디렉토리에 위치하며, 파일명은 'schema-스키마명' 형식으로 작성되어 있습니다.
-
-- `schema-certificate.json`
-
-    ```json
-    {
-      "@id" : "http://192.168.3.130:8090/tas/api/v1/vc-schema?name=certificate",
-      "@schema" : "https://opendid.org/schema/vc.osd",
-      "title" : "OpenDID Certificate Verifiable Credential",
-      "description" : "VC-formatted OpenDID enrollment certificate.",
-      "metadata" : {
-        "language" : "ko",
-        "formatVersion" : "1.0"
-      },
-      "credentialSubject" : {
-        "claims": [
-          {
-            "namespace": {
-              "id" : "org.opendid.v1",
-              "name" : "OpenDID - Certificate Verifiable Credential"
-            },
-            "items" : [
-              {"id": "subject", "caption": "subject", "type": "text", "format": "plain"},
-              {"id": "role", "caption": "role", "type": "text", "format": "plain"}
-            ]
-          }
-        ]
-      }
-    }
-    ```
-
-    가입증명서 VC의 스키마입니다. `@id`를 실제 설치한 TA 서버의 IP와 포트로 변경합니다.
-
-<br/>
-
-
-### 5.11.2. VC Plan 샘플 데이터
-
-Open DID에서 발급하는 VC에 대한 Plan을 설정하는 파일입니다. `sample/data/vc-plan` 디렉토리에 위치하며, 두 가지 타입의 설정 파일이 있습니다. 'vc-plan-list' 파일은 전체 VC Plan 목록을 설정하며, 'vc-plan-VCPlan식별자명' 형식의 파일은 개별 VC Plan을 설정합니다.
-
-- `vc-plan-list.json`
-
-    ```json
-    [
-      {
-        "vcPlanId": "vcplanid000000000002",
-        "name": "National ID Plan",
-        "description": "It is a VC Plan about National ID",
-        "credentialSchema": {
-          "id": "http://192.168.3.130:8091/issuer/api/v1/vc/vcschema?name=national_id",
-          "type": "OsdSchemaCredential"
-        },
-        "option": {
-          "allowUserInit": true,
-          "allowIssuerInit": true,
-          "delegatedIssuance": false
-        },
-        "allowedIssuers": ["did:omn:issuer"],
-        "manager": "did:omn:issuer",
-        "tags": ["national"]
-      }
-    ]
-    ```
-
-    전체 VC Plan 목록입니다. `credentialSchema.id`를 실제 설치한 Issuer 서버의 IP와 포트로 변경합니다.
-
-<br/>
-
-- `vc-plan-vcplanid000000000001.json`
-
-    ```json
-    {
-      "vcPlanId": "vcplanid000000000001",
-      "name": "MDL Plan",
-      "description": "It is a VC Plan about Mobile Driver License(mdl)",
-      "credentialSchema": {
-        "id": "http://192.168.3.130:8091/issuer/api/v1/vc/vcschema?name=mdl",
-        "type": "OsdSchemaCredential"
-      },
-      "option": {
-        "allowUserInit": true,
-        "allowIssuerInit": true,
-        "delegatedIssuance": false
-      },
-      "allowedIssuers": ["did:omn:issuer"],
-      "manager": "did:omn:issuer",
-      "tags": ["mdl"]
-    }
-    ```
-
-    MDL VC Plan 입니다. `credentialSchema.id`를 실제 설치한 Issuer 서버의 IP와 포트로 변경합니다.
-
-<br/>
-
-- `vc-plan-vcplanid000000000002.json`
-
-    ```json
-    {
-      "vcPlanId": "vcplanid000000000002",
-      "name": "National ID Plan",
-      "description": "It is a VC Plan about National ID",
-      "credentialSchema": {
-        "id": "http://192.168.3.130:8091/issuer/api/v1/vc/vcschema?name=national_id",
-        "type": "OsdSchemaCredential"
-      },
-      "option": {
-        "allowUserInit": true,
-        "allowIssuerInit": true,
-        "delegatedIssuance": false
-      },
-      "allowedIssuers": ["did:omn:issuer"],
-      "manager": "did:omn:issuer",
-      "tags": ["national"]
-    }
-
-    ```
-
-    National ID VC Plan 입니다. `credentialSchema.id`를 실제 설치한 Issuer 서버의 IP와 포트로 변경합니다.
-
-<br/>
-
 # 6. 프로파일 설정 및 사용
 
 ## 6.1. 프로파일 개요 (`sample`, `dev`)
-TAS 서버는 다양한 환경에서 실행될 수 있도록 `dev`와 `sample` 두 가지 프로파일을 지원합니다.
+TA 서버는 다양한 환경에서 실행될 수 있도록 `dev`와 `sample` 두 가지 프로파일을 지원합니다.
 
-각 프로파일은 해당 환경에 맞는 설정을 적용하도록 설계되었습니다. 기본적으로 TAS 서버는 `sample` 프로파일로 설정되어 있으며, 이 프로파일은 데이터베이스나 블록체인과 같은 외부 서비스와의 연동 없이 서버를 독립적으로 구동할 수 있도록 설계되었습니다. `sample` 프로파일은 API 호출 테스트에 적합하여, 개발자가 애플리케이션의 기본 동작을 빠르게 확인할 수 있도록 지원합니다. 이 프로파일은 모든 API 호출에 대해 고정된 응답 데이터를 반환하므로, 초기 개발환경에서 유용합니다.
+각 프로파일은 해당 환경에 맞는 설정을 적용하도록 설계되었습니다. 기본적으로 TA 서버는 `sample` 프로파일로 설정되어 있으며, 이 프로파일은 데이터베이스나 블록체인과 같은 외부 서비스와의 연동 없이 서버를 독립적으로 구동할 수 있도록 설계되었습니다. `sample` 프로파일은 API 호출 테스트에 적합하여, 개발자가 애플리케이션의 기본 동작을 빠르게 확인할 수 있도록 지원합니다. 이 프로파일은 모든 API 호출에 대해 고정된 응답 데이터를 반환하므로, 초기 개발환경에서 유용합니다.
 
 샘플 API 호출은 JUnit 테스트로 작성되어 있으므로, 테스트 작성 시 이를 참고할 수 있습니다.
 
@@ -931,6 +750,10 @@ TAS 서버는 다양한 환경에서 실행될 수 있도록 `dev`와 `sample` �
 
 ### 6.1.1. `sample` 프로파일
 `sample` 프로파일은 외부 서비스(DB, 블록체인 등)와의 연동 없이 서버를 독립적으로 구동할 수 있도록 설계되었습니다. 이 프로파일은 API 호출 테스트에 적합하며, 개발자가 애플리케이션의 기본 동작을 빠르게 확인할 수 있습니다. 모든 API 호출에 대해 고정된 응답 데이터를 반환하므로, 초기 개발 단계나 기능 테스트에 유용합니다. 외부 시스템과의 연동이 전혀 필요하지 않기 때문에, 단독으로 서버를 실행하고 테스트할 수 있는 환경을 제공합니다.
+
+---
+> 참고: sample 프로파일을 사용 할 경우 Admin Console이 동작하지 않습니다.
+---
 
 ### 6.1.2. `dev` 프로파일
 `dev` 프로파일은 개발 환경에 적합한 설정을 포함하며, 개발 서버에서 사용됩니다. 이 프로파일을 사용하려면 개발 환경의 데이터베이스와 블록체인 노드에 대한 설정이 필요합니다.
@@ -1062,4 +885,5 @@ docker-compose up -d
 
 
 <!-- References -->
-[Open DID Installation Guide]: https://github.com/OmniOneID/did-release/blob/main/docs/guide/installation/OepnDID_Installation_Guide.md
+[Open DID Installation Guide]: https://github.com/OmniOneID/did-release/blob/main/release-V1.0.0.0/OepnDID_Installation_Guide-V1.0.0.0_ko.md
+[Open DID Admin Console Guide]: ../admin/OpenDID_TAAdmin_InstallationAndOperation_Guide_ko.md
