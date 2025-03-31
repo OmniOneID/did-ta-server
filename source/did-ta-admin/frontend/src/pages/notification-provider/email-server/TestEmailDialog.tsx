@@ -1,6 +1,6 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, DialogContentText, Box } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { emailRegex } from "../../../utils/regex-util";
+import { emailRegex } from "../../../utils/regex";
 
 interface TestEmailDialogProps {
   open: boolean;

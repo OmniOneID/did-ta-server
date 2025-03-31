@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Box, Button, styled, TextField, Typography } from '@mui/material';
 import { useNavigate } from 'react-router';
 import FullscreenLoader from '../../components/loading/FullscreenLoader';
-import { urlRegex, ipRegex } from '../../utils/regex-util';
+import { urlRegex, ipRegex } from '../../utils/regex';
 import { verifyServerUrl } from '../../apis/server-api';
 import { getKycInfo, registerKycInfo } from '../../apis/kyc-api';
 import { useDialogs } from '@toolpad/core/useDialogs';

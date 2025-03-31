@@ -1,4 +1,4 @@
-import { getData, postData } from "../utils/api-util";
+import { getData, postData } from "../utils/api";
 
 const API_BASE_URL = "/tas/admin/v1";
 

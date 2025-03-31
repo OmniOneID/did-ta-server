@@ -9,7 +9,7 @@ import CustomConfirmDialog from '../../components/dialog/CustomConfirmDialog';
 import CustomDialog from '../../components/dialog/CustomDialog';
 import FullscreenLoader from '../../components/loading/FullscreenLoader';
 import { roles } from '../../constants/roles';
-import { englishRegex, ipRegex, urlRegex } from '../../utils/regex-util';
+import { englishRegex, ipRegex, urlRegex } from '../../utils/regex';
 
 type Props = {}
 

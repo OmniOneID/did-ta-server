@@ -1,4 +1,4 @@
-import { deleteData, getData, postData, putData } from "../utils/api-util";
+import { deleteData, getData, postData, putData } from "../utils/api";
 
 const API_BASE_URL = "/list/admin/v1";
 

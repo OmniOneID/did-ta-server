@@ -6,8 +6,8 @@ import CustomConfirmDialog from '../../components/dialog/CustomConfirmDialog';
 import CustomDialog from '../../components/dialog/CustomDialog';
 import FullscreenLoader from '../../components/loading/FullscreenLoader';
 import { useServerStatus } from '../../context/ServerStatusContext';
-import { postData } from '../../utils/api-util';
-import { ipRegex, urlRegex } from '../../utils/regex-util';
+import { postData } from '../../utils/api';
+import { ipRegex, urlRegex } from '../../utils/regex';
 
 interface TaFormData {
   serverUrl: string;
