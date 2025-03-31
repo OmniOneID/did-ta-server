@@ -15,7 +15,7 @@ puppeteer:
         fullPage: false
 ---
 
-Open DID TAS Server Installation And Operation Guide
+Open DID TA Server Installation And Operation Guide
 ==
 
 - Date: 2024-09-02
@@ -133,7 +133,7 @@ git --version
 <br/>
 
 ## 2.2. PostgreSQL Installation
-To run the TAS server, a database installation is required, and Open DID uses PostgreSQL.
+To run the TA server, a database installation is required, and Open DID uses PostgreSQL.
 
 > **Reference Links**
 - [PostgreSQL Installation Guide](https://www.postgresql.org/download/)
@@ -172,7 +172,7 @@ npm --version
 
 The `git clone` command allows you to copy the source code from a remote repository hosted on GitHub to your local computer. By using this command, you can work on the entire source code and related files locally. After cloning, you can proceed with the necessary tasks within the repository and push any changes back to the remote repository.
 
-Open the terminal and run the following commands to copy the TAS server repository to your local computer:
+Open the terminal and run the following commands to copy the TA server repository to your local computer:
 ```bash
 # Clone the repository from the Git repository
 git clone https://github.com/OmniOneID/did-ta-server.git
