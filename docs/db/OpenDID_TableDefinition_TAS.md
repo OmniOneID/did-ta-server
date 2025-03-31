@@ -36,7 +36,7 @@ This document defines the structure of the database tables used in the TAS serve
 
 ### 1.1 ERD
 
-Access the [ERD](https://www.erdcloud.com/d/ypN72iPhhA4F46FSd) site to view the diagram, which visually represents the relationships between the tables in the TAS server database, including key attributes, primary keys, and foreign key relationships.
+Access the [ERD](https://www.erdcloud.com/d/TZGGs3GPE6orphstF) site to view the diagram, which visually represents the relationships between the tables in the TAS server database, including key attributes, primary keys, and foreign key relationships.
 
 ## 2. Table Definition
 
