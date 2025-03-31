@@ -8,7 +8,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CustomConfirmDialog from '../../components/dialog/CustomConfirmDialog';
 import CustomDialog from '../../components/dialog/CustomDialog';
 import { verifyAdminIdUnique, registerAdmin } from '../../apis/admin-api';
-import { emailRegex } from '../../utils/regex';
+import { emailRegex } from '../../utils/regex-util';
 import { sha256Hash } from '../../utils/sha256-hash';
 
 type Props = {}

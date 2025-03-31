@@ -7,7 +7,7 @@ import { getEmailServerInfo, registerEmailServerInfo, sendTestEmail } from '../.
 import CustomConfirmDialog from '../../../components/dialog/CustomConfirmDialog';
 import CustomDialog from '../../../components/dialog/CustomDialog';
 import FullscreenLoader from '../../../components/loading/FullscreenLoader';
-import { emailRegex, hostRegex, portRegex } from '../../../utils/regex';
+import { emailRegex, hostRegex, portRegex } from '../../../utils/regex-util';
 import TestEmailDialog from './TestEmailDialog';
 import { formatErrorMessage } from '../../../utils/error-handler';
 
