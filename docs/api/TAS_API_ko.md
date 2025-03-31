@@ -18,8 +18,17 @@ puppeteer:
 TAS API
 ==
 
-- 일자: 2024-09-03
-- 버전: v1.0.0
+- 일자: 2025-03-31
+- 버전: v1.0.1 (dev)
+
+
+## 개정 이력
+
+| 버전        | 일자       | 변경 내용                                                 |
+| ----------- | ---------- | --------------------------------------------------------- |
+| 1.0.0       | 2024-09-03 | 최초 작성                                                 |
+| 1.0.1 (dev) | 2024-03-31 | [12.4 Send Email] 요청 데이터에서 senderAddress 옵션 처리 |
+| 1.0.1 (dev) | 2024-03-31 | [12.8 Get Vc Schema] 요청 파라미터에 name -> id로 변경    |
 
 <!-- TOC tocDepth:2..3 chapterDepth:2..6 -->
 
@@ -6194,7 +6203,7 @@ N/A
 def object SendEmail: "Send Email 요청문"
 {    
     + string                "title"             : "email 제목"
-    + string                "senderAddress"     : "발신자 이메일 주소" 
+    - string                "senderAddress"     : "발신자 이메일 주소" 
     + string                "recipientAddress"  : "수신자 이메일 주소"
     + EMAIL_TEMPLATE_TYPE   "email"             : "email 템플릿 데이터" // A.2. EmailTemplate Object 참고
 }
@@ -6655,9 +6664,9 @@ N/A
 
 **■ Query Parameters**
 
-| name     | Description      | Remarks |
-| -------- | ---------------- | ------- |
-| + `name` | `VC Schema 이름` |         |
+| name   | Description    | Remarks |
+| ------ | -------------- | ------- |
+| + `id` | `VC Schema ID` |         |
 
 **■ HTTP Body**
 
@@ -6696,7 +6705,7 @@ N/A
 **■ Request**
 
 ```shell
-curl -v -X GET "http://${Host}:${Port}/tas/api/v1/vc-schema?name=certificate
+curl -v -X GET "http://${Host}:${Port}/tas/api/v1/vc-schema?id=http%3A%2F%2F192.168.3.130%3A8090%2Ftas%2Fapi%2Fv1%2Fvc-schema%3Fname%3Dcertificate
 ```
 
 **■ Response**
