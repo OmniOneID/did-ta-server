@@ -965,5 +965,5 @@ docker-compose up -d
 This command runs the PostgreSQL container in the background. Based on the configured environment variables, the PostgreSQL server will start and the database will be ready for use. You can then proceed to connect your application to this database.
 
 <!-- References -->
-[Open DID Installation Guide]: https://github.com/OmniOneID/did-release/blob/main/release-V1.0.0.0/OepnDID_Installation_Guide-V1.0.0.0.md
+[Open DID Installation Guide]: https://github.com/OmniOneID/did-release/blob/develop/unrelease-V1.0.1.0/OepnDID_Installation_Guide-V1.0.1.0.md
 [Open DID Admin Console Guide]: ../admin/OpenDID_TAAdmin_InstallationAndOperation_Guide_ko.md

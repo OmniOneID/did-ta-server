@@ -885,5 +885,5 @@ docker-compose up -d
 
 
 <!-- References -->
-[Open DID Installation Guide]: https://github.com/OmniOneID/did-release/blob/main/release-V1.0.0.0/OepnDID_Installation_Guide-V1.0.0.0_ko.md
+[Open DID Installation Guide]: https://github.com/OmniOneID/did-release/blob/develop/unrelease-V1.0.1.0/OepnDID_Installation_Guide-V1.0.1.0_ko.md
 [Open DID Admin Console Guide]: ../admin/OpenDID_TAAdmin_InstallationAndOperation_Guide_ko.md
