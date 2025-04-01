@@ -172,7 +172,7 @@ public class TaManagementService {
 
         try {
             byte[] didDocBytes = Files.readAllBytes(didDocFile.toPath());
-            String certificateUrl = serverUrl + "/tas/api/v1/certificate-vc";
+            String certificateUrl = serverUrl + "/api/v1/certificate-vc";
             setupService.registerTasDidDocument(didDocBytes, "tas", serverUrl, certificateUrl);
         } catch (IOException e) {
             log.error("I/O error while reading TA DID Document file", e);
