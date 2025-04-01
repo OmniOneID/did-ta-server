@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,13 @@ import org.junit.jupiter.api.*;
 import org.omnione.did.TasApplication;
 import org.omnione.did.base.constants.UrlConstant;
 import org.omnione.did.base.datamodel.data.EcdhReqData;
-import org.omnione.did.base.datamodel.data.ReqRevokeVc;
-import org.omnione.did.tas.v1.dto.entity.RequestECDHReqDto;
-import org.omnione.did.tas.v1.dto.user.RequestCreateTokenReqDto;
-import org.omnione.did.tas.v1.dto.vc.*;
+import org.omnione.did.tas.v1.agent.dto.entity.RequestECDHReqDto;
+import org.omnione.did.tas.v1.agent.dto.user.RequestCreateTokenReqDto;
+import org.omnione.did.tas.v1.agent.dto.vc.ConfirmIssueVcReqDto;
+import org.omnione.did.tas.v1.agent.dto.vc.OfferIssueVcQrReqDto;
+import org.omnione.did.tas.v1.agent.dto.vc.ProposeIssueVcReqDto;
+import org.omnione.did.tas.v1.agent.dto.vc.RequestIssueProfileReqDto;
+import org.omnione.did.tas.v1.agent.dto.vc.RequestIssueVcReqDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -62,7 +65,7 @@ public class VcIssueServiceTest {
         reqDto.setIssuer("did:omn:issuer");
 
         // 2. Call controller and verify response
-        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.V1 + "/offer-issue-vc/qr")
+        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.AGENT_V1 + "/offer-issue-vc/qr")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(reqDto)))
                 .andExpect(status().isOk())
@@ -88,7 +91,7 @@ public class VcIssueServiceTest {
                 .build();
 
         // 2. Call controller and verify response
-        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.V1 + "/propose-issue-vc")
+        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.AGENT_V1 + "/propose-issue-vc")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(reqDto)))
                 .andExpect(status().isOk())
@@ -115,7 +118,7 @@ public class VcIssueServiceTest {
                 .build();
 
         // 2.  Call controller and verify response
-        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.V1 + "/request-ecdh")
+        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.AGENT_V1 + "/request-ecdh")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(reqDto)))
                 .andExpect(status().isOk())
@@ -137,7 +140,7 @@ public class VcIssueServiceTest {
         RequestCreateTokenReqDto reqDto = objectMapper.readValue(req, RequestCreateTokenReqDto.class);
 
         // 2.  Call controller and verify response
-        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.V1 + "/request-create-token")
+        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.AGENT_V1 + "/request-create-token")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(reqDto)))
                 .andExpect(status().isOk())
@@ -160,7 +163,7 @@ public class VcIssueServiceTest {
         reqDto.setServerToken("mr9B+5H6PbgSCNilyvvdbwJA05P/LyvC7ijTVkid7qGU");
 
         // 2. Call controller and verify response
-        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.V1 + "/request-issue-profile")
+        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.AGENT_V1 + "/request-issue-profile")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(reqDto)))
                 .andExpect(status().isOk())
@@ -185,7 +188,7 @@ public class VcIssueServiceTest {
 
 
         // 2. Call controller and verify response
-        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.V1 + "/request-issue-vc")
+        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.AGENT_V1 + "/request-issue-vc")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(reqDto)))
                 .andExpect(status().isOk())
@@ -211,7 +214,7 @@ public class VcIssueServiceTest {
                 .build();
 
         // 2. Call controller and verify response
-        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.V1 + "/confirm-issue-vc")
+        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.AGENT_V1 + "/confirm-issue-vc")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(reqDto)))
                 .andExpect(status().isOk())

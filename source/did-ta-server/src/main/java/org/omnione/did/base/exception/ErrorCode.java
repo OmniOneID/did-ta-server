@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ public enum ErrorCode {
     DID_OFFER_SAVE_FAILED("SSRVTRA11000", "Failed to save DID offer.", 500),
     DID_OFFER_NOT_FOUND("SSRVTRA11001", "Failed to find DID offer.", 400),
     PUSH_TOKEN_UPDATE_FAILED("SSRVTRA11002", "Failed to update push token.", 500),
-
+    DB_ERROR_ON_VC_SCHEMA_SAVE("SSRVTRA11003", "Failed to save VC schema.", 500),
 
     // 3. Error during API processing (12000 ~ 12999)
     PARSE_VC_SCHEMA_FAILED("SSRVTRA12000", "Failed to parse VC Schema.", 500),
@@ -76,6 +76,9 @@ public enum ErrorCode {
     INVALID_ECC_CURVE_TYPE("SSRVTRA13508", "Failed to process ECC curve: invalid curve type.", 500),
     INVALID_SYMMETRIC_CIPHER_TYPE("SSRVTRA13509", "Failed to process encryption: invalid symmetric cipher type.", 500),
     INVALID_SYMMETRIC_PADDING_TYPE("SSRVTRA13510", "Failed to process encryption: invalid symmetric padding type.", 500),
+    FAILED_TO_REGISTER_TA_CERTIFICATE("SSRVTRA13511", "Failed to register TA certificate.", 500),
+    FAILED_TO_REGISTER_TA_DID_DOCUMENT("SSRVTRA13512", "Failed to register TA DID Document.", 500),
+    TA_ALREADY_REGISTERED("SSRVTRA13513", "TA is already registered.", 400),
 
 
     // 05. Entity-related errors (14000 ~ 14499)
@@ -87,7 +90,7 @@ public enum ErrorCode {
     FAIL_TO_PROPOSE_ENROLL_ENTITY("SSRVTRA14005", "Failed to process the 'propose-enroll-entity' API request.", 500),
     ENROLL_REQUEST_ENTITY_DID_MISMATCH("SSRVTRA14006", "The provided DID does not match the entity that requested registration.", 400),
     FAIL_TO_REQUEST_ENROLL_ENTITY("SSRVTRA14007", "Failed to process the 'request-enroll-entity' API request.", 500),
-
+    FAILED_TO_REGISTER_QUICK_ENTITY("SSRVTRA14008", "Failed to register quick entity.", 500),
 
     // 06. Blockchain-related errors (15000 ~ 15499)
     BLOCKCHAIN_INITIALIZATION_FAILED("SSRVTRA15000", "Failed to initialize blockchain.", 500),
@@ -106,6 +109,8 @@ public enum ErrorCode {
     ISSUER_COMMUNICATION_ERROR("SSRVTRA15502", "Failed to communicate with issuer: unknown error occurred.", 500),
     ISSUER_INVALID_MESSAGE("SSRVTRA15503", "Failed to process message: received an invalid message from the issuer.", 500),
     EMAIL_SEND_FAILED("SSRVTRA15504", "Failed to send email.", 500),
+    KYC_COMMUNICATION_ERROR("SSRVTRA15505", "Failed to communicate with KYC server: unknown error occurred.", 500),
+    URL_PING_ERROR("SSRVTRA15506", "Failed to ping the URL.", 400),
 
 
     // 08. Transaction-related errors (16000 ~ 16499)
@@ -232,6 +237,10 @@ public enum ErrorCode {
     FAIL_TO_OFFER_ISSUE_VC_PUSH("SSRVTRA18528", "Failed to process the 'offer-issue-vc-push' API request.", 500),
     FAIL_TO_OFFER_ISSUE_VC_EMAIL("SSRVTRA18529", "Failed to process the 'offer-issue-vc-email' API request.", 500),
     FAIL_TO_GET_VC_SCHEMA("SSRVTRA18530", "Failed to process the 'get-vc-schema' API request.", 500),
+    FAILED_TO_REGISTER_VC_SCHEMA_FROM_ISSUER("SSRVTRA18531", "Failed to register VC schema from issuer.", 500),
+    FAILED_TO_REGISTER_CERTIFICATE_VC_SCHEMA("SSRVTRA18532", "Failed to register certificate VC schema.", 500),
+    FAILED_TO_REGISTER_VC_PLAN_FROM_ISSUER("SSRVTRA18533", "Failed to register VC plan from issuer.", 500),
+    INVALID_VC_SCHEMA("SSRVTRA18534", "Failed to process VC schema: invalid schema.", 400),
 
 
     // 14. Token-related errors (19000 ~ 19499)
@@ -247,17 +256,30 @@ public enum ErrorCode {
     FAILED_API_GET_VCPLAN_LIST("SSRVTRA19500", "Failed to process the 'get-vcplan-list' API request.", 500),
     FAILED_API_GET_VCPLAN("SSRVTRA19501", "Failed to process the 'get-vcplan' API request.", 500),
     FAILED_API_GET_ALLOWED_CA_LIST("SSRVTRA19502", "Failed to process the 'get-allowed-ca-list' API request.", 500),
-
+    LIST_ALLOWED_CA_NOT_FOUND("SSRVTRA19503", "Failed to find allowed CA: allowed CA list not found.", 500),
 
     // 15. Notification-related errors (20000 ~ 20499)
     FAILED_API_SEND_EMAIL("SSRVTRA20000", "Failed to process the 'send-email' API request.", 500),
     FAILED_API_SEND_PUSH("SSRVTRA20001", "Failed to process the 'send-push' API request.", 500),
+    NOTIFICATION_TEMPLATE_NOT_FOUND("SSRVTRA20002", "Failed to find notification template: requested template not found.", 500),
+    FAILED_TO_REGISTER_PUSH_CONFIGURATION("SSRVTRA20003", "Failed to register push configuration.", 500),
+    FAILED_TO_REGISTER_EMAIL_CONFIGURATION("SSRVTRA20004", "Failed to register email configuration.", 500),
+    NOTIFICATION_EMAIL_CONFIGURATION_NOT_FOUND("SSRVTRA20005", "Failed to find email configuration", 500),
 
+    // 16. KYC-related errors (20500 ~ 20999)
+    KYC_INFO_NOT_FOUND("SSRVTRA20500", "Failed to find KYC: KYC is not registered.", 500),
+
+
+    // 17. Admin-related errors (21000 ~ 21499)
+    ADMIN_INFO_NOT_FOUND("SSRVTRA21000", "Failed to find admin: admin is not registered.", 400),
+    ADMIN_ALREADY_EXISTS("SSRVTRA21001", "Failed to register admin: admin is already registered.", 400),
 
     // 99. Miscellaneous errors (90000 ~ 99999)
-    FILE_NOT_FOUND("9SSRVTRA0000", "Failed to find file: requested file not found.", 400),
+    FILE_NOT_FOUND("SSRVTRA0000", "Failed to find file: requested file not found.", 400),
     TODO_CODE("SSRVTRA90001", "Temporary error code: to be replaced.", 400),
+    FILE_IO_ERROR("SSRVTRA90002", "Failed to process file: I/O error occurred.", 500),
     UNKNOWN_SERVER_ERROR("SSRVTRA90003", "An unknown server error has occurred.", 500),
+
     ;
 
     private final String code;

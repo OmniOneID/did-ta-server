@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,9 +23,12 @@ import org.omnione.did.TasApplication;
 import org.omnione.did.base.constants.UrlConstant;
 import org.omnione.did.base.datamodel.data.DidAuth;
 import org.omnione.did.base.datamodel.data.EcdhReqData;
-import org.omnione.did.tas.v1.dto.entity.RequestECDHReqDto;
-import org.omnione.did.tas.v1.dto.entity.RequestEnrollEntityReqDto;
-import org.omnione.did.tas.v1.dto.user.*;
+import org.omnione.did.tas.v1.agent.dto.entity.RequestECDHReqDto;
+import org.omnione.did.tas.v1.agent.dto.user.ConfirmRestoreDidDocReqDto;
+import org.omnione.did.tas.v1.agent.dto.user.OfferRestoreDidEmailReqDto;
+import org.omnione.did.tas.v1.agent.dto.user.ProposeRestoreDidDocReqDto;
+import org.omnione.did.tas.v1.agent.dto.user.RequestCreateTokenReqDto;
+import org.omnione.did.tas.v1.agent.dto.user.RequestRestoreDidDocReqDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -62,7 +65,7 @@ class DidRestoreTest {
         reqDto.setEmail("test@example.com");
 
         // 2.  Call controller and verify response
-        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.V1 + "/offer-restore-did/email")
+        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.AGENT_V1 + "/offer-restore-did/email")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(reqDto)))
                 .andExpect(status().isOk())
@@ -90,7 +93,7 @@ class DidRestoreTest {
                 .build();
 
         // 2.  Call controller and verify response
-        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.V1 + "/request-ecdh")
+        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.AGENT_V1 + "/request-ecdh")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(reqDto)))
                 .andExpect(status().isOk())
@@ -114,7 +117,7 @@ class DidRestoreTest {
         RequestCreateTokenReqDto reqDto = objectMapper.readValue(req, RequestCreateTokenReqDto.class);
 
         // 2.  Call controller and verify response
-        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.V1 + "/request-create-token")
+        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.AGENT_V1 + "/request-create-token")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(reqDto)))
                 .andExpect(status().isOk())
@@ -138,7 +141,7 @@ class DidRestoreTest {
         reqDto.setOfferId("aae54cdf-0412-4878-bd32-b9745dd60482");
 
         // 2.  Call controller and verify response
-        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.V1 + "/propose-restore-diddoc")
+        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.AGENT_V1 + "/propose-restore-diddoc")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(reqDto)))
                 .andExpect(status().isOk())
@@ -169,7 +172,7 @@ class DidRestoreTest {
         reqDto.setDidAuth(didAuth);
 
         // 2.  Call controller and verify response
-        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.V1 + "/request-restore-diddoc")
+        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.AGENT_V1 + "/request-restore-diddoc")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(reqDto)))
                 .andExpect(status().isOk())
@@ -192,7 +195,7 @@ class DidRestoreTest {
         reqDto.setServerToken("muIA3jnftOaSIZt499pH0Zr3CWNDhZ6bXMOCB6i74HgY");
 
         // 2.  Call controller and verify response
-        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.V1 + "/confirm-restore-diddoc")
+        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.AGENT_V1 + "/confirm-restore-diddoc")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(reqDto)))
                 .andExpect(status().isOk())

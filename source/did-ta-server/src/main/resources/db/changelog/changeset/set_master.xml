@@ -15,4 +15,13 @@
   <include file="set.0/project-init_app.xml" relativeToChangelogFile="true" />
   <include file="set.0/project-init_certificate_vc.xml" relativeToChangelogFile="true" />
   <include file="set.0/project-init_did_offer.xml" relativeToChangelogFile="true" />
+  <include file="set.1/admin-dev_kyc.xml" relativeToChangelogFile="true" />
+  <include file="set.1/admin-dev_api.xml" relativeToChangelogFile="true" />
+  <include file="set.1/admin-dev_notification_server.xml" relativeToChangelogFile="true" />
+  <include file="set.1/admin-dev_notification_template.xml" relativeToChangelogFile="true" />
+  <include file="set.1/admin-dev_admin.xml" relativeToChangelogFile="true" />
+  <include file="set.1/admin-dev_list_allowed_ca.xml" relativeToChangelogFile="true" />
+  <include file="set.1/admin-dev_list_vc_schema.xml" relativeToChangelogFile="true" />
+  <include file="set.1/admin-dev_vc_schema.xml" relativeToChangelogFile="true" />
+  <include file="set.1/admin-dev_list_vc_plan.xml" relativeToChangelogFile="true" />
 </databaseChangeLog>

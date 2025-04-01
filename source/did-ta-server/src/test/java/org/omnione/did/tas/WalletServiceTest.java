@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.omnione.did.TasApplication;
 import org.omnione.did.base.constants.UrlConstant;
 import org.omnione.did.base.datamodel.data.AttestedDidDoc;
-import org.omnione.did.tas.v1.dto.vc.ProposeIssueVcReqDto;
-import org.omnione.did.tas.v1.dto.wallet.RegisterWalletReqDto;
+import org.omnione.did.tas.v1.agent.dto.wallet.RegisterWalletReqDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -62,7 +61,7 @@ public class WalletServiceTest {
         reqDto.setAttestedDidDoc(attestedDidDoc);
 
         // 2. Call controller and verify response
-        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.V1 + "/request-register-wallet")
+        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.AGENT_V1 + "/request-register-wallet")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(reqDto)))
                 .andExpect(status().isOk())

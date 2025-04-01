@@ -2,8 +2,8 @@
 Open DID TAS Database Table Definition
 ==
 
-- Date: 2024-09-04
-- Version: v1.0.0
+- Date: 2024-03-31
+- Version: v1.0.1 (dev)
 
 Contents
 --
@@ -20,6 +20,15 @@ Contents
     - [2.9. TOKEN](#29-token)
     - [2.10. ECDH](#210-ecdh)
     - [2.11. DID_OFFER](#211-did_offer)
+    - [2.12. VC_SCHEMA](#212-vc_schema)
+    - [2.13. KYC](#213-kyc)
+    - [2.14. API](#214-api)
+    - [2.15. NOTIFICATION_SERVER](#215-notification_server)
+    - [2.16. NOTIFICATION_TEMPLATE](#216-notification_template)
+    - [2.17. LIST_ALLOWED_CA](#217-list_allowed_ca)
+    - [2.18. LIST_VC_SCHEMA](#218-list_vc_schema)
+    - [2.19. LIST_VC_PLAN](#219-list_vc_plan)
+    - [2.20. ADMIN](#220-admin)
 
 ## 1. Overview
 
@@ -27,7 +36,7 @@ This document defines the structure of the database tables used in the TAS serve
 
 ### 1.1 ERD
 
-Access the [ERD](https://www.erdcloud.com/d/ypN72iPhhA4F46FSd) site to view the diagram, which visually represents the relationships between the tables in the TAS server database, including key attributes, primary keys, and foreign key relationships.
+Access the [ERD](https://www.erdcloud.com/d/TZGGs3GPE6orphstF) site to view the diagram, which visually represents the relationships between the tables in the TAS server database, including key attributes, primary keys, and foreign key relationships.
 
 ## 2. Table Definition
 
@@ -45,9 +54,6 @@ This table stores information related to TAS.
 |      | certificate_url    | VARCHAR    | 2000   | YES      | N/A      | tas's certificate VC URL          |
 |      | created_at         | TIMESTAMP  |        | NO       | now()    | created date                      |
 |      | updated_at         | TIMESTAMP  |        | YES      | N/A      | updated date                      |
-
----
-
 
 ### 2.2. ENTITY
 
@@ -209,3 +215,129 @@ This table stores information related to DID offers.
 |      | created_at         | TIMESTAMP  |        | NO       | now()    | created date                               |
 |      | updated_at         | TIMESTAMP  |        | YES      | N/A      | updated date                               |
 |      | transaction_id     | BIGINT     |        | YES      | N/A      | transaction management table key           |
+
+### 2.12. VC_SCHEMA
+
+This table stores information related to VC schema definitions.
+
+| Key | Column Name | Data Type | Length | Nullable | Default | Description                      |
+| --- | ----------- | --------- | ------ | -------- | ------- | -------------------------------- |
+| PK  | id          | BIGINT    |        | NO       | N/A     | id                               |
+|     | type        | VARCHAR   | 50     | NO       | N/A     | schema type                      |
+|     | schema_id   | VARCHAR   | 200    | NO       | N/A     | unique schema identifier         |
+|     | version     | VARCHAR   | 10     | NO       | N/A     | schema version                   |
+|     | schema      | TEXT      |        | NO       | N/A     | VC schema content in JSON format |
+|     | created_at  | TIMESTAMP |        | NO       | now()   | created date                     |
+|     | updated_at  | TIMESTAMP |        | YES      | N/A     | updated date                     |
+
+
+### 2.13. KYC
+
+This table stores information related to KYC (Know Your Customer) services.
+
+| Key | Column Name | Data Type | Length | Nullable | Default | Description                                    |
+| --- | ----------- | --------- | ------ | -------- | ------- | ---------------------------------------------- |
+| PK  | id          | BIGINT    |        | NO       | N/A     | id                                             |
+|     | name        | VARCHAR   | 200    | NO       | N/A     | KYC service name                               |
+|     | server_url  | VARCHAR   | 2000   | NO       | N/A     | KYC server URL                                 |
+|     | enabled     | BOOLEAN   |        | NO       | N/A     | flag indicating whether the service is enabled |
+|     | created_at  | TIMESTAMP |        | NO       | now()   | created date                                   |
+|     | updated_at  | TIMESTAMP |        | YES      | N/A     | updated date                                   |
+
+### 2.14. API
+
+This table stores information related to API configurations.
+
+| Key | Column Name | Data Type | Length | Nullable | Default | Description                          |
+| --- | ----------- | --------- | ------ | -------- | ------- | ------------------------------------ |
+| PK  | id          | BIGINT    |        | NO       | N/A     | id                                   |
+|     | type        | VARCHAR   | 50     | NO       | N/A     | type of API                          |
+|     | config      | TEXT      |        | NO       | N/A     | configuration details in JSON format |
+|     | created_at  | TIMESTAMP |        | NO       | now()   | created date                         |
+|     | updated_at  | TIMESTAMP |        | YES      | N/A     | updated date                         |
+
+### 2.15. NOTIFICATION_SERVER
+
+This table stores configuration information for notification servers.
+
+| Key | Column Name | Data Type | Length | Nullable | Default | Description                          |
+| --- | ----------- | --------- | ------ | -------- | ------- | ------------------------------------ |
+| PK  | id          | BIGINT    |        | NO       | N/A     | id                                   |
+|     | server_type | VARCHAR   | 50     | NO       | N/A     | type of server                       |
+|     | config      | TEXT      |        | NO       | N/A     | configuration details in JSON format |
+|     | created_at  | TIMESTAMP |        | NO       | now()   | created date                         |
+|     | updated_at  | TIMESTAMP |        | YES      | N/A     | updated date                         |
+
+### 2.16. NOTIFICATION_TEMPLATE
+
+This table stores notification message templates based on server and template types.
+
+| Key | Column Name   | Data Type | Length | Nullable | Default | Description                                           |
+| --- | ------------- | --------- | ------ | -------- | ------- | ----------------------------------------------------- |
+| PK  | id            | BIGINT    |        | NO       | N/A     | id                                                    |
+|     | server_type   | VARCHAR   | 50     | NO       | N/A     | type of server                                        |
+|     | template_type | VARCHAR   | 50     | NO       | N/A     | type of template                                      |
+|     | template      | TEXT      |        | NO       | N/A     | template content (can include variables/placeholders) |
+|     | created_at    | TIMESTAMP |        | NO       | now()   | created date                                          |
+|     | updated_at    | TIMESTAMP |        | YES      | N/A     | updated date                                          |
+
+### 2.17. LIST_ALLOWED_CA
+
+This table stores a list of CA allowed for a specific wallet.
+
+| Key | Column Name | Data Type | Length | Nullable | Default | Description                      |
+| --- | ----------- | --------- | ------ | -------- | ------- | -------------------------------- |
+| PK  | id          | BIGINT    |        | NO       | N/A     | id                               |
+|     | wallet_id   | VARCHAR   | 200    | NO       | N/A     | wallet identifier                |
+|     | ca_list     | TEXT      |        | NO       | N/A     | list of allowed CA (JSON format) |
+|     | created_at  | TIMESTAMP |        | NO       | now()   | created date                     |
+|     | updated_at  | TIMESTAMP |        | YES      | N/A     | updated date                     |
+
+### 2.18. LIST_VC_SCHEMA
+
+This table stores VC schema information published by issuers, including metadata like title and description.
+
+| Key | Column Name | Data Type | Length | Nullable | Default | Description                            |
+| --- | ----------- | --------- | ------ | -------- | ------- | -------------------------------------- |
+| PK  | id          | BIGINT    |        | NO       | N/A     | id                                     |
+|     | schema_id   | VARCHAR   | 200    | NO       | N/A     | schema identifier                      |
+|     | issuer_did  | VARCHAR   | 200    | NO       | N/A     | DID of the issuer                      |
+|     | issuer_name | VARCHAR   | 200    | NO       | N/A     | name of the issuer                     |
+|     | title       | VARCHAR   | 50     | NO       | N/A     | title of the VC schema                 |
+|     | description | VARCHAR   | 200    | NO       | N/A     | description of the VC schema           |
+|     | schema      | TEXT      |        | NO       | N/A     | actual VC schema content (JSON format) |
+|     | created_at  | TIMESTAMP |        | NO       | now()   | created date                           |
+|     | updated_at  | TIMESTAMP |        | YES      | N/A     | updated date                           |
+
+### 2.19. LIST_VC_PLAN
+
+This table stores VC issuance plans published by issuers, including plan metadata and details.
+
+| Key | Column Name | Data Type | Length | Nullable | Default | Description                       |
+| --- | ----------- | --------- | ------ | -------- | ------- | --------------------------------- |
+| PK  | id          | BIGINT    |        | NO       | N/A     | id                                |
+|     | vc_plan_id  | VARCHAR   | 50     | NO       | N/A     | unique ID of the VC issuance plan |
+|     | name        | VARCHAR   | 200    | NO       | N/A     | name of the VC plan               |
+|     | description | VARCHAR   | 200    | NO       | N/A     | description of the VC plan        |
+|     | issuer_did  | VARCHAR   | 200    | NO       | N/A     | DID of the issuer                 |
+|     | issuer_name | VARCHAR   | 200    | NO       | N/A     | name of the issuer                |
+|     | vc_plan     | TEXT      |        | NO       | N/A     | VC plan content (JSON format)     |
+|     | created_at  | TIMESTAMP |        | NO       | now()   | created date                      |
+|     | updated_at  | TIMESTAMP |        | YES      | N/A     | updated date                      |
+
+### 2.20. ADMIN
+
+This table stores information about administrators who manage the system.
+
+| Key | Column Name            | Data Type | Length | Nullable | Default | Description                                      |
+| --- | ---------------------- | --------- | ------ | -------- | ------- | ------------------------------------------------ |
+| PK  | id                     | BIGINT    |        | NO       | N/A     | id                                               |
+|     | login_id               | VARCHAR   | 50     | NO       | N/A     | administrator login ID                           |
+|     | login_password         | VARCHAR   | 64     | NO       | N/A     | hashed login password                            |
+|     | name                   | VARCHAR   | 200    | YES      | N/A     | admin's display name                             |
+|     | email_verified         | BOOLEAN   |        | YES      | false   | whether the email has been verified              |
+|     | require_password_reset | BOOLEAN   |        | NO       | true    | whether password reset is required at next login |
+|     | role                   | VARCHAR   | 50     | NO       | N/A     | admin role                                       |
+|     | created_by             | VARCHAR   | 50     | NO       | N/A     | who created this admin account                   |
+|     | created_at             | TIMESTAMP |        | NO       | now()   | created date                                     |
+|     | updated_at             | TIMESTAMP |        | YES      | N/A     | updated date                                     |
