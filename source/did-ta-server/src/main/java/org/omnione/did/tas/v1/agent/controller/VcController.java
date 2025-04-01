@@ -154,8 +154,8 @@ public class VcController {
      * @return the response of request vc schema
      */
     @GetMapping("/vc-schema")
-    public Map<String, Object> requestVcSchema(@RequestParam(name = "id") String id) {
-        return vcService.requestVcSchema(id);
+    public Map<String, Object> requestVcSchema(@RequestParam(name = "id", required = false) String id, @RequestParam(name = "name", required = false) String name) {
+        return vcService.requestVcSchema(id, name);
     }
 
     /**

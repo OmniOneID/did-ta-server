@@ -137,7 +137,7 @@ public class VcServiceSample implements VcService {
     }
 
     @Override
-    public Map<String, Object>  requestVcSchema(String id) {
+    public Map<String, Object>  requestVcSchema(String id, String name) {
         return null;
     }
 

@@ -36,6 +36,7 @@ import org.omnione.did.base.db.domain.Ecdh;
 import org.omnione.did.base.db.domain.Entity;
 import org.omnione.did.base.db.domain.ListVcSchema;
 import org.omnione.did.base.db.domain.SubTransaction;
+import org.omnione.did.base.db.domain.Tas;
 import org.omnione.did.base.db.domain.Transaction;
 import org.omnione.did.base.db.domain.User;
 import org.omnione.did.base.exception.ErrorCode;
@@ -95,12 +96,14 @@ import org.omnione.did.tas.v1.agent.dto.vc.RequestIssueVcReqDto;
 import org.omnione.did.tas.v1.agent.dto.vc.RequestIssueVcResDto;
 import org.omnione.did.tas.v1.agent.dto.vc.RequestRevokeVcReqDto;
 import org.omnione.did.tas.v1.agent.dto.vc.RequestRevokeVcResDto;
+import org.omnione.did.tas.v1.agent.helper.CertificateVcSchemaProvider;
 import org.omnione.did.tas.v1.agent.helper.EmailServiceHelper;
 import org.omnione.did.tas.v1.agent.helper.PushServiceHelper;
 import org.omnione.did.tas.v1.common.service.StorageService;
 import org.omnione.did.tas.v1.common.service.query.CertificateVcQueryService;
 import org.omnione.did.tas.v1.common.service.query.EcdhQueryService;
 import org.omnione.did.tas.v1.common.service.query.EntityQueryService;
+import org.omnione.did.tas.v1.common.service.query.TasQueryService;
 import org.omnione.did.tas.v1.common.service.query.UserQueryService;
 import org.omnione.did.tas.v1.agent.service.validator.DidAuthValidator;
 import org.omnione.did.tas.v1.agent.service.validator.TokenValidator;
@@ -132,6 +135,7 @@ public class VcServiceImpl implements VcService {
     private final EmailServiceHelper emailServiceHelper;
     private final StorageService storageService;
     private final ListVcSchemaQueryService listVcSchemaQueryService;
+    private final TasQueryService tasQueryService;
 
     /**
      * Propose to issue a VC.
@@ -889,9 +893,17 @@ public class VcServiceImpl implements VcService {
      * @throws OpenDidException if there's an error retrieving or parsing the certificate VC
      */
     @Override
-    public Map<String, Object> requestVcSchema(String id) {
+    public Map<String, Object> requestVcSchema(String id, String name) {
         try {
             log.debug("=== Starting requestVcSchema ===");
+
+            if (name != null && name.equals("certificate")) {
+                Tas existedTas = tasQueryService.findTas();
+
+                String vcSchemaJson = CertificateVcSchemaProvider.getSchema(existedTas.getServerUrl());
+
+                return parseVcSchemaToMap(requestCertificateVc());
+            }
 
             ListVcSchema existingListVcSchema = listVcSchemaQueryService.findBySchemaId(id);
 

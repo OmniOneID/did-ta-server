@@ -35,6 +35,7 @@ import org.omnione.did.tas.v1.admin.dto.tas.RequestTasInfoReqDto;
 import org.omnione.did.tas.v1.admin.dto.tas.RequestTasInfoResDto;
 import org.omnione.did.tas.v1.agent.dto.tas.RequestEnrollTasReqDto;
 import org.omnione.did.tas.v1.agent.dto.tas.RequestEnrollTasReqDto.Request;
+import org.omnione.did.tas.v1.agent.helper.CertificateVcSchemaProvider;
 import org.omnione.did.tas.v1.common.service.DidDocService;
 import org.omnione.did.tas.v1.common.service.SetupService;
 import org.omnione.did.tas.v1.common.service.TasService;
@@ -191,30 +192,7 @@ public class TaManagementService {
                 return;
             }
 
-            String vcSchemaJson = """
-                    {
-                        "@id": "%s/tas/api/v1/vc-schema?name=certificate",
-                        "@schema": "https://opendid.org/schema/vc.osd",
-                        "title": "OpenDID Certificate Verifiable Credential",
-                        "description": "VC-formatted OpenDID enrollment certificate.",
-                        "metadata": {
-                            "language": "ko",
-                            "formatVersion": "1.0"
-                        },
-                        "credentialSubject": {
-                            "claims": [{
-                                "namespace": {
-                                    "id": "org.opendid.v1",
-                                    "name": "OpenDID - Certificate Verifiable Credential"
-                                },
-                                "items": [
-                                    {"id": "subject", "caption": "subject", "type": "text", "format": "plain"},
-                                    {"id": "role", "caption": "role", "type": "text", "format": "plain"}
-                                ]
-                            }]
-                        }
-                    }
-                    """.formatted(serverUrl);
+            String vcSchemaJson = CertificateVcSchemaProvider.getSchema(serverUrl);
 
             org.omnione.did.data.model.schema.VcSchema vcSchema =
                     BaseCoreVcUtil.parseVcSchema(vcSchemaJson);

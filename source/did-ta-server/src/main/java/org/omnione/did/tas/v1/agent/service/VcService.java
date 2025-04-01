@@ -52,7 +52,7 @@ public interface VcService {
     OfferIssueVcNotiResDto offerIssueVcEmail(OfferIssueVcEmailReqDto request);
     OfferIssueVcNotiResDto offerIssueVcPush(OfferIssueVcPushReqDto request);
     String requestCertificateVc();
-    Map<String, Object> requestVcSchema(String id);
+    Map<String, Object> requestVcSchema(String id, String name);
     ProposeRevokeVcResDto proposeRevokeVc(ProposeRevokeVcReqDto proposeRevokeVcReqDto);
     RequestRevokeVcResDto requestRevokeVc(RequestRevokeVcReqDto requestRevokeVcReqDto);
     ConfirmRevokeVcResDto confirmRevokeVc(ConfirmRevokeVcReqDto confirmRevokeVcReqDto);

@@ -6664,9 +6664,10 @@ N/A
 
 **■ Query Parameters**
 
-| name   | Description    | Remarks |
-| ------ | -------------- | ------- |
-| + `id` | `VC Schema ID` |         |
+| name     | Description      | Remarks                         |
+| -------- | ---------------- | ------------------------------- |
+| - `id`   | `VC Schema ID`   |                                 |
+| - `name` | `VC Schema Name` | Only `certificate` is supported |
 
 **■ HTTP Body**
 
