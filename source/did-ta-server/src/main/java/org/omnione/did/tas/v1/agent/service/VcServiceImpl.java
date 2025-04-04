@@ -902,7 +902,7 @@ public class VcServiceImpl implements VcService {
 
                 String vcSchemaJson = CertificateVcSchemaProvider.getSchema(existedTas.getServerUrl());
 
-                return parseVcSchemaToMap(requestCertificateVc());
+                return parseVcSchemaToMap(vcSchemaJson);
             }
 
             ListVcSchema existingListVcSchema = listVcSchemaQueryService.findBySchemaId(id);
