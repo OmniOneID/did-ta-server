@@ -29,6 +29,7 @@ import org.omnione.did.base.db.repository.CertificateVcRepository;
 import org.omnione.did.base.db.repository.TasRepository;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
+import org.omnione.did.base.property.TaAuthProperty;
 import org.omnione.did.base.util.BaseCoreVcUtil;
 import org.omnione.did.base.util.BaseMultibaseUtil;
 import org.omnione.did.tas.v1.agent.dto.tas.RequestEnrollTasReqDto;
@@ -65,6 +66,7 @@ public class TasServiceImpl implements TasService {
     private final CertificateVcRepository certificateVcRepository;
     private final IssueVcService issueVcService;
     private final FileWalletService fileWalletService;
+    private final TaAuthProperty taAuthProperty;
 
     /**
      * Handles the request to enroll a TAS (Trust Anchor Service).
@@ -152,12 +154,17 @@ public class TasServiceImpl implements TasService {
     }
 
     /**
-     * Retrieves the TAS password.
+     * Retrieves the TAS password for registration.
      *
      * @return String The TAS password
      */
     private String findTasPassword() {
-        return "VoOyEuOyal";
+        String password = taAuthProperty.getAuth().getRegistrationPassword();
+        if (password == null || password.isEmpty()) {
+            throw new OpenDidException(ErrorCode.TAS_PASSWORD_NOT_FOUND);
+        }
+
+        return taAuthProperty.getAuth().getRegistrationPassword();
     }
 
     /**
