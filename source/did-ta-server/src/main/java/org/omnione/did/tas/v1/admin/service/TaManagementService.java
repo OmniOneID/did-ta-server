@@ -20,7 +20,7 @@ import com.google.gson.JsonParseException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.apache.bcel.classfile.Module.Open;
+import org.apache.commons.codec.binary.Hex;
 import org.omnione.did.base.db.constant.TasStatus;
 import org.omnione.did.base.db.domain.Tas;
 import org.omnione.did.base.db.domain.VcSchema;
@@ -28,14 +28,19 @@ import org.omnione.did.base.db.repository.VcSchemaRepository;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.base.property.SetupProperty;
+import org.omnione.did.base.property.TaAuthProperty;
 import org.omnione.did.base.util.BaseCoreVcUtil;
+import org.omnione.did.base.util.BaseDigestUtil;
 import org.omnione.did.data.model.did.DidDocument;
 import org.omnione.did.data.model.enums.vc.VcType;
+import org.omnione.did.tas.v1.admin.dto.tas.RegisterTaInfoReqDto;
 import org.omnione.did.tas.v1.admin.dto.tas.RequestTasInfoReqDto;
-import org.omnione.did.tas.v1.admin.dto.tas.RequestTasInfoResDto;
+import org.omnione.did.tas.v1.admin.dto.tas.TasInfoResDto;
+import org.omnione.did.tas.v1.admin.dto.tas.ValidateTaSecretReqDto;
 import org.omnione.did.tas.v1.agent.dto.tas.RequestEnrollTasReqDto;
 import org.omnione.did.tas.v1.agent.dto.tas.RequestEnrollTasReqDto.Request;
 import org.omnione.did.tas.v1.agent.helper.CertificateVcSchemaProvider;
+import org.omnione.did.tas.v1.common.dto.EmptyResDto;
 import org.omnione.did.tas.v1.common.service.DidDocService;
 import org.omnione.did.tas.v1.common.service.SetupService;
 import org.omnione.did.tas.v1.common.service.TasService;
@@ -68,23 +73,24 @@ public class TaManagementService {
     private final DidDocService didDocService;
     private final VcSchemaRepository vcSchemaRepository;
     private final VcSchemaQueryService vcSchemaQueryService;
+    private final TaAuthProperty taAuthProperty;
 
     /**
      * Request TA information.
      *
      * @return TA information
      */
-    public RequestTasInfoResDto requestTaInfo() {
+    public TasInfoResDto requestTaInfo() {
         Tas existedTas = tasQueryService.findTasOrNull();
         log.debug("\t--> Found TAS: {}", existedTas);
 
         if (existedTas == null || existedTas.getStatus() == TasStatus.DID_DOCUMENT_REQUIRED) {
-            return RequestTasInfoResDto.fromEntity(existedTas);
+            return TasInfoResDto.fromEntity(existedTas);
         }
 
         log.debug("\t--> Finding TAS DID Document");
         DidDocument tasDidDocument = findTasDidDocument(existedTas);
-        return RequestTasInfoResDto.fromEntity(existedTas, tasDidDocument);
+        return TasInfoResDto.fromEntity(existedTas, tasDidDocument);
     }
 
     /**
@@ -92,7 +98,7 @@ public class TaManagementService {
      *
      * @return TA information
      */
-    public RequestTasInfoResDto registerTaSimple(RequestTasInfoReqDto requestTasInfoReqDto) {
+    public TasInfoResDto registerTaSimple(RequestTasInfoReqDto requestTasInfoReqDto) {
         log.debug("=== Starting registerTaSimple ===");
 
         log.debug("\t--> Finding TAS");
@@ -113,7 +119,7 @@ public class TaManagementService {
         DidDocument tasDidDocument = findTasDidDocument(updatedTas);
 
         log.debug("*** Finished registerTaSimple ***");
-        return RequestTasInfoResDto.fromEntity(updatedTas, tasDidDocument);
+        return TasInfoResDto.fromEntity(updatedTas, tasDidDocument);
     }
 
     /**
@@ -246,5 +252,21 @@ public class TaManagementService {
      */
     private DidDocument findTasDidDocument(Tas tas) {
         return didDocService.getDidDocument(tas.getDid());
+    }
+
+    public EmptyResDto validateTaSecret(ValidateTaSecretReqDto validateTaSecretReqDto) {
+        byte[] hashedTaPassword = BaseDigestUtil.generateHash(taAuthProperty.getAuth().getRegistrationPassword());
+        String hexedTaPassword = Hex.encodeHexString(hashedTaPassword);
+
+        if (!hexedTaPassword.equals(validateTaSecretReqDto.getSecret())) {
+            throw new OpenDidException(ErrorCode.TA_SECRET_NOT_MATCHED);
+        }
+
+        return new EmptyResDto();
+    }
+
+    public TasInfoResDto registerTaInfo(RegisterTaInfoReqDto registerTaInfoReqDto) {
+
+        return null;
     }
 }

@@ -5,6 +5,9 @@ import FullscreenLoader from '../../components/loading/FullscreenLoader';
 import Step2TaInfo from './stepper/Step2TaInfo';
 import Step3DIDDocument from './stepper/Step3DidDocument';
 import Step4CertificateVC from './stepper/Step4CertificateVc';
+import { getTaInfo } from '../../apis/ta-api';
+import { TaInfoResDto } from '../../apis/models/TaInfoResDto';
+import { TasStatus } from '../../apis/constants/TasStatus';
 
 const steps = ['Enter TA Password', 'Enter TA Info', 'Register DID Document', 'Issue Certificate VC'];
 
@@ -75,33 +78,48 @@ const ServerRegistrationStepper: React.FC = () => {
 
     if (validate && !validate()) return;
 
-    if (afterValidate) {
-      setIsLoading(true);
-      try {
+    try {
+      if (afterValidate) {
         await afterValidate();
-      } catch (error) {
-        console.error('Post-validation error:', error);
-        setIsLoading(false);
-        return;
       }
+  
+      const { data } = await getTaInfo();
+  
+      setIsLoading(true);
+      const nextStep = getNextStepByTaStatus(data);
+      setActiveStep(nextStep);
+      setIsLoading(false);
+  
+    } catch (error) {
+      console.error('Step transition failed:', error);
       setIsLoading(false);
     }
-
-    setActiveStep(prev => prev + 1);
   };
 
-  // const handleNext = async () => {
-  //   const validate = validateFns[activeStep];
-  //   if (validate && !validate()) return;
+  const getNextStepByTaStatus = (taInfo: TaInfoResDto): number => {
+    if (activeStep === 1) {
+      if (!taInfo.name) {
+        return 2;
+      }
+  
+      switch (taInfo.status) {
+        case TasStatus.DID_DOCUMENT_REQUIRED:
+          return 3; 
+        case TasStatus.CERTIFICATE_VC_REQUIRED:
+          return 4;
+        default:
+          return activeStep + 1;
+      }
+    }
 
-  //   setActiveStep((prev) => prev + 1);
-  // };
+    return activeStep + 1;
+  };
 
   const handleBack = () => setActiveStep((prev) => prev - 1);
 
   const getStepContent = (step: number) => {
     switch (step) {
-      case 0: return <Step1TaPassword step={0} onRegister={registerStepFns} />;
+      case 0: return <Step1TaPassword step={0} onRegister={registerStepFns} setIsLoading={setIsLoading}/>;
       case 1: return <Step2TaInfo step={1} onRegister={registerStepFns} />;
       case 2: return <Step3DIDDocument step={2} onRegister={registerStepFns} />;
       case 3: return <Step4CertificateVC step={3} onRegister={registerStepFns} />;

@@ -1,9 +1,15 @@
 import { Box, TextField, Typography, styled } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react'
+import { sha256Hash } from '../../../utils/sha256-hash';
+import { validateTaSecret } from '../../../apis/ta-api';
+import { useDialogs } from '@toolpad/core';
+import CustomDialog from '../../../components/dialog/CustomDialog';
+import { formatErrorMessage } from '../../../utils/error-handler';
 
 interface Props {
     step: number;
     onRegister: (step: number, validate: () => boolean, afterValidate?: () => Promise<void>) => void;
+    setIsLoading: (loading: boolean) => void;
 }
   
 interface formData {
@@ -16,10 +22,10 @@ interface ErrorState {
     confirmPassword?: string;
 }
   
-const Step1TaPassword: React.FC<Props> = ({ step, onRegister }) => {
+const Step1TaPassword: React.FC<Props> = ({ step, onRegister, setIsLoading }) => {
     const [formData, setFormData] = useState<formData>({ password: '', confirmPassword: '' });
-    const [initialData, setInitialData] = useState<formData>({ password: '', confirmPassword: '' });
     const [errors, setErrors] = useState<ErrorState>({});
+    const dialogs = useDialogs();
     
     const handleChange = (field: keyof formData) => (event: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = event.target.value;
@@ -48,12 +54,23 @@ const Step1TaPassword: React.FC<Props> = ({ step, onRegister }) => {
     };
 
     const afterValidate = async () => {
-        console.log('Step1 afterValidate: Password ready for next step');
-    };
+        const hashedPassword = await sha256Hash(formData.password);
 
-    useEffect(() => {
-     const isModified = JSON.stringify(formData) !== JSON.stringify(initialData);
-    }, [formData, initialData]);
+        const requestBody = {
+            secret: hashedPassword
+        };
+
+        await validateTaSecret(requestBody).then((response) => {
+        }).catch((error) => {
+            setIsLoading(false);
+            dialogs.open(CustomDialog, {
+                title: 'Notification',
+                message: formatErrorMessage(error, `Failed to validate TA credential`),
+                isModal: true,
+            });
+            throw error;
+        });
+    };
 
     useEffect(() => {
         onRegister(step, validate, afterValidate);

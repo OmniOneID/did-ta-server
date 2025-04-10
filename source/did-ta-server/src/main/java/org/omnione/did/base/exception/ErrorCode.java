@@ -63,6 +63,7 @@ public enum ErrorCode {
     FAILED_API_PROPOSE_ENROLL_TAS("SSRVTRA13006", "Failed to process the 'propose-enroll-tas' API request.", 500),
     FAILED_API_GET_CERTIFICATE_VC("SSRVTRA13007", "Failed to process the 'get-certificate-vc' API request.", 500),
     TAS_PASSWORD_NOT_FOUND("SSRVTRA13008", "Failed to find TAS password.", 500),
+    TA_SECRET_NOT_MATCHED("SSRVTRA13009", "Failed to process request: TA secret does not match.", 400),
 
 
     // 04. TAS configuration-related errors (13500 ~ 13999)

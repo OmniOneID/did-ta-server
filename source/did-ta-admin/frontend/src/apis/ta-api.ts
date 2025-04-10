@@ -1,7 +1,11 @@
-import { getData } from "../utils/api";
+import { getData, postData } from "../utils/api";
 
 const API_BASE_URL = "/tas/admin/v1";
 
 export const getTaInfo = async () => {
     return getData(API_BASE_URL, "ta/info");
 }
+
+export const validateTaSecret = async (data: any) => {
+    return postData(API_BASE_URL, `ta/validate-ta-secret`, data);
+};

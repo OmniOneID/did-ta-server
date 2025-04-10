@@ -39,7 +39,7 @@ import java.util.Optional;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class RequestTasInfoResDto {
+public class TasInfoResDto {
     private Long id;
     private String did;
     private String name;
@@ -51,9 +51,9 @@ public class RequestTasInfoResDto {
     private String createdAt;
     private String updatedAt;
 
-    public static RequestTasInfoResDto fromEntity(Tas tas) {
+    public static TasInfoResDto fromEntity(Tas tas) {
         return Optional.ofNullable(tas)
-                .map(t -> RequestTasInfoResDto.builder()
+                .map(t -> TasInfoResDto.builder()
                         .id(t.getId())
                         .did(t.getDid())
                         .name(t.getName())
@@ -66,9 +66,9 @@ public class RequestTasInfoResDto {
                 .orElse(null);
     }
 
-    public static RequestTasInfoResDto fromEntity(Tas tas, DidDocument didDocument) {
+    public static TasInfoResDto fromEntity(Tas tas, DidDocument didDocument) {
         return Optional.ofNullable(tas)
-                .map(t -> RequestTasInfoResDto.builder()
+                .map(t -> TasInfoResDto.builder()
                         .id(t.getId())
                         .did(t.getDid())
                         .name(t.getName())
