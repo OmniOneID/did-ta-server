@@ -1,9 +1,10 @@
 import React, { useMemo, useState } from 'react';
 import { Stepper, Step, StepLabel, Button, Box, Typography, styled } from '@mui/material';
-import Step2Url from './Step2Url';
-import Step3TestConnection from './Step3TestConnection';
-import Step4Confirm from './Step4Confirm';
-import Step0TaPassword from './stepper/Step0TaPassword';
+import Step1TaPassword from './stepper/Step1TaPassword';
+import FullscreenLoader from '../../components/loading/FullscreenLoader';
+import Step2TaInfo from './stepper/Step2TaInfo';
+import Step3DIDDocument from './stepper/Step3DidDocument';
+import Step4CertificateVC from './stepper/Step4CertificateVc';
 
 const steps = ['Enter TA Password', 'Enter TA Info', 'Register DID Document', 'Issue Certificate VC'];
 
@@ -52,55 +53,88 @@ const StyledActionWrapper = styled(Box)({
 });
 
 const ServerRegistrationStepper: React.FC = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const [activeStep, setActiveStep] = useState<number>(0);
   const [validateFns, setValidateFns] = useState<Record<number, () => boolean>>({});
+  const [afterValidateFns, setAfterValidateFns] = useState<Record<number, () => Promise<void>>>({});
 
   const onValidateFn = (step: number, fn: () => boolean) => {
     setValidateFns((prev) => ({ ...prev, [step]: fn }));
   };
+
+  const registerStepFns = (step: number, validate: () => boolean, afterValidate?: () => Promise<void>) => {
+    setValidateFns(prev => ({ ...prev, [step]: validate }));
+    if (afterValidate) {
+      setAfterValidateFns(prev => ({ ...prev, [step]: afterValidate }));
+    }
+  };
   
   const handleNext = async () => {
     const validate = validateFns[activeStep];
+    const afterValidate = afterValidateFns[activeStep];
+
     if (validate && !validate()) return;
 
-    setActiveStep((prev) => prev + 1);
+    if (afterValidate) {
+      setIsLoading(true);
+      try {
+        await afterValidate();
+      } catch (error) {
+        console.error('Post-validation error:', error);
+        setIsLoading(false);
+        return;
+      }
+      setIsLoading(false);
+    }
+
+    setActiveStep(prev => prev + 1);
   };
+
+  // const handleNext = async () => {
+  //   const validate = validateFns[activeStep];
+  //   if (validate && !validate()) return;
+
+  //   setActiveStep((prev) => prev + 1);
+  // };
 
   const handleBack = () => setActiveStep((prev) => prev - 1);
 
   const getStepContent = (step: number) => {
     switch (step) {
-      case 0: return <Step0TaPassword step={0} onValidate={onValidateFn}  />;
-      case 1: return <Step2Url />;
-      case 2: return <Step3TestConnection />;
-      case 3: return <Step4Confirm />;
+      case 0: return <Step1TaPassword step={0} onRegister={registerStepFns} />;
+      case 1: return <Step2TaInfo step={1} onRegister={registerStepFns} />;
+      case 2: return <Step3DIDDocument step={2} onRegister={registerStepFns} />;
+      case 3: return <Step4CertificateVC step={3} onRegister={registerStepFns} />;
       default: return 'Unknown step';
     }
   };
 
   return (
-    <StyledContainer>
-      <StyledTitle>TA Registration</StyledTitle>
-      <StyledStepperWrapper>
-        <StyledStepper activeStep={activeStep}>
-          {steps.map((label) => (
-            <StyledStep key={label}>
-              <StyledStepLabel>{label}</StyledStepLabel>
-            </StyledStep>
-          ))}
-        </StyledStepper>
+    <>
+      <FullscreenLoader open={isLoading} />
+      <StyledContainer>
+        <StyledTitle>TA Registration</StyledTitle>
+        <StyledStepperWrapper>
+          <StyledStepper activeStep={activeStep}>
+            {steps.map((label) => (
+              <StyledStep key={label}>
+                <StyledStepLabel>{label}</StyledStepLabel>
+              </StyledStep>
+            ))}
+          </StyledStepper>
 
-        <StyledContentWrapper>
-          {getStepContent(activeStep)}
-          <StyledActionWrapper>
-            <Button variant='outlined' disabled={activeStep === 0} onClick={handleBack}>Back</Button>
-            <Button variant="contained" onClick={handleNext}>
-              {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
-            </Button>
-          </StyledActionWrapper>
-        </StyledContentWrapper>
-      </StyledStepperWrapper>
-    </StyledContainer>
+          <StyledContentWrapper>
+            {getStepContent(activeStep)}
+            <StyledActionWrapper>
+              <Button variant='outlined' disabled={activeStep === 0} onClick={handleBack}>Back</Button>
+              <Button variant="contained" onClick={handleNext}>
+                {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+              </Button>
+            </StyledActionWrapper>
+          </StyledContentWrapper>
+        </StyledStepperWrapper>
+      </StyledContainer>
+    </>
   );
 };
 

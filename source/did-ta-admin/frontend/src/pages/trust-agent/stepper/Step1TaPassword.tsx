@@ -3,9 +3,9 @@ import React, { useEffect, useMemo, useState } from 'react'
 
 interface Props {
     step: number;
-    onValidate: (step: number, fn: () => boolean) => void;
+    onRegister: (step: number, validate: () => boolean, afterValidate?: () => Promise<void>) => void;
 }
-
+  
 interface formData {
     password: string;
     confirmPassword: string;
@@ -16,8 +16,7 @@ interface ErrorState {
     confirmPassword?: string;
 }
   
-const Step0TaPassword: React.FC<Props> = ({ step, onValidate }) => {
-    const [isLoading, setIsLoading] = useState(true);
+const Step1TaPassword: React.FC<Props> = ({ step, onRegister }) => {
     const [formData, setFormData] = useState<formData>({ password: '', confirmPassword: '' });
     const [initialData, setInitialData] = useState<formData>({ password: '', confirmPassword: '' });
     const [errors, setErrors] = useState<ErrorState>({});
@@ -30,9 +29,7 @@ const Step0TaPassword: React.FC<Props> = ({ step, onValidate }) => {
     const validate = () => {
         let tempErrors: ErrorState = {};
 
-        if (!formData.password.trim()) {
-            tempErrors.password = "Please enter TA password.";
-        } 
+        tempErrors.password = validatePassword(formData.password);
 
         if (!formData.confirmPassword.trim()) {
             tempErrors.confirmPassword = "Please confirm TA password.";
@@ -44,19 +41,29 @@ const Step0TaPassword: React.FC<Props> = ({ step, onValidate }) => {
         return Object.values(tempErrors).every((error) => !error);
     };
 
+    const validatePassword = (password?: string): string | undefined => {
+        if (!password?.trim()) return 'Please enter a password.';
+        if (password.length > 64) return 'Password must be less than 64 characters.';
+        return undefined;
+    };
+
+    const afterValidate = async () => {
+        console.log('Step1 afterValidate: Password ready for next step');
+    };
+
     useEffect(() => {
      const isModified = JSON.stringify(formData) !== JSON.stringify(initialData);
     }, [formData, initialData]);
 
     useEffect(() => {
-        onValidate(step, validate);
-      }, [formData]);
+        onRegister(step, validate, afterValidate);
+    }, [formData]);
 
     const StyledDescription = useMemo(() => styled(Box)(({ theme }) => ({
         maxWidth: 600, 
         marginTop: theme.spacing(1),
         padding: theme.spacing(0),
-      })), []);
+    })), []);
       
     const StyledInputArea = useMemo(() => styled(Box)(({ theme }) => ({
         marginTop: theme.spacing(2),
@@ -64,6 +71,9 @@ const Step0TaPassword: React.FC<Props> = ({ step, onValidate }) => {
     
     return (
         <>
+            <Typography variant="h6" gutterBottom>
+                Step 1 – Enter TA Password
+            </Typography>
             <StyledDescription>
                 <Typography variant="body1">
                     This password will be required in the final step when issuing the Certificate VC.
@@ -85,6 +95,7 @@ const Step0TaPassword: React.FC<Props> = ({ step, onValidate }) => {
                     error={!!errors.password}
                     helperText={errors.password}
                     sx={{ minLength: 3, maxLength: 64 }}
+                    slotProps={{ htmlInput: {maxLength: 64,},}}
                 />
 
                 <TextField
@@ -98,10 +109,11 @@ const Step0TaPassword: React.FC<Props> = ({ step, onValidate }) => {
                     error={!!errors.confirmPassword}
                     helperText={errors.confirmPassword}
                     sx={{ minLength: 3, maxLength: 64 }}
+                    slotProps={{ htmlInput: {maxLength: 64,},}}
                 />
             </StyledInputArea>
         </>
     )
 }
 
-export default Step0TaPassword
+export default Step1TaPassword
