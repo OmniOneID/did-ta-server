@@ -16,6 +16,8 @@
 
 package org.omnione.did.tas.v1.admin.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonParseException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -24,15 +26,21 @@ import org.apache.commons.codec.binary.Hex;
 import org.omnione.did.base.db.constant.TasStatus;
 import org.omnione.did.base.db.domain.Tas;
 import org.omnione.did.base.db.domain.VcSchema;
+import org.omnione.did.base.db.repository.TasRepository;
 import org.omnione.did.base.db.repository.VcSchemaRepository;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.base.property.SetupProperty;
 import org.omnione.did.base.property.TaAuthProperty;
+import org.omnione.did.base.util.BaseCoreDidUtil;
 import org.omnione.did.base.util.BaseCoreVcUtil;
 import org.omnione.did.base.util.BaseDigestUtil;
+import org.omnione.did.core.data.rest.DidKeyInfo;
+import org.omnione.did.core.manager.DidManager;
 import org.omnione.did.data.model.did.DidDocument;
+import org.omnione.did.data.model.enums.did.ProofPurpose;
 import org.omnione.did.data.model.enums.vc.VcType;
+import org.omnione.did.tas.v1.admin.dto.tas.RegisterTaDidDocumentReqDto;
 import org.omnione.did.tas.v1.admin.dto.tas.RegisterTaInfoReqDto;
 import org.omnione.did.tas.v1.admin.dto.tas.RequestTasInfoReqDto;
 import org.omnione.did.tas.v1.admin.dto.tas.TasInfoResDto;
@@ -40,18 +48,22 @@ import org.omnione.did.tas.v1.admin.dto.tas.ValidateTaSecretReqDto;
 import org.omnione.did.tas.v1.agent.dto.tas.RequestEnrollTasReqDto;
 import org.omnione.did.tas.v1.agent.dto.tas.RequestEnrollTasReqDto.Request;
 import org.omnione.did.tas.v1.agent.helper.CertificateVcSchemaProvider;
+import org.omnione.did.tas.v1.agent.service.FileWalletService;
 import org.omnione.did.tas.v1.common.dto.EmptyResDto;
 import org.omnione.did.tas.v1.common.service.DidDocService;
 import org.omnione.did.tas.v1.common.service.SetupService;
 import org.omnione.did.tas.v1.common.service.TasService;
 import org.omnione.did.tas.v1.common.service.query.TasQueryService;
 import org.omnione.did.tas.v1.common.service.query.VcSchemaQueryService;
+import org.omnione.did.wallet.key.WalletManagerInterface;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This service provides methods for managing TA.
@@ -74,6 +86,8 @@ public class TaManagementService {
     private final VcSchemaRepository vcSchemaRepository;
     private final VcSchemaQueryService vcSchemaQueryService;
     private final TaAuthProperty taAuthProperty;
+    private final TasRepository tasRepository;
+    private final FileWalletService fileWalletService;
 
     /**
      * Request TA information.
@@ -115,11 +129,7 @@ public class TaManagementService {
 
         Tas updatedTas = tasQueryService.findTas();
 
-        log.debug("\t--> Finding TAS DID Document");
-        DidDocument tasDidDocument = findTasDidDocument(updatedTas);
-
-        log.debug("*** Finished registerTaSimple ***");
-        return TasInfoResDto.fromEntity(updatedTas, tasDidDocument);
+        return buildTasInfoResponse(updatedTas);
     }
 
     /**
@@ -127,7 +137,7 @@ public class TaManagementService {
      */
     private void registerNewTas(RequestTasInfoReqDto requestTasInfoReqDto) {
         log.debug("\t--> Registering TA DID Document");
-        registerTaDidDocument(requestTasInfoReqDto.getServerUrl());
+        registerTaDidDocumentSimple(requestTasInfoReqDto.getServerUrl());
 
         log.debug("\t--> Registering Certificate VC Schema");
         registerCertificateVcSchema(requestTasInfoReqDto.getServerUrl());
@@ -146,7 +156,7 @@ public class TaManagementService {
         switch (tas.getStatus()) {
             case DID_DOCUMENT_REQUIRED:
                 log.debug("\t--> Registering TA DID Document");
-                registerTaDidDocument(requestTasInfoReqDto.getServerUrl());
+                registerTaDidDocumentSimple(requestTasInfoReqDto.getServerUrl());
 
                 log.debug("\t--> Registering Certificate VC Schema");
                 registerCertificateVcSchema(requestTasInfoReqDto.getServerUrl());
@@ -169,7 +179,7 @@ public class TaManagementService {
     /**
      * Register TA DID Document.
      */
-    private void registerTaDidDocument(String serverUrl) {
+    private void registerTaDidDocumentSimple(String serverUrl) {
         File didDocFile = new File(setupProperty.getPath() + "/TA/tas.did");
         if (!didDocFile.exists() || !didDocFile.isFile()) {
             log.error("DID Document file not found at path: {}", setupProperty.getPath());
@@ -266,7 +276,131 @@ public class TaManagementService {
     }
 
     public TasInfoResDto registerTaInfo(RegisterTaInfoReqDto registerTaInfoReqDto) {
+        Tas tas = tasQueryService.findTasOrNull();
+        log.debug("\t--> Found TAS: {}", tas);
+        if (tas == null) {
+            log.debug("\t--> TAS is not registered yet. Proceeding with new registration.");
+            tas = Tas.builder()
+                    .name(registerTaInfoReqDto.getName())
+                    .serverUrl(registerTaInfoReqDto.getServerUrl())
+                    .status(TasStatus.DID_DOCUMENT_REQUIRED)
+                    .build();
 
-        return null;
+            tasRepository.save(tas);
+            return TasInfoResDto.fromEntity(tas);
+        }
+
+        if (tas.getStatus() == TasStatus.COMPLETED) {
+            log.error("TAS is already registered");
+            throw new OpenDidException(ErrorCode.TA_ALREADY_REGISTERED);
+        }
+
+        log.debug("\t--> Updating TAS information");
+        tas.setName(registerTaInfoReqDto.getName());
+        tas.setServerUrl(registerTaInfoReqDto.getServerUrl());
+        tasRepository.save(tas);
+
+        return buildTasInfoResponse(tas);
+    }
+
+    private TasInfoResDto buildTasInfoResponse(Tas tas) {
+        if (tas.getStatus() == TasStatus.DID_DOCUMENT_REQUIRED) {
+            return TasInfoResDto.fromEntity(tas);
+        }
+
+        log.debug("\t--> Finding TAS DID Document");
+        DidDocument didDocument = findTasDidDocument(tas);
+        return TasInfoResDto.fromEntity(tas, didDocument);
+    }
+
+    /*
+     * Register TA DID Document automatically.
+     *
+     * This method creates a wallet and generates keys if they do not exist,
+     * then generates and registers a DID Document.
+     *
+     * Note:
+     * - If the wallet or keys already exist, it will skip creation silently without throwing an error.
+     *
+     * @return TA DID Document
+     */
+    public Map<String, Object> registerTaDidDocumentAuto() {
+        Tas existedTas = tasQueryService.findTas();
+        log.debug("\t--> Found TAS: {}", existedTas);
+
+        if (existedTas.getStatus() != TasStatus.DID_DOCUMENT_REQUIRED) {
+            log.error("TAS DID Document is already registered");
+            throw new OpenDidException(ErrorCode.TAS_DID_DOCUMENT_ALREADY_REGISTERED);
+        }
+
+        // Step1: Create Wallet and keys
+        WalletManagerInterface walletManager = initializeWalletWithKeys();
+
+        // Step2: Create DID Document
+        DidDocument didDocument = createDidDocumentAuto(walletManager);
+
+        return parseVcDidDocToMap(didDocument.toJson());
+    }
+
+    /*
+     * Generate TA wallet and keys.
+     */
+    public WalletManagerInterface initializeWalletWithKeys() {
+        return fileWalletService.initializeWalletWithKeys();
+    }
+
+    /**
+     * Create DID Document automatically.
+     *
+     * This method creates a DID Document using the provided wallet manager.
+     *
+     * @param walletManager Wallet manager
+     * @return Created DID Document
+     */
+    public DidDocument createDidDocumentAuto(WalletManagerInterface walletManager) {
+        String did = "did:omn:tas";
+
+        Map<String, List<ProofPurpose>> purposes = BaseCoreDidUtil.createDefaultProofPurposes();
+        List<DidKeyInfo> keyInfos = BaseCoreDidUtil.getDidKeyInfosFromWallet(walletManager, did, purposes);
+
+        DidManager didManager = new DidManager();
+        DidDocument unsignedDoc = BaseCoreDidUtil.createDidDocument(didManager, did, did, keyInfos);
+
+        List<String> signingKeys = BaseCoreDidUtil.getSigningKeyIds(purposes);
+        DidDocument signedDoc = BaseCoreDidUtil.signAndAddProof(didManager, walletManager, signingKeys);
+
+        return signedDoc;
+    }
+
+    /**
+     * Parse VC DID Document JSON to Map.
+     *
+     * @param didDocJson DID Document JSON
+     * @return Parsed Map
+     */
+    private Map<String, Object> parseVcDidDocToMap(String didDocJson) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.readValue(didDocJson, Map.class);
+        } catch (JsonProcessingException e) {
+            log.error("Failed to parse DID Document JSON (invalid format): {}", didDocJson, e);
+            throw new OpenDidException(ErrorCode.INVALID_DID_DOCUMENT);
+        } catch (Exception e) {
+            log.error("Unexpected error while parsing DID DOcument JSON", e);
+            throw new OpenDidException(ErrorCode.INVALID_DID_DOCUMENT);
+        }
+    }
+
+    /**
+     * Register TA DID Document.
+     *
+     * @param registerTaDidDocumentReqDto Request DTO
+     * @return Empty response
+     */
+    public EmptyResDto registerTaDidDocument(RegisterTaDidDocumentReqDto registerTaDidDocumentReqDto) {
+        Tas existedTas = tasQueryService.findTas();
+        String certificateUrl = existedTas.getServerUrl() + "/api/v1/certificate-vc";
+
+        return setupService.registerTasDidDocument(registerTaDidDocumentReqDto.getDidDocument().getBytes(),certificateUrl);
     }
 }

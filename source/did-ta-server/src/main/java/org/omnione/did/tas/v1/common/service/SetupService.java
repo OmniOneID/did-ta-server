@@ -303,4 +303,48 @@ public class SetupService {
             throw new RuntimeException("Failed to remove blockchain");
         }
     }
+
+    public EmptyResDto registerTasDidDocument(byte[] didDocBytes, String certificateUrl) {
+        try {
+            log.debug("=== Starting registerTasDidDocument ===");
+
+            // Parse the DID Document
+            log.debug("\t--> Parsing DID Document");
+            DidManager didManager = BaseCoreDidUtil.parseDidDoc(new String(didDocBytes, StandardCharsets.UTF_8));
+            DidDocument ownerDidDoc = didManager.getDocument();
+
+            // Check if TAS is not registered.
+            log.debug("\t--> Verifying TAS registration");
+            Tas existedTas = tasQueryService.findTas();
+
+            // Verify DID document key signatures.
+            log.debug("\t--> Verifying DID document key signatures");
+            signatureService.verifyDidDocKeyProofs(ownerDidDoc);
+
+            // Sign DID document.
+            log.debug("\t--> Signing DID document");
+            InvokedDidDoc invokedDidDoc = signatureService.signTasInvokedDidDoc(ownerDidDoc, certificateUrl);
+
+            // Upload User DID document.
+            log.debug("\t--> Uploading wallet DID document");
+            storageService.registerDidDoc(invokedDidDoc, RoleType.TAS);
+
+            // Register TAS DID document.
+            log.debug("\t--> Registering TAS DID document");
+            existedTas.setCertificateUrl(certificateUrl);
+            existedTas.setStatus(TasStatus.CERTIFICATE_VC_REQUIRED);
+
+            tasRepository.save(existedTas);
+
+            log.debug("=== Finished registerTasDidDocument ===");
+
+            return new EmptyResDto();
+        } catch (OpenDidException e) {
+            log.error("Failed to register DID Document : {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to register DID Document : {}", e.getMessage());
+            throw new OpenDidException(ErrorCode.UNKNOWN_SERVER_ERROR);
+        }
+    }
 }

@@ -60,6 +60,7 @@ const Step1TaPassword: React.FC<Props> = ({ step, onRegister, setIsLoading }) =>
             secret: hashedPassword
         };
 
+        setIsLoading(true);
         await validateTaSecret(requestBody).then((response) => {
         }).catch((error) => {
             setIsLoading(false);

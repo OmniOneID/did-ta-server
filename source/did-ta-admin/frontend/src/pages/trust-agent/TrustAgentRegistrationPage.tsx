@@ -97,16 +97,25 @@ const ServerRegistrationStepper: React.FC = () => {
   };
 
   const getNextStepByTaStatus = (taInfo: TaInfoResDto): number => {
-    if (activeStep === 1) {
-      if (!taInfo.name) {
+    if (activeStep === 0) {
+      if (taInfo.name) {
         return 2;
       }
-  
+
       switch (taInfo.status) {
         case TasStatus.DID_DOCUMENT_REQUIRED:
-          return 3; 
+          return 2; 
         case TasStatus.CERTIFICATE_VC_REQUIRED:
-          return 4;
+          return 3;
+        default:
+          return activeStep + 1;
+      }
+    } else if (activeStep === 1) {
+      switch (taInfo.status) {
+        case TasStatus.DID_DOCUMENT_REQUIRED:
+          return 2; 
+        case TasStatus.CERTIFICATE_VC_REQUIRED:
+          return 3;
         default:
           return activeStep + 1;
       }
@@ -120,8 +129,8 @@ const ServerRegistrationStepper: React.FC = () => {
   const getStepContent = (step: number) => {
     switch (step) {
       case 0: return <Step1TaPassword step={0} onRegister={registerStepFns} setIsLoading={setIsLoading}/>;
-      case 1: return <Step2TaInfo step={1} onRegister={registerStepFns} />;
-      case 2: return <Step3DIDDocument step={2} onRegister={registerStepFns} />;
+      case 1: return <Step2TaInfo step={1} onRegister={registerStepFns} setIsLoading={setIsLoading} />;
+      case 2: return <Step3DIDDocument step={2} onRegister={registerStepFns} setIsLoading={setIsLoading} />;
       case 3: return <Step4CertificateVC step={3} onRegister={registerStepFns} />;
       default: return 'Unknown step';
     }

@@ -9,3 +9,15 @@ export const getTaInfo = async () => {
 export const validateTaSecret = async (data: any) => {
     return postData(API_BASE_URL, `ta/validate-ta-secret`, data);
 };
+
+export const registerTaInfo = async (data: any) => {
+    return postData(API_BASE_URL, `ta/register-ta-info`, data);
+};
+
+export const generateTaDidDocument = async () => {
+    return postData(API_BASE_URL, `ta/generate-did-auto`, undefined);
+}
+
+export const registerTaDidDocument = async (data: any) => {
+    return postData(API_BASE_URL, `ta/register-ta-did`, data);
+}

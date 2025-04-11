@@ -18,6 +18,7 @@ package org.omnione.did.tas.v1.admin.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.constants.UrlConstant.Tas;
+import org.omnione.did.tas.v1.admin.dto.tas.RegisterTaDidDocumentReqDto;
 import org.omnione.did.tas.v1.admin.dto.tas.RegisterTaInfoReqDto;
 import org.omnione.did.tas.v1.admin.dto.tas.RequestTasInfoReqDto;
 import org.omnione.did.tas.v1.admin.dto.tas.TasInfoResDto;
@@ -28,6 +29,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 /**
  * This controller provides APIs for managing TA.
@@ -71,5 +74,15 @@ public class TaManagementController {
     @RequestMapping(value = "/ta/register-ta-info", method = RequestMethod.POST)
     public TasInfoResDto registerTaInfo(@RequestBody RegisterTaInfoReqDto registerTaInfoReqDto) {
         return taManagementService.registerTaInfo(registerTaInfoReqDto);
+    }
+
+    @RequestMapping(value = "/ta/generate-did-auto", method = RequestMethod.POST)
+    public Map<String, Object> generateTaDidDocumentAuto() {
+        return taManagementService.registerTaDidDocumentAuto();
+    }
+
+    @RequestMapping(value = "/ta/register-ta-did", method = RequestMethod.POST)
+    public EmptyResDto registerTaDidDocument(@RequestBody RegisterTaDidDocumentReqDto registerTaDidDocumentReqDto) {
+        return taManagementService.registerTaDidDocument(registerTaDidDocumentReqDto);
     }
 }

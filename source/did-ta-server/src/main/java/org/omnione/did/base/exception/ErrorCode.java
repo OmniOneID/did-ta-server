@@ -64,7 +64,7 @@ public enum ErrorCode {
     FAILED_API_GET_CERTIFICATE_VC("SSRVTRA13007", "Failed to process the 'get-certificate-vc' API request.", 500),
     TAS_PASSWORD_NOT_FOUND("SSRVTRA13008", "Failed to find TAS password.", 500),
     TA_SECRET_NOT_MATCHED("SSRVTRA13009", "Failed to process request: TA secret does not match.", 400),
-
+    TAS_DID_DOCUMENT_ALREADY_REGISTERED("SSRVTRA13010", "Failed to register TAS DID Document: document is already registered.", 400),
 
     // 04. TAS configuration-related errors (13500 ~ 13999)
     EMAIL_TEMPLATE_READ_FAILED("SSRVTRA13500", "Failed to read email template.", 400),
@@ -208,7 +208,7 @@ public enum ErrorCode {
     DID_DOCUMENT_REGISTRATION_FAILED("SSRVTRA18016", "Failed to register DID Document.", 500),
     INVOKED_DOCUMENT_GENERATION_FAILED("SSRVTRA18017", "Failed to generate Invoked Document.", 500),
     DID_DOCUMENT_ID_MISMATCH("SSRVTRA18018", "Failed to process request: ID of DID Document does not match the previously requested DID.", 400),
-
+    INVALID_DID_DOCUMENT("SSRVTRA18019", "Failed to process DID Document: invalid document.", 400),
 
     // 13. VC-related errors (18500 ~ 18999)
     VC_ID_NOT_MATCH("SSRVTRA18500", "VC ID does not match.", 400),

@@ -196,13 +196,4 @@ public class BaseWalletUtil {
         }
         return walletManager;
     }
-
-    public static void main(String[] args) {
-        WalletManagerInterface walletManager = initializeWalletWithKeys(
-                "/Users/yundabal/wallet/tas.wallet",
-                "omnioneopendid12!@",
-                "auth", "assert", "keyagree", "invoke"
-        );
-
-    }
 }

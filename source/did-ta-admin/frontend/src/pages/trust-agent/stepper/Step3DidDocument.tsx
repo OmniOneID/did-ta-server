@@ -8,33 +8,64 @@ import {
   CardContent,
   styled,
 } from '@mui/material';
+import { generateTaDidDocument, registerTaDidDocument } from '../../../apis/ta-api';
+import { useDialogs } from '@toolpad/core';
+import CustomDialog from '../../../components/dialog/CustomDialog';
+import { formatErrorMessage } from '../../../utils/error-handler';
 
 interface Props {
   step: number;
   onRegister: (step: number, validate: () => boolean, afterValidate?: () => Promise<void>) => void;
+  setIsLoading: (loading: boolean) => void;
 }
 
-const Step3DIDDocument: React.FC<Props> = ({ step, onRegister }) => {
+const Step3DIDDocument: React.FC<Props> = ({ step, onRegister, setIsLoading }) => {
   const [didDocument, setDidDocument] = useState<string>('');
   const [isDidGenerated, setIsDidGenerated] = useState<boolean>(false);
   const [isBlockchainRegistered, setIsBlockchainRegistered] = useState<boolean>(false);
+  const dialogs = useDialogs();
+  
+  const handleGenerateDid = async () => {
+    setIsLoading(true);
+    setIsDidGenerated(false);
+    setDidDocument('');
 
-  const handleGenerateDid = () => {
-    const exampleDid = JSON.stringify(
-      {
-        id: 'did:omni:tas:1234',
-        verificationMethod: [],
-        authentication: [],
-      },
-      null,
-      2
-    );
-    setDidDocument(exampleDid);
-    setIsDidGenerated(true);
+    await generateTaDidDocument()
+      .then((response) => {
+        setDidDocument(JSON.stringify(response.data, null, 2));
+        setIsDidGenerated(true);
+        setIsLoading(false);
+      }).catch((error) => {
+        setIsLoading(false);
+        dialogs.open(CustomDialog, {
+          title: 'Notification',
+          message: formatErrorMessage(error, `Failed to generate DID Document`),
+          isModal: true,
+        });
+        throw error;
+      });
   };
 
-  const handleRegisterBlockchain = () => {
-    setIsBlockchainRegistered(true);
+  const handleRegisterBlockchain = async () => {
+    setIsLoading(true);
+
+    const requestBody = {
+      didDocument: didDocument
+    };
+
+    await registerTaDidDocument(requestBody).then((response) => {
+      setIsBlockchainRegistered(true);
+      setIsLoading(false);
+    }).catch((error) => {
+        setIsLoading(false);
+        setIsBlockchainRegistered(false);
+        dialogs.open(CustomDialog, {
+            title: 'Notification',
+            message: formatErrorMessage(error, `Failed to register TA DID Document`),
+            isModal: true,
+        });
+        throw error;
+    });
   };
 
   const validate = () => {
@@ -81,16 +112,23 @@ const Step3DIDDocument: React.FC<Props> = ({ step, onRegister }) => {
 
           {isDidGenerated && (
             <>
-              <TextField
-                fullWidth
-                multiline
-                minRows={6}
-                margin="normal"
-                value={didDocument}
-                label="DID Document JSON"
-                slotProps={{ input: { readOnly: true } }}
-              />
-              <Typography variant="body2" color="success.main">
+            <Box
+              sx={{
+                maxHeight: 300,
+                overflow: 'auto',
+                backgroundColor: '#f5f5f5',
+                border: '1px solid #ccc',
+                borderRadius: 1,
+                padding: 2,
+                fontFamily: 'monospace',
+                whiteSpace: 'pre-wrap',
+                marginTop: 2,
+                fontSize: 14,
+              }}
+            >
+              {didDocument}
+            </Box>
+              <Typography variant="body2" color="success.main" sx={{ mt: 1 }}>
                 ✅ DID Document has been successfully created.
               </Typography>
             </>
@@ -105,7 +143,12 @@ const Step3DIDDocument: React.FC<Props> = ({ step, onRegister }) => {
             <Typography variant="subtitle1" gutterBottom>
               Step 2. Register to Blockchain
             </Typography>
-            <Button variant="contained" onClick={handleRegisterBlockchain} sx={{ mt: 1 }}>
+            <Button 
+              variant="contained" 
+              onClick={handleRegisterBlockchain} 
+              sx={{ mt: 1 }}
+              disabled={isBlockchainRegistered}
+            >
               Register
             </Button>
             {isBlockchainRegistered && (

@@ -2,10 +2,15 @@ import { Box, Button, TextField, Typography, styled } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react'
 import { englishRegex, ipRegex, urlRegex } from '../../../utils/regex';
 import { verifyServerUrl } from '../../../apis/server-api';
+import { registerTaInfo, getTaInfo } from '../../../apis/ta-api';
+import CustomDialog from '../../../components/dialog/CustomDialog';
+import { formatErrorMessage } from '../../../utils/error-handler';
+import { useDialogs } from '@toolpad/core';
 
 interface Props {
   step: number;
   onRegister: (step: number, validate: () => boolean, afterValidate?: () => Promise<void>) => void;
+  setIsLoading: (loading: boolean) => void;
 }
 
 interface formData {
@@ -18,12 +23,11 @@ interface ErrorState {
   serverUrl?: string;
 }
 
-
-const Step2TaInfo: React.FC<Props> = ({ step, onRegister }) => {
+const Step2TaInfo: React.FC<Props> = ({ step, onRegister, setIsLoading }) => {
   const [formData, setFormData] = useState<formData>({ name: '', serverUrl: '' });
-  const [initialData, setInitialData] = useState<formData>({ name: '', serverUrl: '' });
   const [errors, setErrors] = useState<ErrorState>({});
   const [isServerValid, setIsServerValid] = useState(false);
+  const dialogs = useDialogs();
 
   const handleChange = (field: keyof formData) => (event: React.ChangeEvent<HTMLInputElement>) => {
       const newValue = event.target.value;
@@ -99,12 +103,42 @@ const Step2TaInfo: React.FC<Props> = ({ step, onRegister }) => {
   };
 
   const afterValidate = async () => {
-    console.log('Step2 afterValidate: Password ready for next step');
+    setIsLoading(true);
+    await registerTaInfo(formData).then((response) => {
+    }).catch((error) => {
+      setIsLoading(false);
+      dialogs.open(CustomDialog, {
+        title: 'Notification',
+        message: formatErrorMessage(error, `Failed to register TA info`),
+        isModal: true,
+      });
+      throw error;
+    });
   };
 
   useEffect(() => {
-    const isModified = JSON.stringify(formData) !== JSON.stringify(initialData);
-  }, [formData, initialData]);
+      const fetchTaInfo = () => {
+        setIsLoading(true);
+        getTaInfo()
+            .then(({ data }) => {
+              if (data.name || data.serverUrl) {
+                setFormData({
+                  name: data.name || '',
+                  serverUrl: data.serverUrl || '',
+                });
+              
+                setIsServerValid(!!data.serverUrl);
+              }
+            setIsLoading(false);
+        })
+        .catch((err) => {
+          console.error('Error fetching TA info:', err);
+          setIsLoading(false);
+        });
+      };
+
+      fetchTaInfo();
+  }, []);
 
   useEffect(() => {
     onRegister(step, validate, afterValidate);
