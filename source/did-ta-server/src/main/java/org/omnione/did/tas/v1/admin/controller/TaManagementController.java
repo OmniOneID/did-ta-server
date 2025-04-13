@@ -18,11 +18,7 @@ package org.omnione.did.tas.v1.admin.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.constants.UrlConstant.Tas;
-import org.omnione.did.tas.v1.admin.dto.tas.RegisterTaDidDocumentReqDto;
-import org.omnione.did.tas.v1.admin.dto.tas.RegisterTaInfoReqDto;
-import org.omnione.did.tas.v1.admin.dto.tas.RequestTasInfoReqDto;
-import org.omnione.did.tas.v1.admin.dto.tas.TasInfoResDto;
-import org.omnione.did.tas.v1.admin.dto.tas.ValidateTaSecretReqDto;
+import org.omnione.did.tas.v1.admin.dto.tas.*;
 import org.omnione.did.tas.v1.admin.service.TaManagementService;
 import org.omnione.did.tas.v1.common.dto.EmptyResDto;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -84,5 +80,20 @@ public class TaManagementController {
     @RequestMapping(value = "/ta/register-ta-did", method = RequestMethod.POST)
     public EmptyResDto registerTaDidDocument(@RequestBody RegisterTaDidDocumentReqDto registerTaDidDocumentReqDto) {
         return taManagementService.registerTaDidDocument(registerTaDidDocumentReqDto);
+    }
+
+    @RequestMapping(value = "/ta/generate-certificate", method = RequestMethod.POST)
+    public Map<String, Object> generateTaCertificate(@RequestBody GenerateTaCertificateReqDto generateTaCertificateReqDto) {
+        return taManagementService.generateTaCertificate(generateTaCertificateReqDto);
+    }
+
+    @RequestMapping(value = "/ta/certificate", method = RequestMethod.GET)
+    public Map<String, Object> requestTaCertificate() {
+        return taManagementService.requestTaCertificateVC();
+    }
+
+    @RequestMapping(value = "/ta/certificate", method = RequestMethod.POST)
+    public EmptyResDto registerCertificate(@RequestBody RegisterTaCertificateReqDto registerTaCertificateReqDto) {
+        return taManagementService.registerTaCertificate(registerTaCertificateReqDto);
     }
 }

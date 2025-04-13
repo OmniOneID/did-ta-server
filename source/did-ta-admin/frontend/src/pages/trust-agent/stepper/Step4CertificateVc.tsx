@@ -1,20 +1,23 @@
-import React, { useEffect, useMemo, useState } from 'react';
 import {
   Box,
   Button,
-  TextField,
-  Typography,
   Card,
   CardContent,
+  TextField,
+  Typography,
   styled,
 } from '@mui/material';
+import React, { useEffect, useMemo, useState } from 'react';
+import { generateTaCertificate, getTaCertificate, registerTaCertificate } from '../../../apis/ta-api';
+import { formatErrorMessage } from '../../../utils/error-handler';
 
 interface Props {
   step: number;
   onRegister: (step: number, validate: () => boolean, afterValidate?: () => Promise<void>) => void;
+  setIsLoading: (loading: boolean) => void;
 }
 
-const Step4CertificateVC: React.FC<Props> = ({ step, onRegister }) => {
+const Step4CertificateVC: React.FC<Props> = ({ step, onRegister, setIsLoading }) => {
   const [dn, setDn] = useState('');
   const [vcJson, setVcJson] = useState('');
   const [error, setError] = useState<string | undefined>(undefined);
@@ -27,7 +30,7 @@ const Step4CertificateVC: React.FC<Props> = ({ step, onRegister }) => {
     return undefined;
   };
 
-  const handleGenerateCertificate = () => {
+  const handleGenerateCertificate = async () => {
     const validationMessage = validateDn(dn);
     if (validationMessage) {
       setError(validationMessage);
@@ -36,20 +39,42 @@ const Step4CertificateVC: React.FC<Props> = ({ step, onRegister }) => {
     }
 
     setError(undefined);
-    const json = JSON.stringify({
-      type: 'CertificateVC',
-      subject: {
-        dn,
-        issuedAt: new Date().toISOString(),
-      },
-    }, null, 2);
 
-    setVcJson(json);
-    setIsCreated(true);
+    const requestBody = {
+      dn: dn,
+    };
+
+    setIsLoading(true);
+    await generateTaCertificate(requestBody)
+      .then((response) => {
+        const data = response.data;
+        setVcJson(JSON.stringify(data, null, 2));
+        setIsCreated(true);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        setError(formatErrorMessage(error, 'Failed to generate Certificate VC'));
+        setIsCreated(false);
+        setIsLoading(false);
+      });
   };
 
-  const handleRegisterBlockchain = () => {
-    setIsBlockchainRegistered(true);
+  const handleRegisterBlockchain = async () => {
+    const requestBody = {
+      certificate: vcJson,
+    };
+
+    setIsLoading(true);
+    await registerTaCertificate(requestBody)
+      .then((response) => {
+        setIsBlockchainRegistered(true);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        setError(formatErrorMessage(error, 'Failed to register Certificate VC'));
+        setIsBlockchainRegistered(false);
+        setIsLoading(false);
+      });
   };
 
   const validate = () => {
@@ -59,6 +84,25 @@ const Step4CertificateVC: React.FC<Props> = ({ step, onRegister }) => {
   const afterValidate = async () => {
     console.log('Step4 afterValidate: Password ready for next step');
   };
+
+  useEffect(() => {
+    const fetchTaCertificate = () => {
+      setIsLoading(true);
+      getTaCertificate()
+        .then(({ data }) => {
+          setVcJson(JSON.stringify(data, null, 2));
+          setIsCreated(true);
+          setIsBlockchainRegistered(true);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.error('Error fetching TA certificate:', err);
+          setIsLoading(false);
+        });
+    };
+
+    fetchTaCertificate();
+  }, []);
 
   useEffect(() => {
     onRegister(step, validate, afterValidate);
@@ -84,10 +128,28 @@ const Step4CertificateVC: React.FC<Props> = ({ step, onRegister }) => {
           Unlike other entities, the TA issues its own Certificate VC. 
           This self-signed credential proves that the TA has been formally registered as an Entity within the OpenDID system.
         </Typography>
+        <Typography variant="body1" sx={{ mt: 1 }}>
+          The <strong>Distinguished Name (DN)</strong> uniquely identifies the TA within the OpenDID system.
+          It must follow the LDAP DN format, for example:
+        </Typography>
+        <Box
+          sx={(theme) => ({
+            backgroundColor: theme.palette.mode === 'dark' ? '#333' : '#f5f5f5',
+            color: theme.palette.mode === 'dark' ? '#fff' : '#000',
+            padding: '8px 12px',
+            borderRadius: '4px',
+            fontFamily: 'monospace',
+            display: 'inline-block',
+            mt: 1,
+            border: `1px solid ${theme.palette.divider}`,
+          })}
+        >
+          cn=TrustAgent,dc=example,dc=com
+        </Box>
       </StyledDescription>
 
       {/* Generate Certificate VC */}
-      <Card variant="outlined" sx={{ mb: 4 }}>
+      <Card variant="outlined" sx={{ mb: 4, mt: 1 }}>
         <CardContent>
           <Typography variant="subtitle1" gutterBottom>
             Step 1. Generate Certificate VC
@@ -108,24 +170,35 @@ const Step4CertificateVC: React.FC<Props> = ({ step, onRegister }) => {
             sx={{ mb: 2 }}
           />
 
-          <Button variant="contained" onClick={handleGenerateCertificate}>
+          <Button 
+            variant="contained" 
+            onClick={handleGenerateCertificate}
+            disabled={isBlockchainRegistered}
+          >
             Generate
           </Button>
 
           {isCreated && (
             <>
-              <TextField
-                fullWidth
-                multiline
-                minRows={6}
-                margin="normal"
-                value={vcJson}
-                label="Certificate VC JSON"
-                InputProps={{ readOnly: true }}
-              />
-              <Typography variant="body2" color="success.main">
-                ✅ Certificate VC has been successfully created.
-              </Typography>
+              <Box
+                sx={{
+                  maxHeight: 300,
+                  overflow: 'auto',
+                  backgroundColor: '#f5f5f5',
+                  border: '1px solid #ccc',
+                  borderRadius: 1,
+                  padding: 2,
+                  fontFamily: 'monospace',
+                  whiteSpace: 'pre-wrap',
+                  marginTop: 2,
+                  fontSize: 14,
+                }}
+              >
+                {vcJson}
+              </Box>
+                <Typography variant="body2" color="success.main" sx={{ mt: 1 }}>
+                  ✅ Certificate VC has been successfully created.
+                </Typography>
             </>
           )}
         </CardContent>
@@ -138,7 +211,11 @@ const Step4CertificateVC: React.FC<Props> = ({ step, onRegister }) => {
             <Typography variant="subtitle1" gutterBottom>
               Step 2. Register to Blockchain
             </Typography>
-            <Button variant="contained" onClick={handleRegisterBlockchain}>
+            <Button 
+              variant="contained" 
+              onClick={handleRegisterBlockchain}
+              disabled={isBlockchainRegistered}
+            >
               Register
             </Button>
             {isBlockchainRegistered && (

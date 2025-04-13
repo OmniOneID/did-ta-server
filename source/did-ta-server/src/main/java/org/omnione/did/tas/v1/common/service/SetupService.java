@@ -333,6 +333,7 @@ public class SetupService {
             log.debug("\t--> Registering TAS DID document");
             existedTas.setCertificateUrl(certificateUrl);
             existedTas.setStatus(TasStatus.CERTIFICATE_VC_REQUIRED);
+            existedTas.setDid(ownerDidDoc.getId());
 
             tasRepository.save(existedTas);
 

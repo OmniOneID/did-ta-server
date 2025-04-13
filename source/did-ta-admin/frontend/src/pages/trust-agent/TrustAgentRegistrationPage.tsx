@@ -1,13 +1,14 @@
-import React, { useMemo, useState } from 'react';
-import { Stepper, Step, StepLabel, Button, Box, Typography, styled } from '@mui/material';
-import Step1TaPassword from './stepper/Step1TaPassword';
+import { Box, Button, Step, StepLabel, Stepper, Typography, styled } from '@mui/material';
+import React, { useState } from 'react';
+import { TasStatus } from '../../apis/constants/TasStatus';
+import { TaInfoResDto } from '../../apis/models/TaInfoResDto';
+import { getTaInfo } from '../../apis/ta-api';
 import FullscreenLoader from '../../components/loading/FullscreenLoader';
+import Step1TaPassword from './stepper/Step1TaPassword';
 import Step2TaInfo from './stepper/Step2TaInfo';
 import Step3DIDDocument from './stepper/Step3DidDocument';
 import Step4CertificateVC from './stepper/Step4CertificateVc';
-import { getTaInfo } from '../../apis/ta-api';
-import { TaInfoResDto } from '../../apis/models/TaInfoResDto';
-import { TasStatus } from '../../apis/constants/TasStatus';
+import StepComplete from './stepper/StepComplete';
 
 const steps = ['Enter TA Password', 'Enter TA Info', 'Register DID Document', 'Issue Certificate VC'];
 
@@ -98,8 +99,8 @@ const ServerRegistrationStepper: React.FC = () => {
 
   const getNextStepByTaStatus = (taInfo: TaInfoResDto): number => {
     if (activeStep === 0) {
-      if (taInfo.name) {
-        return 2;
+      if (!taInfo.name) {
+        return 1;
       }
 
       switch (taInfo.status) {
@@ -107,6 +108,8 @@ const ServerRegistrationStepper: React.FC = () => {
           return 2; 
         case TasStatus.CERTIFICATE_VC_REQUIRED:
           return 3;
+        case TasStatus.COMPLETED:
+          return 4;
         default:
           return activeStep + 1;
       }
@@ -116,10 +119,12 @@ const ServerRegistrationStepper: React.FC = () => {
           return 2; 
         case TasStatus.CERTIFICATE_VC_REQUIRED:
           return 3;
+        case TasStatus.COMPLETED:
+          return 4;
         default:
           return activeStep + 1;
-      }
-    }
+      } 
+    } 
 
     return activeStep + 1;
   };
@@ -131,7 +136,8 @@ const ServerRegistrationStepper: React.FC = () => {
       case 0: return <Step1TaPassword step={0} onRegister={registerStepFns} setIsLoading={setIsLoading}/>;
       case 1: return <Step2TaInfo step={1} onRegister={registerStepFns} setIsLoading={setIsLoading} />;
       case 2: return <Step3DIDDocument step={2} onRegister={registerStepFns} setIsLoading={setIsLoading} />;
-      case 3: return <Step4CertificateVC step={3} onRegister={registerStepFns} />;
+      case 3: return <Step4CertificateVC step={3} onRegister={registerStepFns} setIsLoading={setIsLoading} />;
+      case 4: return <StepComplete />;
       default: return 'Unknown step';
     }
   };
@@ -141,28 +147,38 @@ const ServerRegistrationStepper: React.FC = () => {
       <FullscreenLoader open={isLoading} />
       <StyledContainer>
         <StyledTitle>TA Registration</StyledTitle>
+  
         <StyledStepperWrapper>
-          <StyledStepper activeStep={activeStep}>
-            {steps.map((label) => (
-              <StyledStep key={label}>
-                <StyledStepLabel>{label}</StyledStepLabel>
-              </StyledStep>
-            ))}
-          </StyledStepper>
-
+          {activeStep < steps.length && (
+            <StyledStepper activeStep={activeStep}>
+              {steps.map((label) => (
+                <StyledStep key={label}>
+                  <StyledStepLabel>{label}</StyledStepLabel>
+                </StyledStep>
+              ))}
+            </StyledStepper>
+          )}
+  
           <StyledContentWrapper>
             {getStepContent(activeStep)}
-            <StyledActionWrapper>
-              <Button variant='outlined' disabled={activeStep === 0} onClick={handleBack}>Back</Button>
-              <Button variant="contained" onClick={handleNext}>
-                {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
-              </Button>
-            </StyledActionWrapper>
+  
+            {activeStep < steps.length && (
+              <StyledActionWrapper>
+                <Button variant='outlined' disabled={activeStep === 0} onClick={handleBack}>
+                  Back
+                </Button>
+                <Button variant="contained" onClick={handleNext}>
+                  {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+                </Button>
+              </StyledActionWrapper>
+            )}
           </StyledContentWrapper>
         </StyledStepperWrapper>
       </StyledContainer>
     </>
   );
+  
+  
 };
 
 export default ServerRegistrationStepper;

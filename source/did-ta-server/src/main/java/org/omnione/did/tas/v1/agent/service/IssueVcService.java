@@ -96,6 +96,29 @@ public class IssueVcService {
     }
 
     /**
+     * Sets the TAS claim information for the VC.
+     *
+     * @param issueVcParam The parameter object for issuing a VC
+     * @param tas The TAS entity
+     */
+    public void setTasClaimInfo(IssueVcParam issueVcParam, Tas tas, String dn) {
+        HashMap<String, ClaimInfo> claimInfoMap = new HashMap<>();
+
+        ClaimInfo subjectClaim = new ClaimInfo();
+        subjectClaim.setCode("org.opendid.v1.subject");
+        subjectClaim.setValue(dn.getBytes(StandardCharsets.UTF_8));
+
+        ClaimInfo roleClaim = new ClaimInfo();
+        roleClaim.setCode("org.opendid.v1.role");
+        roleClaim.setValue(RoleType.TAS.getRawValue().getBytes(StandardCharsets.UTF_8));
+
+        claimInfoMap.put(subjectClaim.getCode(), subjectClaim);
+        claimInfoMap.put(roleClaim.getCode(), roleClaim);
+
+        BaseCoreVcUtil.setClaimInfo(issueVcParam, claimInfoMap);
+    }
+
+    /**
      * Sets the entity claim information for the VC.
      *
      * @param issueVcParam The parameter object for issuing a VC

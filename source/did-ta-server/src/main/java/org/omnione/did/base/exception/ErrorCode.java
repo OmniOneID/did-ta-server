@@ -246,6 +246,7 @@ public enum ErrorCode {
     FAILED_TO_REGISTER_CERTIFICATE_VC_SCHEMA("SSRVTRA18532", "Failed to register certificate VC schema.", 500),
     FAILED_TO_REGISTER_VC_PLAN_FROM_ISSUER("SSRVTRA18533", "Failed to register VC plan from issuer.", 500),
     INVALID_VC_SCHEMA("SSRVTRA18534", "Failed to process VC schema: invalid schema.", 400),
+    INVALID_CERTIFICATE_VC_JSON_FORMAT("SSRVTRA18535", "Failed to process certificate VC: invalid JSON format.", 500),
 
 
     // 14. Token-related errors (19000 ~ 19499)

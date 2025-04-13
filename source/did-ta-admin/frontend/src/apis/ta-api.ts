@@ -21,3 +21,16 @@ export const generateTaDidDocument = async () => {
 export const registerTaDidDocument = async (data: any) => {
     return postData(API_BASE_URL, `ta/register-ta-did`, data);
 }
+
+export const generateTaCertificate = async (data: any) => {
+    return postData(API_BASE_URL, `ta/generate-certificate`, data);
+}
+
+export const getTaCertificate = async () => {
+    return getData(API_BASE_URL, "ta/certificate");
+}
+
+export const registerTaCertificate = async (data: any) => {
+    return postData(API_BASE_URL, `ta/certificate`, data);
+}
+

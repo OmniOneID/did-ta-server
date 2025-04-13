@@ -1,15 +1,14 @@
-import React, { useEffect, useMemo, useState } from 'react';
 import {
   Box,
   Button,
-  TextField,
-  Typography,
   Card,
   CardContent,
-  styled,
+  Typography,
+  styled
 } from '@mui/material';
-import { generateTaDidDocument, registerTaDidDocument } from '../../../apis/ta-api';
 import { useDialogs } from '@toolpad/core';
+import React, { useEffect, useMemo, useState } from 'react';
+import { generateTaDidDocument, getTaInfo, registerTaDidDocument } from '../../../apis/ta-api';
 import CustomDialog from '../../../components/dialog/CustomDialog';
 import { formatErrorMessage } from '../../../utils/error-handler';
 
@@ -77,6 +76,29 @@ const Step3DIDDocument: React.FC<Props> = ({ step, onRegister, setIsLoading }) =
   };
 
   useEffect(() => {
+    const fetchTaInfo = () => {
+      setIsLoading(true);
+      getTaInfo()
+          .then(({ data }) => {
+            if (data.didDocument) {
+              setDidDocument(JSON.stringify(data.didDocument, null, 2));
+              setIsDidGenerated(true);
+            }
+            if (data.status === 'CERTIFICATE_VC_REQUIRED') {
+              setIsBlockchainRegistered(true);
+            }
+            setIsLoading(false);
+      })
+      .catch((err) => {
+        console.error('Error fetching TA info:', err);
+        setIsLoading(false);
+      });
+    };
+
+    fetchTaInfo();
+}, []);
+
+  useEffect(() => {
     onRegister(step, validate, afterValidate);
   }, [isBlockchainRegistered]);
 
@@ -106,7 +128,12 @@ const Step3DIDDocument: React.FC<Props> = ({ step, onRegister, setIsLoading }) =
           <Typography variant="subtitle1" gutterBottom>
             Step 1. Generate DID Document
           </Typography>
-          <Button variant="contained" onClick={handleGenerateDid} sx={{ mt: 1 }}>
+          <Button 
+            variant="contained" 
+            onClick={handleGenerateDid} 
+            sx={{ mt: 1 }}
+            disabled={isBlockchainRegistered}
+          >
             Generate
           </Button>
 

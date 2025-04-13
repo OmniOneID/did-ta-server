@@ -16,14 +16,13 @@
 
 package org.omnione.did.tas.v1.admin.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonParseException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Hex;
 import org.omnione.did.base.db.constant.TasStatus;
+import org.omnione.did.base.db.domain.CertificateVc;
 import org.omnione.did.base.db.domain.Tas;
 import org.omnione.did.base.db.domain.VcSchema;
 import org.omnione.did.base.db.repository.TasRepository;
@@ -40,19 +39,17 @@ import org.omnione.did.core.manager.DidManager;
 import org.omnione.did.data.model.did.DidDocument;
 import org.omnione.did.data.model.enums.did.ProofPurpose;
 import org.omnione.did.data.model.enums.vc.VcType;
-import org.omnione.did.tas.v1.admin.dto.tas.RegisterTaDidDocumentReqDto;
-import org.omnione.did.tas.v1.admin.dto.tas.RegisterTaInfoReqDto;
-import org.omnione.did.tas.v1.admin.dto.tas.RequestTasInfoReqDto;
-import org.omnione.did.tas.v1.admin.dto.tas.TasInfoResDto;
-import org.omnione.did.tas.v1.admin.dto.tas.ValidateTaSecretReqDto;
+import org.omnione.did.tas.v1.admin.dto.tas.*;
 import org.omnione.did.tas.v1.agent.dto.tas.RequestEnrollTasReqDto;
 import org.omnione.did.tas.v1.agent.dto.tas.RequestEnrollTasReqDto.Request;
 import org.omnione.did.tas.v1.agent.helper.CertificateVcSchemaProvider;
 import org.omnione.did.tas.v1.agent.service.FileWalletService;
 import org.omnione.did.tas.v1.common.dto.EmptyResDto;
 import org.omnione.did.tas.v1.common.service.DidDocService;
+import org.omnione.did.tas.v1.common.service.JsonParseService;
 import org.omnione.did.tas.v1.common.service.SetupService;
 import org.omnione.did.tas.v1.common.service.TasService;
+import org.omnione.did.tas.v1.common.service.query.CertificateVcQueryService;
 import org.omnione.did.tas.v1.common.service.query.TasQueryService;
 import org.omnione.did.tas.v1.common.service.query.VcSchemaQueryService;
 import org.omnione.did.wallet.key.WalletManagerInterface;
@@ -88,6 +85,8 @@ public class TaManagementService {
     private final TaAuthProperty taAuthProperty;
     private final TasRepository tasRepository;
     private final FileWalletService fileWalletService;
+    private final CertificateVcQueryService certificateVcQueryService;
+    private final JsonParseService jsonParseService;
 
     /**
      * Request TA information.
@@ -339,7 +338,7 @@ public class TaManagementService {
         // Step2: Create DID Document
         DidDocument didDocument = createDidDocumentAuto(walletManager);
 
-        return parseVcDidDocToMap(didDocument.toJson());
+        return jsonParseService.parseDidDocToMap(didDocument.toJson());
     }
 
     /*
@@ -373,25 +372,6 @@ public class TaManagementService {
     }
 
     /**
-     * Parse VC DID Document JSON to Map.
-     *
-     * @param didDocJson DID Document JSON
-     * @return Parsed Map
-     */
-    private Map<String, Object> parseVcDidDocToMap(String didDocJson) {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.readValue(didDocJson, Map.class);
-        } catch (JsonProcessingException e) {
-            log.error("Failed to parse DID Document JSON (invalid format): {}", didDocJson, e);
-            throw new OpenDidException(ErrorCode.INVALID_DID_DOCUMENT);
-        } catch (Exception e) {
-            log.error("Unexpected error while parsing DID DOcument JSON", e);
-            throw new OpenDidException(ErrorCode.INVALID_DID_DOCUMENT);
-        }
-    }
-
-    /**
      * Register TA DID Document.
      *
      * @param registerTaDidDocumentReqDto Request DTO
@@ -402,5 +382,47 @@ public class TaManagementService {
         String certificateUrl = existedTas.getServerUrl() + "/api/v1/certificate-vc";
 
         return setupService.registerTasDidDocument(registerTaDidDocumentReqDto.getDidDocument().getBytes(),certificateUrl);
+    }
+
+    public Map<String, Object> generateTaCertificate(GenerateTaCertificateReqDto generateTaCertificateReqDto) {
+
+        Tas existedTas = tasQueryService.findTas();
+
+        log.debug("\t--> Registering Certificate VC Schema");
+        registerCertificateVcSchema(existedTas.getServerUrl());
+
+        return tasService.generateCertificate(generateTaCertificateReqDto.getDn());
+    }
+
+    /**
+     * Register Certificate VC Schema.
+     *
+     */
+    public Map<String, Object> requestTaCertificateVC() {
+        CertificateVc certificateVc = certificateVcQueryService.findCertificateVc();
+        return jsonParseService.parseCertificateVcToMap(certificateVc.getVc());
+    }
+
+    public EmptyResDto registerTaCertificate(RegisterTaCertificateReqDto registerTaCertificateReqDto) {
+
+        try {
+            String registrationPassword = taAuthProperty.getAuth().getRegistrationPassword();
+            RequestEnrollTasReqDto requestEnrollTasReqDto = RequestEnrollTasReqDto.builder()
+                    .id("12345")
+                    .request(Request.builder()
+                            .password(registrationPassword)
+                            .build())
+                    .build();
+
+            tasService.requestEnrollTas(registerTaCertificateReqDto.getCertificate(), requestEnrollTasReqDto);
+        } catch (OpenDidException e) {
+            log.error("Failed to register TA Certificate", e);
+            throw e;
+        } catch (Exception e) {
+            log.error("Unexpected error while registering TA Certificate", e);
+            throw new OpenDidException(ErrorCode.FAILED_TO_REGISTER_TA_CERTIFICATE);
+        }
+
+        return new EmptyResDto();
     }
 }

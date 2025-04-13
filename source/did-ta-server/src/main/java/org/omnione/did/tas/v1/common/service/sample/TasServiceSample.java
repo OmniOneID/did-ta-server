@@ -25,6 +25,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
 /**
  * this is a sample implementation of the TasService interface.
  */
@@ -40,5 +42,15 @@ public class TasServiceSample implements TasService {
                 .certVcRef("http://192.168.3.130:8090/tas/api/v1/certificate-vc")
                 .txId("ee559cb8-17e6-44b5-9ed7-aa7088c9bac9")
                 .build();
+    }
+
+    @Override
+    public Map<String, Object> generateCertificate(String dn) {
+        return null;
+    }
+
+    @Override
+    public RequestEnrollTasResDto requestEnrollTas(String certificate, RequestEnrollTasReqDto requestEnrollTasReqDto) {
+        return null;
     }
 }

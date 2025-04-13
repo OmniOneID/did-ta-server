@@ -19,9 +19,14 @@ package org.omnione.did.tas.v1.common.service;
 import org.omnione.did.tas.v1.agent.dto.tas.RequestEnrollTasReqDto;
 import org.omnione.did.tas.v1.agent.dto.tas.RequestEnrollTasResDto;
 
+import java.util.Map;
+
 /**
  * Tas service interface for managing TAS enrollments.
  */
 public interface TasService {
     RequestEnrollTasResDto requestEnrollTas(RequestEnrollTasReqDto requestEnrollTasReqDto);
+
+    Map<String, Object> generateCertificate(String dn);
+    RequestEnrollTasResDto requestEnrollTas(String certificate, RequestEnrollTasReqDto requestEnrollTasReqDto);
 }
