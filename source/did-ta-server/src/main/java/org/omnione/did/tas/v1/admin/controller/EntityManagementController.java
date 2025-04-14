@@ -19,6 +19,8 @@ package org.omnione.did.tas.v1.admin.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.constants.UrlConstant;
+import org.omnione.did.tas.v1.admin.dto.admin.RegisterDidFromEntityReqDto;
+import org.omnione.did.tas.v1.admin.dto.entity.ApproveDidReqDto;
 import org.omnione.did.tas.v1.admin.service.EntityManagementService;
 import org.omnione.did.tas.v1.admin.dto.entity.EntityInfoDto;
 import org.omnione.did.tas.v1.admin.dto.entity.VerifyEntityNameUniqueResDto;
@@ -27,6 +29,8 @@ import org.omnione.did.tas.v1.common.service.SetupService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -70,5 +74,16 @@ public class EntityManagementController {
     public EmptyResDto registerEntitiesSimple() {
         return entityManagementService.registerEntitiesSimple();
     }
+
+    @PostMapping(value = "/entities/register-did/public")
+    public EmptyResDto registerDidFromEntity(@RequestBody RegisterDidFromEntityReqDto registerDidFromEntityReqDto) {
+        return entityManagementService.registerDidFromEntity(registerDidFromEntityReqDto);
+    }
+
+    @PostMapping(value = "/entities/approve-did")
+    public EmptyResDto approveEntityDidDocument(@RequestBody ApproveDidReqDto approveDidReqDto) {
+        return entityManagementService.approveEntityDidDocument(approveDidReqDto);
+    }
+
 
 }

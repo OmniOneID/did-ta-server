@@ -31,3 +31,7 @@ export const verifyEntityNameUnique = async (name: string) => {
 export const registerEntitiesSimple = async () => {
     return postData(API_BASE_URL, `entities/register-simple`, null);
 }
+
+export const approveEntityDid = async (data: any) => {
+    return postData(API_BASE_URL, `entities/approve-did`, data);
+}

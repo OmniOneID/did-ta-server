@@ -15,15 +15,21 @@
  */
 package org.omnione.did.tas.v1.admin.dto.entity;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Builder;
 import lombok.Getter;
 import org.omnione.did.base.db.domain.Entity;
+import org.omnione.did.base.exception.ErrorCode;
+import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.data.model.did.DidDocument;
+import org.omnione.did.tas.v1.common.service.JsonParseService;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 
 /**
  * DTO for requesting Entity information.
@@ -40,7 +46,7 @@ public class EntityInfoDto {
     private final String certificateUrl;
     private final String createdAt;
     private final String updatedAt;
-    private DidDocument didDocument;
+    private Map<String, Object> didDocument;
 
     public static EntityInfoDto fromEntity(Entity entity) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -69,7 +75,7 @@ public class EntityInfoDto {
                 .status(entity.getStatus().name())
                 .serverUrl(entity.getServerUrl())
                 .certificateUrl(entity.getCertificateUrl())
-                .didDocument(didDocument)
+                .didDocument(parseDidDocToMap(didDocument.toJson()))
                 .createdAt(formatInstant(entity.getCreatedAt(), formatter))
                 .updatedAt(formatInstant(entity.getUpdatedAt(), formatter))
                 .build();
@@ -78,5 +84,16 @@ public class EntityInfoDto {
     private static String formatInstant(Instant instant, DateTimeFormatter formatter) {
         if (instant == null) return null;
         return LocalDateTime.ofInstant(instant, ZoneId.systemDefault()).format(formatter);
+    }
+
+    public static Map<String, Object> parseDidDocToMap(String didDocJson) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.readValue(didDocJson, Map.class);
+        } catch (JsonProcessingException e) {
+            throw new OpenDidException(ErrorCode.INVALID_DID_DOCUMENT);
+        } catch (Exception e) {
+            throw new OpenDidException(ErrorCode.INVALID_DID_DOCUMENT);
+        }
     }
 }

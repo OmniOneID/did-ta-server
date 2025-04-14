@@ -66,6 +66,7 @@ public enum ErrorCode {
     TA_SECRET_NOT_MATCHED("SSRVTRA13009", "Failed to process request: TA secret does not match.", 400),
     TAS_DID_DOCUMENT_ALREADY_REGISTERED("SSRVTRA13010", "Failed to register TAS DID Document: document is already registered.", 400),
 
+
     // 04. TAS configuration-related errors (13500 ~ 13999)
     EMAIL_TEMPLATE_READ_FAILED("SSRVTRA13500", "Failed to read email template.", 400),
     FCM_SEND_FAILED("SSRVTRA13501", "Failed to send FCM message.", 500),
@@ -93,6 +94,11 @@ public enum ErrorCode {
     ENROLL_REQUEST_ENTITY_DID_MISMATCH("SSRVTRA14006", "The provided DID does not match the entity that requested registration.", 400),
     FAIL_TO_REQUEST_ENROLL_ENTITY("SSRVTRA14007", "Failed to process the 'request-enroll-entity' API request.", 500),
     FAILED_TO_REGISTER_QUICK_ENTITY("SSRVTRA14008", "Failed to register quick entity.", 500),
+    ENTITY_NAME_ALREADY_REGISTERED("SSRVTRA14009", "Failed to register entity: entity name is already registered.", 400),
+    ENTITY_DID_DOCUMENT_NOT_FOUND("SSRVTRA14010", "Failed to find entity DID Document: o registration request has been made.", 400),
+    FAILED_TO_REGISTER_DID_FROM_ENTITY("SSRVTRA14011", "Failed to register DID from entity.", 500),
+    FAILED_TO_APPROVE_ENTITY_DID_DOCUMENT("SSRVTRA14012", "Failed to approve entity DID Document.", 500),
+
 
     // 06. Blockchain-related errors (15000 ~ 15499)
     BLOCKCHAIN_INITIALIZATION_FAILED("SSRVTRA15000", "Failed to initialize blockchain.", 500),
@@ -209,6 +215,7 @@ public enum ErrorCode {
     INVOKED_DOCUMENT_GENERATION_FAILED("SSRVTRA18017", "Failed to generate Invoked Document.", 500),
     DID_DOCUMENT_ID_MISMATCH("SSRVTRA18018", "Failed to process request: ID of DID Document does not match the previously requested DID.", 400),
     INVALID_DID_DOCUMENT("SSRVTRA18019", "Failed to process DID Document: invalid document.", 400),
+    DID_ALREADY_REGISTERED("SSRVTRA18020", "Failed to register DID: DID is already registered.", 400),
 
     // 13. VC-related errors (18500 ~ 18999)
     VC_ID_NOT_MATCH("SSRVTRA18500", "VC ID does not match.", 400),
