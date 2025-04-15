@@ -9,6 +9,8 @@ import Step2TaInfo from './stepper/Step2TaInfo';
 import Step3DIDDocument from './stepper/Step3DidDocument';
 import Step4CertificateVC from './stepper/Step4CertificateVc';
 import StepComplete from './stepper/StepComplete';
+import { useServerStatus } from '../../context/ServerStatusContext';
+import { Navigate } from 'react-router';
 
 const steps = ['Enter TA Password', 'Enter TA Info', 'Register DID Document', 'Issue Certificate VC'];
 
@@ -56,16 +58,13 @@ const StyledActionWrapper = styled(Box)({
   gap: "12px",
 });
 
-const ServerRegistrationStepper: React.FC = () => {
+const TrustAgentRegistrationPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [activeStep, setActiveStep] = useState<number>(0);
   const [validateFns, setValidateFns] = useState<Record<number, () => boolean>>({});
   const [afterValidateFns, setAfterValidateFns] = useState<Record<number, () => Promise<void>>>({});
-
-  const onValidateFn = (step: number, fn: () => boolean) => {
-    setValidateFns((prev) => ({ ...prev, [step]: fn }));
-  };
-
+  const { serverStatus } = useServerStatus();
+  
   const registerStepFns = (step: number, validate: () => boolean, afterValidate?: () => Promise<void>) => {
     setValidateFns(prev => ({ ...prev, [step]: validate }));
     if (afterValidate) {
@@ -142,6 +141,10 @@ const ServerRegistrationStepper: React.FC = () => {
     }
   };
 
+  if (serverStatus === 'COMPLETED') {
+    return <Navigate to="/ta-management" replace />;
+  }
+
   return (
     <>
       <FullscreenLoader open={isLoading} />
@@ -181,4 +184,4 @@ const ServerRegistrationStepper: React.FC = () => {
   
 };
 
-export default ServerRegistrationStepper;
+export default TrustAgentRegistrationPage;

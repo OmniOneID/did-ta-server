@@ -1,14 +1,11 @@
-import { Box, Button, Popover, styled, TextField, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Button, Popover, styled, TextField, Typography } from '@mui/material';
 import React, { useMemo, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router';
 import { useServerStatus } from '../../context/ServerStatusContext';
 
 export default function TrustAgentManagementPage() {
-  const { taInfo } = useServerStatus();
+  const { taInfo, serverStatus } = useServerStatus();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const { setServerStatus, setTaInfo, serverStatus } = useServerStatus();
-  const navigate = useNavigate();
-  const theme = useTheme();
 
   if (!taInfo) {
     return (

@@ -19,6 +19,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.db.constant.EntityStatus;
+import org.omnione.did.base.db.constant.Role;
 import org.omnione.did.base.db.domain.Entity;
 import org.omnione.did.base.db.domain.EntityDidDocument;
 import org.omnione.did.base.db.domain.Tas;
@@ -41,6 +42,7 @@ import org.omnione.did.data.model.vc.VcMeta;
 import org.omnione.did.data.model.vc.VerifiableCredential;
 import org.omnione.did.tas.v1.admin.dto.admin.RegisterDidFromEntityReqDto;
 import org.omnione.did.tas.v1.admin.dto.entity.ApproveDidReqDto;
+import org.omnione.did.tas.v1.admin.dto.entity.RequestEntityStatusResDto;
 import org.omnione.did.tas.v1.admin.dto.entity.SendEntityInfoReqDto;
 import org.omnione.did.tas.v1.agent.service.FileWalletService;
 import org.omnione.did.tas.v1.agent.service.IssueVcService;
@@ -414,6 +416,11 @@ public class EntityManagementService {
      * Stores the registration information (including the DID Document) in the database.
      * Admin approval is required to complete the registration.
      *
+     * Note:
+     *  * - Currently, if an entity tries to register with the same DID or Name again,
+     *  *   there is no mechanism to cancel or override the existing registration.
+     *  * - This feature is planned for future implementation.
+     *
      * @param registerDidFromEntityReqDto the request DTO containing the DID document and other information
      * @return an empty response DTO
      */
@@ -448,7 +455,7 @@ public class EntityManagementService {
             Entity savedEntity = entityRepository.save(Entity.builder()
                     .did(ownerDidDoc.getId())
                     .name(registerDidFromEntityReqDto.getName())
-                    .role(registerDidFromEntityReqDto.getRole())
+                    .role(Role.fromRoleType(registerDidFromEntityReqDto.getRole()))
                     .serverUrl(registerDidFromEntityReqDto.getServerUrl())
                     .certificateUrl(registerDidFromEntityReqDto.getCertificateUrl())
                     .status(EntityStatus.DID_DOCUMENT_REQUIRED)
@@ -521,6 +528,27 @@ public class EntityManagementService {
             log.error("\t--> Failed to approve DID document: {}", approveDidReqDto.getEntityId(), e);
             throw new OpenDidException(ErrorCode.FAILED_TO_APPROVE_ENTITY_DID_DOCUMENT);
         }
+    }
+
+    public RequestEntityStatusResDto requestEntityStatus(String did) {
+        log.debug("=== Starting requestEntityStatus ===");
+
+        // Fetch the entity by DID
+        log.debug("\t--> Fetching entity by DID: {}", did);
+        Entity entity = entityQueryService.findEntityByDid(did);
+
+        // Check if the entity is null
+        if (entity == null) {
+            log.error("\t--> Entity not found: {}", did);
+            throw new OpenDidException(ErrorCode.ENTITY_INFO_NOT_FOUND);
+        }
+
+        log.debug("=== Finished requestEntityStatus ===");
+
+        // Return the status of the entity
+        return RequestEntityStatusResDto.builder()
+                .status(entity.getStatus())
+                .build();
     }
 
 }

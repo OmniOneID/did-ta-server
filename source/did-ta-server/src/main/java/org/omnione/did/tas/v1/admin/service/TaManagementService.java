@@ -286,7 +286,7 @@ public class TaManagementService {
                     .build();
 
             tasRepository.save(tas);
-            return TasInfoResDto.fromEntity(tas);
+            return buildTasInfoResponse(tas);
         }
 
         if (tas.getStatus() == TasStatus.COMPLETED) {

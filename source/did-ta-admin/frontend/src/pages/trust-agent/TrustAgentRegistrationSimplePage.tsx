@@ -17,7 +17,7 @@ interface ErrorState {
   serverUrl?: string;
 }
 
-const TrustAgentRegisterPage = () => {
+const TrustAgentRegisterPageSimple = () => {
   const navigate = useNavigate();
   const { setServerStatus, setTaInfo, serverStatus } = useServerStatus();
   const dialogs = useDialogs();
@@ -122,9 +122,9 @@ const TrustAgentRegisterPage = () => {
     gap: theme.spacing(2), 
   })), []);
 
-  // if (serverStatus === 'COMPLETED') {
-  //   return <Navigate to="/ta-management" replace />;
-  // }
+  if (serverStatus === 'COMPLETED') {
+    return <Navigate to="/ta-management" replace />;
+  }
 
   return (
     <>
@@ -172,4 +172,4 @@ const TrustAgentRegisterPage = () => {
     
 };
 
-export default TrustAgentRegisterPage;
+export default TrustAgentRegisterPageSimple;

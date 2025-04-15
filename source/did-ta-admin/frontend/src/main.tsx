@@ -17,7 +17,7 @@ import EmailServerSettingsPage from './pages/notification-provider/email-server/
 import EmailTemplateSettingsPage from './pages/notification-provider/email-template/EmailTemplateSettingsPage';
 import NotificationProviderPage from './pages/notification-provider/NotificationProviderPage';
 import TrustAgentManagementPage from './pages/trust-agent/TrustAgentManagementPage';
-import TrustAgentRegistrationPage from './pages/trust-agent/TrustAgentRegistrationSimplePage';
+import TrustAgentRegistrationPageSimple from './pages/trust-agent/TrustAgentRegistrationSimplePage';
 import PushServerSettingsPage from './pages/notification-provider/push-server/PushServerSettingsPage';
 import AllowedCaManagementPage from './pages/list-provider/allowed-ca/AllowedCaManagementPage';
 import ListProviderPage from './pages/list-provider/ListProviderPage';
@@ -31,7 +31,7 @@ import VcPlanDetailPage from './pages/list-provider/vc-plan/VcPlanDetailPage';
 import AdminDetailPage from './pages/admins/AdminDetailPage';
 import AdminRegisterPage from './pages/admins/AdminRegisterPage';
 import DashboardPage from './pages/dashboard/DashboardPage';
-import ServerRegistrationStepper from './pages/trust-agent/TrustAgentRegistrationPage';
+import TrustAgentRegistrationPage from './pages/trust-agent/TrustAgentRegistrationPage';
 
 const router = createBrowserRouter([
   {
@@ -47,7 +47,7 @@ const router = createBrowserRouter([
           },
           {
             path: '/ta-registration',
-            Component: ServerRegistrationStepper,
+            Component: TrustAgentRegistrationPage,
           },
           {
             path: '/ta-management',

@@ -193,7 +193,7 @@ public enum ErrorCode {
     FAILED_API_REQUEST_REGISTER_WALLET("SSRVTRA17510", "Failed to process the 'request-register-wallet' API request.", 500),
     WALLET_ALREADY_EXISTS("SSRVTRA17511", "Failed to create wallet: wallet already exists.", 500),
     INVALID_WALLET_FILE_PATH("SSRVTRA17512", "Failed to create wallet: invalid wallet file path.", 500),
-    KEY_ALREADY_EXISTS("SSRVTRA17513", "Failed to generate random keys: key already exists.", 500),
+    KEY_ALREADY_EXISTS("SSRVTRA17513", "Failed to generate keys: key already exists.", 500),
     FAILED_TO_LOAD_KEY_ELEMENT("SSRVTRA17514", "Failed to load key element.", 500),
 
     // 12. DID Document-related errors (18000 ~ 18499)

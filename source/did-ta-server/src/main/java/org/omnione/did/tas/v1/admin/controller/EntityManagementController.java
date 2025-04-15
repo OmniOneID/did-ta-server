@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.constants.UrlConstant;
 import org.omnione.did.tas.v1.admin.dto.admin.RegisterDidFromEntityReqDto;
 import org.omnione.did.tas.v1.admin.dto.entity.ApproveDidReqDto;
+import org.omnione.did.tas.v1.admin.dto.entity.RequestEntityStatusResDto;
 import org.omnione.did.tas.v1.admin.service.EntityManagementService;
 import org.omnione.did.tas.v1.admin.dto.entity.EntityInfoDto;
 import org.omnione.did.tas.v1.admin.dto.entity.VerifyEntityNameUniqueResDto;
@@ -85,5 +86,9 @@ public class EntityManagementController {
         return entityManagementService.approveEntityDidDocument(approveDidReqDto);
     }
 
+    @GetMapping(value = "/entities/request-status")
+    public RequestEntityStatusResDto requestEntityStatus(@RequestParam("did") String did) {
+        return entityManagementService.requestEntityStatus(did);
+    }
 
 }

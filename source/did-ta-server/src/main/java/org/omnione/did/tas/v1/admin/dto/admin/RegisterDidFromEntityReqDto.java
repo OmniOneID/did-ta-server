@@ -22,7 +22,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.omnione.did.base.db.constant.Role;
+import org.omnione.did.data.model.enums.vc.RoleType;
 
 @Getter
 @Setter
@@ -36,7 +36,7 @@ public class RegisterDidFromEntityReqDto {
     @NotNull(message = "name cannot be null")
     private String name;
     @NotNull(message = "role cannot be null")
-    private Role role;
+    private RoleType role;
     @NotNull(message = "serverUrl cannot be null")
     private String serverUrl;
     @NotNull(message = "certificateUrl cannot be null")

@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.omnione.did.tas.v1.admin.dto.tas;
+package org.omnione.did.tas.v1.admin.dto.entity;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.omnione.did.base.db.constant.EntityStatus;
 
 @Getter
 @Setter
@@ -29,7 +29,6 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 @Builder
-public class RegisterTaDidDocumentReqDto {
-    @NotNull(message = "didDocument cannot be null")
-    private String didDocument;
+public class RequestEntityStatusResDto {
+    private EntityStatus status;
 }

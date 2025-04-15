@@ -72,7 +72,6 @@ const Step3DIDDocument: React.FC<Props> = ({ step, onRegister, setIsLoading }) =
   };
 
   const afterValidate = async () => {
-    console.log('Step3 afterValidate: Password ready for next step');
   };
 
   useEffect(() => {
@@ -96,7 +95,7 @@ const Step3DIDDocument: React.FC<Props> = ({ step, onRegister, setIsLoading }) =
     };
 
     fetchTaInfo();
-}, []);
+  }, []);
 
   useEffect(() => {
     onRegister(step, validate, afterValidate);
@@ -106,7 +105,7 @@ const Step3DIDDocument: React.FC<Props> = ({ step, onRegister, setIsLoading }) =
         maxWidth: 600, 
         marginTop: theme.spacing(1),
         padding: theme.spacing(0),
-    })), []);
+  })), []);
 
   return (
     <Box>
