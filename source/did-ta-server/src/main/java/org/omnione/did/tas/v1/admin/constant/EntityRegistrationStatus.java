@@ -13,23 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.omnione.did.tas.v1.admin.dto.entity;
+package org.omnione.did.tas.v1.admin.constant;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-import org.omnione.did.base.db.constant.EntityStatus;
-import org.omnione.did.tas.v1.admin.constant.EntityRegistrationStatus;
-
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
-@Builder
-public class RequestEntityStatusResDto {
-    private EntityRegistrationStatus status;
+public enum EntityRegistrationStatus {
+    NOT_REGISTERED,
+    DID_DOCUMENT_REQUIRED,
+    CERTIFICATE_VC_REQUIRED,
+    COMPLETED,
 }

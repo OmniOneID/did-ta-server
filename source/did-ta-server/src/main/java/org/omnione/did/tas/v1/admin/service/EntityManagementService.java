@@ -40,6 +40,7 @@ import org.omnione.did.data.model.did.InvokedDidDoc;
 import org.omnione.did.data.model.enums.vc.RoleType;
 import org.omnione.did.data.model.vc.VcMeta;
 import org.omnione.did.data.model.vc.VerifiableCredential;
+import org.omnione.did.tas.v1.admin.constant.EntityRegistrationStatus;
 import org.omnione.did.tas.v1.admin.dto.admin.RegisterDidFromEntityReqDto;
 import org.omnione.did.tas.v1.admin.dto.entity.ApproveDidReqDto;
 import org.omnione.did.tas.v1.admin.dto.entity.RequestEntityStatusResDto;
@@ -535,20 +536,33 @@ public class EntityManagementService {
 
         // Fetch the entity by DID
         log.debug("\t--> Fetching entity by DID: {}", did);
-        Entity entity = entityQueryService.findEntityByDid(did);
+        Entity entity = entityQueryService.findEntityByDidOrNull(did);
 
-        // Check if the entity is null
-        if (entity == null) {
-            log.error("\t--> Entity not found: {}", did);
-            throw new OpenDidException(ErrorCode.ENTITY_INFO_NOT_FOUND);
-        }
+        // Check the registration status of the entity
+        log.debug("\t--> Checking registration status of entity: {}", entity);
+        EntityRegistrationStatus entityStatus = checkEntityRegistrationStatus(entity);
+        log.debug("\t--> Entity registration status: {}", entityStatus);
 
         log.debug("=== Finished requestEntityStatus ===");
 
         // Return the status of the entity
         return RequestEntityStatusResDto.builder()
-                .status(entity.getStatus())
+                .status(entityStatus)
                 .build();
+    }
+
+    private EntityRegistrationStatus checkEntityRegistrationStatus(Entity entity) {
+        if (entity == null) {
+            return EntityRegistrationStatus.NOT_REGISTERED;
+        } else if (entity.getStatus() == EntityStatus.COMPLETED) {
+            return EntityRegistrationStatus.COMPLETED;
+        } else if (entity.getStatus() == EntityStatus.CERTIFICATE_VC_REQUIRED) {
+            return EntityRegistrationStatus.CERTIFICATE_VC_REQUIRED;
+        } else if (entity.getStatus() == EntityStatus.DID_DOCUMENT_REQUIRED) {
+            return EntityRegistrationStatus.DID_DOCUMENT_REQUIRED;
+        } else {
+            return EntityRegistrationStatus.NOT_REGISTERED;
+        }
     }
 
 }

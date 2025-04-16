@@ -9,7 +9,7 @@ export const getNavigationByStatus = (serverStatus: string | null): Navigation=>
         kind: 'divider',
       },
       { 
-        segment: 'ta-registration', title: 'TA Registration', icon: <StorageIcon /> 
+        segment: 'ta-registration', title: 'TA Registration'
       },
       {
         kind: 'divider',

@@ -3,7 +3,7 @@ import React from 'react';
 
 const StepComplete: React.FC = () => {
   const handleGoHome = () => {
-    window.location.href = '/'; // Adjust if using react-router
+    window.location.href = '/'; 
   };
 
   return (
@@ -12,7 +12,7 @@ const StepComplete: React.FC = () => {
       flexDirection="column"
       alignItems="center"
       textAlign="center"
-      mt={8} // move content closer to top
+      mt={8}
       px={2}
     >
       <Typography variant="h4" gutterBottom>
