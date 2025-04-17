@@ -17,8 +17,10 @@
 package org.omnione.did.base.db.repository;
 
 import org.omnione.did.base.db.constant.WalletStatus;
+import org.omnione.did.base.db.domain.User;
 import org.omnione.did.base.db.domain.Wallet;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -29,7 +31,7 @@ import java.util.Optional;
  * for more specific database interactions with Wallet entities.
  */
 @Repository
-public interface WalletRepository extends JpaRepository<Wallet, Long> {
+public interface WalletRepository extends JpaRepository<Wallet, Long>, QuerydslPredicateExecutor<Wallet>, WalletRepositoryAdmin {
     Optional<Wallet> findByWalletId(String walletId);
     long countByWalletId(String walletId);
     long countByWalletIdAndDidAndStatus(String walletId, String did, WalletStatus status);

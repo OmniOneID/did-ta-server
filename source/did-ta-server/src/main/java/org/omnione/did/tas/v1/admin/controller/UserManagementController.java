@@ -18,7 +18,9 @@ package org.omnione.did.tas.v1.admin.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.constants.UrlConstant;
+import org.omnione.did.list.v1.admin.dto.user.AppDto;
 import org.omnione.did.list.v1.admin.dto.user.UserDto;
+import org.omnione.did.list.v1.admin.dto.user.WalletDto;
 import org.omnione.did.tas.v1.admin.dto.entity.EntityInfoDto;
 import org.omnione.did.tas.v1.admin.service.UserManagementService;
 import org.springframework.data.domain.Page;
@@ -43,5 +45,25 @@ public class UserManagementController {
     @GetMapping(value = "/users")
     public UserDto findUser(@RequestParam Long id) {
         return userManagementService.findUser(id);
+    }
+
+    @GetMapping(value = "/apps/list")
+    public Page<AppDto> searchApps(String searchKey, String searchValue, Pageable pageable) {
+        return userManagementService.searchApps(searchKey, searchValue, pageable);
+    }
+
+    @GetMapping(value = "/apps")
+    public AppDto findApp(@RequestParam Long id) {
+        return userManagementService.findApp(id);
+    }
+
+    @GetMapping(value = "/wallets/list")
+    public Page<WalletDto> searchWallets(String searchKey, String searchValue, Pageable pageable) {
+        return userManagementService.searchWallets(searchKey, searchValue, pageable);
+    }
+
+    @GetMapping(value = "/wallets")
+    public WalletDto findWallet(@RequestParam Long id) {
+        return userManagementService.findWallet(id);
     }
 }

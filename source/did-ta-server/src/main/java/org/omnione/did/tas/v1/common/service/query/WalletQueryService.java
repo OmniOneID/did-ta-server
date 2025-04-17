@@ -17,13 +17,22 @@
 package org.omnione.did.tas.v1.common.service.query;
 
 import org.omnione.did.base.db.constant.WalletStatus;
+import org.omnione.did.base.db.domain.User;
 import org.omnione.did.base.db.domain.Wallet;
 import org.omnione.did.base.db.repository.WalletRepository;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.omnione.did.list.v1.admin.dto.user.UserDto;
+import org.omnione.did.list.v1.admin.dto.user.WalletDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Service for querying Wallet.
@@ -131,5 +140,23 @@ public class WalletQueryService {
             log.error("Unexpected error occurred while finding Wallet for walletId {}, userId {}: {}", walletId, userId, e.getMessage());
             throw new OpenDidException(ErrorCode.WALLET_INFO_NOT_FOUND);
         }
+    }
+
+    /**
+     * Searches for a list of Wallets based on the given search key and value.
+     *
+     * @param searchKey Key to search for.
+     * @param searchValue Value to search for.
+     * @param pageable Pageable.
+     * @return Page of WalletDto.
+     */
+    public Page<WalletDto> searchWalletList(String searchKey, String searchValue, Pageable pageable) {
+        Page<Wallet> walletPage = walletRepository.searchWallets(searchKey, searchValue, pageable);
+
+        List<WalletDto> walletDtos = walletPage.getContent().stream()
+                .map(WalletDto::fromWallet)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(walletDtos, pageable, walletPage.getTotalElements());
     }
 }

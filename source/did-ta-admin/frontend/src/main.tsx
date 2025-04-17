@@ -36,6 +36,8 @@ import UserListPage from './pages/user/user-list/UserListPage';
 import AppListPage from './pages/user/app-list/AppListPage';
 import WalletListPage from './pages/user/wallet-list/WalletListPage';
 import UserDetailPage from './pages/user/user-list/UserDetailPage';
+import AppDetailPage from './pages/user/app-list/AppDetailPage';
+import WalletDetailPage from './pages/user/wallet-list/WalletDetailPage';
 
 const router = createBrowserRouter([
   {
@@ -162,8 +164,16 @@ const router = createBrowserRouter([
             Component: UserListPage,
           },
           {
+            path: 'user-management/app-list/:id',
+            Component: AppDetailPage,
+          },
+          {
             path: 'user-management/app-list',
             Component: AppListPage,
+          },
+          {
+            path: 'user-management/wallet-list/:id',
+            Component: WalletDetailPage,
           },
           {
             path: 'user-management/wallet-list',

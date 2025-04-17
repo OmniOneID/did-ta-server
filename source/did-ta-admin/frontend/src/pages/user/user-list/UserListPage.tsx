@@ -7,6 +7,7 @@ import FullscreenLoader from '../../../components/loading/FullscreenLoader';
 import { fetchUsers } from '../../../apis/user-api';
 import { formatErrorMessage } from '../../../utils/error-handler';
 import CustomDataGrid from '../../../components/data-grid/CustomDataGrid';
+import CustomDialog from '../../../components/dialog/CustomDialog';
 
 type Props = {}
 
@@ -40,12 +41,15 @@ const UserListPage = (props: Props) => {
         setLoading(true);
         fetchUsers(paginationModel.page, paginationModel.pageSize, null, null)
             .then((response) => {
-            setRows(response.data.content);
-            setTotalRows(response.data.totalElements);
+                setRows(response.data.content);
+                setTotalRows(response.data.totalElements);
             })
             .catch((err) => {
-            console.error("Failed to fetch Allowed User Lists. ", err);
-            navigate('/error', { state: { message: formatErrorMessage(err, "Failed to fetch Allowed User Lists") } });
+                dialogs.open(CustomDialog, {
+                    title: 'Notification',
+                    message: formatErrorMessage(err, "Failed to fetch User List"),
+                    isModal: true,
+                });
             })
             .finally(() => setLoading(false));
     }, [paginationModel]);
@@ -58,13 +62,13 @@ const UserListPage = (props: Props) => {
         borderRadius: theme.shape.borderRadius,
         backgroundColor: '#ffffff',
         boxShadow: '0px 4px 8px 0px #0000001A',
-      })), []);
+    })), []);
   
-      const StyledSubTitle = useMemo(() => styled(Typography)({
-          textAlign: 'left',
-          fontSize: '24px',
-          fontWeight: 700,
-      }), []);
+    const StyledSubTitle = useMemo(() => styled(Typography)({
+        textAlign: 'left',
+        fontSize: '24px',
+        fontWeight: 700,
+    }), []);
 
     return (
         <>

@@ -5,19 +5,20 @@ import { useNavigate, useParams } from 'react-router';
 import CustomDialog from '../../../components/dialog/CustomDialog';
 import FullscreenLoader from '../../../components/loading/FullscreenLoader';
 import { formatErrorMessage } from '../../../utils/error-handler';
-import { getUserInfo } from '../../../apis/user-api';
+import { getAppInfo } from '../../../apis/user-api';
 
 type Props = {}
 
 interface FormData {
-    did: string;
-    pii: string;
+    appId: string;
+    pushToken: string;
     status: string;
     createdAt: string;
     updatedAt: string;
+    userId: number;
 }
 
-const UserDetailPage = (props: Props) => {
+const AppDetailPage = (props: Props) => {
     const { id } = useParams();
     const navigate = useNavigate();
     const dialogs = useDialogs();
@@ -26,11 +27,12 @@ const UserDetailPage = (props: Props) => {
     const numericId = id ? parseInt(id, 10) : null;
     const [isLoading, setIsLoading] = useState<boolean>(true); 
     const [formData, serFormData] = useState<FormData>({
-        did: '',
-        pii: '',
+        appId: '',
+        pushToken: '',
         status: '',
         createdAt: '',
-        updatedAt: ''
+        updatedAt: '',
+        userId: 0
     });
 
     useEffect(() => {
@@ -41,7 +43,7 @@ const UserDetailPage = (props: Props) => {
                     message: 'Invalid Path.', 
                     isModal: true 
                 },{
-                    onClose: async () => navigate('/user-management/user-list', { replace: true }),
+                    onClose: async () => navigate('/user-management/app-list', { replace: true }),
                 });
                 return;
             }
@@ -49,13 +51,14 @@ const UserDetailPage = (props: Props) => {
             setIsLoading(true);
 
             try {
-                const { data } = await getUserInfo(numericId);
+                const { data } = await getAppInfo(numericId);
                 serFormData({
-                    did: data.did,
-                    pii: data.pii,
+                    appId: data.appId,
+                    pushToken: data.pushToken,
                     status: data.status,
                     createdAt: data.createdAt,
-                    updatedAt: data.updatedAt
+                    updatedAt: data.updatedAt,
+                    userId: data.userId
                 });
                 setIsLoading(false);
             } catch (err) {
@@ -63,7 +66,7 @@ const UserDetailPage = (props: Props) => {
 
                 dialogs.open(CustomDialog, {
                     title: 'Notification',
-                    message: formatErrorMessage(err, "Failed to fetch User information"),
+                    message: formatErrorMessage(err, "Failed to fetch App information"),
                     isModal: true,
                 });
             }
@@ -96,25 +99,25 @@ const UserDetailPage = (props: Props) => {
     return (
         <>
             <FullscreenLoader open={isLoading} />
-            <Typography variant="h4">User List</Typography>
+            <Typography variant="h4">App List</Typography>
             <StyledContainer>
-                <StyledTitle>User Detail Information</StyledTitle>
+                <StyledTitle>App Detail Information</StyledTitle>
                 <StyledInputArea>
                     <TextField 
                         fullWidth 
                         label="DID" 
                         variant="standard" 
                         margin="normal" 
-                        value={formData?.did || ''} 
+                        value={formData?.pushToken || ''} 
                         slotProps={{ input: { readOnly: true } }} 
                     />
 
                     <TextField 
                         fullWidth 
-                        label="PII" 
+                        label="Push Token" 
                         variant="standard" 
                         margin="normal" 
-                        value={formData?.pii || ''} 
+                        value={formData?.pushToken || ''} 
                         slotProps={{ input: { readOnly: true } }} 
                     />
 
@@ -148,7 +151,7 @@ const UserDetailPage = (props: Props) => {
                     )}
                 </StyledInputArea>
                 <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 3 }}>
-                    <Button variant="outlined" color="primary" onClick={() => navigate('/user-management/user-list')}>
+                    <Button variant="outlined" color="primary" onClick={() => navigate('/user-management/app-list')}>
                         Back
                     </Button>
                 </Box>
@@ -157,4 +160,4 @@ const UserDetailPage = (props: Props) => {
     )
 }
 
-export default UserDetailPage
+export default AppDetailPage

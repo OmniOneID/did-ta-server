@@ -5,19 +5,21 @@ import { useNavigate, useParams } from 'react-router';
 import CustomDialog from '../../../components/dialog/CustomDialog';
 import FullscreenLoader from '../../../components/loading/FullscreenLoader';
 import { formatErrorMessage } from '../../../utils/error-handler';
-import { getUserInfo } from '../../../apis/user-api';
+import { getWalletInfo } from '../../../apis/user-api';
 
 type Props = {}
 
 interface FormData {
+    walletId: string;
     did: string;
-    pii: string;
     status: string;
+    registeredAt: string;
+    cancelledAt: string;
     createdAt: string;
     updatedAt: string;
 }
 
-const UserDetailPage = (props: Props) => {
+const WalletDetailPage = (props: Props) => {
     const { id } = useParams();
     const navigate = useNavigate();
     const dialogs = useDialogs();
@@ -26,9 +28,11 @@ const UserDetailPage = (props: Props) => {
     const numericId = id ? parseInt(id, 10) : null;
     const [isLoading, setIsLoading] = useState<boolean>(true); 
     const [formData, serFormData] = useState<FormData>({
+        walletId: '',
         did: '',
-        pii: '',
         status: '',
+        registeredAt: '',
+        cancelledAt: '',
         createdAt: '',
         updatedAt: ''
     });
@@ -49,11 +53,13 @@ const UserDetailPage = (props: Props) => {
             setIsLoading(true);
 
             try {
-                const { data } = await getUserInfo(numericId);
+                const { data } = await getWalletInfo(numericId);
                 serFormData({
+                    walletId: data.walletId,
                     did: data.did,
-                    pii: data.pii,
                     status: data.status,
+                    registeredAt: data.registeredAt,
+                    cancelledAt: data.cancelledAt,
                     createdAt: data.createdAt,
                     updatedAt: data.updatedAt
                 });
@@ -63,7 +69,7 @@ const UserDetailPage = (props: Props) => {
 
                 dialogs.open(CustomDialog, {
                     title: 'Notification',
-                    message: formatErrorMessage(err, "Failed to fetch User information"),
+                    message: formatErrorMessage(err, "Failed to fetch Wallet information"),
                     isModal: true,
                 });
             }
@@ -93,12 +99,13 @@ const UserDetailPage = (props: Props) => {
         marginTop: theme.spacing(2),
     })), []);
 
-    return (
+return (
         <>
             <FullscreenLoader open={isLoading} />
-            <Typography variant="h4">User List</Typography>
+            <Typography variant="h4">Wallet List</Typography>
             <StyledContainer>
-                <StyledTitle>User Detail Information</StyledTitle>
+                <StyledTitle>Wallet Detail Information</StyledTitle>
+
                 <StyledInputArea>
                     <TextField 
                         fullWidth 
@@ -111,10 +118,10 @@ const UserDetailPage = (props: Props) => {
 
                     <TextField 
                         fullWidth 
-                        label="PII" 
+                        label="ID" 
                         variant="standard" 
                         margin="normal" 
-                        value={formData?.pii || ''} 
+                        value={formData?.walletId || ''} 
                         slotProps={{ input: { readOnly: true } }} 
                     />
 
@@ -126,23 +133,23 @@ const UserDetailPage = (props: Props) => {
                         value={formData?.status || ''} 
                         slotProps={{ input: { readOnly: true } }} 
                     />
-
+                
                     <TextField 
                         fullWidth 
                         label="Registered At" 
                         variant="standard" 
                         margin="normal" 
-                        value={formData?.createdAt || ''} 
+                        value={formData?.registeredAt || ''} 
                         slotProps={{ input: { readOnly: true } }} 
                     />
 
-                    {formData?.updatedAt && (
+                    {formData?.cancelledAt && (
                         <TextField 
                             fullWidth 
-                            label="Updated At" 
+                            label="Cancelled At" 
                             variant="standard" 
                             margin="normal" 
-                            value={formData?.updatedAt || ''} 
+                            value={formData?.cancelledAt || ''} 
                             slotProps={{ input: { readOnly: true } }} 
                         />
                     )}
@@ -157,4 +164,4 @@ const UserDetailPage = (props: Props) => {
     )
 }
 
-export default UserDetailPage
+export default WalletDetailPage
