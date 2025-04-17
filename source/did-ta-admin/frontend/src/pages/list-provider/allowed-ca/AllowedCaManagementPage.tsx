@@ -37,7 +37,6 @@ const AllowedCaManagementPage = (props: Props) => {
         return rows.find(row => row.id === selectedRow) || null;
     }, [rows, selectedRow]);
 
-
     const handleDelete = async () => {
         const id = selectedRowData?.id as number;
         if (id) {

@@ -33,4 +33,9 @@ public class DidDocumentQueryService {
         return didDocumentRepository.findTop1ByEntityIdOrderByIdDesc(entityId)
                 .orElseThrow(() -> new OpenDidException(ErrorCode.ENTITY_DID_DOCUMENT_NOT_FOUND));
     }
+
+    public EntityDidDocument findDidDocumentByEntityIdOrNull(Long entityId) {
+        return didDocumentRepository.findTop1ByEntityIdOrderByIdDesc(entityId)
+                .orElse(null);
+    }
 }

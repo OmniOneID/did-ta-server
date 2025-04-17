@@ -98,6 +98,7 @@ public enum ErrorCode {
     ENTITY_DID_DOCUMENT_NOT_FOUND("SSRVTRA14010", "Failed to find entity DID Document: o registration request has been made.", 400),
     FAILED_TO_REGISTER_DID_FROM_ENTITY("SSRVTRA14011", "Failed to register DID from entity.", 500),
     FAILED_TO_APPROVE_ENTITY_DID_DOCUMENT("SSRVTRA14012", "Failed to approve entity DID Document.", 500),
+    ENTITY_NOT_DELETABLE("SSRVTRA14013", "Failed to delete entity: entity is not deletable.", 400),
 
 
     // 06. Blockchain-related errors (15000 ~ 15499)

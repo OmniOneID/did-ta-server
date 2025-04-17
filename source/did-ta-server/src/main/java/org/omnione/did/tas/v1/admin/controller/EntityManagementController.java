@@ -29,6 +29,7 @@ import org.omnione.did.tas.v1.common.dto.EmptyResDto;
 import org.omnione.did.tas.v1.common.service.SetupService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -89,6 +90,11 @@ public class EntityManagementController {
     @GetMapping(value = "/entities/request-status")
     public RequestEntityStatusResDto requestEntityStatus(@RequestParam("did") String did) {
         return entityManagementService.requestEntityStatus(did);
+    }
+
+    @DeleteMapping(value = "/entities")
+    public EmptyResDto deleteEntity(@RequestParam("id") Long id) {
+        return entityManagementService.deleteEntity(id);
     }
 
 }

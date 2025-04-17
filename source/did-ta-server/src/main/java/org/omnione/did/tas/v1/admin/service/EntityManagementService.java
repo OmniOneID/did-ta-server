@@ -531,6 +531,13 @@ public class EntityManagementService {
         }
     }
 
+    /**
+     * Request the status of an entity by its DID.
+     * This method checks the registration status of the entity and returns it.
+     *
+     * @param did the DID of the entity
+     * @return a response DTO containing the entity registration status
+     */
     public RequestEntityStatusResDto requestEntityStatus(String did) {
         log.debug("=== Starting requestEntityStatus ===");
 
@@ -551,6 +558,12 @@ public class EntityManagementService {
                 .build();
     }
 
+    /** Check the registration status of an entity.
+     * This method determines the registration status based on the entity's status.
+     *
+     * @param entity the entity to check
+     * @return the registration status of the entity
+     */
     private EntityRegistrationStatus checkEntityRegistrationStatus(Entity entity) {
         if (entity == null) {
             return EntityRegistrationStatus.NOT_REGISTERED;
@@ -563,6 +576,42 @@ public class EntityManagementService {
         } else {
             return EntityRegistrationStatus.NOT_REGISTERED;
         }
+    }
+
+    /*
+     * Delete the entity and its associated DID document.
+     * This method is used to remove an entity from the system.
+     *
+     * @param id the ID of the entity to delete
+     * @return an empty response DTO
+     */
+    public EmptyResDto deleteEntity(Long id) {
+        log.debug("=== Starting deleteEntity ===");
+
+        // Fetch the entity by ID
+        log.debug("\t--> Fetching entity by ID: {}", id);
+        Entity entity = entityQueryService.findEntityById(id);
+
+        // Check if the entity is in a deletable state
+        if (entity.getStatus() != EntityStatus.DID_DOCUMENT_REQUIRED) {
+            log.error("\t--> Entity is not in a deletable state: {}", entity);
+            throw new OpenDidException(ErrorCode.ENTITY_NOT_DELETABLE);
+        }
+
+        // Delete Entity's DID Document
+        EntityDidDocument entityDidDocument = didDocumentQueryService.findDidDocumentByEntityIdOrNull(entity.getId());
+        if (entityDidDocument != null) {
+            log.debug("\t--> Deleting Entity's DID Document: {}", entityDidDocument);
+            didDocumentRepository.delete(entityDidDocument);
+        }
+
+        // Delete the entity
+        log.debug("\t--> Deleting entity: {}", entity);
+        entityRepository.delete(entity);
+
+        log.debug("=== Finished deleteEntity ===");
+
+        return new EmptyResDto();
     }
 
 }
