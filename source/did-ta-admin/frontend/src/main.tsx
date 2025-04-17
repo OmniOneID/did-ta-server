@@ -32,6 +32,10 @@ import AdminDetailPage from './pages/admins/AdminDetailPage';
 import AdminRegisterPage from './pages/admins/AdminRegisterPage';
 import DashboardPage from './pages/dashboard/DashboardPage';
 import TrustAgentRegistrationPage from './pages/trust-agent/TrustAgentRegistrationPage';
+import UserListPage from './pages/user/user-list/UserListPage';
+import AppListPage from './pages/user/app-list/AppListPage';
+import WalletListPage from './pages/user/wallet-list/WalletListPage';
+import UserDetailPage from './pages/user/user-list/UserDetailPage';
 
 const router = createBrowserRouter([
   {
@@ -148,6 +152,22 @@ const router = createBrowserRouter([
           {
             path: 'admin-management',
             Component: AdminManagementPage,
+          },
+          {
+            path: 'user-management/user-list/:id',
+            Component: UserDetailPage,
+          },
+          {
+            path: 'user-management/user-list',
+            Component: UserListPage,
+          },
+          {
+            path: 'user-management/app-list',
+            Component: AppListPage,
+          },
+          {
+            path: 'user-management/wallet-list',
+            Component: WalletListPage,
           },
         ],
       },
