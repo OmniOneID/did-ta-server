@@ -27,6 +27,8 @@ const AllowedCaManagementPage = (props: Props) => {
     const [totalRows, setTotalRows] = useState<number>(0);
     const [selectedRow, setSelectedRow] = useState<string | number | null>(null);
     const [rows, setRows] = useState<AllowedCaRow[]>([]);
+    const [searchText, setSearchText] = useState<string>('');
+    const [selectedSearch, setSelectedSearch] = useState<string>('');
 
     const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
         page: 0,
@@ -163,6 +165,11 @@ const AllowedCaManagementPage = (props: Props) => {
                   totalRows={totalRows} 
                   paginationModel={paginationModel} 
                   setPaginationModel={setPaginationModel} 
+                  setSearchText={setSearchText}
+                  selectedSearch={selectedSearch}
+                  setSelectedSearch={setSelectedSearch}
+                  enableSearch={false} 
+                  searchText={''}   
               />
             </StyledContainer>
         </>

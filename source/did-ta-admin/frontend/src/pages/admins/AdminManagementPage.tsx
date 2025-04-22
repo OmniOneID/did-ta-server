@@ -33,6 +33,8 @@ const AdminManagementPage = (props: Props) => {
     const [rows, setRows] = useState<AdminRow[]>([]);
     const [requirePasswordReset, setRequirePasswordReset] = useState(false);
     const { session } = useSession(); 
+    const [searchText, setSearchText] = useState<string>('');
+    const [selectedSearch, setSelectedSearch] = useState<string>('');
 
     const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
         page: 0,
@@ -197,6 +199,11 @@ const AdminManagementPage = (props: Props) => {
               totalRows={totalRows} 
               paginationModel={paginationModel} 
               setPaginationModel={setPaginationModel} 
+              searchText={searchText}
+              setSearchText={setSearchText}
+              selectedSearch={selectedSearch}
+              setSelectedSearch={setSelectedSearch}
+              enableSearch={false}
           />
 
           <PasswordResetDialog

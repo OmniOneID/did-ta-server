@@ -25,6 +25,8 @@ const EntityManagementPage = (props: Props) => {
   const [rows, setRows] = useState<{ id: string | number }[]>([]);
   const [totalRows, setTotalRows] = useState<number>(0);
   const [selectedRow, setSelectedRow] = useState<string | number | null>(null);
+  const [searchText, setSearchText] = useState<string>('');
+  const [selectedSearch, setSelectedSearch] = useState<string>('');
 
   const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
     page: 0,
@@ -136,59 +138,64 @@ const EntityManagementPage = (props: Props) => {
           Entity Management
         </Typography>
         <CustomDataGrid 
-            rows={rows} 
-            columns={[
-              { field: 'did', headerName: "DID", width: 200},
-              { 
-                field: 'name', 
-                headerName: "Name", 
-                width: 100,
-                renderCell: (params) => (
-                  <Link 
-                    component="button"
-                    variant='body2'
-                    onClick={() => navigate(`/entities/entity-management/${params.row.id}`)}
-                    sx={{ cursor: 'pointer', color: 'primary.main' }}
-                  >
-                    {params.value}
-                  </Link>),
-              },
-              { 
-                field: 'role',
-                headerName: "Role",
-                width: 100,
-                renderCell: (params) => {
-                  if (!params.value) return ""; 
-                  return params.value
-                    .toLowerCase() 
-                    .replace(/_/g, " ") 
-                    .replace(/\b\w/g, (char: string) => char.toUpperCase()); 
-                }
-              },
-              { 
-                field: 'status', 
-                headerName: "Status", 
-                width: 180,
-                renderCell: (params) => statusMapping[params.value] || params.value
-              },
-              { field: 'serverUrl', headerName: "URL", width: 200},
-              { field: 'createdAt', headerName: "Registered At", width: 150},
-              { field: 'updatedAt', headerName: "Updated At", width: 150},
-            ]} 
-            selectedRow={selectedRow} 
-            setSelectedRow={setSelectedRow}
-            // onRegister={() => navigate('/entities/entity-registration')}
-            additionalButtons={[
-              { label: 'Quick Register', onClick: () => handelRegisterSimple(), color: 'primary' },
-            ]}
-            paginationMode="server" 
-            totalRows={totalRows} 
-            paginationModel={paginationModel} 
-            setPaginationModel={setPaginationModel} 
-            onDelete={() => {
-              const row = rows.find(r => r.id === selectedRow);
-              if (row) handleDelete(row);
-            }}
+          rows={rows}
+          columns={[
+            { field: 'did', headerName: "DID", width: 200 },
+            {
+              field: 'name',
+              headerName: "Name",
+              width: 100,
+              renderCell: (params) => (
+                <Link
+                  component="button"
+                  variant='body2'
+                  onClick={() => navigate(`/entities/entity-management/${params.row.id}`)}
+                  sx={{ cursor: 'pointer', color: 'primary.main' }}
+                >
+                  {params.value}
+                </Link>),
+            },
+            {
+              field: 'role',
+              headerName: "Role",
+              width: 100,
+              renderCell: (params) => {
+                if (!params.value) return "";
+                return params.value
+                  .toLowerCase()
+                  .replace(/_/g, " ")
+                  .replace(/\b\w/g, (char: string) => char.toUpperCase());
+              }
+            },
+            {
+              field: 'status',
+              headerName: "Status",
+              width: 180,
+              renderCell: (params) => statusMapping[params.value] || params.value
+            },
+            { field: 'serverUrl', headerName: "URL", width: 200 },
+            { field: 'createdAt', headerName: "Registered At", width: 150 },
+            { field: 'updatedAt', headerName: "Updated At", width: 150 },
+          ]}
+          selectedRow={selectedRow}
+          setSelectedRow={setSelectedRow}
+          // onRegister={() => navigate('/entities/entity-registration')}
+          additionalButtons={[
+            { label: 'Quick Register', onClick: () => handelRegisterSimple(), color: 'primary' },
+          ]}
+          paginationMode="server"
+          totalRows={totalRows}
+          paginationModel={paginationModel}
+          setPaginationModel={setPaginationModel}
+          onDelete={() => {
+            const row = rows.find(r => r.id === selectedRow);
+            if (row) handleDelete(row);
+          } }
+          setSearchText={setSearchText}
+          selectedSearch={selectedSearch}
+          setSelectedSearch={setSelectedSearch}
+          enableSearch={false} 
+          searchText={''}          
           />
         </StyledContainer>
     </>
