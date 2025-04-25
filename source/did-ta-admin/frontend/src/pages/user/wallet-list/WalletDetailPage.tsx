@@ -45,7 +45,7 @@ const WalletDetailPage = (props: Props) => {
                     message: 'Invalid Path.', 
                     isModal: true 
                 },{
-                    onClose: async () => navigate('/user-management/user-list', { replace: true }),
+                    onClose: async () => navigate('/user-management/wallet-list', { replace: true }),
                 });
                 return;
             }
@@ -155,7 +155,7 @@ return (
                     )}
                 </StyledInputArea>
                 <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 3 }}>
-                    <Button variant="outlined" color="primary" onClick={() => navigate('/user-management/user-list')}>
+                    <Button variant="outlined" color="primary" onClick={() => navigate('/user-management/wallet-list')}>
                         Back
                     </Button>
                 </Box>
