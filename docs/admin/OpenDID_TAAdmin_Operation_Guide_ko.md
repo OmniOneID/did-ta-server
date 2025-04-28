@@ -34,6 +34,9 @@ style: |
     color: #FF9E1B;
     text-decoration: none;
   }
+  table {
+    font-size: 16px;
+  }
 ---
 
 # Open DID TA Admin Console Guide
@@ -141,8 +144,6 @@ img {
 ## 2.3. 메뉴 구성
 
 TA Admin Console의 사이드바 메뉴는 **TA 등록 상태에 따라 화면 구성에 차이**가 있습니다.
-
-<br/>
 
 ### 2.3.1. TA 미등록 상태
 
