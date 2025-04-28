@@ -26,6 +26,5 @@
   <include file="set.1/admin-dev_list_vc_plan.xml" relativeToChangelogFile="true" />
   <include file="set.2/admin-2phase-tas.xml" relativeToChangelogFile="true" />
   <include file="set.2/admin-2phase-did_document.xml" relativeToChangelogFile="true" />
-  <include file="set.2/admin-2phase-admin.xml" relativeToChangelogFile="true" />
 
 </databaseChangeLog>
