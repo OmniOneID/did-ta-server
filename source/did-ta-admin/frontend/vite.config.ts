@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   server: {
+    host: '0.0.0.0',
     proxy: {
       // /noti/admin/v1 → http://localhost:8090/noti/admin/v1
       '/noti/admin/v1': {
