@@ -59,16 +59,16 @@ public class ListCredentialDefinitionRepositoryAdminImpl implements ListCredenti
     }
 
     public BooleanExpression buildPredicate(String searchKey, String searchValue) {
-        QListVcSchema qListVcSchema = QListVcSchema.listVcSchema;
+        QListCredentialDefinition qListCredentialDefinition = QListCredentialDefinition.listCredentialDefinition;
         BooleanExpression predicate = Expressions.asBoolean(true).isTrue();
 
         if (searchKey != null && searchValue != null && !searchValue.isEmpty()) {
             switch (searchKey) {
                 case "issuerDid":
-                    predicate = predicate.and(qListVcSchema.issuerDid.eq(searchValue));
+                    predicate = predicate.and(qListCredentialDefinition.issuerDid.eq(searchValue));
                     break;
                 case "issuerName":
-                    predicate = predicate.and(qListVcSchema.issuerName.eq(searchValue));
+                    predicate = predicate.and(qListCredentialDefinition.issuerName.eq(searchValue));
                     break;
                 default:
                     predicate = predicate.and(Expressions.FALSE);

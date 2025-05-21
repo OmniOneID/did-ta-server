@@ -35,8 +35,11 @@ public class ListCredentialDefinition extends BaseEntity implements Serializable
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "credential_schema_id", nullable = false, length = 200)
+    @Column(name = "credential_definition_id", nullable = false, length = 200)
     private String credentialDefinitionId;
+
+    @Column(name = "credential_schema_id", nullable = false, length = 200)
+    private String credentialSchemaId;
 
     @Column(name = "issuer_did", nullable = false, length = 200)
     private String issuerDid;
@@ -44,6 +47,6 @@ public class ListCredentialDefinition extends BaseEntity implements Serializable
     @Column(name = "issuer_name", nullable = false, length = 200)
     private String issuerName;
 
-    @Column(name = "credentialSchema", nullable = false)
+    @Column(name = "credentialDefinition", nullable = false)
     private String credentialDefinition;
 }

@@ -23,6 +23,8 @@ import org.omnione.did.base.db.domain.ListCredentialDefinition;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.data.model.schema.VcSchema;
+import org.omnione.did.zkp.datamodel.definition.CredentialDefinition;
+import org.omnione.did.zkp.datamodel.util.GsonWrapper;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -35,31 +37,33 @@ import java.util.Map;
 public class ListCredentialDefinitionDto {
     private final Long id;
     private final String credentialDefinitionId;
+    private final String credentialSchemaId;
     private final String issuerDid;
     private final String issuerName;
     private final String name;
     private final String description;
-    private final Map<String, Object> vcSchema;
+    private final Map<String, Object> credentialDefinition;
     private final String createdAt;
     private final String updatedAt;
     private final String entityName;
 
-    public static ListCredentialDefinitionDto fromListCredentialDefinition(ListCredentialDefinition credentialDefinition) {
+    public static ListCredentialDefinitionDto fromListCredentialDefinition(ListCredentialDefinition listCredentialDefinition) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-        VcSchema vcSchema = new VcSchema();
-        vcSchema.fromJson(credentialDefinition.getCredentialDefinition());
+        CredentialDefinition credentialDefinition = GsonWrapper.getGson()
+                .fromJson(listCredentialDefinition.getCredentialDefinition(), CredentialDefinition.class);
 
-        Map<String, Object> parsedVcSchema = parseVcSchema(credentialDefinition.getCredentialDefinition());
+        Map<String, Object> parsedCredentialDefinition = parseVcSchema(listCredentialDefinition.getCredentialDefinition());
 
         return ListCredentialDefinitionDto.builder()
-                .id(credentialDefinition.getId())
-                .credentialDefinitionId(credentialDefinition.getCredentialDefinitionId())
-                .issuerDid(credentialDefinition.getIssuerDid())
-                .issuerName(credentialDefinition.getIssuerName())
-                .vcSchema(parsedVcSchema)
-                .createdAt(formatInstant(credentialDefinition.getCreatedAt(), formatter))
-                .updatedAt(formatInstant(credentialDefinition.getUpdatedAt(), formatter))
+                .id(listCredentialDefinition.getId())
+                .credentialDefinitionId(listCredentialDefinition.getCredentialDefinitionId())
+                .credentialSchemaId(listCredentialDefinition.getCredentialSchemaId())
+                .issuerDid(listCredentialDefinition.getIssuerDid())
+                .issuerName(listCredentialDefinition.getIssuerName())
+                .credentialDefinition(parsedCredentialDefinition)
+                .createdAt(formatInstant(listCredentialDefinition.getCreatedAt(), formatter))
+                .updatedAt(formatInstant(listCredentialDefinition.getUpdatedAt(), formatter))
                 .build();
     }
 
@@ -72,19 +76,21 @@ public class ListCredentialDefinitionDto {
         }
     }
 
-    public static ListCredentialDefinitionDto fromListCredentialDefinitionForAgent(ListCredentialDefinition listCredentialDefinitiona) {
+    public static ListCredentialDefinitionDto fromListCredentialDefinitionForAgent(ListCredentialDefinition listCredentialDefinition) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-        VcSchema vcSchema = new VcSchema();
-        vcSchema.fromJson(listCredentialDefinitiona.getCredentialDefinition());
+        CredentialDefinition credentialDefinition = GsonWrapper.getGson()
+                .fromJson(listCredentialDefinition.getCredentialDefinition(), CredentialDefinition.class);
 
-        Map<String, Object> parsedVcSchema = parseVcSchema(listCredentialDefinitiona.getCredentialDefinition());
+        Map<String, Object> parsedCredentialDefinition = parseVcSchema(listCredentialDefinition.getCredentialDefinition());
 
         return ListCredentialDefinitionDto.builder()
-                .credentialDefinitionId(listCredentialDefinitiona.getCredentialDefinitionId())
-                .issuerDid(listCredentialDefinitiona.getIssuerDid())
-                .issuerName(listCredentialDefinitiona.getIssuerName())
-                .vcSchema(parsedVcSchema)
+                .id(listCredentialDefinition.getId())
+                .credentialDefinitionId(listCredentialDefinition.getCredentialDefinitionId())
+                .credentialSchemaId(listCredentialDefinition.getCredentialSchemaId())
+                .issuerDid(listCredentialDefinition.getIssuerDid())
+                .issuerName(listCredentialDefinition.getIssuerName())
+                .credentialDefinition(parsedCredentialDefinition)
                 .build();
     }
 

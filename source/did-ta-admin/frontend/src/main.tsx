@@ -38,6 +38,10 @@ import WalletListPage from './pages/user/wallet-list/WalletListPage';
 import UserDetailPage from './pages/user/user-list/UserDetailPage';
 import AppDetailPage from './pages/user/app-list/AppDetailPage';
 import WalletDetailPage from './pages/user/wallet-list/WalletDetailPage';
+import CredentialSchemaDetailPage from './pages/list-provider/credential-schema/CredentialSchemaDetailPage';
+import CredentialSchemaManagementPage from './pages/list-provider/credential-schema/CredentialSchemaManagementPage';
+import CredentialDefinitionDetailPage from './pages/list-provider/credential-definition/CredentialDefinitionDetailPage';
+import CredentialDefinitionManagementPage from './pages/list-provider/credential-definition/CredentialDefinitionManagementPage';
 
 const router = createBrowserRouter([
   {
@@ -142,6 +146,22 @@ const router = createBrowserRouter([
           {
             path: 'list-settings/vc-plan',
             Component: VcPlanManagementPage,
+          },
+          {
+            path: 'list-settings/credential-schema/:id',
+            Component: CredentialSchemaDetailPage
+          },
+          {
+            path: 'list-settings/credential-schema',
+            Component: CredentialSchemaManagementPage,
+          },
+          {
+            path: 'list-settings/credential-definition/:id',
+            Component: CredentialDefinitionDetailPage
+          },
+          {
+            path: 'list-settings/credential-definition',
+            Component: CredentialDefinitionManagementPage,
           },
           {
             path: 'admin-management/admin-registration',

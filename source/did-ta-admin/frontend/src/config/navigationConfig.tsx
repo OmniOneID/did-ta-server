@@ -80,6 +80,14 @@ export const getNavigationByStatus = (serverStatus: string | null): Navigation=>
           segment: 'vc-plan',
           title: 'VC Plan Management',
         },
+        {
+          segment: 'credential-schema',
+          title: 'Credential Schema Management',
+        },
+        {
+          segment: 'credential-definition',
+          title: 'Credential Definition Management',
+        },
       ],
     },
     {

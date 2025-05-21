@@ -113,6 +113,7 @@ public class ListCredentialDefinitionManagementService {
                 .issuerDid(issuerDid)
                 .issuerName(entity.getName())
                 .credentialDefinition(credentialDefinition.toJson())
+                .credentialSchemaId(credentialDefinition.getSchemaId())
                 .build();
 
         listCredentialDefinitionRepository.save(newSchema);
