@@ -16,6 +16,7 @@
 
 package org.omnione.did.tas.v1.agent.controller;
 
+import com.google.gson.GsonBuilder;
 import org.omnione.did.base.constants.UrlConstant;
 import org.omnione.did.tas.v1.agent.service.VcService;
 import jakarta.validation.Valid;
@@ -109,7 +110,8 @@ public class VcController {
     @RequestMapping(value = "/request-issue-profile", method = RequestMethod.POST)
     @ResponseBody
     public String requestIssueProfile(@Valid @RequestBody RequestIssueProfileReqDto requestIssueProfileReqDto) {
-        return GsonWrapper.getGson().toJson(vcService.requestIssueProfile(requestIssueProfileReqDto));
+        
+        return new GsonBuilder().create().toJson(vcService.requestIssueProfile(requestIssueProfileReqDto));
     }
 
     /**
