@@ -20,10 +20,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.datamodel.data.VcPlan;
-import org.omnione.did.base.db.domain.ListAllowedCa;
-import org.omnione.did.base.db.domain.ListVcPlan;
-import org.omnione.did.base.db.domain.ListVcSchema;
-import org.omnione.did.base.db.domain.Tas;
+import org.omnione.did.base.datamodel.enums.InitiateType;
+import org.omnione.did.base.db.domain.*;
 import org.omnione.did.base.db.repository.ListAllowedCaRepository;
 import org.omnione.did.base.db.repository.ListVcSchemaRepository;
 import org.omnione.did.base.exception.ErrorCode;
@@ -31,6 +29,8 @@ import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.common.exception.CommonSdkException;
 import org.omnione.did.common.util.JsonUtil;
 import org.omnione.did.list.v1.admin.dto.vcschema.ListVcSchemaDto;
+import org.omnione.did.list.v1.admin.service.query.ListCredentialDefinitionQueryService;
+import org.omnione.did.list.v1.admin.service.query.ListCredentialSchemaQueryService;
 import org.omnione.did.list.v1.admin.service.query.ListVcPlanQueryService;
 import org.omnione.did.list.v1.agent.dto.ca.AllowedCaResDto;
 import org.omnione.did.list.v1.agent.dto.server.RequestTaDidResDto;
@@ -38,6 +38,9 @@ import org.omnione.did.list.v1.agent.dto.vcplan.RequestVcplanListResDto;
 import org.omnione.did.list.v1.agent.dto.vcplan.VcPlanResDto;
 import org.omnione.did.list.v1.agent.dto.vcschema.RequestVcSchemaListResDto;
 import org.omnione.did.tas.v1.common.service.query.TasQueryService;
+import org.omnione.did.zkp.datamodel.definition.CredentialDefinition;
+import org.omnione.did.zkp.datamodel.schema.CredentialSchema;
+import org.omnione.did.zkp.datamodel.util.GsonWrapper;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -54,6 +57,8 @@ import java.util.stream.Collectors;
 public class ListService {
     private final ListAllowedCaRepository listAllowedCaRepository;
     private final ListVcSchemaRepository listVcSchemaRepository;
+    private final ListCredentialDefinitionQueryService listCredentialDefinitionQueryService;
+    private final ListCredentialSchemaQueryService listCredentialSchemaQueryService;
     private final ListVcPlanQueryService listVcPlanQueryService;
     private final TasQueryService tasQueryService;
 
@@ -69,16 +74,17 @@ public class ListService {
             log.debug("=== Starting findAllowedAppList ===");
 
             Optional<ListAllowedCa> allowedCa = listAllowedCaRepository.findByWalletId(walletServiceId);
-            List<String> caList = JsonUtil.deserializeFromJson(allowedCa.get().getCaList(), new TypeReference<>() {});
+            List<String> caList = JsonUtil.deserializeFromJson(allowedCa.get().getCaList(), new TypeReference<>() {
+            });
 
             return AllowedCaResDto.builder()
                     .count(caList.size())
                     .items(caList)
                     .build();
         } catch (CommonSdkException e) {
-          log.error("\t--> JSON processing error: ", e);
+            log.error("\t--> JSON processing error: ", e);
             throw new OpenDidException(ErrorCode.FAILED_API_GET_ALLOWED_CA_LIST);
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error("\t--> An unknown error occurred retrieving allowed ca list: ", e);
             throw new OpenDidException(ErrorCode.FAILED_API_GET_ALLOWED_CA_LIST);
         }
@@ -120,12 +126,34 @@ public class ListService {
      * @return The response DTO containing the filtered list of VC plans.
      * @throws OpenDidException if there's an error retrieving the VC plan list.
      */
-    public RequestVcplanListResDto findVcPlanList(List<String> tags) {
+    public RequestVcplanListResDto findVcPlanListUserInit(List<String> tags) {
+        log.debug("=== Starting findAllVcPlanList ===");
+
+        List<ListVcPlan> exsingVcPlanList = listVcPlanQueryService.findAllByInitiate(InitiateType.USER_INIT.getType());
+
+
+        return getRequestVcplanListResDto(exsingVcPlanList, tags);
+    }
+
+
+    /**
+     * Finds a list of VC plans filtered by tags.
+     * If the tags parameter is null or empty, the full list of VC plans will be returned.
+     *
+     * @param tags The list of tags to filter the VC plans (optional).
+     * @return The response DTO containing the filtered list of VC plans.
+     * @throws OpenDidException if there's an error retrieving the VC plan list.
+     */
+    public RequestVcplanListResDto findVcPlanListIssuerInit(List<String> tags) {
+        log.debug("=== Starting findAllVcPlanList ===");
+
+        List<ListVcPlan> exsingVcPlanList = listVcPlanQueryService.findAllByInitiate(InitiateType.ISSUER_INIT.getType());
+
+        return getRequestVcplanListResDto(exsingVcPlanList, tags);
+    }
+
+    public RequestVcplanListResDto getRequestVcplanListResDto(List<ListVcPlan> exsingVcPlanList, List<String> tags) {
         try {
-            log.debug("=== Starting findAllVcPlanList ===");
-
-            List<ListVcPlan> exsingVcPlanList = listVcPlanQueryService.findAll();
-
             List<VcPlan> vcPlanList = exsingVcPlanList.stream()
                     .map(vcPlan ->
                             JsonUtil.deserializeFromJson(vcPlan.getVcPlan(), VcPlan.class)
@@ -154,7 +182,7 @@ public class ListService {
      * Filters a list of VC plans based on the provided tags.
      *
      * @param vcPlanList The list of VC plans to filter
-     * @param tags The tags to filter by
+     * @param tags       The tags to filter by
      * @return List<VcPlan> The filtered list of VC plans
      */
     private List<VcPlan> filterVcPlanList(List<VcPlan> vcPlanList, List<String> tags) {
@@ -177,7 +205,7 @@ public class ListService {
      * Determines whether a VC plan should be removed based on its tags.
      *
      * @param vcPlan The VC plan to check
-     * @param tags The list of tags to check against
+     * @param tags   The list of tags to check against
      * @return boolean True if the VC plan should be removed, false otherwise
      */
     private boolean shouldRemove(VcPlan vcPlan, List<String> tags) {
@@ -211,5 +239,25 @@ public class ListService {
         return RequestTaDidResDto.builder()
                 .did(existedTasInfo.getDid())
                 .build();
+    }
+
+    public CredentialSchema findCredentialSchemaByCredentialDefinitionId(String credentialDefinitionId) {
+        String credentialSchemaId = findCredentialDefinitionByCredentialDefinitionId(credentialDefinitionId)
+                .getSchemaId();
+        String credentialSchemaJson = listCredentialSchemaQueryService.findByCredentialSchemaId(credentialSchemaId).getCredentialSchema();
+        return GsonWrapper.getGson().fromJson(credentialSchemaJson, CredentialSchema.class);
+    }
+
+    public CredentialSchema findCredentialSchemaByCredentialSchemaId(String credentialSchemaId) {
+
+        String credentialSchemaJson = listCredentialSchemaQueryService.findByCredentialSchemaId(credentialSchemaId)
+                .getCredentialSchema();
+        return GsonWrapper.getGson().fromJson(credentialSchemaJson, CredentialSchema.class);
+    }
+
+    public CredentialDefinition findCredentialDefinitionByCredentialDefinitionId(String credentialDefinitionId) {
+        String credentialDefinitionJson = listCredentialDefinitionQueryService.findByCredentialDefinitionId(credentialDefinitionId).getCredentialDefinition();
+
+        return GsonWrapper.getGson().fromJson(credentialDefinitionJson, CredentialDefinition.class);
     }
 }

@@ -19,9 +19,12 @@ import org.omnione.did.base.db.domain.ListVcPlan;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ListVcPlanRepository extends JpaRepository<ListVcPlan, Long>, QuerydslPredicateExecutor<ListVcPlan>, ListVcPlanRepositoryAdmin {
     Optional<ListVcPlan> findByVcPlanId(String vcPlanId);
     Optional<ListVcPlan> findByVcPlanIdAndIssuerDid(String vcPlanId, String issuerDid);
+
+    List<ListVcPlan> findAllByInitiate(String initiate);
 }

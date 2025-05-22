@@ -36,6 +36,7 @@ public class ListVcPlanDto {
     private final String issuerDid;
     private final String issuerName;
     private final VcPlan vcPlan;
+    private final String initiate;
     private final String createdAt;
     private final String updatedAt;
 
@@ -52,6 +53,7 @@ public class ListVcPlanDto {
                 .issuerDid(listVcPlan.getIssuerDid())
                 .issuerName(listVcPlan.getIssuerName())
                 .vcPlan(vcPlan)
+                .initiate(listVcPlan.getInitiate())
                 .createdAt(formatInstant(listVcPlan.getCreatedAt(), formatter))
                 .updatedAt(formatInstant(listVcPlan.getUpdatedAt(), formatter))
                 .build();

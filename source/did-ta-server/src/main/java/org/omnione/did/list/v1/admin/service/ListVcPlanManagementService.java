@@ -66,7 +66,7 @@ public class ListVcPlanManagementService {
             if (existingPlan != null) {
                 updateExistingVcPlan(existingPlan, vcPlan);
             } else {
-                insertNewVcPlan(request.getIssuerDid(), entity, vcPlan);
+                insertNewVcPlan(request.getIssuerDid(), request.getInitiate(), entity, vcPlan);
             }
 
             log.debug("*** Finished registerVcPlanFromIssuer ***");
@@ -105,7 +105,7 @@ public class ListVcPlanManagementService {
         listVcPlanRepository.save(existingPlan);
     }
 
-    private void insertNewVcPlan(String issuerDid, Entity entity, VcPlan vcPlan) {
+    private void insertNewVcPlan(String issuerDid, String initiate, Entity entity, VcPlan vcPlan) {
         log.debug("\t--> Inserting vc-plan");
 
         ListVcPlan newVcPlan = ListVcPlan.builder()
@@ -115,6 +115,7 @@ public class ListVcPlanManagementService {
                 .name(vcPlan.getName())
                 .description(vcPlan.getDescription())
                 .vcPlan(JsonUtil.serializeToJson(vcPlan))
+                .initiate(initiate)
                 .build();
 
         listVcPlanRepository.save(newVcPlan);

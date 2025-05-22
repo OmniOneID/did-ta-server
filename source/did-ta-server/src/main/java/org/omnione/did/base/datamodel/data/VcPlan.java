@@ -22,6 +22,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.omnione.did.base.datamodel.data.zkp.CredentialDefinition;
 
 import java.util.List;
 
@@ -44,6 +45,7 @@ public class VcPlan {
     private String validUntil;
     private List<String> tags;
     private CredentialSchema credentialSchema;
+    private CredentialDefinition credentialDefinition;
     private Option option;
     private String delegator;
     private List<String> allowedIssuers;

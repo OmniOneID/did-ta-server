@@ -13,27 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.omnione.did.list.v1.admin.dto.vcplan;
 
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+package org.omnione.did.base.datamodel.enums;
+
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.google.gson.annotations.SerializedName;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
+/**
+ * InitiateType
+ */
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
-@Builder
-public class RegisterVcPlanFromIssuerReqDto {
-    @NotNull(message = "vcPlan cannot be null")
-    private String vcPlan;
-    @NotNull(message = "issuerDid cannot be null")
-    private String issuerDid;
-    @NotNull(message = "initiate cannot be null")
-    private String initiate;
+public enum InitiateType {
+    @SerializedName("user_init")
+    USER_INIT("user_init"),
+
+    @SerializedName("issuer_init")
+    ISSUER_INIT("issuer_init");
+
+
+    @JsonValue
+    private String type;
+
+    InitiateType(String type) {
+        this.type = type;
+    }
 }

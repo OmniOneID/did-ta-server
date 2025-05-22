@@ -24,10 +24,10 @@ import org.omnione.did.list.v1.agent.dto.vcschema.RequestVcSchemaListResDto;
 import org.omnione.did.list.v1.agent.service.ListService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.omnione.did.zkp.datamodel.schema.CredentialSchema;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Controller class for handling list-related requests.
@@ -36,7 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(value = List.AGENT_V1)
-public class ListVcController  {
+public class ListVcController {
     private final ListService listService;
 
     /**
@@ -69,9 +69,16 @@ public class ListVcController  {
      * @return A {@link RequestVcplanListResDto} containing the list of VC plans that match the provided tags, or the full list if no tags are provided.
      */
     @RequestMapping(value = "/vcplan/list", method = RequestMethod.GET)
-    public RequestVcplanListResDto requestVcPlanList(@RequestParam(value = "tags[]", required = false) java.util.List<String> tags) {
-        return listService.findVcPlanList(tags);
+    public RequestVcplanListResDto requestVcPlanListUserInit(@RequestParam(value = "tags[]", required = false) java.util.List<String> tags) {
+        return listService.findVcPlanListUserInit(tags);
     }
+
+    @RequestMapping(value = "/vcplan/list/issuer", method = RequestMethod.GET)
+    public RequestVcplanListResDto requestVcPlanListIssuerInit(@RequestParam(value = "tags[]", required = false) java.util.List<String> tags) {
+        return listService.findVcPlanListIssuerInit(tags);
+    }
+
+
 
     /**
      * Retrieves a list of VC schemas.
@@ -81,5 +88,10 @@ public class ListVcController  {
     @RequestMapping(value = "/vcschema/list", method = RequestMethod.GET)
     public RequestVcSchemaListResDto requestVcSchemaList() {
         return listService.findVcSchemaList();
+    }
+
+    @GetMapping("/credential-schema")
+    public ResponseEntity<CredentialSchema> getCredentialSchemaById(@RequestParam String credentialSchemaId) {
+        return new ResponseEntity<>(listService.findCredentialSchemaByCredentialSchemaId(credentialSchemaId), HttpStatus.OK);
     }
 }
