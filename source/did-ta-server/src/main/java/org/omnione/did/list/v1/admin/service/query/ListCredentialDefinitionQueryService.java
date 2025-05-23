@@ -50,7 +50,7 @@ public class ListCredentialDefinitionQueryService {
 
     public ListCredentialDefinition findById(Long id) {
         return listCredentialDefinitionRepository.findById(id)
-                .orElseThrow(() -> new OpenDidException(ErrorCode.TODO_CODE));
+                .orElseThrow(() -> new OpenDidException(ErrorCode.CREDENTIAL_DEFINITION_RETRIEVAL_FAILED));
     }
 
     public List<ListCredentialDefinition> findByCredentialSchemaId(String schemaId) {
@@ -63,7 +63,7 @@ public class ListCredentialDefinitionQueryService {
 
     public ListCredentialDefinition findByCredentialDefinitionId(String credentialDefinitionId) {
         return listCredentialDefinitionRepository.findByCredentialDefinitionId(credentialDefinitionId)
-                .orElseThrow(() -> new OpenDidException(ErrorCode.TODO_CODE));
+                .orElseThrow(() -> new OpenDidException(ErrorCode.CREDENTIAL_DEFINITION_RETRIEVAL_FAILED));
 
     }
 }

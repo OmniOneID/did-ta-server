@@ -48,12 +48,12 @@ public class ListCredentialSchemaQueryService {
 
     public ListCredentialSchema findById(Long id) {
         return listCredentialSchemaRepository.findById(id)
-                .orElseThrow(() -> new OpenDidException(ErrorCode.TODO_CODE));
+                .orElseThrow(() -> new OpenDidException(ErrorCode.CREDENTIAL_SCHEMA_RETRIEVAL_FAILED));
     }
 
     public ListCredentialSchema findByCredentialSchemaId(String schemaId) {
         return listCredentialSchemaRepository.findByCredentialSchemaId(schemaId)
-                .orElseThrow(() -> new OpenDidException(ErrorCode.TODO_CODE));
+                .orElseThrow(() -> new OpenDidException(ErrorCode.CREDENTIAL_SCHEMA_RETRIEVAL_FAILED));
     }
 
     public ListCredentialSchema findByCredentialSchemaIdAndIssuerDid(String schemaId, String issuerDid) {

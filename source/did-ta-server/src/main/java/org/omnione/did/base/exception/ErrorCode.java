@@ -256,6 +256,8 @@ public enum ErrorCode {
     INVALID_VC_SCHEMA("SSRVTRA18534", "Failed to process VC schema: invalid schema.", 400),
     INVALID_CERTIFICATE_VC_JSON_FORMAT("SSRVTRA18535", "Failed to process certificate VC: invalid JSON format.", 500),
 
+    CREDENTIAL_SCHEMA_RETRIEVAL_FAILED("SSRVTRA18536", "Failed to retrieve Credential Schema.", 400),
+    CREDENTIAL_DEFINITION_RETRIEVAL_FAILED("SSRVTRA18536", "Failed to retrieve Credential Definition.", 400),
 
     // 14. Token-related errors (19000 ~ 19499)
     SERVER_TOKEN_GENERATION_FAILED("SSRVTRA19000", "Failed to generate server token.", 500),
