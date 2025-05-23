@@ -41,6 +41,8 @@ import org.omnione.did.tas.v1.agent.dto.vc.RequestIssueVcResDto;
 import org.omnione.did.tas.v1.agent.dto.vc.RequestRevokeVcReqDto;
 import org.omnione.did.tas.v1.agent.dto.vc.RequestRevokeVcResDto;
 import org.omnione.did.zkp.datamodel.util.GsonWrapper;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -109,9 +111,11 @@ public class VcController {
      */
     @RequestMapping(value = "/request-issue-profile", method = RequestMethod.POST)
     @ResponseBody
-    public String requestIssueProfile(@Valid @RequestBody RequestIssueProfileReqDto requestIssueProfileReqDto) {
-        
-        return new GsonBuilder().create().toJson(vcService.requestIssueProfile(requestIssueProfileReqDto));
+    public ResponseEntity<String> requestIssueProfile(@Valid @RequestBody RequestIssueProfileReqDto requestIssueProfileReqDto) {
+        String jsonResponse = new GsonBuilder().create().toJson(vcService.requestIssueProfile(requestIssueProfileReqDto));
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(jsonResponse);
     }
 
     /**
