@@ -12,6 +12,7 @@ type Props = {}
 interface CredentialDefinitionFormData {
     credentialSchemaId: string;
     credentialDefinitionId: string;
+    credentialDefinitionTag: string;
     issuerName: string;
     createdAt: string;
     updatedAt: string;
@@ -29,6 +30,7 @@ const CredentialDefinitionDetailPage = (props: Props) => {
     const [formData, serFormData] = useState<CredentialDefinitionFormData>({
         credentialSchemaId: '',
         credentialDefinitionId: '',
+        credentialDefinitionTag: '',
         issuerName: '',
         createdAt: '',
         updatedAt: '',
@@ -65,6 +67,7 @@ const CredentialDefinitionDetailPage = (props: Props) => {
                 serFormData({
                     credentialSchemaId: data.credentialSchemaId,
                     credentialDefinitionId: data.credentialDefinitionId,
+                    credentialDefinitionTag: data.credentialDefinitionTag,
                     issuerName: data.issuerName,
                     createdAt: data.createdAt,
                     updatedAt: data.updatedAt,
@@ -160,6 +163,15 @@ const CredentialDefinitionDetailPage = (props: Props) => {
                         variant="standard"
                         margin="normal" 
                         value={formData.credentialSchemaId || ''} 
+                        slotProps={{ input: { readOnly: true } }} 
+                    />
+
+                    <TextField 
+                        fullWidth
+                        label="Credential Definition Tag" 
+                        variant="standard"
+                        margin="normal" 
+                        value={formData.credentialDefinitionTag || ''} 
                         slotProps={{ input: { readOnly: true } }} 
                     />
 

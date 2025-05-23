@@ -27,6 +27,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -47,5 +49,10 @@ public class ListCredentialSchemaManagementController {
     @PostMapping(value = "/credential-schemas/public")
     public EmptyResDto registerCredentialSchemaFromIssuer(@RequestBody RegisterCredentialSchemaFromIssuerReqDto registerCredentialSchemaFromIssuerReqDto) {
         return listCredentialSchemaManagementService.registerCredentialSchemaFromIssuer(registerCredentialSchemaFromIssuerReqDto);
+    }
+
+    @GetMapping(value = "/credential-schemas/all")
+    public List<ListCredentialSchemaDto> getAllCredentialSchemas() {
+        return listCredentialSchemaManagementService.getAllCredentialSchemas();
     }
 }

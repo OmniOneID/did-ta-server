@@ -16,6 +16,7 @@ type CredentialDefinitionRow = {
     id: string | number;
     credentialSchemaId: string;
     credentialDefinitionId: string;
+    credentialDefinitionTag: string;
     issuerName: string;
     createdAt: string;
     updatedAt: string;
@@ -98,6 +99,7 @@ const CredentialDefinitionManagementPage = (props: Props) => {
                                 </Link>),
                         },
                         { field: 'credentialSchemaId', headerName: "Credential Schema ID", width: 150 },
+                        { field: 'credentialDefinitionTag', headerName: "Credential Definition Tag", width: 180 },
                         { field: 'issuerName', headerName: "Issuer Name", width: 100 },
                         { field: 'createdAt', headerName: "Registered At", width: 150 },
                         { field: 'updatedAt', headerName: "Updated At", width: 150 },

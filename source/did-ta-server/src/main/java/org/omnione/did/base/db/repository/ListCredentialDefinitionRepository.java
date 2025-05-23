@@ -20,9 +20,11 @@ import org.omnione.did.base.db.domain.ListCredentialSchema;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ListCredentialDefinitionRepository extends JpaRepository<ListCredentialDefinition, Long>, QuerydslPredicateExecutor<ListCredentialDefinition>, ListCredentialDefinitionRepositoryAdmin {
-    Optional<ListCredentialDefinition> findByCredentialDefinitionId(String definition);
-    Optional<ListCredentialDefinition> findByCredentialDefinitionIdAndIssuerDid(String definition, String issuerDid);
+    Optional<ListCredentialDefinition> findByCredentialDefinitionId(String credentialDefinitionId);
+    Optional<ListCredentialDefinition> findByCredentialDefinitionIdAndIssuerDid(String credentialDefinitionId, String issuerDid);
+    List<ListCredentialDefinition> findByCredentialSchemaId(String credentialSchemaId);
 }

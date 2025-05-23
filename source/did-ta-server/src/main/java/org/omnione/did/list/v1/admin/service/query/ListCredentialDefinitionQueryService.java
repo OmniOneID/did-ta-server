@@ -53,9 +53,8 @@ public class ListCredentialDefinitionQueryService {
                 .orElseThrow(() -> new OpenDidException(ErrorCode.TODO_CODE));
     }
 
-    public ListCredentialDefinition findByCredentialSchemaId(String schemaId) {
-        return listCredentialDefinitionRepository.findByCredentialDefinitionId(schemaId)
-                .orElseThrow(() -> new OpenDidException(ErrorCode.TODO_CODE));
+    public List<ListCredentialDefinition> findByCredentialSchemaId(String schemaId) {
+        return listCredentialDefinitionRepository.findByCredentialSchemaId(schemaId);
     }
 
     public ListCredentialDefinition findByCredentialSchemaIdAndIssuerDid(String schemaId, String issuerDid) {

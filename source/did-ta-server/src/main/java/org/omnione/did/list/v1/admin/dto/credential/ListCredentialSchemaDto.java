@@ -17,12 +17,20 @@ package org.omnione.did.list.v1.admin.dto.credential;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializer;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import org.omnione.did.base.db.domain.ListCredentialSchema;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
+import org.omnione.did.base.util.GsonSerializationUtil;
 import org.omnione.did.data.model.schema.VcSchema;
+import org.omnione.did.zkp.datamodel.schema.AttributeDef;
+import org.omnione.did.zkp.datamodel.schema.AttributeDef.ATTR_TYPE;
 import org.omnione.did.zkp.datamodel.schema.CredentialSchema;
 import org.omnione.did.zkp.datamodel.util.GsonWrapper;
 
@@ -30,9 +38,11 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Map;
 
 @Getter
+@Setter
 @Builder
 public class ListCredentialSchemaDto {
     private final Long id;
@@ -45,14 +55,12 @@ public class ListCredentialSchemaDto {
     private final String createdAt;
     private final String updatedAt;
     private final String entityName;
+    private final List<ListCredentialDefinitionSimpleDto> credentialDefinitions;
 
     public static ListCredentialSchemaDto fromListCredentialSchema(ListCredentialSchema listCredentialSchema) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-        CredentialSchema credentialSchema = GsonWrapper.getGson()
-                .fromJson(listCredentialSchema.getCredentialSchema(), CredentialSchema.class);
-
-
+        Gson customGson = GsonSerializationUtil.createGsonWithAttributeTypeSerializer();
         Map<String, Object> parsedVcSchema = parseVcSchema(listCredentialSchema.getCredentialSchema());
 
         return ListCredentialSchemaDto.builder()
@@ -90,6 +98,27 @@ public class ListCredentialSchemaDto {
                 .issuerName(listCredentialSchema.getIssuerName())
                 .name(listCredentialSchema.getName())
                 .credentialSchema(parsedVcSchema)
+                .createdAt(formatInstant(listCredentialSchema.getCreatedAt(), formatter))
+                .updatedAt(formatInstant(listCredentialSchema.getUpdatedAt(), formatter))
+                .build();
+    }
+
+    public static ListCredentialSchemaDto fromListCredentialSchema(ListCredentialSchema listCredentialSchema, List<ListCredentialDefinitionSimpleDto> credentialDefinitions) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        Gson customGson = GsonSerializationUtil.createGsonWithAttributeTypeSerializer();
+        CredentialSchema credentialSchema = GsonSerializationUtil.parseCredentialSchema(listCredentialSchema.getCredentialSchema());
+        String credentialJson = customGson.toJson(credentialSchema, CredentialSchema.class);
+
+        Map<String, Object> parsedVcSchema = parseVcSchema(credentialJson);
+        return ListCredentialSchemaDto.builder()
+                .id(listCredentialSchema.getId())
+                .credentialSchemaId(listCredentialSchema.getCredentialSchemaId())
+                .issuerDid(listCredentialSchema.getIssuerDid())
+                .issuerName(listCredentialSchema.getIssuerName())
+                .name(listCredentialSchema.getName())
+                .credentialSchema(parsedVcSchema)
+                .credentialDefinitions(credentialDefinitions)
                 .createdAt(formatInstant(listCredentialSchema.getCreatedAt(), formatter))
                 .updatedAt(formatInstant(listCredentialSchema.getUpdatedAt(), formatter))
                 .build();

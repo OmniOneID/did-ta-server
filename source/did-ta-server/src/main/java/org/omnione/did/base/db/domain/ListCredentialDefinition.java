@@ -38,6 +38,9 @@ public class ListCredentialDefinition extends BaseEntity implements Serializable
     @Column(name = "credential_definition_id", nullable = false, length = 200)
     private String credentialDefinitionId;
 
+    @Column(name = "credential_definition_tag", nullable = false, length = 100)
+    private String credentialDefinitionTag;
+
     @Column(name = "credential_schema_id", nullable = false, length = 200)
     private String credentialSchemaId;
 

@@ -59,4 +59,8 @@ public class ListCredentialSchemaQueryService {
     public ListCredentialSchema findByCredentialSchemaIdAndIssuerDid(String schemaId, String issuerDid) {
         return listCredentialSchemaRepository.findByCredentialSchemaIdAndIssuerDid(schemaId, issuerDid).orElse(null);
     }
+
+    public List<ListCredentialSchema> getAllCredentialSchemas() {
+       return listCredentialSchemaRepository.findAll();
+    }
 }

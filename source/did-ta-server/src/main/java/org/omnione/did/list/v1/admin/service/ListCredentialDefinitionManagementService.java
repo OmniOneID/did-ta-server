@@ -36,6 +36,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -54,7 +56,7 @@ public class ListCredentialDefinitionManagementService {
         return ListCredentialDefinitionDto.fromListCredentialDefinition(listCredentialDefinition);
     }
 
-    public ListCredentialDefinition findByCredentialSchemaId(String schemaId) {
+    public List<ListCredentialDefinition> findByCredentialSchemaId(String schemaId) {
         return listCredentialDefinitionQueryService.findByCredentialSchemaId(schemaId);
     }
 
@@ -114,6 +116,7 @@ public class ListCredentialDefinitionManagementService {
                 .issuerName(entity.getName())
                 .credentialDefinition(credentialDefinition.toJson())
                 .credentialSchemaId(credentialDefinition.getSchemaId())
+                .credentialDefinitionTag(credentialDefinition.getTag())
                 .build();
 
         listCredentialDefinitionRepository.save(newSchema);
