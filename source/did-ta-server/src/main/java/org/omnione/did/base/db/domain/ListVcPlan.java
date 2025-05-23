@@ -61,4 +61,7 @@ public class ListVcPlan extends BaseEntity implements Serializable {
 
     @Column(name = "vc_plan", nullable = false)
     private String vcPlan;
+
+    @Column(name = "initiate", nullable = false)
+    private String initiate;
 }

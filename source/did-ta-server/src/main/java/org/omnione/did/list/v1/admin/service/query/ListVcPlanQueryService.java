@@ -62,4 +62,9 @@ public class ListVcPlanQueryService {
     public List<ListVcPlan> findAll() {
         return listVcPlanRepository.findAll();
     }
+
+    public List<ListVcPlan> findAllByInitiate(String initiate) {
+
+        return listVcPlanRepository.findAllByInitiate(initiate);
+    }
 }

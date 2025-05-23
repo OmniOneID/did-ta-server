@@ -13,27 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.omnione.did.list.v1.admin.dto.vcplan;
 
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+package org.omnione.did.base.datamodel.data.zkp;
 
+import lombok.*;
+import org.omnione.did.base.datamodel.enums.CredentialSchemaType;
+
+/**
+ * This class represents the CredentialSchema structure.
+ */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
 @Builder
-public class RegisterVcPlanFromIssuerReqDto {
-    @NotNull(message = "vcPlan cannot be null")
-    private String vcPlan;
-    @NotNull(message = "issuerDid cannot be null")
-    private String issuerDid;
-    @NotNull(message = "initiate cannot be null")
-    private String initiate;
+public class CredentialDefinition {
+    private String id;
+    private String schemaId;
 }

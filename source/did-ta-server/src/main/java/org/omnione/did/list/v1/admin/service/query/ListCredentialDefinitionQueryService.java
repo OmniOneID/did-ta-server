@@ -61,4 +61,10 @@ public class ListCredentialDefinitionQueryService {
     public ListCredentialDefinition findByCredentialSchemaIdAndIssuerDid(String schemaId, String issuerDid) {
         return listCredentialDefinitionRepository.findByCredentialDefinitionIdAndIssuerDid(schemaId, issuerDid).orElse(null);
     }
+
+    public ListCredentialDefinition findByCredentialDefinitionId(String credentialDefinitionId) {
+        return listCredentialDefinitionRepository.findByCredentialDefinitionId(credentialDefinitionId)
+                .orElseThrow(() -> new OpenDidException(ErrorCode.TODO_CODE));
+
+    }
 }
