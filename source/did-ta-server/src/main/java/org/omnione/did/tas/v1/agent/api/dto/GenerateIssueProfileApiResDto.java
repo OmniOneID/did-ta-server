@@ -24,6 +24,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.omnione.did.base.datamodel.data.zkp.ZkpIssueProfile;
 import org.omnione.did.data.model.profile.issue.IssueProfile;
 
 /**
@@ -39,5 +40,5 @@ public class GenerateIssueProfileApiResDto {
     @NotNull(message = "txId cannot be null")
     private String txId;
     @Valid
-    private IssueProfile profile;
+    private ZkpIssueProfile profile;
 }

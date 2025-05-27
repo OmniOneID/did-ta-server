@@ -34,4 +34,6 @@ public class RegisterVcPlanFromIssuerReqDto {
     private String vcPlan;
     @NotNull(message = "issuerDid cannot be null")
     private String issuerDid;
+    @NotNull(message = "initiate cannot be null")
+    private String initiate;
 }

@@ -1,6 +1,6 @@
-import { DataGrid, GridColDef, GridPaginationModel, GridRowSelectionModel } from "@mui/x-data-grid";
-import * as React from "react";
-import CustomToolbar from "../tool-bar/CustomToolbar";
+import { DataGrid, GridColDef, GridPaginationModel, GridRowSelectionModel, GridToolbarProps } from '@mui/x-data-grid';
+import * as React from 'react';
+import CustomToolbar from '../tool-bar/CustomToolbar';
 
 interface CustomDataGridProps {
   rows: Array<{ id: string | number } & Record<string, any>>;
@@ -16,14 +16,18 @@ interface CustomDataGridProps {
   additionalButtons?: Array<{
     label: string;
     onClick: () => void;
-    color?: "primary" | "secondary" | "error" | "info" | "success" | "warning";
+    color?: 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning';
     disabled?: boolean;
   }>;
-  paginationMode: "server" | "client"; 
-  totalRows?: number; 
-  paginationModel?: GridPaginationModel; 
-  setPaginationModel?: (model: GridPaginationModel) => void; 
-  loading?: boolean; 
+  paginationMode: 'server' | 'client';
+  totalRows?: number;
+  paginationModel?: GridPaginationModel;
+  setPaginationModel?: (model: GridPaginationModel) => void;
+  loading?: boolean;
+  searchText: string;
+  setSearchText: (text: string) => void;
+  selectedSearch: string;
+  setSelectedSearch: (value: string) => void;
 }
 
 export default function CustomDataGrid({
@@ -43,14 +47,73 @@ export default function CustomDataGrid({
   paginationModel,
   setPaginationModel,
   loading = false,
+  searchText,
+  setSearchText,
+  selectedSearch,
+  setSelectedSearch,
 }: CustomDataGridProps) {
-  const [searchText, setSearchText] = React.useState("");
-  const [selectedSearch, setSelectedSearch] = React.useState(
-    searchOptions?.[0]?.value || ""
+
+  const CustomToolbarWrapper = React.memo((props: GridToolbarProps) => {
+    return (
+      <CustomToolbar
+        {...props}
+        enableSearch={enableSearch}
+        searchText={searchText}
+        setSearchText={setSearchText}
+        selectedSearch={selectedSearch}
+        setSelectedSearch={setSelectedSearch}
+        onSearch={onSearch}
+        onRegister={onRegister}
+        onEdit={onEdit}
+        onDelete={onDelete}
+        disableEdit={!selectedRow}
+        disableDelete={!selectedRow}
+        searchOptions={searchOptions}
+        additionalButtons={additionalButtons}
+      />
+    );
+  });
+  
+  CustomToolbarWrapper.displayName = 'CustomToolbarWrapper';
+
+  const handleRowSelectionModelChange = React.useCallback(
+    (selectedIds: GridRowSelectionModel) => {
+      const selectedId = selectedIds.length > 0 ? selectedIds[0] : null;
+      setSelectedRow(selectedId as string | number | null);
+    },
+    [setSelectedRow]
   );
 
+  const handlePaginationModelChange = React.useCallback(
+    (model: GridPaginationModel) => {
+      if (setPaginationModel) {
+        setPaginationModel(model);
+      }
+    },
+    [setPaginationModel]
+  );
+
+  const toolbarProps = React.useMemo(() => ({
+    enableSearch,
+    searchText,
+    setSearchText,
+    selectedSearch,
+    setSelectedSearch, 
+    onSearch,
+    onRegister,
+    onEdit,
+    onDelete,
+    disableEdit: !selectedRow,
+    disableDelete: !selectedRow,
+    searchOptions,
+    additionalButtons,
+  }), [
+    enableSearch, searchText, setSearchText, selectedSearch, setSelectedSearch,
+    onSearch, onRegister, onEdit, onDelete, selectedRow, searchOptions, additionalButtons
+  ]);
+
   return (
-    <div style={{ display: "flex", flexDirection: "column" }}>
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
       <DataGrid
         checkboxSelection={!!onEdit || !!onDelete}
         disableMultipleRowSelection
@@ -60,38 +123,18 @@ export default function CustomDataGrid({
         pageSizeOptions={[10, 20, 50]}
         disableColumnResize
         density="compact"
-        paginationMode={paginationMode} 
-        rowCount={paginationMode === "server" ? totalRows : undefined} 
-        paginationModel={paginationMode === "server" ? paginationModel : undefined} 
-        onPaginationModelChange={(model) => {
-          if (setPaginationModel) {
-            setPaginationModel(model);
-          }
-        }}
-        loading={loading} 
+        paginationMode={paginationMode}
+        rowCount={paginationMode === 'server' ? totalRows : undefined}
+        paginationModel={paginationModel}
+        onPaginationModelChange={handlePaginationModelChange}
+        loading={loading}
         slots={{
-          toolbar: () => (
-            <CustomToolbar
-              enableSearch={enableSearch}
-              searchText={searchText}
-              setSearchText={setSearchText}
-              selectedSearch={selectedSearch}
-              setSelectedSearch={setSelectedSearch}
-              onSearch={onSearch}
-              onRegister={onRegister}
-              onEdit={onEdit}
-              onDelete={onDelete}
-              disableEdit={!selectedRow}
-              disableDelete={!selectedRow}
-              searchOptions={searchOptions}
-              additionalButtons={additionalButtons}
-            />
-          ),
+          toolbar: CustomToolbarWrapper,
         }}
-        onRowSelectionModelChange={(selectedIds: GridRowSelectionModel) => {
-          const selectedId = selectedIds.length > 0 ? selectedIds[0] : null;
-          setSelectedRow(selectedId as string | number | null);
+        slotProps={{
+          toolbar: toolbarProps,
         }}
+        onRowSelectionModelChange={handleRowSelectionModelChange}
         getRowHeight={() => 45}
       />
     </div>

@@ -23,9 +23,15 @@ import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.omnione.did.list.v1.admin.dto.user.UserDto;
+import org.omnione.did.list.v1.admin.dto.vcplan.ListVcPlanDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Service for querying User.
@@ -146,5 +152,23 @@ public class UserQueryService {
             log.error("User not found", e.getMessage());
             throw new OpenDidException(ErrorCode.USER_INFO_NOT_FOUND);
         }
+    }
+
+    /**
+     * Searches for a list of Users based on the given search key and value.
+     *
+     * @param searchKey Key to search for.
+     * @param searchValue Value to search for.
+     * @param pageable Pageable.
+     * @return Page of UserDto.
+     */
+    public Page<UserDto> searchUserList(String searchKey, String searchValue, Pageable pageable) {
+        Page<User> userPage = userRepository.searchUsers(searchKey, searchValue, pageable);
+
+        List<UserDto> userDtos = userPage.getContent().stream()
+                .map(UserDto::fromUser)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(userDtos, pageable, userPage.getTotalElements());
     }
 }

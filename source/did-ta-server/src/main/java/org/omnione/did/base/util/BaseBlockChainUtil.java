@@ -48,7 +48,7 @@ public class BaseBlockChainUtil {
      * @return a ContractApi instance.
      */
     public static ContractApi initBlockChain() {
-        return ContractFactory.FABRIC.create("/Users/yundabal/blockchain/blockchain.properties");
+        return ContractFactory.EVM.create("/Users/gwnam/Documents/team/opensource/project/github/did-orchestrator-server/source/did-orchestrator-server/shells/Besu/blockchain.propertiess");
 
     }
 

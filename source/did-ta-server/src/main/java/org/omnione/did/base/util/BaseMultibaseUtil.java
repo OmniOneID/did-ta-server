@@ -85,4 +85,16 @@ public class BaseMultibaseUtil {
             throw new OpenDidException(ErrorCode.DECODING_FAILED);
         }
     }
+
+    public static void main(String[] args) {
+
+        String plainText = "{\"@context\":[\"https://www.w3.org/ns/did/v1\"],\"assertionMethod\":[\"assert\"],\"authentication\":[\"auth\"],\"controller\":\"did:omn:tas\",\"created\":\"2025-04-02T04:01:37Z\",\"deactivated\":false,\"id\":\"did:omn:cas\",\"keyAgreement\":[\"keyagree\"],\"proofs\":[{\"created\":\"2025-04-02T04:01:37Z\",\"proofPurpose\":\"assertionMethod\",\"proofValue\":\"z3ntBwnooRaikEw7qfhBxVvCXhpWcig9t5FVAFSsPWLSprzrqYcXSvL7TucdLMUBu5DLnAd4UA2ThvVJn3Pq8VPaW8\",\"type\":\"Secp256r1Signature2018\",\"verificationMethod\":\"did:omn:cas?versionId=1#assert\"},{\"created\":\"2025-04-02T04:01:37Z\",\"proofPurpose\":\"authentication\",\"proofValue\":\"z3sXB7wxfCodXPPLBNttpvnJ33H1creZSYhzCKVVWUZtQzSzTBGrKnXDxTFBux2QjrMeUcfqdsVNeK7DpgUcajoR7H\",\"type\":\"Secp256r1Signature2018\",\"verificationMethod\":\"did:omn:cas?versionId=1#auth\"}],\"updated\":\"2025-04-02T04:01:37Z\",\"verificationMethod\":[{\"authType\":1,\"controller\":\"did:omn:tas\",\"id\":\"assert\",\"publicKeyMultibase\":\"zsYXPBGBWeKKmVRXCRojCkMQEQazxRe35jcQmbbcfX3EG\",\"type\":\"Secp256r1VerificationKey2018\"},{\"authType\":1,\"controller\":\"did:omn:tas\",\"id\":\"auth\",\"publicKeyMultibase\":\"z2B9uxnEhnEEvcpZrLJwrxDQnhPgaCSnAEg8x5AS7s8kB3\",\"type\":\"Secp256r1VerificationKey2018\"},{\"authType\":1,\"controller\":\"did:omn:tas\",\"id\":\"keyagree\",\"publicKeyMultibase\":\"z2BtXtBGgAHgWm6cLDhFE7enb47di75SzsbmGCxy2FQUEC\",\"type\":\"Secp256r1VerificationKey2018\"}],\"versionId\":\"1\"}";
+
+        String encodedData = encode(plainText.getBytes());
+        System.out.println("Encoded Data:");
+        System.out.println(encodedData);
+
+        byte[] decodedData = decode(encodedData);
+        System.out.println("Decoded Data: " + new String(decodedData));
+    }
 }

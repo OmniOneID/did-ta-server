@@ -17,6 +17,7 @@
 package org.omnione.did.tas.v1.agent.dto.vc;
 
 import lombok.*;
+import org.omnione.did.base.datamodel.data.zkp.ZkpIssueProfile;
 import org.omnione.did.data.model.profile.issue.IssueProfile;
 
 /**
@@ -31,6 +32,6 @@ import org.omnione.did.data.model.profile.issue.IssueProfile;
 public class RequestIssueProfileResDto {
     private String txId;
     private String authNonce;
-    private IssueProfile profile;
+    private ZkpIssueProfile profile;
 
 }

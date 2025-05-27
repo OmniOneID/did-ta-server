@@ -20,6 +20,7 @@ import org.omnione.did.base.db.domain.App;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
@@ -32,7 +33,7 @@ import java.util.Optional;
  * for more specific database interactions with App entities.
  */
 @Repository
-public interface AppRepository extends JpaRepository<App, Long> {
+public interface AppRepository extends JpaRepository<App, Long>, QuerydslPredicateExecutor<App>, AppRepositoryAdmin {
     Optional<App> findByAppId(String appId);
     Optional<App> findByUserId(Long userID);
     @Query("SELECT u FROM App u WHERE u.userId IN :userIds")

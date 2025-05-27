@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router';
-import { getEntityInfo } from '../../apis/entity-api';
+import { getEntityInfo, approveEntityDid } from '../../apis/entity-api';
 import { CircularProgress, Box, Typography, TextField, Button, Popover, useTheme, useMediaQuery, styled } from '@mui/material';
 import CustomDialog from '../../components/dialog/CustomDialog';
 import { useDialogs } from '@toolpad/core/useDialogs';
 import { formatErrorMessage } from '../../utils/error-handler';
 import FullscreenLoader from '../../components/loading/FullscreenLoader';
+import CustomConfirmDialog from '../../components/dialog/CustomConfirmDialog';
 
 const EntityDetailPage = () => {
     const { entityId } = useParams();
@@ -55,6 +56,39 @@ const EntityDetailPage = () => {
 
     const handlePopoverClose = () => {
         setAnchorEl(null);
+    };
+
+    const handleApprove = async () => {
+        const result = await dialogs.open(CustomConfirmDialog, {
+            title: 'Confirmation',
+            message: 'Are you sure you want to approve entity?',
+            isModal: true,
+        });
+        
+        if (result) {
+            setIsLoading(true);
+            try {
+                const { data } = await approveEntityDid({ entityId: entityId });
+                setEntityData(data);
+                setIsLoading(false);
+                await dialogs.open(CustomDialog, {
+                    title: 'Notification',
+                    message: 'Completed entity approval.',
+                    isModal: true,
+                },{
+                    onClose: async (result) =>  navigate('/entities/entity-management'),
+                });
+            } catch (err) {
+                console.error('Failed to approve Entity:', err);
+                setIsLoading(false);
+
+                dialogs.open(CustomDialog, {
+                    title: 'Notification',
+                    message: formatErrorMessage(err, `Failed to approve Entity`),
+                    isModal: true,
+                });
+            }
+        }
     };
 
     const StyledContainer = styled(Box)(({ theme }) => ({
@@ -201,6 +235,11 @@ const EntityDetailPage = () => {
                     <Button variant="outlined" color="primary" onClick={() => navigate('/entities/entity-management')}>
                         Back
                     </Button>
+                    {entityData?.status === "DID_DOCUMENT_REQUIRED" && (
+                        <Button variant="contained" color="primary" onClick={handleApprove}>
+                            DID Doc Approval
+                        </Button>
+                    )}
                 </Box>
 
             </StyledContainer>

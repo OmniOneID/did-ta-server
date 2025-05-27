@@ -20,7 +20,6 @@ import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.base.property.WalletProperty;
 import org.omnione.did.base.util.BaseWalletUtil;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.wallet.exception.WalletException;
 import org.omnione.did.wallet.key.WalletManagerInterface;
@@ -91,5 +90,15 @@ public class FileWalletService {
         } catch (Exception e) {
             throw new OpenDidException(ErrorCode.WALLET_SIGNATURE_GENERATION_FAILED);
         }
+    }
+
+    public WalletManagerInterface initializeWalletWithKeys() {
+        WalletManagerInterface walletManager = BaseWalletUtil.initializeWalletWithKeys(
+                walletProperty.getFilePath(),
+                walletProperty.getPassword(),
+                "auth", "assert", "keyagree", "invoke"
+        );
+
+        return walletManager;
     }
 }

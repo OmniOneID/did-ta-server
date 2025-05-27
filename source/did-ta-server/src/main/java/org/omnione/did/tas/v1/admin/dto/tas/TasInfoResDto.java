@@ -17,6 +17,8 @@
 package org.omnione.did.tas.v1.admin.dto.tas;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,11 +26,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.omnione.did.base.db.constant.TasStatus;
 import org.omnione.did.base.db.domain.Tas;
+import org.omnione.did.base.exception.ErrorCode;
+import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.data.model.did.DidDocument;
 
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -39,7 +44,7 @@ import java.util.Optional;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class RequestTasInfoResDto {
+public class TasInfoResDto {
     private Long id;
     private String did;
     private String name;
@@ -47,13 +52,13 @@ public class RequestTasInfoResDto {
     private TasStatus status;
     private String serverUrl;
     private String certificateUrl;
-    private DidDocument didDocument;
+    private Map<String, Object> didDocument;
     private String createdAt;
     private String updatedAt;
 
-    public static RequestTasInfoResDto fromEntity(Tas tas) {
+    public static TasInfoResDto fromEntity(Tas tas) {
         return Optional.ofNullable(tas)
-                .map(t -> RequestTasInfoResDto.builder()
+                .map(t -> TasInfoResDto.builder()
                         .id(t.getId())
                         .did(t.getDid())
                         .name(t.getName())
@@ -66,16 +71,16 @@ public class RequestTasInfoResDto {
                 .orElse(null);
     }
 
-    public static RequestTasInfoResDto fromEntity(Tas tas, DidDocument didDocument) {
+    public static TasInfoResDto fromEntity(Tas tas, DidDocument didDocument) {
         return Optional.ofNullable(tas)
-                .map(t -> RequestTasInfoResDto.builder()
+                .map(t -> TasInfoResDto.builder()
                         .id(t.getId())
                         .did(t.getDid())
                         .name(t.getName())
                         .status(t.getStatus())
                         .serverUrl(t.getServerUrl())
                         .certificateUrl(t.getCertificateUrl())
-                        .didDocument(didDocument)
+                        .didDocument(parseDidDocToMap(didDocument.toJson()))
                         .createdAt(formatInstant(t.getCreatedAt()))
                         .updatedAt(formatInstant(t.getUpdatedAt()))
                         .build())
@@ -88,5 +93,16 @@ public class RequestTasInfoResDto {
         return Optional.ofNullable(instant)
                 .map(FORMATTER::format)
                 .orElse(null);
+    }
+
+    public static Map<String, Object> parseDidDocToMap(String didDocJson) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.readValue(didDocJson, Map.class);
+        } catch (JsonProcessingException e) {
+            throw new OpenDidException(ErrorCode.INVALID_DID_DOCUMENT);
+        } catch (Exception e) {
+            throw new OpenDidException(ErrorCode.INVALID_DID_DOCUMENT);
+        }
     }
 }

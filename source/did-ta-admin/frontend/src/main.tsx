@@ -17,7 +17,7 @@ import EmailServerSettingsPage from './pages/notification-provider/email-server/
 import EmailTemplateSettingsPage from './pages/notification-provider/email-template/EmailTemplateSettingsPage';
 import NotificationProviderPage from './pages/notification-provider/NotificationProviderPage';
 import TrustAgentManagementPage from './pages/trust-agent/TrustAgentManagementPage';
-import TrustAgentRegistrationPage from './pages/trust-agent/TrustAgentRegistrationPage';
+import TrustAgentRegistrationPageSimple from './pages/trust-agent/TrustAgentRegistrationSimplePage';
 import PushServerSettingsPage from './pages/notification-provider/push-server/PushServerSettingsPage';
 import AllowedCaManagementPage from './pages/list-provider/allowed-ca/AllowedCaManagementPage';
 import ListProviderPage from './pages/list-provider/ListProviderPage';
@@ -31,6 +31,17 @@ import VcPlanDetailPage from './pages/list-provider/vc-plan/VcPlanDetailPage';
 import AdminDetailPage from './pages/admins/AdminDetailPage';
 import AdminRegisterPage from './pages/admins/AdminRegisterPage';
 import DashboardPage from './pages/dashboard/DashboardPage';
+import TrustAgentRegistrationPage from './pages/trust-agent/TrustAgentRegistrationPage';
+import UserListPage from './pages/user/user-list/UserListPage';
+import AppListPage from './pages/user/app-list/AppListPage';
+import WalletListPage from './pages/user/wallet-list/WalletListPage';
+import UserDetailPage from './pages/user/user-list/UserDetailPage';
+import AppDetailPage from './pages/user/app-list/AppDetailPage';
+import WalletDetailPage from './pages/user/wallet-list/WalletDetailPage';
+import CredentialSchemaDetailPage from './pages/list-provider/credential-schema/CredentialSchemaDetailPage';
+import CredentialSchemaManagementPage from './pages/list-provider/credential-schema/CredentialSchemaManagementPage';
+import CredentialDefinitionDetailPage from './pages/list-provider/credential-definition/CredentialDefinitionDetailPage';
+import CredentialDefinitionManagementPage from './pages/list-provider/credential-definition/CredentialDefinitionManagementPage';
 
 const router = createBrowserRouter([
   {
@@ -137,6 +148,22 @@ const router = createBrowserRouter([
             Component: VcPlanManagementPage,
           },
           {
+            path: 'list-settings/credential-schema/:id',
+            Component: CredentialSchemaDetailPage
+          },
+          {
+            path: 'list-settings/credential-schema',
+            Component: CredentialSchemaManagementPage,
+          },
+          {
+            path: 'list-settings/credential-definition/:id',
+            Component: CredentialDefinitionDetailPage
+          },
+          {
+            path: 'list-settings/credential-definition',
+            Component: CredentialDefinitionManagementPage,
+          },
+          {
             path: 'admin-management/admin-registration',
             Component: AdminRegisterPage,
           },
@@ -147,6 +174,30 @@ const router = createBrowserRouter([
           {
             path: 'admin-management',
             Component: AdminManagementPage,
+          },
+          {
+            path: 'user-management/user-list/:id',
+            Component: UserDetailPage,
+          },
+          {
+            path: 'user-management/user-list',
+            Component: UserListPage,
+          },
+          {
+            path: 'user-management/app-list/:id',
+            Component: AppDetailPage,
+          },
+          {
+            path: 'user-management/app-list',
+            Component: AppListPage,
+          },
+          {
+            path: 'user-management/wallet-list/:id',
+            Component: WalletDetailPage,
+          },
+          {
+            path: 'user-management/wallet-list',
+            Component: WalletListPage,
           },
         ],
       },

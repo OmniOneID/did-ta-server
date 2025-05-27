@@ -16,8 +16,8 @@
 
 package org.omnione.did.tas.v1.agent.controller;
 
+import com.google.gson.GsonBuilder;
 import org.omnione.did.base.constants.UrlConstant;
-import org.omnione.did.data.model.schema.VcSchema;
 import org.omnione.did.tas.v1.agent.service.VcService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -36,11 +36,13 @@ import org.omnione.did.tas.v1.agent.dto.vc.ProposeIssueVcResDto;
 import org.omnione.did.tas.v1.agent.dto.vc.ProposeRevokeVcReqDto;
 import org.omnione.did.tas.v1.agent.dto.vc.ProposeRevokeVcResDto;
 import org.omnione.did.tas.v1.agent.dto.vc.RequestIssueProfileReqDto;
-import org.omnione.did.tas.v1.agent.dto.vc.RequestIssueProfileResDto;
 import org.omnione.did.tas.v1.agent.dto.vc.RequestIssueVcReqDto;
 import org.omnione.did.tas.v1.agent.dto.vc.RequestIssueVcResDto;
 import org.omnione.did.tas.v1.agent.dto.vc.RequestRevokeVcReqDto;
 import org.omnione.did.tas.v1.agent.dto.vc.RequestRevokeVcResDto;
+import org.omnione.did.zkp.datamodel.util.GsonWrapper;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -109,8 +111,11 @@ public class VcController {
      */
     @RequestMapping(value = "/request-issue-profile", method = RequestMethod.POST)
     @ResponseBody
-    public RequestIssueProfileResDto requestIssueProfile(@Valid @RequestBody RequestIssueProfileReqDto requestIssueProfileReqDto) {
-        return vcService.requestIssueProfile(requestIssueProfileReqDto);
+    public ResponseEntity<String> requestIssueProfile(@Valid @RequestBody RequestIssueProfileReqDto requestIssueProfileReqDto) {
+        String jsonResponse = new GsonBuilder().create().toJson(vcService.requestIssueProfile(requestIssueProfileReqDto));
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(jsonResponse);
     }
 
     /**

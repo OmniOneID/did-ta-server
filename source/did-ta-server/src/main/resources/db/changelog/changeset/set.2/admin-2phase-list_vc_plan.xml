@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+  <changeSet id="admin-2phase-list_vc_plan" author="gwnam">
+    <addColumn tableName="list_vc_plan">
+      <column name="initiate" type="varchar(20)" defaultValue="issuer_init">
+        <constraints nullable="false" unique="false" />
+      </column>
+
+    </addColumn>
+  </changeSet>
+
+</databaseChangeLog>

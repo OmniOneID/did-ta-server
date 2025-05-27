@@ -62,6 +62,9 @@ public enum ErrorCode {
     INVALID_TAS_DIDDOC("SSRVTRA13005", "Failed to process TAS DID Document: invalid document.", 400),
     FAILED_API_PROPOSE_ENROLL_TAS("SSRVTRA13006", "Failed to process the 'propose-enroll-tas' API request.", 500),
     FAILED_API_GET_CERTIFICATE_VC("SSRVTRA13007", "Failed to process the 'get-certificate-vc' API request.", 500),
+    TAS_PASSWORD_NOT_FOUND("SSRVTRA13008", "Failed to find TAS password.", 500),
+    TA_SECRET_NOT_MATCHED("SSRVTRA13009", "Failed to process request: TA secret does not match.", 400),
+    TAS_DID_DOCUMENT_ALREADY_REGISTERED("SSRVTRA13010", "Failed to register TAS DID Document: document is already registered.", 400),
 
 
     // 04. TAS configuration-related errors (13500 ~ 13999)
@@ -91,6 +94,12 @@ public enum ErrorCode {
     ENROLL_REQUEST_ENTITY_DID_MISMATCH("SSRVTRA14006", "The provided DID does not match the entity that requested registration.", 400),
     FAIL_TO_REQUEST_ENROLL_ENTITY("SSRVTRA14007", "Failed to process the 'request-enroll-entity' API request.", 500),
     FAILED_TO_REGISTER_QUICK_ENTITY("SSRVTRA14008", "Failed to register quick entity.", 500),
+    ENTITY_NAME_ALREADY_REGISTERED("SSRVTRA14009", "Failed to register entity: entity name is already registered.", 400),
+    ENTITY_DID_DOCUMENT_NOT_FOUND("SSRVTRA14010", "Failed to find entity DID Document: o registration request has been made.", 400),
+    FAILED_TO_REGISTER_DID_FROM_ENTITY("SSRVTRA14011", "Failed to register DID from entity.", 500),
+    FAILED_TO_APPROVE_ENTITY_DID_DOCUMENT("SSRVTRA14012", "Failed to approve entity DID Document.", 500),
+    ENTITY_NOT_DELETABLE("SSRVTRA14013", "Failed to delete entity: entity is not deletable.", 400),
+
 
     // 06. Blockchain-related errors (15000 ~ 15499)
     BLOCKCHAIN_INITIALIZATION_FAILED("SSRVTRA15000", "Failed to initialize blockchain.", 500),
@@ -183,7 +192,10 @@ public enum ErrorCode {
     WALLET_ID_MISMATCH("SSRVTRA17508", "Failed to authenticate wallet: wallet ID does not match.", 400),
     FAILED_TO_GET_FILE_WALLET_MANAGER("SSRVTRA17509", "Failed to get File wallet manager", 500),
     FAILED_API_REQUEST_REGISTER_WALLET("SSRVTRA17510", "Failed to process the 'request-register-wallet' API request.", 500),
-
+    WALLET_ALREADY_EXISTS("SSRVTRA17511", "Failed to create wallet: wallet already exists.", 500),
+    INVALID_WALLET_FILE_PATH("SSRVTRA17512", "Failed to create wallet: invalid wallet file path.", 500),
+    KEY_ALREADY_EXISTS("SSRVTRA17513", "Failed to generate keys: key already exists.", 500),
+    FAILED_TO_LOAD_KEY_ELEMENT("SSRVTRA17514", "Failed to load key element.", 500),
 
     // 12. DID Document-related errors (18000 ~ 18499)
     DID_DOCUMENT_RETRIEVAL_FAILED("SSRVTRA18000", "Failed to retrieve DID Document.", 500),
@@ -203,7 +215,8 @@ public enum ErrorCode {
     DID_DOCUMENT_REGISTRATION_FAILED("SSRVTRA18016", "Failed to register DID Document.", 500),
     INVOKED_DOCUMENT_GENERATION_FAILED("SSRVTRA18017", "Failed to generate Invoked Document.", 500),
     DID_DOCUMENT_ID_MISMATCH("SSRVTRA18018", "Failed to process request: ID of DID Document does not match the previously requested DID.", 400),
-
+    INVALID_DID_DOCUMENT("SSRVTRA18019", "Failed to process DID Document: invalid document.", 400),
+    DID_ALREADY_REGISTERED("SSRVTRA18020", "Failed to register DID: DID is already registered.", 400),
 
     // 13. VC-related errors (18500 ~ 18999)
     VC_ID_NOT_MATCH("SSRVTRA18500", "VC ID does not match.", 400),
@@ -241,7 +254,10 @@ public enum ErrorCode {
     FAILED_TO_REGISTER_CERTIFICATE_VC_SCHEMA("SSRVTRA18532", "Failed to register certificate VC schema.", 500),
     FAILED_TO_REGISTER_VC_PLAN_FROM_ISSUER("SSRVTRA18533", "Failed to register VC plan from issuer.", 500),
     INVALID_VC_SCHEMA("SSRVTRA18534", "Failed to process VC schema: invalid schema.", 400),
+    INVALID_CERTIFICATE_VC_JSON_FORMAT("SSRVTRA18535", "Failed to process certificate VC: invalid JSON format.", 500),
 
+    CREDENTIAL_SCHEMA_RETRIEVAL_FAILED("SSRVTRA18536", "Failed to retrieve Credential Schema.", 400),
+    CREDENTIAL_DEFINITION_RETRIEVAL_FAILED("SSRVTRA18536", "Failed to retrieve Credential Definition.", 400),
 
     // 14. Token-related errors (19000 ~ 19499)
     SERVER_TOKEN_GENERATION_FAILED("SSRVTRA19000", "Failed to generate server token.", 500),

@@ -28,8 +28,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.tas.v1.common.service.query.ApiQueryService;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -227,10 +227,11 @@ public class TransactionServiceImpl implements TransactionService {
     /**
      * Retrieves the expiration time for a transaction.
      *
-     * @return An Instant representing the expiration time (1 day from now)
+     * @return The expiration time as an Instant object
      */
     @Override
     public Instant retrieveTransactionExpiredTime() {
-        return Instant.now().plus(apiQueryService.findTransactionExpirationTime(), ChronoUnit.SECONDS);
+        Duration seconds = Duration.ofSeconds(apiQueryService.findTransactionExpirationTime());
+        return Instant.now().plus(seconds);
     }
 }

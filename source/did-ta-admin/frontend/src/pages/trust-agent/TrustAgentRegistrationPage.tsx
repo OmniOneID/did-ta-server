@@ -1,175 +1,187 @@
-import { Box, Button, SelectChangeEvent, styled, TextField, Typography } from '@mui/material';
-import { useDialogs } from '@toolpad/core/useDialogs';
-import { useMemo, useState } from 'react';
-import { Navigate, useNavigate } from 'react-router';
-import CustomConfirmDialog from '../../components/dialog/CustomConfirmDialog';
-import CustomDialog from '../../components/dialog/CustomDialog';
+import { Box, Button, Step, StepLabel, Stepper, Typography, styled } from '@mui/material';
+import React, { useState } from 'react';
+import { TasStatus } from '../../apis/constants/TasStatus';
+import { TaInfoResDto } from '../../apis/models/TaInfoResDto';
+import { getTaInfo } from '../../apis/ta-api';
 import FullscreenLoader from '../../components/loading/FullscreenLoader';
+import Step1TaPassword from './stepper/Step1TaPassword';
+import Step2TaInfo from './stepper/Step2TaInfo';
+import Step3DIDDocument from './stepper/Step3DidDocument';
+import Step4CertificateVC from './stepper/Step4CertificateVc';
+import StepComplete from './stepper/StepComplete';
 import { useServerStatus } from '../../context/ServerStatusContext';
-import { postData } from '../../utils/api';
-import { ipRegex, urlRegex } from '../../utils/regex';
+import { Navigate } from 'react-router';
 
-interface TaFormData {
-  serverUrl: string;
-}
+const steps = ['Enter TA Password', 'Enter TA Info', 'Register DID Document', 'Issue Certificate VC'];
 
-interface ErrorState {
-  serverUrl?: string;
-}
+const StyledContainer = styled(Box)(({ theme }) => ({
+  width: 800,
+  margin: 'auto',
+  marginTop: theme.spacing(1),
+  padding: theme.spacing(3),
+  border: 'none',
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: '#ffffff',
+  boxShadow: '0px 4px 8px 0px #0000001A',
+}));
 
-const TrustAgentRegisterPage = () => {
-  const navigate = useNavigate();
-  const { setServerStatus, setTaInfo, serverStatus } = useServerStatus();
-  const dialogs = useDialogs();
+const StyledTitle = styled(Typography)({
+  textAlign: 'left',
+  fontSize: '24px',
+  fontWeight: 700,
+});
+
+const StyledStepperWrapper = styled(Box)({
+  width: '100%',
+  maxWidth: 800,
+  marginLeft: 'auto',
+  marginRight: 'auto',
+  marginTop: 10,
+});
+
+const StyledStepper = styled(Stepper)({
+  width: '100%',
+});
+
+const StyledStep = styled(Step)({});
+
+const StyledStepLabel = styled(StepLabel)({});
+
+const StyledContentWrapper = styled(Box)(({ theme }) => ({
+  marginTop: theme.spacing(4),
+}));
+
+const StyledActionWrapper = styled(Box)({
+  display: 'flex',
+  justifyContent: 'center',
+  marginTop: '24px',
+  gap: "12px",
+});
+
+const TrustAgentRegistrationPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState<TaFormData>({
-    serverUrl: '',
-  });
-  const [errors, setErrors] = useState<ErrorState>({});
-  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
-
-  const API_BASE_URL = "/tas/admin/v1";
-
-
-  const validate = () => {
-    let tempErrors: ErrorState = {};
-    tempErrors.serverUrl = validateServerUrl(formData.serverUrl);
-
-    setErrors(tempErrors);
-    return Object.values(tempErrors).every((error) => !error);
+  const [activeStep, setActiveStep] = useState<number>(0);
+  const [validateFns, setValidateFns] = useState<Record<number, () => boolean>>({});
+  const [afterValidateFns, setAfterValidateFns] = useState<Record<number, () => Promise<void>>>({});
+  const { serverStatus } = useServerStatus();
+  
+  const registerStepFns = (step: number, validate: () => boolean, afterValidate?: () => Promise<void>) => {
+    setValidateFns(prev => ({ ...prev, [step]: validate }));
+    if (afterValidate) {
+      setAfterValidateFns(prev => ({ ...prev, [step]: afterValidate }));
+    }
   };
-
-  const validateServerUrl = (serverUrl?: string): string | undefined => {
-    if (!serverUrl) return 'Please enter a Server URL.';
-    if (!urlRegex.test(serverUrl) && !ipRegex.test(serverUrl)) return 'Please enter a valid URL.';
-    return undefined;
-};
-
-  const handleSimpleRegistration = async () => {
-    if (!validate()) return;
-
-    const result = await dialogs.open(CustomConfirmDialog, {
-      title: 'Confirmation',
-      message: 'Are you sure you want to register Trust Agent?',
-      isModal: true,
-    });
-
-    if (result) {
-      setIsLoading(true);
-
-      try {
-        const { data } = await postData(API_BASE_URL, 'ta/register-simple', formData);
-        setServerStatus(data.status);
-        setTaInfo(data);
   
-        if (data.status === 'COMPLETED') {
-          setIsLoading(false);
-          await dialogs.open(CustomDialog, {
-            title: 'Notification',
-            message: `Registration completed successfully.`,
-            isModal: true,
-          },{
-            onClose: async (result) =>  navigate('/ta-management'),
-          });
-        }
-      } catch (err: any) {
-        setIsLoading(false);
-        await dialogs.open(CustomDialog, {
-          title: 'Notification',
-          message: `Failed to register TA: ${err.message}`,
-          isModal: true,
-        });
-  
-      } finally {
-        setIsLoading(false);
+  const handleNext = async () => {
+    const validate = validateFns[activeStep];
+    const afterValidate = afterValidateFns[activeStep];
+
+    if (validate && !validate()) return;
+
+    try {
+      if (afterValidate) {
+        await afterValidate();
       }
+  
+      const { data } = await getTaInfo();
+  
+      setIsLoading(true);
+      const nextStep = getNextStepByTaStatus(data);
+      setActiveStep(nextStep);
+      setIsLoading(false);
+  
+    } catch (error) {
+      console.error('Step transition failed:', error);
+      setIsLoading(false);
     }
   };
 
-  const handleChange = (field: keyof TaFormData) => 
-        (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>) => {
-            const newValue = event.target.value;
-            setFormData((prev) => ({ ...prev, [field]: newValue }));
+  const getNextStepByTaStatus = (taInfo: TaInfoResDto): number => {
+    if (activeStep === 0) {
+      if (!taInfo.name) {
+        return 1;
+      }
+
+      switch (taInfo.status) {
+        case TasStatus.DID_DOCUMENT_REQUIRED:
+          return 2; 
+        case TasStatus.CERTIFICATE_VC_REQUIRED:
+          return 3;
+        case TasStatus.COMPLETED:
+          return 4;
+        default:
+          return activeStep + 1;
+      }
+    } else if (activeStep === 1) {
+      switch (taInfo.status) {
+        case TasStatus.DID_DOCUMENT_REQUIRED:
+          return 2; 
+        case TasStatus.CERTIFICATE_VC_REQUIRED:
+          return 3;
+        case TasStatus.COMPLETED:
+          return 4;
+        default:
+          return activeStep + 1;
+      } 
+    } 
+
+    return activeStep + 1;
   };
 
-  const StyledContainer = useMemo(() => styled(Box)(({ theme }) => ({
-    backgroundColor: 'white',
-    padding: theme.spacing(3),
-    borderRadius: theme.shape.borderRadius,
-    margin: 'auto',
-    marginTop: theme.spacing(3),
-    boxShadow: '0px 4px 8px 0px #0000001A',
-  })), []);
-  
-  const StyledSubTitle = useMemo(() => styled(Typography)(({ theme }) => ({
-    textAlign: 'left',
-    fontSize: '24px',
-    fontWeight: 700,
-  })), []);
+  const handleBack = () => setActiveStep((prev) => prev - 1);
 
-  const StyledDescription = useMemo(() => styled(Box)(({ theme }) => ({
-    maxWidth: 500, 
-    marginTop: theme.spacing(1),
-    padding: theme.spacing(0),
-  })), []);
+  const getStepContent = (step: number) => {
+    switch (step) {
+      case 0: return <Step1TaPassword step={0} onRegister={registerStepFns} setIsLoading={setIsLoading}/>;
+      case 1: return <Step2TaInfo step={1} onRegister={registerStepFns} setIsLoading={setIsLoading} />;
+      case 2: return <Step3DIDDocument step={2} onRegister={registerStepFns} setIsLoading={setIsLoading} />;
+      case 3: return <Step4CertificateVC step={3} onRegister={registerStepFns} setIsLoading={setIsLoading} />;
+      case 4: return <StepComplete />;
+      default: return 'Unknown step';
+    }
+  };
 
-  const StyledInputArea = useMemo(() => styled(Box)(({ theme }) => ({
-    maxWidth: 500, 
-    margin: 'auto', 
-    marginTop: theme.spacing(2), 
-    display: 'flex', 
-    alignItems: 'flex-start', 
-    gap: theme.spacing(2), 
-  })), []);
-
-  // if (serverStatus === 'COMPLETED') {
-  //   return <Navigate to="/ta-management" replace />;
-  // }
+  if (serverStatus === 'COMPLETED') {
+    return <Navigate to="/ta-management" replace />;
+  }
 
   return (
     <>
       <FullscreenLoader open={isLoading} />
+      <StyledContainer>
+        <StyledTitle>TA Registration</StyledTitle>
   
-        <StyledContainer>
-          <StyledSubTitle>Trust Agent Registration</StyledSubTitle>
+        <StyledStepperWrapper>
+          {activeStep < steps.length && (
+            <StyledStepper activeStep={activeStep}>
+              {steps.map((label) => (
+                <StyledStep key={label}>
+                  <StyledStepLabel>{label}</StyledStepLabel>
+                </StyledStep>
+              ))}
+            </StyledStepper>
+          )}
   
-          <StyledDescription>
-            <Typography variant="body1" sx={{ color: '#666666' }}>
-              This is a <strong>temporary registration page</strong> for the Trust Agent.
-            </Typography>
-            <Typography variant="body1" sx={{ mt: 1, color: '#666666' }}>
-              A more detailed registration page will be updated in the second phase of development, scheduled for April.
-            </Typography>
-          </StyledDescription>
+          <StyledContentWrapper>
+            {getStepContent(activeStep)}
   
-          <StyledInputArea>
-            <TextField
-              fullWidth
-              label="Server URL"
-              variant="outlined"
-              size="small"
-              value={formData.serverUrl}
-              onChange={handleChange('serverUrl')}
-              error={!!errors.serverUrl}
-              helperText={errors.serverUrl}
-              sx={{
-                minWidth: 250,
-                flex: 1,
-                minHeight: 56,
-              }}
-            />
-
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-              <Button variant="contained" color="primary" onClick={handleSimpleRegistration}>
-                Quick Register
-              </Button>
-            </Box>
-          </StyledInputArea>
-        </StyledContainer>
+            {activeStep < steps.length && (
+              <StyledActionWrapper>
+                <Button variant='outlined' disabled={activeStep === 0} onClick={handleBack}>
+                  Back
+                </Button>
+                <Button variant="contained" onClick={handleNext}>
+                  {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+                </Button>
+              </StyledActionWrapper>
+            )}
+          </StyledContentWrapper>
+        </StyledStepperWrapper>
+      </StyledContainer>
     </>
   );
   
-    
+  
 };
 
-export default TrustAgentRegisterPage;
+export default TrustAgentRegistrationPage;

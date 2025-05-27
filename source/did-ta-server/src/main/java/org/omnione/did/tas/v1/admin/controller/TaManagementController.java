@@ -18,13 +18,15 @@ package org.omnione.did.tas.v1.admin.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.constants.UrlConstant.Tas;
-import org.omnione.did.tas.v1.admin.dto.tas.RequestTasInfoReqDto;
-import org.omnione.did.tas.v1.admin.dto.tas.RequestTasInfoResDto;
+import org.omnione.did.tas.v1.admin.dto.tas.*;
 import org.omnione.did.tas.v1.admin.service.TaManagementService;
+import org.omnione.did.tas.v1.common.dto.EmptyResDto;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 /**
  * This controller provides APIs for managing TA.
@@ -46,7 +48,7 @@ public class TaManagementController {
      * @return TA information
      */
     @RequestMapping(value = "/ta/info", method = RequestMethod.GET)
-    public RequestTasInfoResDto requestTaInfo() {
+    public TasInfoResDto requestTaInfo() {
         return taManagementService.requestTaInfo();
     };
 
@@ -56,7 +58,42 @@ public class TaManagementController {
      * @return TA information
      */
     @RequestMapping(value = "/ta/register-simple", method = RequestMethod.POST)
-    public RequestTasInfoResDto registerTaSimple(@RequestBody RequestTasInfoReqDto requestTasInfoReqDto) {
+    public TasInfoResDto registerTaSimple(@RequestBody RequestTasInfoReqDto requestTasInfoReqDto) {
         return taManagementService.registerTaSimple(requestTasInfoReqDto);
+    }
+
+    @RequestMapping(value = "/ta/validate-ta-secret", method = RequestMethod.POST)
+    public EmptyResDto validateTaSecret(@RequestBody ValidateTaSecretReqDto validateTaSecretReqDto) {
+        return taManagementService.validateTaSecret(validateTaSecretReqDto);
+    }
+
+    @RequestMapping(value = "/ta/register-ta-info", method = RequestMethod.POST)
+    public TasInfoResDto registerTaInfo(@RequestBody RegisterTaInfoReqDto registerTaInfoReqDto) {
+        return taManagementService.registerTaInfo(registerTaInfoReqDto);
+    }
+
+    @RequestMapping(value = "/ta/generate-did-auto", method = RequestMethod.POST)
+    public Map<String, Object> generateTaDidDocumentAuto() {
+        return taManagementService.registerTaDidDocumentAuto();
+    }
+
+    @RequestMapping(value = "/ta/register-ta-did", method = RequestMethod.POST)
+    public EmptyResDto registerTaDidDocument(@RequestBody RegisterTaDidDocumentReqDto registerTaDidDocumentReqDto) {
+        return taManagementService.registerTaDidDocument(registerTaDidDocumentReqDto);
+    }
+
+    @RequestMapping(value = "/ta/generate-certificate", method = RequestMethod.POST)
+    public Map<String, Object> generateTaCertificate(@RequestBody GenerateTaCertificateReqDto generateTaCertificateReqDto) {
+        return taManagementService.generateTaCertificate(generateTaCertificateReqDto);
+    }
+
+    @RequestMapping(value = "/ta/certificate", method = RequestMethod.GET)
+    public Map<String, Object> requestTaCertificate() {
+        return taManagementService.requestTaCertificateVC();
+    }
+
+    @RequestMapping(value = "/ta/certificate", method = RequestMethod.POST)
+    public EmptyResDto registerCertificate(@RequestBody RegisterTaCertificateReqDto registerTaCertificateReqDto) {
+        return taManagementService.registerTaCertificate(registerTaCertificateReqDto);
     }
 }

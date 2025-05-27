@@ -71,3 +71,41 @@ export const fetchVcPlanList = async (page: number, size: number, searchKey: str
 export const getVcPlanInfo = async (id: number) => {
     return getData(API_BASE_URL, `vc-plans?id=${id}`);
 }
+
+
+export const fetchCredentialSchemaList = async (page: number, size: number, searchKey: string|null, searchValue: string|null) => {
+    const params = new URLSearchParams({
+        page: page.toString(),
+        size: size.toString(),
+    });
+
+    if (searchKey && searchValue) {
+        params.append("searchKey", searchKey);
+        params.append("searchValue", searchValue);
+    }
+
+    return getData(API_BASE_URL, `credential-schemas/list?${params.toString()}`);
+};
+
+export const getCredentialSchemaInfo = async (id: number) => {
+    return getData(API_BASE_URL, `credential-schemas?id=${id}`);
+}
+
+
+export const fetchCredentialDefinitionList = async (page: number, size: number, searchKey: string|null, searchValue: string|null) => {
+    const params = new URLSearchParams({
+        page: page.toString(),
+        size: size.toString(),
+    });
+
+    if (searchKey && searchValue) {
+        params.append("searchKey", searchKey);
+        params.append("searchValue", searchValue);
+    }
+
+    return getData(API_BASE_URL, `credential-definitions/list?${params.toString()}`);
+};
+
+export const getCredentialDefinitionInfo = async (id: number) => {
+    return getData(API_BASE_URL, `credential-definitions?id=${id}`);
+}

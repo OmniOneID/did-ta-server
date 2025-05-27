@@ -1,4 +1,4 @@
-import { getData, postData, uploadData } from "../utils/api";
+import { getData, postData, uploadData, deleteData } from "../utils/api";
 
 const API_BASE_URL = "/tas/admin/v1";
 
@@ -30,4 +30,12 @@ export const verifyEntityNameUnique = async (name: string) => {
 
 export const registerEntitiesSimple = async () => {
     return postData(API_BASE_URL, `entities/register-simple`, null);
+}
+
+export const approveEntityDid = async (data: any) => {
+    return postData(API_BASE_URL, `entities/approve-did`, data);
+}
+
+export const deleteEntity = async (id: number) => {
+    return deleteData(API_BASE_URL, `entities?id=${id}`);
 }

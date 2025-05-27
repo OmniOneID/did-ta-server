@@ -16,6 +16,8 @@
 
 package org.omnione.did.tas.v1.common.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.omnione.did.base.db.constant.SubTransactionStatus;
 import org.omnione.did.base.db.constant.SubTransactionType;
 import org.omnione.did.base.db.constant.TasStatus;
@@ -29,6 +31,7 @@ import org.omnione.did.base.db.repository.CertificateVcRepository;
 import org.omnione.did.base.db.repository.TasRepository;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
+import org.omnione.did.base.property.TaAuthProperty;
 import org.omnione.did.base.util.BaseCoreVcUtil;
 import org.omnione.did.base.util.BaseMultibaseUtil;
 import org.omnione.did.tas.v1.agent.dto.tas.RequestEnrollTasReqDto;
@@ -49,6 +52,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * TAS service implementation for managing TAS registration and enrollment
@@ -65,6 +69,8 @@ public class TasServiceImpl implements TasService {
     private final CertificateVcRepository certificateVcRepository;
     private final IssueVcService issueVcService;
     private final FileWalletService fileWalletService;
+    private final TaAuthProperty taAuthProperty;
+    private final JsonParseService jsonParseService;
 
     /**
      * Handles the request to enroll a TAS (Trust Anchor Service).
@@ -152,12 +158,17 @@ public class TasServiceImpl implements TasService {
     }
 
     /**
-     * Retrieves the TAS password.
+     * Retrieves the TAS password for registration.
      *
      * @return String The TAS password
      */
     private String findTasPassword() {
-        return "VoOyEuOyal";
+        String password = taAuthProperty.getAuth().getRegistrationPassword();
+        if (password == null || password.isEmpty()) {
+            throw new OpenDidException(ErrorCode.TAS_PASSWORD_NOT_FOUND);
+        }
+
+        return taAuthProperty.getAuth().getRegistrationPassword();
     }
 
     /**
@@ -194,6 +205,23 @@ public class TasServiceImpl implements TasService {
         issueVcService.setCertificateVcSchema(issueVcParam);
         issueVcService.setIssuer(issueVcParam, tas, tas.getCertificateUrl());
         issueVcService.setTasClaimInfo(issueVcParam, tas);
+        issueVcService.setCertificateVcTypes(issueVcParam);
+        issueVcService.setCertificateEvidence(issueVcParam, tas);
+        issueVcService.setValidateUntil(issueVcParam,1);
+
+        return issueVcService.generateTasCertificateVc(issueVcParam, tas);
+    }
+
+    /**
+     * Generates a TAS certificate Verifiable Credential (VC).
+     *
+     * @return VerifiableCredential The generated TAS certificate VC
+     */
+    private VerifiableCredential generateTasCertificateVc(Tas tas, String dn) {
+        IssueVcParam issueVcParam = new IssueVcParam();
+        issueVcService.setCertificateVcSchema(issueVcParam);
+        issueVcService.setIssuer(issueVcParam, tas, tas.getCertificateUrl());
+        issueVcService.setTasClaimInfo(issueVcParam, tas, dn);
         issueVcService.setCertificateVcTypes(issueVcParam);
         issueVcService.setCertificateEvidence(issueVcParam, tas);
         issueVcService.setValidateUntil(issueVcParam,1);
@@ -279,5 +307,109 @@ public class TasServiceImpl implements TasService {
         tas.setStatus(tasStatus);
 
         tasRepository.save(tas);
+    }
+
+    @Override
+    public Map<String, Object> generateCertificate(String dn) {
+        try {
+            log.debug("=== Starting generateCertificate ===");
+
+            // Find TAS.
+            Tas existedTas = tasQueryService.findTas();
+
+            // Verify TAS status.
+            log.debug("\t--> Validating TAS status.");
+            verifyCertificateVcIssuance(existedTas);
+
+            // Generate TAS certificate VC.
+            log.debug("\t--> Generating TAS certificate VC.");
+            VerifiableCredential tasCertificateVc = generateTasCertificateVc(existedTas, dn);
+
+            log.debug("\t--> Signing TAS certificate VC.");
+            signTasCertificateVc(tasCertificateVc, existedTas);
+
+            log.debug("=== Finished generateCertificate ===");
+
+            return jsonParseService.parseCertificateVcToMap(tasCertificateVc.toJson());
+        } catch (OpenDidException e) {
+            log.error("Failed to enroll TAS: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to enroll TAS: {}", e.getMessage());
+            throw new OpenDidException(ErrorCode.FAILED_API_PROPOSE_ENROLL_TAS);
+        }
+    }
+
+    public RequestEnrollTasResDto requestEnrollTas(String certificate, RequestEnrollTasReqDto requestEnrollTasReqDto) {
+        try {
+            log.debug("=== Starting requestEnrollTas ===");
+
+            // Retrieve TAS password.
+            log.debug("\t--> Retrieving TAS password.");
+            String tasPassword = findTasPassword();
+
+            // Compare passwords.
+            log.debug("\t--> Comparing passwords.");
+            verifyTasPassword(requestEnrollTasReqDto.getRequest().getPassword(), tasPassword);
+
+            // Find TAS.
+            Tas existedTas = tasQueryService.findTas();
+
+            // Verify TAS status.
+            log.debug("\t--> Validating TAS status.");
+            verifyCertificateVcIssuance(existedTas);
+
+            // Parse the certificate.
+            log.debug("\t--> Parsing the certificate.");
+            VerifiableCredential tasCertificateVc = new VerifiableCredential();
+            tasCertificateVc.fromJson(certificate);
+
+            // Register TAS certificate VC meta.
+            log.debug("\t--> Registering TAS certificate VC meta.");
+            registerTasCertificateVcMeta(tasCertificateVc, existedTas);
+
+            // Publish TAS certificate VC.
+            log.debug("\t--> Publishing TAS certificate VC.");
+            publishTasCertificateVc(tasCertificateVc);
+
+            // Generate transaction code.
+            log.debug("\t--> Generating transaction code.");
+            String txId = IdGenerator.generateTxId();
+
+            // Update the status of TAS.
+            log.debug("\t--> Updating TAS status. (status: COMPLETED)");
+            updateTasStatus(TasStatus.COMPLETED);
+
+            // Insert transaction information.
+            log.debug("\t--> Inserting transaction information.");
+            Transaction transaction = transactionService.insertTransaction(Transaction.builder()
+                    .txId(txId)
+                    .type(TransactionType.TAS_REGISTRATION)
+                    .status(TransactionStatus.COMPLETED)
+                    .expiredAt(transactionService.retrieveTransactionExpiredTime())
+                    .build()
+            );
+
+            // Insert sub-transaction information.
+            log.debug("\t--> Inserting sub-transaction information.");
+            transactionService.insertSubTransaction(SubTransaction.builder()
+                    .transactionId(transaction.getId())
+                    .step(1)
+                    .type(SubTransactionType.REQUEST_ENROLL_TAS)
+                    .status(SubTransactionStatus.COMPLETED)
+                    .build()
+            );
+
+            return RequestEnrollTasResDto.builder()
+                    .certVcRef(existedTas.getCertificateUrl())
+                    .txId(txId)
+                    .build();
+        } catch (OpenDidException e) {
+            log.error("Failed to enroll TAS: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to enroll TAS: {}", e.getMessage());
+            throw new OpenDidException(ErrorCode.FAILED_API_PROPOSE_ENROLL_TAS);
+        }
     }
 }

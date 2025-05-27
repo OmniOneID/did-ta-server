@@ -1,5 +1,6 @@
 import { Box, Button } from '@mui/material';
 import { GridToolbarContainer } from '@mui/x-data-grid';
+import * as React from 'react';
 import CustomSearchBar from '../search-bar/CustomSearchBar';
 
 interface CustomToolbarProps {
@@ -23,7 +24,7 @@ interface CustomToolbarProps {
   }>;
 }
 
-export default function CustomToolbar({
+const CustomToolbar = React.memo(({
   enableSearch = false,
   searchText,
   setSearchText,
@@ -37,7 +38,8 @@ export default function CustomToolbar({
   disableDelete,
   searchOptions,
   additionalButtons = [],
-}: CustomToolbarProps) {
+  ...props
+}: CustomToolbarProps) => {
   return (
     <GridToolbarContainer sx={{ display: 'flex', alignItems: 'center', p:0, pb: '8px', pt: '8px' }}>
       {enableSearch && (
@@ -84,4 +86,8 @@ export default function CustomToolbar({
       </Box>
     </GridToolbarContainer>
   );
-}
+});
+
+CustomToolbar.displayName = 'CustomToolbar';
+
+export default CustomToolbar;

@@ -7,10 +7,10 @@ plugins {
 }
 
 group = 'org.omnione.did'
-version = '1.0.0'
+version = '2.0.0'
 
 java {
-    sourceCompatibility = '17'
+    sourceCompatibility = '21'
 }
 
 jar {
@@ -49,35 +49,24 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.9'
     implementation 'org.apache.commons:commons-pool2:2.12.0'
     implementation('org.hyperledger.fabric:fabric-gateway-java:2.2.9')
+    implementation 'org.web3j:core:4.14.0'
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-
     implementation 'org.springframework.boot:spring-boot-starter-web'
-
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
-    // DB
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.liquibase:liquibase-core'
     implementation 'org.postgresql:postgresql'
 
-    // Swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
-
-    // API
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
-
-    // google admin
     implementation 'io.netty:netty-handler:4.1.108.Final'
     implementation 'com.google.firebase:firebase-admin:9.2.0'
-
-    // QR Code - zxing
-    implementation group: 'com.google.zxing', name: 'javase', version: '3.5.0'
-    implementation group: 'com.google.zxing', name: 'core', version: '3.5.0'
-
-    // Spring Boot Starter Mail
+    implementation 'com.google.zxing:javase:3.5.0'
+    implementation 'com.google.zxing:core:3.5.0'
     implementation 'org.springframework.boot:spring-boot-starter-mail'
 
     compileOnly 'org.projectlombok:lombok:1.18.34'
@@ -88,9 +77,8 @@ dependencies {
 
     implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
 
-    // Query DSL
-    implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
-    annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
+    implementation 'io.github.openfeign.querydsl:querydsl-jpa:6.11'
+    annotationProcessor 'io.github.openfeign.querydsl:querydsl-apt:6.11:jpa'
     annotationProcessor "jakarta.annotation:jakarta.annotation-api"
     annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 
@@ -115,11 +103,7 @@ import com.github.jk1.license.filter.ExcludeTransitiveDependenciesFilter
 
 licenseReport {
     outputDir = "$projectDir/build/licenses"
-
-    // markdown 생성
     renderers = [new InventoryMarkdownReportRenderer()]
-
-    // 보고서에 첫 번째 수준 종속성만 표기
     filters = [new LicenseBundleNormalizer(), new ExcludeTransitiveDependenciesFilter()]
 }
 
@@ -127,9 +111,11 @@ node {
     version = "22.9.0"
     download = true
     nodeProjectDir = file("${frontendResourceDir}")
-    workDir = file("${projectDir}/.gradle/nodejs")
-    npmWorkDir = file("${projectDir}/.gradle/npm")
+    workDir = layout.buildDirectory.dir("nodejs").get().asFile
+    npmWorkDir = layout.buildDirectory.dir("npm").get().asFile
 }
+
+import com.github.gradle.node.npm.task.NpmTask
 
 tasks.register('deleteFrontResources', Delete) {
     delete "${backendResourceDir}/**"
@@ -162,9 +148,7 @@ tasks.named('copyFrontResources') {
 }
 
 tasks.named('processResources') {
-    println "## skipFrontendBuild : ${skipFrontendBuild}"
     if (!Boolean.valueOf(skipFrontendBuild)) {
         dependsOn('npm_build', 'copyFrontResources')
     }
-
 }
