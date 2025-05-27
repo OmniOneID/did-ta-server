@@ -49,7 +49,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.9'
     implementation 'org.apache.commons:commons-pool2:2.12.0'
     implementation('org.hyperledger.fabric:fabric-gateway-java:2.2.9')
-    implementation 'org.web3j:core:4.13.0'
+    implementation 'org.web3j:core:4.14.0'
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'org.springframework.boot:spring-boot-starter-web'
