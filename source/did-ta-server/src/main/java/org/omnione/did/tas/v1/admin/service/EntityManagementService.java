@@ -105,7 +105,7 @@ public class EntityManagementService {
         if (status == EntityStatus.COMPLETED || status == EntityStatus.CERTIFICATE_VC_REQUIRED) {
             log.debug("\t--> Fetching DID Document from blockchain");
             entityDidDocument = didDocService.getDidDocumentOrNull(entity.getDid());
-        } else if (status == EntityStatus.DID_DOCUMENT_REQUIRED) {
+        } else {
             log.debug("\t--> Fetching DID Document from DB");
             EntityDidDocument didDocEntity =
                     didDocumentQueryService.findDidDocumentByEntityId(entity.getId());
