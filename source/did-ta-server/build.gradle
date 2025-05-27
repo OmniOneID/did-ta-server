@@ -151,3 +151,4 @@ tasks.named('processResources') {
     if (!Boolean.valueOf(skipFrontendBuild)) {
         dependsOn('npm_build', 'copyFrontResources')
     }
+}
