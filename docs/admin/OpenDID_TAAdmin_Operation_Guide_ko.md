@@ -40,6 +40,9 @@ Open DID TA Admin Console Guide
 목차
 ==
 
+- [Open DID TA Admin Console Guide](#open-did-ta-admin-console-guide)
+- [개정 이력](#개정-이력)
+- [목차](#목차)
 - [1. 소개](#1-소개)
   - [1.1. 개요](#11-개요)
   - [1.2. Admin Console 정의](#12-admin-console-정의)
@@ -77,19 +80,25 @@ Open DID TA Admin Console Guide
   - [3.14. VC Plan Management](#314-vc-plan-management)
     - [3.14.1 VC Plan 목록 조회](#3141-vc-plan-목록-조회)
     - [3.14.2 VC Plan 상세](#3142-vc-plan-상세)
-  - [3.15. User Management](#315-user-management)
-  - [3.16. User List](#316-user-list)
-    - [3.16.1. User 목록 조회](#3161-user-목록-조회)
-    - [3.16.2. User 상세 정보](#3162-user-상세-정보)
-  - [3.17. App List](#317-app-list)
-    - [3.17.1. App 목록 조회](#3171-app-목록-조회)
-    - [3.17.2. App 상세 정보](#3172-app-상세-정보)
-  - [3.18. Wallet List](#318-wallet-list)
-    - [3.18.1. Wallet 목록 조회](#3181-wallet-목록-조회)
-    - [3.18.2. Wallet 상세 정보](#3182-wallet-상세-정보)
-  - [3.19. Admin Management](#319-admin-management)
-    - [3.19.1. Admin 목록 조회](#3191-admin-목록-조회)
-    - [3.19.2. Admin 등록](#3192-admin-등록)
+  - [3.15. Credential Schema Management](#315-credential-schema-management)
+    - [3.15.1 Credential Schema 목록 조회](#3151-credential-schema-목록-조회)
+    - [3.15.2 Credential Schema 상세](#3152-credential-schema-상세)
+  - [3.16. Credential Definition Management](#316-credential-definition-management)
+    - [3.16.1 Credential Definition 목록 조회](#3161-credential-definition-목록-조회)
+    - [3.16.2 Credential Definition 상세](#3162-credential-definition-상세)
+  - [3.17. User Management](#317-user-management)
+  - [3.18. User List](#318-user-list)
+    - [3.18.1. User 목록 조회](#3181-user-목록-조회)
+    - [3.18.2. User 상세 정보](#3182-user-상세-정보)
+  - [3.19. App List](#319-app-list)
+    - [3.19.1. App 목록 조회](#3191-app-목록-조회)
+    - [3.19.2. App 상세 정보](#3192-app-상세-정보)
+  - [3.20. Wallet List](#320-wallet-list)
+    - [3.20.1. Wallet 목록 조회](#3201-wallet-목록-조회)
+    - [3.20.2. Wallet 상세 정보](#3202-wallet-상세-정보)
+  - [3.21. Admin Management](#321-admin-management)
+    - [3.21.1. Admin 목록 조회](#3211-admin-목록-조회)
+    - [3.21.2. Admin 등록](#3212-admin-등록)
 
 # 1. 소개
 
@@ -894,7 +903,96 @@ VC Plan 목록에서 ID를 클릭하면 해당 VC Plan의 상세 정보 화면�
 
 <br/>
 
-## 3.15. User Management
+## 3.15. Credential Schema Management
+
+`Credential Schema Management` 메뉴에서는 Open DID 시스템에서 발급 가능한 Credential Schema의 목록을 확인할 수 있습니다.  
+Credential Schema는 ZKP 방식으로 VC를 발급하기 위한 클레임 이름, 속성 등을 정의한 구조이며,  
+각 Credential Definition과 1:1로 연결됩니다.
+
+Issuer Admin 페이지에서 Credential Schema가 생성된 후,  
+TA Admin 서버로 전송되어 최종 등록됩니다.
+
+Credential Schema는 TA 서버에 등록되어 있으며, 관리자는 이 목록을 조회하거나 상세 내용을 확인할 수 있습니다.
+
+<br/>
+
+### 3.15.1 Credential Schema 목록 조회
+
+`List Provider Settings > Credential Schema Management` 메뉴에 진입하면 등록된 Credential Schema 목록이 테이블 형식으로 표시됩니다.
+
+<img src="./images/3-29.credential-schema-management.png" width="800"/>
+
+| 번호 | 항목           | 설명                                                        |
+| ---- | -------------- | ----------------------------------------------------------- |
+| 1    | **Name**       | Credential Schema의 이름입니다. 클릭 시 상세 정보로 이동합니다. |
+| 2    | **Issuer Name** | 해당 스키마를 등록한 Issuer의 이름입니다.                     |
+| 3    | **Registered At** | 최초 등록 일시입니다.                                     |
+| 4    | **Updated At** | 마지막 수정 일시입니다. (없을 경우 비어있음)                  |
+
+<br/>
+
+### 3.15.2 Credential Schema 상세
+
+Credential Schema 목록에서 이름(Name)을 클릭하면 상세 정보 화면으로 이동합니다.
+
+<img src="./images/3-30.credemtial-schema-detail.png" width="600"/>
+
+| 번호 | 항목                       | 설명                                                                          |
+| ---- | -------------------------- | ----------------------------------------------------------------------------- |
+| 1    | **Name**                   | Credential Schema의 이름입니다.                                               |
+| 2    | **Credential Schema ID**   | 해당 스키마의 고유 식별자(DID 형식)입니다.                                    |
+| 3    | **Issuer Name**            | 해당 Credential Schema를 등록한 Issuer의 이름입니다.                          |
+| 4    | **Registered At**          | Credential Schema가 최초로 등록된 날짜 및 시간입니다.                        |
+| 5    | **VIEW CREDENTIAL SCHEMA 버튼** | Credential Schema의 JSON 원문을 팝업 형태로 확인할 수 있습니다.                |
+| 6    | **BACK 버튼**              | 목록 화면으로 되돌아갑니다.                                                  |
+
+---
+
+## 3.16. Credential Definition Management
+
+`Credential Definition Management` 메뉴에서는 등록된 Credential Definition의 목록을 확인할 수 있습니다.
+
+Credential Definition은 Credential Schema를 기반으로 실제 ZKP 방식으로 VC를 발급하기 위한 정의입니다.  
+Credential Definition은 각 Credential Schema와 1:1 관계를 가지며, Issuer가 VC를 생성할 수 있도록 필요한 메타데이터를 포함합니다.
+
+<br/>
+
+### 3.16.1 Credential Definition 목록 조회
+
+`List Provider Settings > Credential Definition Management` 메뉴에 진입하면 Credential Definition 목록이 표시됩니다.
+
+<img src="./images/3-31.credential-definition.management.png" width="800"/>
+
+| 번호 | 항목                     | 설명                                                                 |
+| ---- | ------------------------ | -------------------------------------------------------------------- |
+| 1    | **Credential Definition ID** | 해당 Credential Definition의 DID 식별자입니다. 클릭 시 상세 보기로 이동합니다. |
+| 2    | **Credential Schema ID** | 연결된 Credential Schema의 DID 식별자입니다.                        |
+| 3    | **Credential Definition Tag** | Definition에 부여된 태그 값입니다.                                 |
+| 4    | **Issuer Name**          | 해당 Credential Definition을 등록한 Issuer의 이름입니다.             |
+| 5    | **Registered At**        | Credential Definition이 최초로 등록된 시간입니다.                    |
+| 6    | **Updated At**           | 마지막으로 수정된 시간입니다. (없을 경우 비어있음)                   |
+
+<br/>
+
+### 3.16.2 Credential Definition 상세
+
+Credential Definition 목록에서 ID를 클릭하면 상세 정보 화면으로 이동합니다.
+
+<img src="./images/3-32.credential-definition-detail.png" width="600"/>
+
+| 번호 | 항목                           | 설명                                                                 |
+| ---- | ------------------------------ | -------------------------------------------------------------------- |
+| 1    | **Credential Definition ID**   | Credential Definition의 DID 형식 식별자입니다.                       |
+| 2    | **Credential Schema ID**       | 연결된 Credential Schema의 DID 식별자입니다.                         |
+| 3    | **Credential Definition Tag**  | Definition 생성 시 부여된 태그 값입니다.                             |
+| 4    | **Issuer Name**                | 해당 Definition을 등록한 Issuer의 이름입니다.                        |
+| 5    | **Registered At**              | Credential Definition이 최초로 등록된 시간입니다.                    |
+| 6    | **VIEW DEFINITION 버튼**       | Credential Definition의 원문(JSON)을 팝업으로 확인할 수 있습니다.     |
+| 7    | **BACK 버튼**                  | 목록 화면으로 돌아갑니다.                                            |
+
+<br/>
+
+## 3.17. User Management
 
 `User Management` 메뉴에서는 Open DID 시스템에서 등록된 사용자의 정보를 조회합니다.   
 
@@ -906,17 +1004,17 @@ VC Plan 목록에서 ID를 클릭하면 해당 VC Plan의 상세 정보 화면�
   
 각 항목은 별도 메뉴에서 개별적으로 조회할 수 있으며, 하위 메뉴는 다음과 같습니다:
 
-- [3.16. User List](#316-user-list)
-- [3.17. App List](#317-app-list)
-- [3.18. Wallet List](#318-wallet-list)
+- [3.18. User List](#318-user-list)
+- [3.19. App List](#319-app-list)
+- [3.20. Wallet List](#320-wallet-list)
 
 <br/>
 
-## 3.16. User List
+## 3.18. User List
 
 `User List`는 Open DID 시스템에 등록된 사용자의 DID 및 PII 정보를 확인할 수 있는 메뉴입니다.
 
-### 3.16.1. User 목록 조회
+### 3.18.1. User 목록 조회
 
 `User List` 메뉴에 진입하면, 등록된 사용자의 목록이 테이블 형태로 표시됩니다.  
 검색 기능을 통해 DID 또는 PII 기준으로 사용자 정보를 조회할 수 있습니다.
@@ -933,7 +1031,7 @@ VC Plan 목록에서 ID를 클릭하면 해당 VC Plan의 상세 정보 화면�
 
 <br/>
 
-### 3.16.2. User 상세 정보
+### 3.18.2. User 상세 정보
 
 User 목록에서 DID를 클릭하면 해당 User의 상세 정보 화면으로 이동합니다.
 
@@ -950,11 +1048,11 @@ User 목록에서 DID를 클릭하면 해당 User의 상세 정보 화면으로 
 
 <br/>
 
-## 3.17. App List
+## 3.19. App List
 
 `App List`는 Open DID 시스템에 등록된 App의 Push Token과 상태를 확인할 수 있는 메뉴입니다.
 
-### 3.17.1. App 목록 조회
+### 3.19.1. App 목록 조회
 
 `App List` 메뉴에 진입하면, Open DID 시스템에 등록한 App의 목록이 테이블 형태로 표시됩니다.  
 
@@ -971,7 +1069,7 @@ User 목록에서 DID를 클릭하면 해당 User의 상세 정보 화면으로 
 
 <br/>
 
-### 3.17.2. App 상세 정보
+### 3.19.2. App 상세 정보
 
 App 목록에서 App ID를 클릭하면 해당 App의 상세 정보 화면으로 이동합니다.
 
@@ -988,11 +1086,11 @@ App 목록에서 App ID를 클릭하면 해당 App의 상세 정보 화면으로
 
 <br/>
 
-## 3.18. Wallet List
+## 3.20. Wallet List
 
 `Wallet List`는 Open DID 시스템에 등록된 Wallet 정보(DID, Wallet ID 등)를 조회하는 메뉴입니다.
 
-### 3.18.1. Wallet 목록 조회
+### 3.20.1. Wallet 목록 조회
 
 `Wallet List` 메뉴에 진입하면 등록된 Wallet 목록이 테이블 형태로 표시됩니다.
 
@@ -1008,7 +1106,7 @@ App 목록에서 App ID를 클릭하면 해당 App의 상세 정보 화면으로
 
 <br/>
 
-### 3.18.2. Wallet 상세 정보
+### 3.20.2. Wallet 상세 정보
 
 Wallet 목록에서 DID를 클릭하면 해당 Wallet의 상세 정보 화면으로 이동합니다.
 
@@ -1024,7 +1122,7 @@ Wallet 목록에서 DID를 클릭하면 해당 Wallet의 상세 정보 화면으
 
 <br/>
 
-## 3.19. Admin Management
+## 3.21. Admin Management
 
 `Admin Management` 메뉴는 TA Admin Console에 접근할 수 있는 관리자 계정을 관리하는 기능입니다.  
 
@@ -1043,7 +1141,7 @@ ROOT 계정은 `Admin Management` 메뉴에서 모든 기능을 수행할 수 �
 
 <br/>
 
-### 3.19.1. Admin 목록 조회
+### 3.21.1. Admin 목록 조회
 
 
 `Admin Management` 메뉴에 진입하면 등록된 관리자 계정들의 목록이 테이블 형태로 표시됩니다.
@@ -1062,7 +1160,7 @@ ROOT 계정은 `Admin Management` 메뉴에서 모든 기능을 수행할 수 �
 
 <br/>
 
-### 3.19.2. Admin 등록
+### 3.21.2. Admin 등록
 
 `Admin Management` 화면에서 **REGISTER** 버튼을 클릭하면, 아래와 같은 등록 화면으로 이동합니다.
 
@@ -1080,6 +1178,5 @@ ROOT 계정은 `Admin Management` 메뉴에서 모든 기능을 수행할 수 �
 | 8    | **CANCEL 버튼**             | 등록을 취소하고 이전 화면으로 돌아갑니다.                           |
 
 
-[Open DID Installation Guide]: https://github.com/OmniOneID/did-release/blob/develop/unrelease-V1.0.1.0/OepnDID_Installation_Guide-V1.0.1.0_ko.md
-
+[Open DID Installation Guide]: https://github.com/OmniOneID/did-release/blob/develop/release-V2.0.0.0/OpenDID_Installation_Guide-V2.0.0.0_ko.md
 
