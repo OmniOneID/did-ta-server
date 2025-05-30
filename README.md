@@ -21,15 +21,20 @@ did-ta-server
 ├── SECURITY.md
 ├── docs
 │   └── admin
+│       ├── OpenDID_TAAdmin_Operation_Guide.md
 │       └── OpenDID_TAAdmin_Operation_Guide_ko.md
 │   └── api
+│       ├── TAS_API.md
 │       └── TAS_API_ko.md
 │   └── errorCode
-│       └── TAS_ErrorCode.md
+│       ├── TAS_ErrorCode.md
+│       └── TAS_ErrorCode_ko.md
 │   └── installation
-│       └── OpenDID_TASServer_InstallationAndOperation_Guide.md
+│       ├── OpenDID_TASServer_InstallationAndOperation_Guide.md
+│       └── OpenDID_TASServer_InstallationAndOperation_Guide_ko.md
 │   └── db
-│       └── OpenDID_TableDefinition_TAS.md
+│       ├── OpenDID_TableDefinition_TAS.md
+│       └── OpenDID_TableDefinition_TAS_ko.md
 └── source
     └── did-ta-admin
         ├── frontend

@@ -33,6 +33,9 @@ Open DID TA Admin Console Guide
 |        |            | `3.1.16. User List` 장 추가          |
 |        |            | `3.1.17. App List` 장 추가          |
 |        |            | `3.1.18. Wallet List` 장 추가          |
+| v2.0.0 | 2025-05-30 | `3.16. Credential Schema List`에서 Credential Schema 장 추가 |
+|        |            | `3.16. Credential Definition List`에서 Credential Definition 장 추가  |
+
 
 
 
@@ -128,6 +131,10 @@ TA Admin Console에서 설정할 수 있는 주요 항목은 다음과 같습니
   - Push 서버 설정
 - List 사업자 설정
   - 허용된 CA 목록 설정
+  - VC Schema 목록 관리
+  - VC plan 목록 관리
+  - Credential Schema 목록 관리
+  - Credential Definition 목록 관리
 
 <br/>
 

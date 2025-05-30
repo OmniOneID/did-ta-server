@@ -1,7 +1,7 @@
 # Changelog
 
 
-## [Unreleased] (v2.0.0)
+## [Released] (v2.0.0)
 
 ### 🚀 New Features
 - Admin Console
