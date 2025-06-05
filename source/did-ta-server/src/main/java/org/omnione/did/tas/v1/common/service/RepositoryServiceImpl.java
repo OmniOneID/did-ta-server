@@ -61,7 +61,7 @@ public class RepositoryServiceImpl implements StorageService {
     public void registerDidDoc(InvokedDidDoc didDoc, RoleType roleType) {
         try {
             RegisterDidApiReqDto apiRegisterDidReqDto = RegisterDidApiReqDto.builder()
-                    .roleTYpe(roleType.toString())
+                    .roleType(roleType.name())
                     .didDoc(didDoc)
                     .build();
 

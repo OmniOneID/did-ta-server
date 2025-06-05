@@ -34,6 +34,6 @@ import org.omnione.did.data.model.did.InvokedDidDoc;
 @ToString
 @Builder
 public class RegisterDidApiReqDto {
-    private String roleTYpe;
+    private String roleType;
     private InvokedDidDoc didDoc;
 }
