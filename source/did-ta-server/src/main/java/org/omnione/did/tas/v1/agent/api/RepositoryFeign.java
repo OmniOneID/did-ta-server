@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.*;
  * Feign client for the Storage server.
  * This class was temporarily used instead of the BlockChain service and is no longer in use.
  */
-@FeignClient(value = "Storage", url = "${lls.url:htt://127.0.0.1:8098}" + UrlConstant.LLS.V1)
+@FeignClient(value = "Storage", url = "${lls.url:http://127.0.0.1:8098}" + UrlConstant.LLS.V1)
 public interface RepositoryFeign {
 
     /**
