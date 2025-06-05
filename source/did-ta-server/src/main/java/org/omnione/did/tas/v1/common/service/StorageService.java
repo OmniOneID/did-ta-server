@@ -19,6 +19,7 @@ package org.omnione.did.tas.v1.common.service;
 import org.omnione.did.data.model.did.DidDocument;
 import org.omnione.did.data.model.did.InvokedDidDoc;
 import org.omnione.did.data.model.enums.vc.RoleType;
+import org.omnione.did.data.model.enums.vc.VcStatus;
 import org.omnione.did.data.model.vc.VcMeta;
 import org.omnione.did.data.model.enums.did.DidDocStatus;
 
@@ -27,8 +28,9 @@ import org.omnione.did.data.model.enums.did.DidDocStatus;
  */
 public interface StorageService {
     void registerDidDoc(InvokedDidDoc didDoc, RoleType roleType);
-    DidDocument updateDidDocStatus(String did, DidDocStatus didDocStatus);
+    void updateDidDocStatus(String did, DidDocStatus didDocStatus);
     DidDocument findDidDoc(String didKeyUrl);
     void registerVcMeta(VcMeta vcMeta);
+    void updateVcMeta(String vcId, VcStatus vcStatus);
     VcMeta findVcMeta(String vcId);
 }

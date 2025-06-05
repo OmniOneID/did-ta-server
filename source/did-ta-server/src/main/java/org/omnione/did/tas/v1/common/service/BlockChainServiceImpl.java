@@ -21,7 +21,6 @@ import org.omnione.did.ContractFactory;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.base.property.BlockchainProperty;
-import org.omnione.did.base.util.BaseBlockChainUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.data.model.did.DidDocAndStatus;
@@ -43,7 +42,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Profile("!repository & !sample")
+@Profile("!lls & !sample")
 public class BlockChainServiceImpl implements StorageService {
 
     private final ContractApi contractApi;
@@ -83,15 +82,14 @@ public class BlockChainServiceImpl implements StorageService {
     /**
      * Updates the status of a DID document on the blockchain.
      *
-     * @param didKeyURl the DID key URL.
+     * @param didKeyURl    the DID key URL.
      * @param didDocStatus the new status for the DID document.
-     * @return the updated DID document.
      * @throws OpenDidException if the DID document status cannot be updated.
      */
     @Override
-    public DidDocument updateDidDocStatus(String didKeyURl, DidDocStatus didDocStatus) {
+    public void updateDidDocStatus(String didKeyURl, DidDocStatus didDocStatus) {
         try {
-            return (DidDocument) contractApi.updateDidDocStatus(didKeyURl, didDocStatus);
+            contractApi.updateDidDocStatus(didKeyURl, didDocStatus);
         } catch (BlockChainException e) {
             log.error("Failed to update DID Document: " + e.getMessage());
             throw new OpenDidException(ErrorCode.BLOCKCHAIN_UPDATE_DID_DOC_FAILED);
@@ -139,6 +137,25 @@ public class BlockChainServiceImpl implements StorageService {
         } catch (Exception e) {
             log.error("Failed to register VC Meta: " + e.getMessage());
             throw new OpenDidException(ErrorCode.VC_META_REGISTRATION_FAILED);
+        }
+    }
+
+    /**
+     * Updates the status of a VC Meta.
+     *
+     * @param vcId        The VC ID of the VC Meta to update
+     * @param vcStatus    The new status of the VC Meta
+     */
+    @Override
+    public void updateVcMeta(String vcId, VcStatus vcStatus) {
+        try {
+            contractApi.updateVcStatus(vcId, vcStatus);
+        } catch (BlockChainException e) {
+            log.error("Failed to update VC Meta: " + e.getMessage());
+            throw new OpenDidException(ErrorCode.VC_STATUS_UPDATE_FAILED);
+        } catch (Exception e) {
+            log.error("Failed to update VC Meta: " + e.getMessage());
+            throw new OpenDidException(ErrorCode.VC_STATUS_UPDATE_FAILED);
         }
     }
 

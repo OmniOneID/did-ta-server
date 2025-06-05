@@ -63,4 +63,14 @@ public class UrlConstant {
         public static final String REVOKE_VC = "/revoke-vc";
         public static final String COMPLETE_REVOKE = "/complete-revoke";
     }
+
+    public static class LLS {
+        public static final String V1 = "/lls/api/v1";
+        public static final String DID = "/did-doc";
+        public static final String VC_META = "/vc-meta";
+        public static final String CREDENTIAL_SCHEMA = "/credential-schema";
+        public static final String CREDENTIAL_DEFINITION = "/credential-definition";
+
+
+    }
 }

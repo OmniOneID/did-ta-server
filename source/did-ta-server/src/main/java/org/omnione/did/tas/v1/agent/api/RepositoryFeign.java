@@ -16,20 +16,22 @@
 
 package org.omnione.did.tas.v1.agent.api;
 
+import org.omnione.did.base.constants.UrlConstant;
+import org.omnione.did.data.model.vc.VcMeta;
 import org.omnione.did.tas.v1.agent.api.dto.RegisterDidApiReqDto;
-import org.omnione.did.tas.v1.agent.api.dto.DidDocApiResDto;
-import org.omnione.did.tas.v1.agent.api.dto.VcMetaApiResDto;
+import org.omnione.did.tas.v1.agent.api.dto.UpdateDidDocStatusReqDto;
+import org.omnione.did.tas.v1.agent.api.dto.UpdateVcMetaStatusReqDto;
+import org.omnione.did.tas.v1.common.dto.EmptyResDto;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Feign client for the Storage server.
  * This class was temporarily used instead of the BlockChain service and is no longer in use.
  */
-@FeignClient(value = "Storage", url = "http://127.0.0.1:8097/repository", path = "/api/v1")
+@FeignClient(value = "Storage", url = "${lls.url:htt://127.0.0.1:8098}" + UrlConstant.LLS.V1)
 public interface RepositoryFeign {
 
     /**
@@ -38,8 +40,19 @@ public interface RepositoryFeign {
      * @param did DID to get the document for.
      * @return Found DID document.
      */
-    @GetMapping("/did-doc")
-    DidDocApiResDto getDid(@RequestParam(name = "did") String did);
+    @GetMapping(UrlConstant.LLS.DID)
+    String getDid(@RequestParam(name = "did") String did);
+
+    /**
+     * Registers a DID document.
+     *
+     * @param apiRegisterDidReqDto DID document to register.
+     */
+    @PostMapping(value = UrlConstant.LLS.DID, consumes = MediaType.APPLICATION_JSON_VALUE)
+    void registerDid(@RequestBody String apiRegisterDidReqDto);
+
+    @PatchMapping(UrlConstant.LLS.DID)
+    ResponseEntity<EmptyResDto> updateDid(UpdateDidDocStatusReqDto updateDidDocStatusReqDto);
 
     /**
      * Gets metadata for a Verifiable Credential (VC) by its identifier.
@@ -47,14 +60,12 @@ public interface RepositoryFeign {
      * @param vcId Identifier of the Verifiable Credential.
      * @return Found VC metadata.
      */
-    @GetMapping("/vc-meta")
-    VcMetaApiResDto getVcMetaData(@RequestParam(name = "vcId") String vcId);
+    @GetMapping(UrlConstant.LLS.VC_META)
+    String getVcMetaData(@RequestParam(name = "vcId") String vcId);
 
-    /**
-     * Registers a DID document.
-     *
-     * @param apiRegisterDidReqDto DID document to register.
-     */
-    @PostMapping("/did-doc")
-    void registerDid(@RequestBody RegisterDidApiReqDto apiRegisterDidReqDto);
+    @PostMapping(UrlConstant.LLS.VC_META)
+    void registerVcMeta(@RequestBody VcMeta vcMeta);
+
+    @PatchMapping(UrlConstant.LLS.VC_META)
+    void updateVcMetaStatus(@RequestBody UpdateVcMetaStatusReqDto updateVcMetaStatus);
 }
