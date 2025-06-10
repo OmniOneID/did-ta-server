@@ -29,6 +29,7 @@ import org.omnione.did.data.model.did.InvokedDidDoc;
 import org.omnione.did.data.model.enums.did.DidDocStatus;
 import org.omnione.did.data.model.enums.vc.RoleType;
 import org.omnione.did.data.model.enums.vc.VcStatus;
+import org.omnione.did.data.model.schema.VcSchema;
 import org.omnione.did.data.model.vc.VcMeta;
 import org.omnione.did.fabric.FabricContractApi;
 import org.omnione.exception.BlockChainException;
@@ -176,6 +177,32 @@ public class BlockChainServiceImpl implements StorageService {
         } catch (Exception e) {
             log.error("Failed to find VC Meta: " + e.getMessage());
             throw new OpenDidException(ErrorCode.VC_META_RETRIEVAL_FAILED);
+        }
+    }
+
+    @Override
+    public void registerVcSchema(VcSchema vcSchema, String did) {
+        try {
+            contractApi.registVcSchema(vcSchema);
+        } catch (BlockChainException e) {
+            log.error("Failed to get VC Schema: " + e.getMessage());
+            throw new OpenDidException(ErrorCode.BLOCKCHAIN_VC_SCHEMA_REGISTRATION_FAILED);
+        } catch (Exception e) {
+            log.error("Failed to register VC Schema: " + e.getMessage());
+            throw new OpenDidException(ErrorCode.VC_SCHEMA_REGISTRATION_FAILED);
+        }
+    }
+
+    @Override
+    public VcSchema getVcSchema(String vcSchemaId) {
+        try {
+            return (VcSchema) contractApi.getVcSchema(vcSchemaId);
+        } catch (BlockChainException e) {
+            log.error("Failed to get VC Schema: " + e.getMessage());
+            throw new OpenDidException(ErrorCode.BLOCKCHAIN_VC_SCHEMA_RETRIEVAL_FAILED);
+        } catch (Exception e) {
+            log.error("Failed to get DID Document: " + e.getMessage());
+            throw new OpenDidException(ErrorCode.VC_SCHEMA_NOT_FOUND);
         }
     }
 

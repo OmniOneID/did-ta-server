@@ -18,6 +18,7 @@ package org.omnione.did.tas.v1.agent.api;
 
 import org.omnione.did.base.constants.UrlConstant;
 import org.omnione.did.data.model.vc.VcMeta;
+import org.omnione.did.tas.v1.agent.api.dto.InputVcSchemaReqDto;
 import org.omnione.did.tas.v1.agent.api.dto.RegisterDidApiReqDto;
 import org.omnione.did.tas.v1.agent.api.dto.UpdateDidDocStatusReqDto;
 import org.omnione.did.tas.v1.agent.api.dto.UpdateVcMetaStatusReqDto;
@@ -68,4 +69,19 @@ public interface RepositoryFeign {
 
     @PatchMapping(UrlConstant.LSS.VC_META)
     void updateVcMetaStatus(@RequestBody UpdateVcMetaStatusReqDto updateVcMetaStatus);
+
+    /**
+     * Register a VC Schema.
+     * @param vcSchema the VC Schema to register
+     */
+    @PostMapping("/vc-schema")
+    void registerVcSchema(InputVcSchemaReqDto vcSchema);
+
+    /**
+     * Get a VC Schema by schema-id
+     * @param schemaId the credential schema id
+     * @return the encoded Credential Schema
+     */
+    @GetMapping("/vc-schema")
+    String getVcSchema(@RequestParam(name = "schemaId") String schemaId);
 }

@@ -20,6 +20,7 @@ import org.omnione.did.data.model.did.DidDocument;
 import org.omnione.did.data.model.did.InvokedDidDoc;
 import org.omnione.did.data.model.enums.vc.RoleType;
 import org.omnione.did.data.model.enums.vc.VcStatus;
+import org.omnione.did.data.model.schema.VcSchema;
 import org.omnione.did.data.model.vc.VcMeta;
 import org.omnione.did.data.model.enums.did.DidDocStatus;
 
@@ -33,4 +34,6 @@ public interface StorageService {
     void registerVcMeta(VcMeta vcMeta);
     void updateVcMeta(String vcId, VcStatus vcStatus);
     VcMeta findVcMeta(String vcId);
+    void registerVcSchema(VcSchema vcSchema, String did);
+    VcSchema getVcSchema(String vcSchemaId);
 }

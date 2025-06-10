@@ -110,6 +110,8 @@ public enum ErrorCode {
     BLOCKCHAIN_VC_META_RETRIEVAL_FAILED("SSRVTRA15005", "Failed to retrieve VC meta on the blockchain.", 500),
     BLOCKCHAIN_VC_STATUS_UPDATE_FAILED("SSRVTRA18507", "Failed to update VC status on the blockchain.", 500),
     BLOCKCHAIN_REMOVE_INDEX_FAILED("SSRVTRA18508", "Failed to remove index on the blockchain", 500),
+    BLOCKCHAIN_VC_SCHEMA_REGISTRATION_FAILED("SSRVTRA18509", "Failed to register VC schema on the blockchain.", 500),
+    BLOCKCHAIN_VC_SCHEMA_RETRIEVAL_FAILED("SSRVTRA18510", "Failed to retrieve VC schema on the blockchain.", 500),
 
 
     // 07. External server integration errors (15500 ~ 15999)
@@ -255,9 +257,11 @@ public enum ErrorCode {
     FAILED_TO_REGISTER_VC_PLAN_FROM_ISSUER("SSRVTRA18533", "Failed to register VC plan from issuer.", 500),
     INVALID_VC_SCHEMA("SSRVTRA18534", "Failed to process VC schema: invalid schema.", 400),
     INVALID_CERTIFICATE_VC_JSON_FORMAT("SSRVTRA18535", "Failed to process certificate VC: invalid JSON format.", 500),
-
     CREDENTIAL_SCHEMA_RETRIEVAL_FAILED("SSRVTRA18536", "Failed to retrieve Credential Schema.", 400),
     CREDENTIAL_DEFINITION_RETRIEVAL_FAILED("SSRVTRA18536", "Failed to retrieve Credential Definition.", 400),
+    VC_SCHEMA_REGISTRATION_FAILED("SSRVTRA18537", "Failed to register VC schema.", 500),
+    VC_SCHEMA_NOT_FOUND("SSRVTRA18538", "Failed to find VC schema", 400),
+
 
     // 14. Token-related errors (19000 ~ 19499)
     SERVER_TOKEN_GENERATION_FAILED("SSRVTRA19000", "Failed to generate server token.", 500),

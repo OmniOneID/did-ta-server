@@ -16,16 +16,20 @@
 
 package org.omnione.did.tas.v1.common.service;
 
+import com.google.gson.JsonSyntaxException;
 import lombok.RequiredArgsConstructor;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.base.util.BaseCoreDidUtil;
 import org.omnione.did.base.util.BaseCoreVcUtil;
+import org.omnione.did.base.util.BaseMultibaseUtil;
 import org.omnione.did.common.util.JsonUtil;
 import org.omnione.did.core.manager.DidManager;
 import org.omnione.did.data.model.enums.did.DidDocStatus;
 import org.omnione.did.data.model.enums.vc.VcStatus;
+import org.omnione.did.data.model.schema.VcSchema;
 import org.omnione.did.tas.v1.agent.api.RepositoryFeign;
+import org.omnione.did.tas.v1.agent.api.dto.InputVcSchemaReqDto;
 import org.omnione.did.tas.v1.agent.api.dto.RegisterDidApiReqDto;
 import org.omnione.did.tas.v1.agent.api.dto.UpdateVcMetaStatusReqDto;
 import feign.FeignException;
@@ -35,9 +39,12 @@ import org.omnione.did.data.model.did.InvokedDidDoc;
 import org.omnione.did.data.model.enums.vc.RoleType;
 import org.omnione.did.data.model.vc.VcMeta;
 import org.omnione.did.tas.v1.agent.api.dto.UpdateDidDocStatusReqDto;
+import org.omnione.did.zkp.datamodel.util.GsonWrapper;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
+
+import java.nio.charset.StandardCharsets;
 
 /**
  * Storage service implementation for managing DID documents and verifiable credentials.
@@ -177,6 +184,36 @@ public class RepositoryServiceImpl implements StorageService {
             log.error("Failed to find VC meta data.", e);
             throw new OpenDidException(ErrorCode.FIND_VC_META_FAILED);
         }
+    }
+
+    @Override
+    public void registerVcSchema(VcSchema vcSchema, String did) {
+        String encodedVcSchema = encodeVcSchema(vcSchema);
+        repositoryFeign.registerVcSchema(
+                InputVcSchemaReqDto.builder()
+                        .did(did)
+                        .vcSchema(encodedVcSchema)
+                        .build()
+        );
+    }
+
+    private String encodeVcSchema(VcSchema vcSchema) {
+        try {
+            String vcSchemaJson = GsonWrapper.getGson().toJson(vcSchema);
+            return BaseMultibaseUtil.encode(vcSchemaJson.getBytes(StandardCharsets.UTF_8));
+        } catch (JsonSyntaxException e) {
+            log.error("\t--> Failed to encode Credential Schema: {}", e.getMessage());
+            throw new OpenDidException(ErrorCode.ENCODING_FAILED);
+        } catch (Exception e) {
+            log.error("\t--> Unexpected error while encoding Credential Schema: {}", e.getMessage());
+            throw new OpenDidException(ErrorCode.ENCODING_FAILED);
+        }
+    }
+
+    @Override
+    public VcSchema getVcSchema(String vcSchemaId) {
+        String vcSchema = repositoryFeign.getVcSchema(vcSchemaId);
+        return GsonWrapper.getGson().fromJson(vcSchema, VcSchema.class);
     }
 
     /**
