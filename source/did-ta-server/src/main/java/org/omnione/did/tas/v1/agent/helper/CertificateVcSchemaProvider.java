@@ -19,11 +19,28 @@ public class CertificateVcSchemaProvider {
                     "language": "ko",
                     "formatVersion": "1.0"
                 },
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "credentialSubject": {
+                            "type": "object",
+                            "properties": {
+                                "claims": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 "credentialSubject": {
                     "claims": [{
                         "namespace": {
                             "id": "org.opendid.v1",
-                            "name": "OpenDID - Certificate Verifiable Credential"
+                            "name": "OpenDID - Certificate Verifiable Credential",
+                            "ref": " "
                         },
                         "items": [
                             {"id": "subject", "caption": "subject", "type": "text", "format": "plain"},
