@@ -23,6 +23,7 @@ Open DID TA Server Installation And Operation Guide
 
 Table of Contents
 ==
+
 - [1. Introduction](#1-introduction)
   - [1.1. Overview](#11-overview)
   - [1.2. What is the TA Server?](#12-what-is-the-ta-server)
@@ -65,7 +66,6 @@ Table of Contents
   - [5.7. application-blockchain.yml](#57-application-blockchainyml)
   - [5.8. blockchain.properties](#58-blockchainproperties)
     - [5.8.1. Blockchain Integration Configuration](#581-blockchain-integration-configuration)
-    - [EVM Contract Configuration](#evm-contract-configuration)      
 - [6. Profile Configuration and Usage](#6-profile-configuration-and-usage)
   - [6.1. Profile Overview (`sample`, `dev`)](#61-profile-overview-sample-dev)
     - [6.1.1. `sample` Profile](#611-sample-profile)
@@ -75,12 +75,13 @@ Table of Contents
     - [6.2.2. When Using Console Commands](#622-when-using-console-commands)
     - [6.2.3. When Using Docker](#623-when-using-docker)
 - [7. Running After Building with Docker](#7-running-after-building-with-docker)
-  - [7.1. How to Build a Docker Image (Based on `Dockerfile`)](#71-how-to-build-a-docker-image-based-on-dockerfile)
-  - [7.2. Running the Docker Image](#72-running-the-docker-image)
-  - [7.3. Running with Docker Compose](#73-running-with-docker-compose)
-    - [7.3.1. `docker-compose.yml` File Explanation](#731-docker-composeyml-file-explanation)
-    - [7.3.2. Running and Managing Containers](#732-running-and-managing-containers)
-    - [7.3.3. How to Configure the Server](#733-how-to-configure-the-server)
+  - [7.1. Docker Image Build Method (Based on `Dockerfile`)](#71-docker-image-build-method-based-on-dockerfile)
+    - [7.1.1. Copy Dockerfile to source directory](#711-copy-dockerfile-to-source-directory)
+    - [7.1.2. Build Docker image](#712-build-docker-image)
+  - [7.2. Running with Docker Compose](#72-running-with-docker-compose)
+    - [7.2.1. Preparing Directories and Configuration Files](#721-preparing-directories-and-configuration-files)
+    - [7.2.2. Create `docker-compose.yml` file](#722-create-docker-composeyml-file)
+    - [7.2.3. Run Container](#723-run-container)
 - [8. Installing PostgreSQL with Docker](#8-installing-postgresql-with-docker)
   - [8.1. Installing PostgreSQL with Docker Compose](#81-installing-postgresql-with-docker-compose)
   - [8.2. Running the PostgreSQL Container](#82-running-the-postgresql-container)
@@ -880,59 +881,87 @@ You can flexibly switch between profiles based on the method of execution and ap
 
 # 7. Running After Building with Docker
 
-## 7.1. How to Build a Docker Image (Based on `Dockerfile`)
+## 7.1. Docker Image Build Method (Based on `Dockerfile`)
 
-Build the Docker image using the following command:
-
+### 7.1.1. Copy Dockerfile to source directory
 ```bash
-docker build -t did-tas-server .
+cp {dockerfile_path} {source_directory}/
 ```
 
-## 7.2. Running the Docker Image
-
-Run the built image using the following command:
+### 7.1.2. Build Docker image
+Build the Docker image with the following command:
 
 ```bash
-docker run -d -p 8090:8090 did-tas-server
+cd {source_directory}
+docker build -t did-ta-server -f did-ta-server/Dockerfile .
 ```
 
-## 7.3. Running with Docker Compose
+<br/>
 
-### 7.3.1. `docker-compose.yml` File Explanation
+## 7.2. Running with Docker Compose
 
-You can easily manage multiple containers using a `docker-compose.yml` file.
+### 7.2.1. Preparing Directories and Configuration Files
 
-```yaml
+#### 1. Create docker-compose directory and config directory
+```bash
+mkdir -p {docker_compose_directory}/config
+```
+
+#### 2. Copy configuration files (yml) to config directory
+```bash
+cp {application_yml_directory}/* {docker_compose_directory}/config/
+cp {blockchain_properties_path} {docker_compose_directory}/config/
+```
+
+#### 3. Modify blockchain.properties file
+```yml
+evm.network.url=http://host.docker.internal:8545
+... (omitted)
+```
+
+> **host.docker.internal** is a special address that points to the host machine from within a Docker container.  
+> Since localhost inside a container refers to the container itself, you must use host.docker.internal to access services (PostgreSQL, blockchain) running on the host.
+
+#### 4. Modify application-database.yml file
+```yml
+spring:
+ ... (omitted)
+ datasource:
+   driver-class-name: org.postgresql.Driver
+   url: jdbc:postgresql://host.docker.internal:5430/tas
+   username: omn
+   password: omn
+ ... (omitted)
+```
+
+### 7.2.2. Create `docker-compose.yml` file
+You can easily manage multiple containers using the `docker-compose.yml` file.
+
+```yml
 version: '3'
 services:
-  app:
-    image: did-tas-server
-    ports:
-      - "8090:8090"
-    volumes:
-      - ${your-config-dir}:/app/config
-    environment:
-      - SPRING_PROFILES_ACTIVE=local
+ app:
+   image: did-ta-server
+   ports:
+     - "8090:8090"
+   volumes:
+     - {config_directory}:/app/config
+   environment:
+     - SPRING_PROFILES_ACTIVE=dev
+   extra_hosts:
+     - "host.docker.internal:host-gateway"
 ```
 
-### 7.3.2. Running and Managing Containers
+> - In the example above, the `config_directory` is mounted to `/app/config` inside the container to share configuration files.
+>   - Configuration files located in `config_directory` take priority over default configuration files.
+>   - For detailed configuration instructions, please refer to [5. Configuration Guide](#5-configuration-guide).
 
-Run the container using Docker Compose with the following command:
 
+### 7.2.3. Run Container
 ```bash
+cd {docker_compose_directory}
 docker-compose up -d
 ```
-
-### 7.3.3. How to Configure the Server
-
-In the example above, the `${your-config-dir}` directory is mounted to `/app/config` inside the container to share configuration files.
-
-- If additional configuration is needed, you can modify the settings by adding separate property files in the mounted folder.
-  - For example, add an `application.yml` file to `${your-config-dir}` and include your custom configurations in it.
-  - The `application.yml` file in `${your-config-dir}` will override the default settings.
-
-- For detailed configuration, refer to [5. Configuration Guide](#5-configuration-guide).
-
 
 <br/>
 

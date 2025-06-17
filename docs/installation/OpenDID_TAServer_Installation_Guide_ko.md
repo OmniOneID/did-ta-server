@@ -24,8 +24,6 @@ Open DID TA Server Installation Guide
 목차
 ==
 
-- [Open DID TA Server Installation Guide](#open-did-ta-server-installation-guide)
-- [목차](#목차)
 - [1. 소개](#1-소개)
   - [1.1. 개요](#11-개요)
   - [1.2. TA 서버 정의](#12-ta-서버-정의)
@@ -40,17 +38,7 @@ Open DID TA Server Installation Guide
 - [4. 서버 구동 방법](#4-서버-구동-방법)
   - [4.1. IntelliJ IDEA로 구동하기 (Gradle 지원)](#41-intellij-idea로-구동하기-gradle-지원)
     - [4.1.1. IntelliJ IDEA에서 백엔드(Spring Boot) 실행](#411-intellij-idea에서-백엔드spring-boot-실행)
-      - [4.1.1.1. IntelliJ IDEA 설치 및 설정](#4111-intellij-idea-설치-및-설정)
-      - [4.1.1.2. 프로젝트 열기](#4112-프로젝트-열기)
-      - [4.1.1.3. Gradle 빌드](#4113-gradle-빌드)
-      - [4.1.1.4. 서버 구동](#4114-서버-구동)
-      - [4.1.1.5. 데이터베이스 설치](#4115-데이터베이스-설치)
-      - [4.1.1.6. 서버 설정](#4116-서버-설정)
     - [4.1.2. VS Code에서 프론트엔드(React) 실행](#412-vs-code에서-프론트엔드react-실행)
-      - [4.1.2.1. VS Code 설치](#4121-vs-code-설치)
-      - [4.1.2.2. 프로젝트 열기](#4122-프로젝트-열기)
-      - [4.1.2.3. 의존성 설치](#4123-의존성-설치)
-      - [4.1.2.4. 개발 서버 실행](#4124-개발-서버-실행)
   - [4.2. 콘솔 명령어로 구동하기](#42-콘솔-명령어로-구동하기)
     - [4.2.1. Gradle 빌드 명령어](#421-gradle-빌드-명령어)
     - [4.2.2. 서버 구동 방법](#422-서버-구동-방법)
@@ -77,8 +65,7 @@ Open DID TA Server Installation Guide
     - [5.6.1. Wallet 접속 정보 설정](#561-wallet-접속-정보-설정)
   - [5.7. applicaiton-blockchain.yml](#57-applicaiton-blockchainyml)
   - [5.8. blockchain.properties](#58-blockchainproperties)
-    - [5.8.1. 블록체인 연동 설정](#581-블록체인-연동-설정)      
-      - [EVM Contract Configuration](#evm-contract-configuration)      
+    - [5.8.1. 블록체인 연동 설정](#581-블록체인-연동-설정)
 - [6. 프로파일 설정 및 사용](#6-프로파일-설정-및-사용)
   - [6.1. 프로파일 개요 (`sample`, `dev`)](#61-프로파일-개요-sample-dev)
     - [6.1.1. `sample` 프로파일](#611-sample-프로파일)
@@ -89,11 +76,12 @@ Open DID TA Server Installation Guide
     - [6.2.3. Docker를 사용한 서버 구동 시](#623-docker를-사용한-서버-구동-시)
 - [7. Docker로 빌드 후 구동하기](#7-docker로-빌드-후-구동하기)
   - [7.1. Docker 이미지 빌드 방법 (`Dockerfile` 기반)](#71-docker-이미지-빌드-방법-dockerfile-기반)
-  - [7.2. Docker 이미지 실행](#72-docker-이미지-실행)
-  - [7.3. Docker Compose를 이용한 구동](#73-docker-compose를-이용한-구동)
-    - [7.3.1. `docker-compose.yml` 파일 설명](#731-docker-composeyml-파일-설명)
-    - [7.3.2. 컨테이너 실행 및 관리](#732-컨테이너-실행-및-관리)
-    - [7.3.3. 서버 설정 방법](#733-서버-설정-방법)
+    - [7.1.1. Dockerfile을 source 디렉토리로 복사](#711-dockerfile을-source-디렉토리로-복사)
+    - [7.1.2. Docker 이미지 빌드](#712-docker-이미지-빌드)
+  - [7.2. Docker Compose를 이용한 구동](#72-docker-compose를-이용한-구동)
+    - [7.2.1. 디렉토리 및 설정 파일 준비](#721-디렉토리-및-설정-파일-준비)
+    - [7.2.2. `docker-compose.yml` 파일 생성](#722-docker-composeyml-파일-생성)
+    - [7.2.3. 컨테이너 실행](#723-컨테이너-실행)
 - [8. Docker PostgreSQL 설치하기](#8-docker-postgresql-설치하기)
   - [8.1. Docker Compose를 이용한 PostgreSQL 설치](#81-docker-compose를-이용한-postgresql-설치)
   - [8.2. PostgreSQL 컨테이너 실행](#82-postgresql-컨테이너-실행)
@@ -824,54 +812,93 @@ TA 서버는 다양한 환경에서 실행될 수 있도록 `dev`와 `sample` �
 
 각 방법에 따라 프로파일별 설정을 유연하게 변경하여 사용할 수 있으며, 프로젝트 환경에 맞는 설정을 쉽게 적용할 수 있습니다.
 
+<br/>
+
 # 7. Docker로 빌드 후 구동하기
 
 ## 7.1. Docker 이미지 빌드 방법 (`Dockerfile` 기반)
+
+### 7.1.1. Dockerfile을 source 디렉토리로 복사
+```bash
+cp {dockerfile_path} {source_directory}/
+```
+
+### 7.1.2. Docker 이미지 빌드
 다음 명령어로 Docker 이미지를 빌드합니다:
 
 ```bash
-docker build -t did-tas-server .
+cd {source_directory}
+docker build -t did-ta-server -f did-ta-server/Dockerfile .
 ```
 
-## 7.2. Docker 이미지 실행
-빌드된 이미지를 실행합니다:
+<br/>
 
+## 7.2. Docker Compose를 이용한 구동
+
+### 7.2.1. 디렉토리 및 설정 파일 준비
+
+#### 1. docker-compose 디렉토리 및 config 디렉토리 생성
 ```bash
-docker run -d -p 8090:8090 did-tas-server
+mkdir -p {docker_compose_directory}/config
 ```
 
-## 7.3. Docker Compose를 이용한 구동
+#### 2. 설정 파일(yml)들을 config 디렉토리로 복사
+```bash
+cp {application_yml_directory}/* {docker_compose_directory}/config/
+cp {blockchain_properties_path} {docker_compose_directory}/config/
+```
 
-### 7.3.1. `docker-compose.yml` 파일 설명
+#### 3. blockchain.properties 파일 수정
+```yml
+evm.network.url=http://host.docker.internal:8545
+... 생략
+```
+
+> **host.docker.internal**은 Docker 컨테이너에서 호스트 머신을 가리키는 특별한 주소입니다.  
+> 컨테이너 내부에서 localhost는 컨테이너 자신을 의미하므로, 호스트에서 실행 중인 서비스(PostgreSQL, 블록체인)에 접근하려면 host.docker.internal을 사용해야 합니다.
+
+#### 4. application-database.yml 파일 수정
+```yml
+spring:
+  ... 생략
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://host.docker.internal:5430/tas
+    username: omn
+    password: omn
+  ... 생략
+```
+
+### 7.2.2. `docker-compose.yml` 파일 생성
 `docker-compose.yml` 파일을 사용하여 여러 컨테이너를 쉽게 관리할 수 있습니다.
 
-```yaml
+```yml
 version: '3'
 services:
   app:
-    image: did-tas-server
+    image: did-ta-server
     ports:
       - "8090:8090"
     volumes:
-      - ${your-config-dir}:/app/config
+      - {config_directory}:/app/config
     environment:
-      - SPRING_PROFILES_ACTIVE=local
+      - SPRING_PROFILES_ACTIVE=dev
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 ```
 
-### 7.3.2. 컨테이너 실행 및 관리
-다음 명령어로 Docker Compose를 사용해 컨테이너를 실행합니다:
+> - 위의 예시에서 `config_directory` 디렉토리를 컨테이너 내 `/app/config`로 마운트하여 설정 파일을 공유합니다.
+>   - `config_directory`에 위치한 설정 파일은 기본 설정 파일보다 우선적으로 적용됩니다.
+>   - 자세한 설정 방법은 [5. 설정 가이드](#5-설정-가이드) 를 참고해 주세요.
 
+
+### 7.2.3. 컨테이너 실행
 ```bash
+cd {docker_compose_directory}
 docker-compose up -d
 ```
 
-### 7.3.3. 서버 설정 방법
-위의 예시에서 `${your-config-dir}` 디렉토리를 컨테이너 내 `/app/config`로 마운트하여 설정 파일을 공유합니다.
-- 추가적인 설정이 필요한 경우, 마운트된 폴더에 별도의 property 파일을 추가하여 설정을 변경할 수 있습니다. 
-  - 예를 들어, `application.yml` 파일을 `${your-config-dir}`에 추가하고, 이 파일에 변경할 설정을 작성합니다. 
-  - `${your-config-dir}`에 위치한 `application.yml` 파일은 기본 설정 파일보다 우선적으로 적용됩니다.
-- 자세한 설정 방법은 [5. 설정 가이드](#5-설정-가이드) 를 참고해 주세요.
-
+<br/>
 
 # 8. Docker PostgreSQL 설치하기
 
