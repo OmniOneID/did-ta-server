@@ -76,8 +76,7 @@ Table of Contents
     - [6.2.3. When Using Docker](#623-when-using-docker)
 - [7. Running After Building with Docker](#7-running-after-building-with-docker)
   - [7.1. Docker Image Build Method (Based on `Dockerfile`)](#71-docker-image-build-method-based-on-dockerfile)
-    - [7.1.1. Copy Dockerfile to source directory](#711-copy-dockerfile-to-source-directory)
-    - [7.1.2. Build Docker image](#712-build-docker-image)
+    - [7.1.1. Build Docker image](#711-build-docker-image)
   - [7.2. Running with Docker Compose](#72-running-with-docker-compose)
     - [7.2.1. Preparing Directories and Configuration Files](#721-preparing-directories-and-configuration-files)
     - [7.2.2. Create `docker-compose.yml` file](#722-create-docker-composeyml-file)
@@ -883,12 +882,7 @@ You can flexibly switch between profiles based on the method of execution and ap
 
 ## 7.1. Docker Image Build Method (Based on `Dockerfile`)
 
-### 7.1.1. Copy Dockerfile to source directory
-```bash
-cp {dockerfile_path} {source_directory}/
-```
-
-### 7.1.2. Build Docker image
+### 7.1.1. Build Docker image
 Build the Docker image with the following command:
 
 ```bash

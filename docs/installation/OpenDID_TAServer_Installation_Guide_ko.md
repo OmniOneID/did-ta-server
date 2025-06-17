@@ -76,8 +76,7 @@ Open DID TA Server Installation Guide
     - [6.2.3. Docker를 사용한 서버 구동 시](#623-docker를-사용한-서버-구동-시)
 - [7. Docker로 빌드 후 구동하기](#7-docker로-빌드-후-구동하기)
   - [7.1. Docker 이미지 빌드 방법 (`Dockerfile` 기반)](#71-docker-이미지-빌드-방법-dockerfile-기반)
-    - [7.1.1. Dockerfile을 source 디렉토리로 복사](#711-dockerfile을-source-디렉토리로-복사)
-    - [7.1.2. Docker 이미지 빌드](#712-docker-이미지-빌드)
+    - [7.1.1. Docker 이미지 빌드](#711-docker-이미지-빌드)
   - [7.2. Docker Compose를 이용한 구동](#72-docker-compose를-이용한-구동)
     - [7.2.1. 디렉토리 및 설정 파일 준비](#721-디렉토리-및-설정-파일-준비)
     - [7.2.2. `docker-compose.yml` 파일 생성](#722-docker-composeyml-파일-생성)
@@ -818,12 +817,7 @@ TA 서버는 다양한 환경에서 실행될 수 있도록 `dev`와 `sample` �
 
 ## 7.1. Docker 이미지 빌드 방법 (`Dockerfile` 기반)
 
-### 7.1.1. Dockerfile을 source 디렉토리로 복사
-```bash
-cp {dockerfile_path} {source_directory}/
-```
-
-### 7.1.2. Docker 이미지 빌드
+### 7.1.1. Docker 이미지 빌드
 다음 명령어로 Docker 이미지를 빌드합니다:
 
 ```bash
