@@ -37,6 +37,8 @@ const AllowedCaRegistrationPage = (props: Props) => {
     const [isButtonDisabled, setIsButtonDisabled] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
     const [isWalletIsValid, setIsWalletIdValid] = useState(false);
+    const [walletIdCheckMessage, setWalletIdCheckMessage] = useState<string>('');
+    const [walletIdCheckStatus, setWalletIdCheckStatus] = useState<'success' | 'error' | ''>('');
 
     const handleChange = (field: keyof AllowedCaFormData) => 
         (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>) => {
@@ -46,6 +48,8 @@ const AllowedCaRegistrationPage = (props: Props) => {
             if (field === 'walletId') {
                 setIsWalletIdValid(false);
                 setErrors((prev) => ({ ...prev, walletId: undefined }));
+                setWalletIdCheckMessage('');
+                setWalletIdCheckStatus('');
             }
     };
 
@@ -70,6 +74,8 @@ const AllowedCaRegistrationPage = (props: Props) => {
         setIsButtonDisabled(true);
         setFormData({ caList: [], walletId: ''});
         setIsWalletIdValid(false);
+        setWalletIdCheckMessage('');
+        setWalletIdCheckStatus('');
     };
 
     const validate = () => {
@@ -153,10 +159,19 @@ const AllowedCaRegistrationPage = (props: Props) => {
             if (response.data.unique === false) {
                 setErrors((prev) => ({ ...prev, walletId: 'WalletId already exists.' }));
                 setIsWalletIdValid(false);
+                setWalletIdCheckMessage('This wallet identifier is already in use. Please choose a different one.');
+                setWalletIdCheckStatus('error');
             } else {        
                 setIsWalletIdValid(true);
                 setErrors((prev) => ({ ...prev, walletId: undefined }));
+                setWalletIdCheckMessage('This wallet identifier is available for use.');
+                setWalletIdCheckStatus('success');
             }
+        })
+        .catch((error) => {
+            setIsWalletIdValid(false);
+            setWalletIdCheckMessage('Failed to check wallet identifier availability. Please try again.');
+            setWalletIdCheckStatus('error');
         });
     };
     
@@ -218,8 +233,15 @@ const AllowedCaRegistrationPage = (props: Props) => {
                             value={formData.walletId} 
                             onChange={handleChange('walletId')} 
                             error={!!errors.walletId} 
-                            helperText={errors.walletId} 
-                            sx={{minWidth: 250}}
+                            helperText={errors.walletId || walletIdCheckMessage}
+                            sx={{
+                                minWidth: 250,
+                                '& .MuiFormHelperText-root': {
+                                    color: walletIdCheckStatus === 'success' ? 'green' : 
+                                           walletIdCheckStatus === 'error' ? 'red' : 'inherit',
+                                    fontWeight: walletIdCheckStatus ? 500 : 'inherit'
+                                }
+                            }}
                         />
                         <Button 
                             variant="contained" 
