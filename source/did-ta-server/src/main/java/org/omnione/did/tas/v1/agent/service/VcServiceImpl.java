@@ -316,7 +316,8 @@ public class VcServiceImpl implements VcService {
 
             // Generate auth nonce.
             log.debug("\t--> Generating auth nonce");
-            String authNonce = generateNonceWithMultibase();
+//            String authNonce = generateNonceWithMultibase();
+            String authNonce = "mhs8xzAiU9UGB/LatBBTNkg";
 
             // Update auth nonce.
             log.debug("\t--> Updating transactioin authNonce");

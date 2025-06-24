@@ -24,7 +24,6 @@ import org.omnione.did.base.exception.OpenDidException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.list.v1.admin.dto.user.UserDto;
-import org.omnione.did.list.v1.admin.dto.vcplan.ListVcPlanDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -59,7 +58,7 @@ public class UserQueryService {
      */
     public User findByDid(String did) {
         try {
-            return userRepository.findByDid(did)
+            return userRepository.findFirstByDid(did)
                     .orElseThrow(() -> new OpenDidException(ErrorCode.USER_INFO_NOT_FOUND));
         } catch (OpenDidException e) {
             log.error("User not found for did {}: {}", did, e.getMessage());

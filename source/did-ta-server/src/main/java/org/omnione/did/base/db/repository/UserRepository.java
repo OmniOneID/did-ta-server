@@ -35,7 +35,7 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long>, QuerydslPredicateExecutor<User>, UserRepositoryAdmin {
     long countByDid(String did);
-    Optional<User> findByDid(String did);
+    Optional<User> findFirstByDid(String did);
     Optional<User> findByDidAndStatus(String did, UserStatus userStatus);
     @Query("SELECT u.id FROM User u WHERE u.did IN :dids")
     List<Long> findIdsByDids(@Param("dids") List<String> dids);

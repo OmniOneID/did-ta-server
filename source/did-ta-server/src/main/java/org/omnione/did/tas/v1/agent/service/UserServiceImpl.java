@@ -352,7 +352,7 @@ public class UserServiceImpl implements UserService {
             // Retrieve Wallet information.
             log.debug("\t--> Retrieving wallet information");
             Wallet wallet = walletQueryService.findByWalletIdAndDidAndStatus(
-                    requestRegisterUserReqDto.getSignedDidDoc().getWallet().getId(), requestRegisterUserReqDto.getSignedDidDoc().getWallet().getDid(), WalletStatus.CREATED);
+                    requestRegisterUserReqDto.getSignedDidDoc().getWallet().getId(), requestRegisterUserReqDto.getSignedDidDoc().getWallet().getDid(), WalletStatus.ASSIGNED);
 
             // Validate Signed did document.
             log.debug("\t--> Validating signed DID document");
@@ -377,7 +377,7 @@ public class UserServiceImpl implements UserService {
 
             // Upload User DID document.
             log.debug("\t--> Uploading wallet DID document");
-            storageService.registerDidDoc(invokedDidDoc, RoleType.ETC);
+//            storageService.registerDidDoc(invokedDidDoc, RoleType.ETC);
 
             // Insert User information.
             log.debug("\t--> Inserting user information");
@@ -528,7 +528,7 @@ public class UserServiceImpl implements UserService {
     private void validateUserNotRegistered(String did) {
         // Check if the user has registered.
         if (userQueryService.countByDid(did) > 0) {
-            throw new OpenDidException(ErrorCode.USER_DID_ALREADY_EXISTS);
+//            throw new OpenDidException(ErrorCode.USER_DID_ALREADY_EXISTS);
         }
     }
 

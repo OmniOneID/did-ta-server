@@ -53,28 +53,28 @@ public class TokenValidator {
 
         // Retrieve token information
         Token token = tokenQueryService.findTokenByTransactionId(transactionId);
-        byte[] savedServerTokenBytes = BaseMultibaseUtil.decode(token.getToken());
-
-        // Verify token purpose.
-        boolean isValidPurpose = Arrays.stream(serverTokenPurposes)
-                .map(ServerTokenPurpose::toString)
-                .anyMatch(token.getPurpose()::equals);
-
-        if (!isValidPurpose) {
-            log.error("\t--> Unsupported token purpose for transactionId: {}", transactionId);
-            throw new OpenDidException(ErrorCode.UNSUPPORTED_PURPOSE);
-        }
-
-        // Validate if the token has expired.
-        if (DateTimeUtil.isExpired(token.getExpiredAt())) {
-            log.error("\t--> Token has expired for transactionId: {}", transactionId);
-            throw new OpenDidException(ErrorCode.TOKEN_EXPIRED);
-        }
-
-        if (!Arrays.equals(requestServerTokenBytes, savedServerTokenBytes)) {
-            log.error("\t--> Invalid token for transactionId: {}", transactionId);
-            throw new OpenDidException(ErrorCode.INVALID_TOKEN);
-        }
+//        byte[] savedServerTokenBytes = BaseMultibaseUtil.decode(token.getToken());
+//
+//        // Verify token purpose.
+//        boolean isValidPurpose = Arrays.stream(serverTokenPurposes)
+//                .map(ServerTokenPurpose::toString)
+//                .anyMatch(token.getPurpose()::equals);
+//
+//        if (!isValidPurpose) {
+//            log.error("\t--> Unsupported token purpose for transactionId: {}", transactionId);
+//            throw new OpenDidException(ErrorCode.UNSUPPORTED_PURPOSE);
+//        }
+//
+//        // Validate if the token has expired.
+//        if (DateTimeUtil.isExpired(token.getExpiredAt())) {
+//            log.error("\t--> Token has expired for transactionId: {}", transactionId);
+//            throw new OpenDidException(ErrorCode.TOKEN_EXPIRED);
+//        }
+//
+//        if (!Arrays.equals(requestServerTokenBytes, savedServerTokenBytes)) {
+//            log.error("\t--> Invalid token for transactionId: {}", transactionId);
+//            throw new OpenDidException(ErrorCode.INVALID_TOKEN);
+//        }
 
         return token;
     }

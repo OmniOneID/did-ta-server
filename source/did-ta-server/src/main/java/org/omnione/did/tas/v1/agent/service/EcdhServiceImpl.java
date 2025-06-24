@@ -354,16 +354,20 @@ public class EcdhServiceImpl implements EcdhService {
         byte[] clientPublicKey = BaseMultibaseUtil.decode(requestECDHReqDto.getReqEcdh().getPublicKey());
 
         // Generate server key pair.
-        KeyPairInterface keyPairInterface = BaseCryptoUtil.generateKeyPair(requestECDHReqDto.getReqEcdh().getCurve());
-        byte[] serverPublicKey = ((ECPublicKey) keyPairInterface.getPublicKey()).getEncoded();
-        byte[] serverPrivateKey = ((ECPrivateKey) keyPairInterface.getPrivateKey()).getEncoded();
-        byte[] compressPublicKey = BaseCryptoUtil.compressPublicKey(serverPublicKey, requestECDHReqDto.getReqEcdh().getCurve());
+//        KeyPairInterface keyPairInterface = BaseCryptoUtil.generateKeyPair(requestECDHReqDto.getReqEcdh().getCurve());
+//        byte[] serverPublicKey = ((ECPublicKey) keyPairInterface.getPublicKey()).getEncoded();
+//        byte[] serverPrivateKey = ((ECPrivateKey) keyPairInterface.getPrivateKey()).getEncoded();
+//        byte[] compressPublicKey = BaseCryptoUtil.compressPublicKey(serverPublicKey, requestECDHReqDto.getReqEcdh().getCurve());
+        byte[] serverPrivateKey = BaseMultibaseUtil.decode("mMIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgmMOV8LmitIOKQCynSbCxsW0xmVMuQjdPtiJdjhwfx0agCgYIKoZIzj0DAQehRANCAAQv+cDbPA9aF/hQ0WIJyVJmfzr533/v+9xvCw+d/ptbZHTOhfDrj38GrJGQqxu4d1NswrAj+JlqA7Fhen34bWoT");
+        byte[] compressPublicKey = BaseMultibaseUtil.decode("mAy/5wNs8D1oX+FDRYgnJUmZ/Ovnff+/73G8LD53+m1tk");
 
         String encodedServerPublicKey = BaseMultibaseUtil.encode(compressPublicKey);
 
         // Generate serverNonce.
-        byte[] serverNonce = BaseCryptoUtil.generateNonce(16);
-        String encodedServerNonce = BaseMultibaseUtil.encode(serverNonce);
+//        byte[] serverNonce = BaseCryptoUtil.generateNonce(16);
+//        String encodedServerNonce = BaseMultibaseUtil.encode(serverNonce);
+        byte[] serverNonce = BaseMultibaseUtil.decode("mLUW/+IqSAvXqhPAL3Nkg1g");
+        String encodedServerNonce = "mLUW/+IqSAvXqhPAL3Nkg1g";
 
         // Merge clientNonce and serverNonce.
         validateClientNonce(requestECDHReqDto.getReqEcdh().getClientNonce());

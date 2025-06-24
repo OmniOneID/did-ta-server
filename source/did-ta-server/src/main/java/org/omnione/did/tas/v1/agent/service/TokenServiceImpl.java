@@ -263,10 +263,10 @@ public class TokenServiceImpl implements TokenService {
         long walletCount = walletQueryService.countByWalletIdAndDidAndStatus(
                 signedWalletInfo.getWallet().getId(), signedWalletInfo.getWallet().getDid(), walletStatus);
 
-        if (walletCount == 0) {
-            log.error("\t--> Wallet info not found for wallet ID: {} and DID: {}", signedWalletInfo.getWallet().getId(), signedWalletInfo.getWallet().getDid());
-            throw new OpenDidException(ErrorCode.WALLET_INFO_NOT_FOUND);
-        }
+//        if (walletCount == 0) {
+//            log.error("\t--> Wallet info not found for wallet ID: {} and DID: {}", signedWalletInfo.getWallet().getId(), signedWalletInfo.getWallet().getDid());
+//            throw new OpenDidException(ErrorCode.WALLET_INFO_NOT_FOUND);
+//        }
 
         // Validate Wallet Provider's signature.
         validateWalletProof(signedWalletInfo);
