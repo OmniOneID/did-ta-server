@@ -1,3 +1,7 @@
 auth:
   token:
     enable: false
+
+ta:
+  auth:
+    registration-password: VoOyEuOyal

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,16 +17,18 @@
 package org.omnione.did.tas;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.*;
 import org.omnione.did.TasApplication;
 import org.omnione.did.base.constants.UrlConstant;
 import org.omnione.did.base.datamodel.data.EcdhReqData;
 import org.omnione.did.base.datamodel.data.SignedDidDoc;
-import org.omnione.did.base.datamodel.enums.DidDocStatus;
-import org.omnione.did.tas.v1.dto.entity.RequestECDHReqDto;
-import org.omnione.did.tas.v1.dto.user.*;
+import org.omnione.did.tas.v1.agent.dto.entity.RequestECDHReqDto;
+import org.omnione.did.tas.v1.agent.dto.user.ConfirmRegisterUserReqDto;
+import org.omnione.did.tas.v1.agent.dto.user.ProposeRegisterUserReqDto;
+import org.omnione.did.tas.v1.agent.dto.user.RequestCreateTokenReqDto;
+import org.omnione.did.tas.v1.agent.dto.user.RequestRegisterUserReqDto;
+import org.omnione.did.tas.v1.agent.dto.user.RetrieveKycReqDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -61,7 +63,7 @@ class UserRegisterTest {
         reqDto.setId("20240905165727669000CDD0FA74");
 
         // 2.  Call controller and verify response
-        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.V1 + "/propose-register-user")
+        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.AGENT_V1 + "/propose-register-user")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(reqDto)))
                 .andExpect(status().isOk())
@@ -88,7 +90,7 @@ class UserRegisterTest {
                 .build();
 
         // 2.  Call controller and verify response
-        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.V1 + "/request-ecdh")
+        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.AGENT_V1 + "/request-ecdh")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(reqDto)))
                 .andExpect(status().isOk())
@@ -110,7 +112,7 @@ class UserRegisterTest {
         RequestCreateTokenReqDto reqDto = objectMapper.readValue(req, RequestCreateTokenReqDto.class);
 
         // 2.  Call controller and verify response
-        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.V1 + "/request-create-token")
+        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.AGENT_V1 + "/request-create-token")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(reqDto)))
                 .andExpect(status().isOk())
@@ -136,7 +138,7 @@ class UserRegisterTest {
 
 
         // 2.  Call controller and verify response
-        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.V1 + "/retrieve-kyc")
+        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.AGENT_V1 + "/retrieve-kyc")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(reqDto)))
                 .andExpect(status().isOk())
@@ -164,7 +166,7 @@ class UserRegisterTest {
         reqDto.setSignedDidDoc(signedDidDoc);
 
         // 2.  Call controller and verify response
-        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.V1 + "/request-register-user")
+        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.AGENT_V1 + "/request-register-user")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(reqDto)))
                 .andExpect(status().isOk())
@@ -187,7 +189,7 @@ class UserRegisterTest {
         reqDto.setServerToken("mCpmk2VhUL6Q8aBerIxm1CaGv86eWoH7toZQKhz8Te6g");
 
         // 2.  Call controller and verify response
-        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.V1 + "/confirm-register-user")
+        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.AGENT_V1 + "/confirm-register-user")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(reqDto)))
                 .andExpect(status().isOk())

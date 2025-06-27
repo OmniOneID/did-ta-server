@@ -3,13 +3,14 @@ plugins {
     id 'org.springframework.boot' version '3.2.4'
     id 'io.spring.dependency-management' version '1.1.4'
     id 'com.github.jk1.dependency-license-report' version '2.0'
+    id 'com.github.node-gradle.node' version '5.0.0'
 }
 
 group = 'org.omnione.did'
-version = '1.0.0'
+version = '2.0.0'
 
 java {
-    sourceCompatibility = '17'
+    sourceCompatibility = '21'
 }
 
 jar {
@@ -24,6 +25,9 @@ configurations {
 
 ext {
     set('springCloudVersion', "2023.0.1")
+    set("skipFrontendBuild", System.getProperty("skipFrontendBuild"))
+    set("frontendResourceDir", "${project.projectDir}/../did-ta-admin/frontend")
+    set("backendResourceDir", "${projectDir}/src/main/resources/static")
 }
 
 springBoot {
@@ -45,35 +49,24 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.9'
     implementation 'org.apache.commons:commons-pool2:2.12.0'
     implementation('org.hyperledger.fabric:fabric-gateway-java:2.2.9')
+    implementation 'org.web3j:core:4.14.0'
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-
     implementation 'org.springframework.boot:spring-boot-starter-web'
-
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
-    // DB
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.liquibase:liquibase-core'
     implementation 'org.postgresql:postgresql'
 
-    // Swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
-
-    // API
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
-
-    // google admin
     implementation 'io.netty:netty-handler:4.1.108.Final'
     implementation 'com.google.firebase:firebase-admin:9.2.0'
-
-    // QR Code - zxing
-    implementation group: 'com.google.zxing', name: 'javase', version: '3.5.0'
-    implementation group: 'com.google.zxing', name: 'core', version: '3.5.0'
-
-    // Spring Boot Starter Mail
+    implementation 'com.google.zxing:javase:3.5.0'
+    implementation 'com.google.zxing:core:3.5.0'
     implementation 'org.springframework.boot:spring-boot-starter-mail'
 
     compileOnly 'org.projectlombok:lombok:1.18.34'
@@ -83,6 +76,13 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
     implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
+
+    implementation 'io.github.openfeign.querydsl:querydsl-jpa:6.11'
+    annotationProcessor 'io.github.openfeign.querydsl:querydsl-apt:6.11:jpa'
+    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 }
 
 dependencyManagement {
@@ -95,16 +95,60 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+
+import com.github.gradle.node.npm.task.NpmTask
 import com.github.jk1.license.render.*
 import com.github.jk1.license.filter.LicenseBundleNormalizer
 import com.github.jk1.license.filter.ExcludeTransitiveDependenciesFilter
 
 licenseReport {
     outputDir = "$projectDir/build/licenses"
-
-    // markdown 생성
     renderers = [new InventoryMarkdownReportRenderer()]
-
-    // 보고서에 첫 번째 수준 종속성만 표기
     filters = [new LicenseBundleNormalizer(), new ExcludeTransitiveDependenciesFilter()]
+}
+
+node {
+    version = "22.9.0"
+    download = true
+    nodeProjectDir = file("${frontendResourceDir}")
+    workDir = layout.buildDirectory.dir("nodejs").get().asFile
+    npmWorkDir = layout.buildDirectory.dir("npm").get().asFile
+}
+
+import com.github.gradle.node.npm.task.NpmTask
+
+tasks.register('deleteFrontResources', Delete) {
+    delete "${backendResourceDir}/**"
+    delete "${backendResourceDir}"
+    delete "${frontendResourceDir}/dist/**"
+    delete "${frontendResourceDir}/dist"
+}
+
+tasks.register('npm_install', NpmTask) {
+    dependsOn tasks.named("nodeSetup")
+    workingDir = file("${frontendResourceDir}")
+    args = ['install']
+}
+
+tasks.register('npm_build', NpmTask) {
+    dependsOn 'deleteFrontResources'
+    dependsOn 'npm_install'
+    workingDir = file("${frontendResourceDir}")
+    args = ['run', 'build']
+}
+
+tasks.register('copyFrontResources', Copy) {
+    dependsOn 'npm_build'
+    from "${frontendResourceDir}/dist"
+    into "${backendResourceDir}"
+}
+
+tasks.named('copyFrontResources') {
+    mustRunAfter('npm_build')
+}
+
+tasks.named('processResources') {
+    if (!Boolean.valueOf(skipFrontendBuild)) {
+        dependsOn('npm_build', 'copyFrontResources')
+    }
 }

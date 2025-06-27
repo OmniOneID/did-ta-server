@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ public class BaseBlockChainUtil {
      * @return a ContractApi instance.
      */
     public static ContractApi initBlockChain() {
-        return ContractFactory.FABRIC.create("properties/blockchain.properties");
+        return ContractFactory.EVM.create("/Users/gwnam/Documents/team/opensource/project/github/did-orchestrator-server/source/did-orchestrator-server/shells/Besu/blockchain.propertiess");
 
     }
 

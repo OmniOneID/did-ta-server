@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,8 @@ public class UrlConstant {
      * Contains URL constants for the TAS (Trusted Agent) API.
      */
     public static class Tas {
-        public static final String V1 = "/tas/api/v1";
+        public static final String AGENT_V1 = "/tas/api/v1";
+        public static final String ADMIN_V1 = "/tas/admin/v1";
     }
 
     /**
@@ -34,7 +35,8 @@ public class UrlConstant {
      * @Note: Currently, the TAS service is handling Noti-related operations.
      */
     public static class Noti {
-        public static final String V1 = "/noti/api/v1";
+        public static final String AGENT_V1 = "/noti/api/v1";
+        public static final String ADMIN_V1 = "/noti/admin/v1";
     }
 
     /**
@@ -42,7 +44,8 @@ public class UrlConstant {
      * @Note: Currently, the TAS service is handling List-related operations.
      */
     public static class List {
-        public static final String V1 = "/list/api/v1";
+        public static final String AGENT_V1 = "/list/api/v1";
+        public static final String ADMIN_V1 = "/list/admin/v1";
     }
 
     /**
@@ -59,5 +62,15 @@ public class UrlConstant {
         public static final String INSPECT_PROPOSE_REVOKE = "/inspect-propose-revoke";
         public static final String REVOKE_VC = "/revoke-vc";
         public static final String COMPLETE_REVOKE = "/complete-revoke";
+    }
+
+    public static class LSS {
+        public static final String V1 = "/lss/api/v1";
+        public static final String DID = "/did-doc";
+        public static final String VC_META = "/vc-meta";
+        public static final String CREDENTIAL_SCHEMA = "/credential-schema";
+        public static final String CREDENTIAL_DEFINITION = "/credential-definition";
+
+
     }
 }

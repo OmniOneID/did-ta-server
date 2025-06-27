@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import org.springframework.context.annotation.Configuration;
  * communication with external services defined by Feign interfaces.
  */
 @Configuration
-@EnableFeignClients("org.omnione.did.tas.v1.api")
+@EnableFeignClients("org.omnione.did.tas.v1.agent.api")
 public class OpenFeignConfig {
 
 }

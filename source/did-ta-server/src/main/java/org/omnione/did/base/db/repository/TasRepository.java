@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,4 +33,5 @@ public interface TasRepository extends JpaRepository<Tas, Long> {
     Optional<Tas> findByDid(String did);
     long countByDid(String did);
     long countByDidAndStatus(String did, TasStatus status);
+    Optional<Tas> findTop1ByOrderByIdAsc();
 }

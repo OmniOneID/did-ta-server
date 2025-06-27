@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+
+  <changeSet id="admin-dev-api" author="yklee0911">
+    <createTable tableName="api">
+      <column name="id" type="bigint" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+      <column name="type" type="varchar(50)">
+        <constraints nullable="false" unique="false"/>
+      </column>
+      <column name="config" type="text">
+        <constraints nullable="false" unique="false"/>
+      </column>
+      <column name="created_at" type="timestamp" defaultValue="NOW()">
+        <constraints nullable="false" unique="false"/>
+      </column>
+      <column name="updated_at" type="timestamp">
+        <constraints nullable="true" unique="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="insert-initial-api-data" author="yklee0911">
+    <insert tableName="api">
+      <column name="type" value="EXPIRATION_TIME"/>
+      <column name="config">
+        <![CDATA[{"tokenExpirationSeconds":60, "transactionExpirationSeconds":300}]]>
+      </column>
+    </insert>
+    <insert tableName="api">
+      <column name="type" value="KEY_EXCHANGE_POLICY"/>
+      <column name="config">
+        <![CDATA[{"cipherType":"AES-256-CBC", "paddingType":"PKCS5"}]]>
+      </column>
+    </insert>
+  </changeSet>
+
+</databaseChangeLog>

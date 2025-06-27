@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +22,11 @@ import org.omnione.did.TasApplication;
 import org.omnione.did.base.constants.UrlConstant;
 import org.omnione.did.base.datamodel.data.EcdhReqData;
 import org.omnione.did.base.datamodel.data.ReqRevokeVc;
-import org.omnione.did.tas.v1.dto.entity.RequestECDHReqDto;
-import org.omnione.did.tas.v1.dto.user.RequestCreateTokenReqDto;
-import org.omnione.did.tas.v1.dto.vc.*;
+import org.omnione.did.tas.v1.agent.dto.entity.RequestECDHReqDto;
+import org.omnione.did.tas.v1.agent.dto.user.RequestCreateTokenReqDto;
+import org.omnione.did.tas.v1.agent.dto.vc.ConfirmRevokeVcReqDto;
+import org.omnione.did.tas.v1.agent.dto.vc.ProposeRevokeVcReqDto;
+import org.omnione.did.tas.v1.agent.dto.vc.RequestRevokeVcReqDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -61,7 +63,7 @@ public class VcRevokeServiceTest {
         reqDto.setVcId("5dbebdf0-6b36-4bdf-9ceb-436262986ac9");
 
         // 2. Call controller and verify response
-        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.V1 + "/propose-revoke-vc")
+        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.AGENT_V1 + "/propose-revoke-vc")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(reqDto)))
                 .andExpect(status().isOk())
@@ -88,7 +90,7 @@ public class VcRevokeServiceTest {
                 .build();
 
         // 2.  Call controller and verify response
-        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.V1 + "/request-ecdh")
+        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.AGENT_V1 + "/request-ecdh")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(reqDto)))
                 .andExpect(status().isOk())
@@ -110,7 +112,7 @@ public class VcRevokeServiceTest {
         RequestCreateTokenReqDto reqDto = objectMapper.readValue(req, RequestCreateTokenReqDto.class);
 
         // 2.  Call controller and verify response
-        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.V1 + "/request-create-token")
+        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.AGENT_V1 + "/request-create-token")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(reqDto)))
                 .andExpect(status().isOk())
@@ -138,7 +140,7 @@ public class VcRevokeServiceTest {
         reqDto.setServerToken("mN4iPCsqBBNuMymZDSZoPdqAVbl2sU8bOM8E8rJCMdj0");
 
         // 2. Call controller and verify response
-        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.V1 + "/request-revoke-vc")
+        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.AGENT_V1 + "/request-revoke-vc")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(reqDto)))
                 .andExpect(status().isOk())
@@ -162,7 +164,7 @@ public class VcRevokeServiceTest {
         reqDto.setTxId("4bc7e7b9-e666-4a90-9eef-783a33326fd9");
 
         // 2. Call controller and verify response
-        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.V1 + "/confirm-revoke-vc")
+        MvcResult result = mockMvc.perform(post(UrlConstant.Tas.AGENT_V1 + "/confirm-revoke-vc")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(reqDto)))
                 .andExpect(status().isOk())

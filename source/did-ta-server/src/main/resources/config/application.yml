@@ -10,16 +10,17 @@ spring:
           - wallet
           - logging
           - spring-docs
-          - notification
-          - tas
+          - setup
+          - blockchain
         sample:
           - auth
           - databases-sample
           - wallet
           - logging
           - spring-docs
-          - notification
-          - tas
+          - setup
+        lss:
+          - lss
   jackson:
     default-property-inclusion: non_null
     serialization:
@@ -30,8 +31,18 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - "health"
+          - "shutdown"
+  endpoint:
+    health:
+      show-details: "never"
+    shutdown:
+      enabled: true
+
 server:
   port: 8090
-
-kyc:
-  url: http://127.0.0.1:8094/cas

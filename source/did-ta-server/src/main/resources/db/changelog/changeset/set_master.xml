@@ -15,4 +15,20 @@
   <include file="set.0/project-init_app.xml" relativeToChangelogFile="true" />
   <include file="set.0/project-init_certificate_vc.xml" relativeToChangelogFile="true" />
   <include file="set.0/project-init_did_offer.xml" relativeToChangelogFile="true" />
+  <include file="set.1/admin-dev_kyc.xml" relativeToChangelogFile="true" />
+  <include file="set.1/admin-dev_api.xml" relativeToChangelogFile="true" />
+  <include file="set.1/admin-dev_notification_server.xml" relativeToChangelogFile="true" />
+  <include file="set.1/admin-dev_notification_template.xml" relativeToChangelogFile="true" />
+  <include file="set.1/admin-dev_admin.xml" relativeToChangelogFile="true" />
+  <include file="set.1/admin-dev_list_allowed_ca.xml" relativeToChangelogFile="true" />
+  <include file="set.1/admin-dev_list_vc_schema.xml" relativeToChangelogFile="true" />
+  <include file="set.1/admin-dev_vc_schema.xml" relativeToChangelogFile="true" />
+  <include file="set.1/admin-dev_list_vc_plan.xml" relativeToChangelogFile="true" />
+  <include file="set.2/admin-2phase-tas.xml" relativeToChangelogFile="true" />
+  <include file="set.2/admin-2phase-did_document.xml" relativeToChangelogFile="true" />
+  <include file="set.2/admin-2phase-list_credential_schema.xml" relativeToChangelogFile="true" />
+  <include file="set.2/admin-2phase-list_credential_definition.xml" relativeToChangelogFile="true" />
+  <include file="set.2/admin-2phase-list_vc_plan.xml" relativeToChangelogFile="true" />
+  <include file="set.2/admin-2phase_admin.xml" relativeToChangelogFile="true"/>
+
 </databaseChangeLog>
