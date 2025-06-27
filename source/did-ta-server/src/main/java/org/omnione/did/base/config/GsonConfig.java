@@ -22,6 +22,7 @@ import org.omnione.did.base.datamodel.enums.ServerTokenPurpose;
 import org.omnione.did.base.datamodel.enums.ServerTokenPurposeAdaptor;
 import org.omnione.did.base.datamodel.enums.VerifyAuthType;
 import org.omnione.did.base.datamodel.enums.VerifyAuthTypeAdaptor;
+import org.omnione.did.zkp.datamodel.util.GsonWrapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -45,5 +46,10 @@ public class GsonConfig {
                 .registerTypeAdapter(ServerTokenPurpose.class, new ServerTokenPurposeAdaptor())
                 .registerTypeAdapter(VerifyAuthType.class, new VerifyAuthTypeAdaptor())
                 .create();
+    }
+
+    @Bean
+    public GsonWrapper gsonWrapper() {
+        return new GsonWrapper();
     }
 }

@@ -68,7 +68,7 @@ const PasswordChangeDialog: React.FC<PasswordResetDialogProps> = ({ open, onClos
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" sx={{ maxWidth: 500, margin: "0 auto" }}>
       <Box sx={{ px: 2 }}>
-        <DialogTitle sx={{ p: 0, pt: 2, fontWeight: 700 }}>Reset Password</DialogTitle>
+        <DialogTitle sx={{ p: 0, pt: 2, fontWeight: 700 }}>Change Password</DialogTitle>
         <Box sx={{ height: "1px", backgroundColor: "var(--G40, #BFBFBF)", width: "100%", mt: 1 }} />
       </Box>
 

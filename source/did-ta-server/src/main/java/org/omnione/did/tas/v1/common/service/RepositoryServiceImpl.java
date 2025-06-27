@@ -16,28 +16,35 @@
 
 package org.omnione.did.tas.v1.common.service;
 
+import com.google.gson.JsonSyntaxException;
+import lombok.RequiredArgsConstructor;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.base.util.BaseCoreDidUtil;
 import org.omnione.did.base.util.BaseCoreVcUtil;
 import org.omnione.did.base.util.BaseMultibaseUtil;
-import org.omnione.did.data.model.enums.did.DidDocStatus;
-import org.omnione.did.tas.v1.agent.api.RepositoryFeign;
-import org.omnione.did.tas.v1.agent.api.dto.RegisterDidApiReqDto;
-import org.omnione.did.tas.v1.agent.api.dto.DidDocApiResDto;
-import org.omnione.did.tas.v1.agent.api.dto.VcMetaApiResDto;
-import feign.FeignException;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.omnione.did.common.util.DidUtil;
+import org.omnione.did.common.util.JsonUtil;
 import org.omnione.did.core.manager.DidManager;
+import org.omnione.did.data.model.enums.did.DidDocStatus;
+import org.omnione.did.data.model.enums.vc.VcStatus;
+import org.omnione.did.data.model.schema.VcSchema;
+import org.omnione.did.tas.v1.agent.api.RepositoryFeign;
+import org.omnione.did.tas.v1.agent.api.dto.InputVcSchemaReqDto;
+import org.omnione.did.tas.v1.agent.api.dto.RegisterDidApiReqDto;
+import org.omnione.did.tas.v1.agent.api.dto.UpdateVcMetaStatusReqDto;
+import feign.FeignException;
+import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.data.model.did.DidDocument;
 import org.omnione.did.data.model.did.InvokedDidDoc;
 import org.omnione.did.data.model.enums.vc.RoleType;
 import org.omnione.did.data.model.vc.VcMeta;
+import org.omnione.did.tas.v1.agent.api.dto.UpdateDidDocStatusReqDto;
+import org.omnione.did.zkp.datamodel.util.GsonWrapper;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
+
+import java.nio.charset.StandardCharsets;
 
 /**
  * Storage service implementation for managing DID documents and verifiable credentials.
@@ -46,7 +53,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j
 @Primary
-@Profile("repository")
+@Profile("lss")
 public class RepositoryServiceImpl implements StorageService {
     private final RepositoryFeign repositoryFeign;
 
@@ -61,11 +68,12 @@ public class RepositoryServiceImpl implements StorageService {
     public void registerDidDoc(InvokedDidDoc didDoc, RoleType roleType) {
         try {
             RegisterDidApiReqDto apiRegisterDidReqDto = RegisterDidApiReqDto.builder()
-                    .roleTYpe(roleType.toString())
+                    .roleType(roleType.name())
                     .didDoc(didDoc)
                     .build();
 
-            repositoryFeign.registerDid(apiRegisterDidReqDto);
+            String request = JsonUtil.serializeToJson(apiRegisterDidReqDto);
+            repositoryFeign.registerDid(request);
         } catch (OpenDidException e) {
             log.error("Failed to register DID document.", e);
             throw e;
@@ -81,12 +89,28 @@ public class RepositoryServiceImpl implements StorageService {
     /**
      * Updates the status of a DID document.
      *
-     * @param did The DID of the document to update
+     * @param did          The DID of the document to update
      * @param didDocStatus The new status of the document
      */
     @Override
-    public DidDocument updateDidDocStatus(String did, DidDocStatus didDocStatus) {
-        return null;
+    public void updateDidDocStatus(String did, DidDocStatus didDocStatus) {
+        try {
+            UpdateDidDocStatusReqDto updateDidDocStatusReqDto = UpdateDidDocStatusReqDto.builder()
+                    .did(did)
+                    .didDocStatus(didDocStatus)
+                    .build();;
+
+            repositoryFeign.updateDid(updateDidDocStatusReqDto);
+        } catch (OpenDidException e) {
+            log.error("Failed to update DID document.", e);
+            throw e;
+        } catch (FeignException e) {
+            log.error("Failed to update DID document.", e);
+            throw new OpenDidException(ErrorCode.UPDATE_DID_DOC_FAILED);
+        } catch (Exception e) {
+            log.error("Failed to update DID document.", e);
+            throw new OpenDidException(ErrorCode.UPDATE_DID_DOC_FAILED);
+        }
     }
 
     /**
@@ -99,14 +123,9 @@ public class RepositoryServiceImpl implements StorageService {
     @Override
     public DidDocument findDidDoc(String didKeyUrl) {
         try {
-            String did = DidUtil.extractDid(didKeyUrl);
+            String didDocument = repositoryFeign.getDid(didKeyUrl);
 
-            DidDocApiResDto didDocApiResDto = repositoryFeign.getDid(did);
-
-            byte[] decodedDidDoc = BaseMultibaseUtil.decode(didDocApiResDto.getDidDoc());
-
-            String didDocJson = new String(decodedDidDoc);
-            DidManager didManager = BaseCoreDidUtil.parseDidDoc(didDocJson);
+            DidManager didManager = BaseCoreDidUtil.parseDidDoc(didDocument);
 
             return didManager.getDocument();
         } catch (OpenDidException e) {
@@ -128,7 +147,18 @@ public class RepositoryServiceImpl implements StorageService {
      */
     @Override
     public void registerVcMeta(VcMeta vcMeta) {
-
+        try {
+            repositoryFeign.registerVcMeta(vcMeta);
+        } catch (OpenDidException e) {
+            log.error("Failed to register VC Metadata.", e);
+            throw e;
+        } catch (FeignException e) {
+            log.error("Failed to register VC Metadata.", e);
+            throw new OpenDidException(ErrorCode.VC_META_REGISTRATION_FAILED);
+        } catch (Exception e) {
+            log.error("Failed to register VC Metadata.", e);
+            throw new OpenDidException(ErrorCode.VC_META_REGISTRATION_FAILED);
+        }
     }
 
     /**
@@ -136,13 +166,14 @@ public class RepositoryServiceImpl implements StorageService {
      *
      * @param vcId The ID of the verifiable credential to find
      * @return The found verifiable credential meta data
-     * @throws OpenDidException If the VC meta data cannot be found
+     * @throws OpenDidException If the VC metadata cannot be found
      */
     @Override
     public VcMeta findVcMeta(String vcId) {
         try {
-            VcMetaApiResDto vcMetaData = repositoryFeign.getVcMetaData(vcId);
-            return BaseCoreVcUtil.parseVcMeta(vcMetaData.getVcMeta());
+            String vcMetaData = repositoryFeign.getVcMetaData(vcId);
+
+            return BaseCoreVcUtil.parseVcMeta(vcMetaData);
         } catch (OpenDidException e) {
             log.error("Failed to find VC meta data.", e);
             throw e;
@@ -152,6 +183,63 @@ public class RepositoryServiceImpl implements StorageService {
         } catch (Exception e) {
             log.error("Failed to find VC meta data.", e);
             throw new OpenDidException(ErrorCode.FIND_VC_META_FAILED);
+        }
+    }
+
+    @Override
+    public void registerVcSchema(VcSchema vcSchema, String did) {
+        String encodedVcSchema = encodeVcSchema(vcSchema);
+        repositoryFeign.registerVcSchema(
+                InputVcSchemaReqDto.builder()
+                        .did(did)
+                        .vcSchema(encodedVcSchema)
+                        .build()
+        );
+    }
+
+    private String encodeVcSchema(VcSchema vcSchema) {
+        try {
+            String vcSchemaJson = GsonWrapper.getGson().toJson(vcSchema);
+            return BaseMultibaseUtil.encode(vcSchemaJson.getBytes(StandardCharsets.UTF_8));
+        } catch (JsonSyntaxException e) {
+            log.error("\t--> Failed to encode Credential Schema: {}", e.getMessage());
+            throw new OpenDidException(ErrorCode.ENCODING_FAILED);
+        } catch (Exception e) {
+            log.error("\t--> Unexpected error while encoding Credential Schema: {}", e.getMessage());
+            throw new OpenDidException(ErrorCode.ENCODING_FAILED);
+        }
+    }
+
+    @Override
+    public VcSchema getVcSchema(String vcSchemaId) {
+        String vcSchema = repositoryFeign.getVcSchema(vcSchemaId);
+        return GsonWrapper.getGson().fromJson(vcSchema, VcSchema.class);
+    }
+
+    /**
+     * Updates the status of a DID document.
+     *
+     * @param vcId        The VC ID of the VC Meta to update
+     * @param vcStatus    The new status of the VC Meta
+     */
+    @Override
+    public void updateVcMeta(String vcId, VcStatus vcStatus) {
+        try {
+            UpdateVcMetaStatusReqDto request = UpdateVcMetaStatusReqDto.builder()
+                    .vcId(vcId)
+                    .vcStatus(vcStatus)
+                    .build();
+
+            repositoryFeign.updateVcMetaStatus(request);
+        } catch (OpenDidException e) {
+            log.error("Failed to update VC Metadata.", e);
+            throw e;
+        } catch (FeignException e) {
+            log.error("Failed to update VC Metadata.", e);
+            throw new OpenDidException(ErrorCode.VC_STATUS_UPDATE_FAILED);
+        } catch (Exception e) {
+            log.error("Failed to update VC Metadata.", e);
+            throw new OpenDidException(ErrorCode.VC_STATUS_UPDATE_FAILED);
         }
     }
 }

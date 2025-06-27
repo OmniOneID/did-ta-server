@@ -19,6 +19,8 @@ spring:
           - logging
           - spring-docs
           - setup
+        lss:
+          - lss
   jackson:
     default-property-inclusion: non_null
     serialization:

@@ -45,14 +45,12 @@ import org.omnione.did.tas.v1.agent.dto.tas.RequestEnrollTasReqDto.Request;
 import org.omnione.did.tas.v1.agent.helper.CertificateVcSchemaProvider;
 import org.omnione.did.tas.v1.agent.service.FileWalletService;
 import org.omnione.did.tas.v1.common.dto.EmptyResDto;
-import org.omnione.did.tas.v1.common.service.DidDocService;
-import org.omnione.did.tas.v1.common.service.JsonParseService;
-import org.omnione.did.tas.v1.common.service.SetupService;
-import org.omnione.did.tas.v1.common.service.TasService;
+import org.omnione.did.tas.v1.common.service.*;
 import org.omnione.did.tas.v1.common.service.query.CertificateVcQueryService;
 import org.omnione.did.tas.v1.common.service.query.TasQueryService;
 import org.omnione.did.tas.v1.common.service.query.VcSchemaQueryService;
 import org.omnione.did.wallet.key.WalletManagerInterface;
+import org.omnione.did.zkp.datamodel.util.GsonWrapper;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -87,6 +85,7 @@ public class TaManagementService {
     private final FileWalletService fileWalletService;
     private final CertificateVcQueryService certificateVcQueryService;
     private final JsonParseService jsonParseService;
+    private final StorageService storageService;
 
     /**
      * Request TA information.
@@ -207,11 +206,17 @@ public class TaManagementService {
                 return;
             }
 
+            // Fetch the Certificate VC Schema JSON from the provider
+            log.debug("\t--> Fetching Certificate VC Schema JSON from provider");
             String vcSchemaJson = CertificateVcSchemaProvider.getSchema(serverUrl);
 
+            // Parse the JSON into a VcSchema object
+            log.debug("\t--> Parsing Certificate VC Schema JSON");
             org.omnione.did.data.model.schema.VcSchema vcSchema =
                     BaseCoreVcUtil.parseVcSchema(vcSchemaJson);
 
+            // Save the VcSchema to the database
+            log.debug("\t--> Saving Certificate VC Schema to database");
             vcSchemaRepository.save(VcSchema.builder()
                     .type(VcType.CERTIFICATE_VC)
                     .schema(vcSchema.getSchema())
@@ -220,17 +225,39 @@ public class TaManagementService {
                             .getFormatVersion())
                     .schema(vcSchema.toJson())
                     .build());
+
+            // Register the VcSchema to the blockchain
+            log.debug("\t--> Registering Certificate VC Schema to blockchain");
+            registerVcSchemaToBlockchain(vcSchema);
         } catch (JsonParseException | ClassCastException e) {
             log.error("Failed to parse Certificate VC Schema JSON", e);
             throw new OpenDidException(ErrorCode.PARSE_VC_SCHEMA_FAILED);
         } catch (DataAccessException e) {
             log.error("Database error while saving Certificate VC Schema", e);
             throw new OpenDidException(ErrorCode.DB_ERROR_ON_VC_SCHEMA_SAVE);
+        } catch (OpenDidException e) {
+            throw e;
         } catch (Exception e) {
             log.error("Unexpected error while registering Certificate VC Schema", e);
             throw new OpenDidException(ErrorCode.FAILED_TO_REGISTER_CERTIFICATE_VC_SCHEMA);
         }
     }
+
+    private void registerVcSchemaToBlockchain(org.omnione.did.data.model.schema.VcSchema vcSchema) {
+        try {
+            Tas foundTasInfo = tasQueryService.findTas();
+
+            storageService.registerVcSchema(vcSchema, foundTasInfo.getDid());
+
+        } catch (OpenDidException e) {
+            log.error("Failed to register VC schema to blockchain: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Unexpected error while registering VC schema to blockchain: {}", e.getMessage());
+            throw new OpenDidException(ErrorCode.BLOCKCHAIN_VC_SCHEMA_REGISTRATION_FAILED);
+        }
+    }
+
 
     /**
      * Register TA certificate.

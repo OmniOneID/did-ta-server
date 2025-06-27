@@ -1,5 +1,15 @@
 # Changelog
 
+
+## [Released] (v2.0.0)
+
+### 🚀 New Features
+- Admin Console
+  - Credential Schema Management
+  - Credential Definition Management
+- Support for Besu blockchain
+
+
 ## [Unreleased] (v1.0.1)
 
 ### 🚀 New Features

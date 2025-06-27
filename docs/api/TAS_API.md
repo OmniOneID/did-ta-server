@@ -15,55 +15,53 @@ puppeteer:
         fullPage: false
 ---
 
-TAS API
-==
+# TAS API
 
-- 일자: 2025-05-30
-- 버전: v2.0.0 
+- Date: 2025-05-30  
+- Version: v2.0.0
 
+## Revision History
 
-## 개정 이력
-
-| 버전        | 일자       | 변경 내용                                                 |
+| Version     | Date       | Changes                                                    |
 | ----------- | ---------- | --------------------------------------------------------- |
-| 1.0.0       | 2024-09-03 | 최초 작성                                                 |
-| 1.0.1 (dev) | 2024-03-31 | [12.4 Send Email] 요청 데이터에서 senderAddress 옵션 처리 |
-| 1.0.1 (dev) | 2024-03-31 | [12.8 Get Vc Schema] 요청 파라미터에 name -> id로 변경    |
-| 2.0.0       | 2025-05-30 | [12.11 Get Vc Schema List] 요청 추가, [12.12 Get Credential Schema] 요청 추가   |
+| 1.0.0       | 2024-09-03 | Initial creation                                          |
+| 1.0.1 (dev) | 2024-03-31 | [12.4 Send Email] Optional handling of senderAddress in request data |
+| 1.0.1 (dev) | 2024-03-31 | [12.8 Get Vc Schema] Changed request parameter from name -> id |
+| 2.0.0       | 2025-05-30 | [12.11 Get Vc Schema List] Request Add, [12.12 Get Credential Schema] Request Add  |
 
 <!-- TOC tocDepth:2..3 chapterDepth:2..6 -->
 
-목차
+Table of Contents
 ---
 
-- [1. 개요](#1-개요)
-- [2. 용어 설명](#2-용어-설명)
-- [3. API 목록](#3-api-목록)
-  - [3.1. 순차 API](#31-순차-api)
-  - [3.2. 단일호출 API](#32-단일호출-api)
-- [4. P110 - TAS 등록 프로토콜](#4-p110---tas-등록-프로토콜)
+- [1. Overview](#1-overview)
+- [2. Terminology](#2-terminology)
+- [3. API List](#3-api-list)
+  - [3.1. Sequential APIs](#31-sequential-apis)
+  - [3.2. Single Call APIs](#32-single-call-apis)
+- [4. P110 - TAS Registration Protocol](#4-p110---tas-registration-protocol)
   - [4.1. Request Enroll TAS](#41-request-enroll-tas)
-- [5. P120 - Entity 등록 프로토콜](#5-p120---entity-등록-프로토콜)
+- [5. P120 - Entity Registration Protocol](#5-p120---entity-registration-protocol)
   - [5.1. Propose Enroll Entity](#51-propose-enroll-entity)
   - [5.2. Request ECDH](#52-request-ecdh)
   - [5.3. Request Enroll Entity](#53-request-enroll-entity)
   - [5.4. Confirm Enroll Entity](#54-confirm-enroll-entity)
-- [6. P131 - 월렛 등록 프로토콜](#6-p131---월렛-등록-프로토콜)
+- [6. P131 - Wallet Registration Protocol](#6-p131---wallet-registration-protocol)
   - [6.1. Request Register Wallet](#61-request-register-wallet)
-- [7. P132 - 사용자 등록 프로토콜](#7-p132---사용자-등록-프로토콜)
+- [7. P132 - User Registration Protocol](#7-p132---user-registration-protocol)
   - [7.1. Propose Register User](#71-propose-register-user)
   - [7.2. Request ECDH](#72-request-ecdh)
   - [7.3. Request Create Token](#73-request-create-token)
   - [7.4. Retrieve KYC](#74-retrieve-kyc)
   - [7.5. Request Register User](#75-request-register-user)
   - [7.6. Confirm Register User](#76-confirm-register-user)
-- [8. P141 - 사용자 DID Document 갱신 프로토콜](#8-p141---사용자-did-document-갱신-프로토콜)
+- [8. P141 - User DID Document Update Protocol](#8-p141---user-did-document-update-protocol)
   - [8.1. Propose Update DidDoc](#81-propose-update-diddoc)
   - [8.2. Request ECDH](#82-request-ecdh)
   - [8.3. Request Create Token](#83-request-create-token)
   - [8.4. Request Update DidDoc](#84-request-update-diddoc)
   - [8.5. Confirm Update DidDoc](#85-confirm-update-diddoc)
-- [9. P142 - 사용자 DID Document 복구 프로토콜](#9-p142---사용자-did-document-복구-프로토콜)
+- [9. P142 - User DID Document Recovery Protocol](#9-p142---user-did-document-recovery-protocol)
   - [9.1. Offer Restore DidDoc (Push)](#91-offer-restore-diddoc-push)
   - [9.2. Offer Restore DidDoc (Email)](#92-offer-restore-diddoc-email)
   - [9.3. Propose Restore DidDoc](#93-propose-restore-diddoc)
@@ -71,7 +69,7 @@ TAS API
   - [9.5. Request Create Token](#95-request-create-token)
   - [9.6. Request Restore DidDoc](#96-request-restore-diddoc)
   - [9.7. Confirm Restore DidDoc](#97-confirm-restore-diddoc)
-- [10. P210 - VC 발급 프로토콜](#10-p210---vc-발급-프로토콜)
+- [10. P210 - VC Issuance Protocol](#10-p210---vc-issuance-protocol)
   - [10.1 Offer Issue VC (QR)](#101-offer-issue-vc-qr)
   - [10.2 Offer Issue VC (Push)](#102-offer-issue-vc-push)
   - [10.3 Offer Issue VC (Email)](#103-offer-issue-vc-email)
@@ -81,13 +79,13 @@ TAS API
   - [10.7. Request Issue Profile](#107-request-issue-profile)
   - [10.8. Request Issue VC](#108-request-issue-vc)
   - [10.9. Confirm Issue VC](#109-confirm-issue-vc)
-- [11. P220 - VC 폐기 프로토콜](#11-p220---vc-폐기-프로토콜)
+- [11. P220 - VC Revocation Protocol](#11-p220---vc-revocation-protocol)
   - [11.1. Propose Revoke VC](#111-propose-revoke-vc)
   - [11.2. Request ECDH](#112-request-ecdh)
   - [11.3. Request Create Token](#113-request-create-token)
   - [11.4. Request Revoke VC](#114-request-revoke-vc)
   - [11.5. Confirm Revoke VC](#115-confirm-revoke-vc)
-- [12. 단일 호출 API](#12-단일-호출-api)
+- [12. Single Call APIs](#12-single-call-apis)
   - [12.1. Get VcPlan List](#121-get-vcplan-list)
   - [12.2. Get VcPlan](#122-get-vcplan)
   - [12.3. Get Allowed CA List](#123-get-allowed-ca-list)
@@ -105,162 +103,162 @@ TAS API
   - [A.2. EmailTemplate Object](#a2-emailtemplate-object)
   - [A.3. FcmNotification Object](#a3-fcmnotification-object)
 
-## 1. 개요
+## 1. Overview
 
-본 문서는 Trust Agent (TA 또는 TAS)가 제공하는 API를 정의한다.
+This document defines the APIs provided by Trust Agent (TA or TAS).
 
 ![Workflow](images/workflow_ta.svg)
 
-- 상기 그림에서는 Trust Agent가 제공하거나 혹은 Trust Agent가 호출하는 프로토콜(Protocol)과 API를 표기하였으며, API는 가독성을 위하여 표준 API (Standard API)만을 표기하였다.
-- 각 용어는 2장에서 설명하며, API 목록과 호출 예시 등은 3장 이후부터 확인할 수 있다.
+- The above diagram shows the protocols and APIs provided by Trust Agent or called by Trust Agent. For readability, only Standard APIs are shown.
+- Each term is explained in Chapter 2, and API lists and call examples can be found from Chapter 3 onwards.
 
 <div style="page-break-after: always; margin-top: 50px;"></div>
 
-## 2. 용어 설명
-- 프로토콜 (Protocol)
-  - 특정 기능을 수행하기 위해 정해진 순서에 따라 호출해야 하는 `순차 API`의 집합이다. API 호출 순서를 엄격히 따라야 하며, 순서가 잘못될 경우 예상하지 못한 결과가 발생할 수 있다.
-  - 프로토콜은 P로 시작하고, 3자리 숫자로 구성된다. 
-    - 예시: P110 - TAS 등록 프로토콜
-- 순차 API (Sequential API)
-  - 특정 기능(프로토콜)을 수행하기 위해 정해진 순서대로 호출하는 일련의 API를 말한다. 각 API는 순차적으로 호출되어야 하며, 순서가 잘못될 경우 제대로 동작하지 않을 수 있다.
-  - 그러나 일부 프로토콜에서는 같은 호출 순서를 가진 API가 존재할 수 있으며, 이 경우 하나의 API를 선택하여 호출할 수 있다.
-    - 예시: 'P142 - 사용자 DID Document 복구 프로토콜'에서는 1번 호출 순서에서 `offer-restore-did-push`와 `offer-restore-did-email` 중 하나를 선택하여 호출할 수 있다.
-- 단일 호출 API (Single Call API)
-  - 일반적인 REST API처럼 순서에 관계없이 독립적으로 호출 가능한 API를 의미한다.
-- 표준 API (Standard API)
-  - API 문서에서 명확하게 정의된 API로, 모든 구현체에서 일관된 방식으로 제공되어야 한다. 표준 API는 시스템 간 상호 운용성을 보장하며, 사전에 정의된 스펙에 따라 동작해야 한다.
-- 비표준 API (Non-Standard API)
-  - 구현체마다 필요에 따라 다르게 정의되거나 커스터마이징될 수 있는 API이다. 본 문서에서 제공하는 비표준 API는 한 가지 예시일 뿐이며, 각 구현체에 맞춰 다르게 구현될 수 있다. 이 경우, 구현체별 별도의 문서화가 필요하다.
-  - 예를 들어, 이메일 전송 기능은 시스템에 따라 구현 방법이 달라질 수 있으며, `send-email` API와 같은 비표준 API는 각 구현체에서 필요한 방식으로 재정의할 수 있다.
+## 2. Terminology
+- Protocol
+  - A set of `sequential APIs` that must be called in a defined order to perform specific functions. API call sequence must be strictly followed, and incorrect order may cause unexpected results.
+  - Protocols start with P and consist of 3 digits.
+    - Example: P110 - TAS Registration Protocol
+- Sequential API
+  - A series of APIs that are called in a defined order to perform specific functions (protocols). Each API must be called sequentially, and incorrect order may cause malfunction.
+  - However, some protocols may have APIs with the same call sequence, in which case one API can be selected and called.
+    - Example: In 'P142 - User DID Document Recovery Protocol', you can select and call either `offer-restore-did-push` or `offer-restore-did-email` in call sequence 1.
+- Single Call API
+  - APIs that can be called independently regardless of order, like general REST APIs.
+- Standard API
+  - APIs clearly defined in the API documentation that must be provided consistently across all implementations. Standard APIs ensure interoperability between systems and must operate according to predefined specifications.
+- Non-Standard API
+  - APIs that may be defined differently or customized according to each implementation's needs. Non-standard APIs provided in this document are just examples, and may be implemented differently for each implementation. In such cases, separate documentation for each implementation is required.
+  - For example, email sending functionality may be implemented differently depending on the system, and non-standard APIs like `send-email` can be redefined as needed for each implementation.
 
 <div style="page-break-after: always; margin-top: 50px;"></div>
 
-## 3. API 목록
+## 3. API List
 
-### 3.1. 순차 API
+### 3.1. Sequential APIs
 
-#### 3.1.1. P110 - TAS 등록 프로토콜
-| Seq | API                  | URL                        | Description | 표준API |
-| --- | -------------------- | -------------------------- | ----------- | ------- |
-| 1   | `request-enroll-tas` | /api/v1/request-enroll-tas | TAS 등록    | Y       |
-
-<div style="page-break-after: always; margin-top: 40px;"></div>
-
-#### 3.1.2. P120 - Entity 등록 프로토콜
-| Seq | API                     | URL                               | Description           | 표준API |
-| --- | ----------------------- | --------------------------------- | --------------------- | ------- |
-| 1   | `propose-enroll-entity` | /api/v1/propose-enroll-entity | Entity 등록 시작 요청 | Y       |
-| 2   | `request-ecdh`          | /api/v1/request-ecdh          | ECDH 요청             | Y       |
-| 3   | `request-enroll-entity` | /api/v1/request-enroll-entity | Entity 등록 요청      | Y       |
-| 4   | `confirm-enroll-entity` | /api/v1/confirm-enroll-entity | Entity 등록 완료      | Y       |
+#### 3.1.1. P110 - TAS Registration Protocol
+| Seq | API                  | URL                        | Description     | Standard API |
+| --- | -------------------- | -------------------------- | --------------- | ------------ |
+| 1   | `request-enroll-tas` | /api/v1/request-enroll-tas | TAS Registration | Y            |
 
 <div style="page-break-after: always; margin-top: 40px;"></div>
 
-#### 3.1.3. P131 - Wallet 등록 프로토콜
-| Seq | API                       | URL                                 | Description | 표준API |
-| --- | ------------------------- | ----------------------------------- | ----------- | ------- |
-| 1   | `request-register-wallet` | /api/v1/request-register-wallet | 월렛 등록   | Y       |
+#### 3.1.2. P120 - Entity Registration Protocol
+| Seq | API                     | URL                               | Description                   | Standard API |
+| --- | ----------------------- | --------------------------------- | ----------------------------- | ------------ |
+| 1   | `propose-enroll-entity` | /api/v1/propose-enroll-entity     | Entity registration request   | Y            |
+| 2   | `request-ecdh`          | /api/v1/request-ecdh              | ECDH request                  | Y            |
+| 3   | `request-enroll-entity` | /api/v1/request-enroll-entity     | Entity registration request   | Y            |
+| 4   | `confirm-enroll-entity` | /api/v1/confirm-enroll-entity     | Entity registration completion| Y            |
 
 <div style="page-break-after: always; margin-top: 40px;"></div>
 
-#### 3.1.4. P132 - 사용자 등록 프토토콜
-| Seq | API                     | URL                               | Description           | 표준API |
-| --- | ----------------------- | --------------------------------- | --------------------- | ------- |
-| 1   | `propose-register-user` | /api/v1/propose-register-user | 사용자 등록 시작 요청 | Y       |
-| 2   | `request-ecdh`          | /api/v1/request-ecdh          | ECDH 요청             | Y       |
-| 3   | `request-create-token`  | /api/v1/request-create-token  | 서버토큰 생성 요청    | Y       |
-| 4   | `retrieve-kyc`          | /api/v1/retrieve-kyc          | KYC 결과 회신 요청    | N       |
-| 5   | `request-register-user` | /api/v1/request-register-user | 사용자 등록 요청      | Y       |
-| 6   | `confirm-register-user` | /api/v1/confirm-register-user | 사용자 등록 완료      | Y       |
+#### 3.1.3. P131 - Wallet Registration Protocol
+| Seq | API                       | URL                                 | Description         | Standard API |
+| --- | ------------------------- | ----------------------------------- | ------------------- | ------------ |
+| 1   | `request-register-wallet` | /api/v1/request-register-wallet     | Wallet registration | Y            |
 
 <div style="page-break-after: always; margin-top: 40px;"></div>
 
-#### 3.1.5. P141 - 사용자 DID Document 갱신 프토토콜
-| Seq | API                     | URL                               | Description                        | 표준API |
-| --- | ----------------------- | --------------------------------- | ---------------------------------- | ------- |
-| 1   | `propose-update-diddoc` | /api/v1/propose-update-diddoc | 사용자 DID Document 갱신 시작 요청 | Y       |
-| 2   | `request-ecdh`          | /api/v1/request-ecdh          | ECDH 요청                          | Y       |
-| 3   | `request-create-token`  | /api/v1/request-create-token  | 서버토큰 생성 요청                 | Y       |
-| 4   | `request-update-diddoc` | /api/v1/request-update-diddoc | 사용자 DID Document 갱신 요청      | Y       |
-| 5   | `confirm-update-diddoc` | /api/v1/confirm-update-diddoc | 사용자 DID Document 갱신 완료      | Y       |
+#### 3.1.4. P132 - User Registration Protocol
+| Seq | API                     | URL                               | Description                   | Standard API |
+| --- | ----------------------- | --------------------------------- | ----------------------------- | ------------ |
+| 1   | `propose-register-user` | /api/v1/propose-register-user     | User registration request     | Y            |
+| 2   | `request-ecdh`          | /api/v1/request-ecdh              | ECDH request                  | Y            |
+| 3   | `request-create-token`  | /api/v1/request-create-token      | Server token creation request | Y            |
+| 4   | `retrieve-kyc`          | /api/v1/retrieve-kyc              | KYC result response request   | N            |
+| 5   | `request-register-user` | /api/v1/request-register-user     | User registration request     | Y            |
+| 6   | `confirm-register-user` | /api/v1/confirm-register-user     | User registration completion  | Y            |
 
 <div style="page-break-after: always; margin-top: 40px;"></div>
 
-#### 3.1.6. P142 - 사용자 DID Document 복구 프토토콜
-| Seq | API                       | URL                                 | Description                            | 표준API |
-| --- | ------------------------- | ----------------------------------- | -------------------------------------- | ------- |
-| 1   | `offer-restore-did-push`  | /api/v1/offer-restore-did/push  | 사용자 DID Document Offer 요청 (Push)  | N       |
-| 1   | `offer-restore-did-email` | /api/v1/offer-restore-did/email | 사용자 DID Document Offer 요청 (Email) | N       |
-| 2   | `propose-restore-user`    | /api/v1/propose-restore-user    | 사용자 DID Document 복구 시작 요청     | Y       |
-| 3   | `request-ecdh`            | /api/v1/request-ecdh            | ECDH 요청                              | Y       |
-| 4   | `request-create-token`    | /api/v1/request-create-token    | 서버토큰 생성 요청                     | Y       |
-| 5   | `request-restore-user`    | /api/v1/request-restore-user    | 사용자 DID Document 복구 요청          | Y       |
-| 6   | `confirm-restore-user`    | /api/v1/confirm-restore-user    | 사용자 DID Document 복구 완료          | Y       |
+#### 3.1.5. P141 - User DID Document Update Protocol
+| Seq | API                     | URL                               | Description                            | Standard API |
+| --- | ----------------------- | --------------------------------- | -------------------------------------- | ------------ |
+| 1   | `propose-update-diddoc` | /api/v1/propose-update-diddoc     | User DID Document update request       | Y            |
+| 2   | `request-ecdh`          | /api/v1/request-ecdh              | ECDH request                           | Y            |
+| 3   | `request-create-token`  | /api/v1/request-create-token      | Server token creation request          | Y            |
+| 4   | `request-update-diddoc` | /api/v1/request-update-diddoc     | User DID Document update request       | Y            |
+| 5   | `confirm-update-diddoc` | /api/v1/confirm-update-diddoc     | User DID Document update completion    | Y            |
 
 <div style="page-break-after: always; margin-top: 40px;"></div>
 
-#### 3.1.7. P210 - VC 발급 프로토콜
-| Seq | API                     | URL                               | Description                | 표준API |
-| --- | ----------------------- | --------------------------------- | -------------------------- | ------- |
-| 1   | `offer-issue-vc-qr`     | /api/v1/offer-issue-vc/qr     | VC 발급 Offer 요청 (QR)    | N       |
-| 1   | `offer-issue-vc-push`   | /api/v1/offer-issue-vc/push   | VC 발급 Offer 요청 (Push)  | N       |
-| 1   | `offer-issue-vc-email`  | /api/v1/offer-issue-vc/email  | VC 발급 Offer 요청 (Email) | N       |
-| 2   | `propose-issue-vc`      | /api/v1/propose-issue-vc      | VC 발급 시작 요청          | Y       |
-| 3   | `request-ecdh`          | /api/v1/request-ecdh          | ECDH 요청                  | Y       |
-| 4   | `request-create-token`  | /api/v1/request-create-token  | 서버토큰 생성 요청         | Y       |
-| 5   | `request-issue-profile` | /api/v1/request-issue-profile | Issue Profile 요청         | Y       |
-| 6   | `request-issue-vc`      | /api/v1/request-issue-vc      | VC 발급 요청               | Y       |
-| 7   | `confirm-issue-vc`      | /api/v1/confirm-issue-vc      | VC 발급 완료               | Y       |
+#### 3.1.6. P142 - User DID Document Recovery Protocol
+| Seq | API                       | URL                                 | Description                                | Standard API |
+| --- | ------------------------- | ----------------------------------- | ------------------------------------------ | ------------ |
+| 1   | `offer-restore-did-push`  | /api/v1/offer-restore-did/push      | User DID Document Offer request (Push)     | N            |
+| 1   | `offer-restore-did-email` | /api/v1/offer-restore-did/email     | User DID Document Offer request (Email)    | N            |
+| 2   | `propose-restore-user`    | /api/v1/propose-restore-user        | User DID Document recovery request         | Y            |
+| 3   | `request-ecdh`            | /api/v1/request-ecdh                | ECDH request                               | Y            |
+| 4   | `request-create-token`    | /api/v1/request-create-token        | Server token creation request              | Y            |
+| 5   | `request-restore-user`    | /api/v1/request-restore-user        | User DID Document recovery request         | Y            |
+| 6   | `confirm-restore-user`    | /api/v1/confirm-restore-user        | User DID Document recovery completion      | Y            |
 
 <div style="page-break-after: always; margin-top: 40px;"></div>
 
-#### 3.1.8. P220 - VC 폐기 프로토콜
+#### 3.1.7. P210 - VC Issuance Protocol
+| Seq | API                     | URL                               | Description                    | Standard API |
+| --- | ----------------------- | --------------------------------- | ------------------------------ | ------------ |
+| 1   | `offer-issue-vc-qr`     | /api/v1/offer-issue-vc/qr         | VC issuance Offer request (QR) | N            |
+| 1   | `offer-issue-vc-push`   | /api/v1/offer-issue-vc/push       | VC issuance Offer request (Push)| N           |
+| 1   | `offer-issue-vc-email`  | /api/v1/offer-issue-vc/email      | VC issuance Offer request (Email)| N          |
+| 2   | `propose-issue-vc`      | /api/v1/propose-issue-vc          | VC issuance request            | Y            |
+| 3   | `request-ecdh`          | /api/v1/request-ecdh              | ECDH request                   | Y            |
+| 4   | `request-create-token`  | /api/v1/request-create-token      | Server token creation request  | Y            |
+| 5   | `request-issue-profile` | /api/v1/request-issue-profile     | Issue Profile request          | Y            |
+| 6   | `request-issue-vc`      | /api/v1/request-issue-vc          | VC issuance request            | Y            |
+| 7   | `confirm-issue-vc`      | /api/v1/confirm-issue-vc          | VC issuance completion         | Y            |
 
-| Seq. | API                    | URL                              | Description        | 표준API |
-| :--: | ---------------------- | -------------------------------- | ------------------ | ------- |
-|  1   | `propose-revoke-vc`    | /api/v1/propose-revoke-vc    | VC 폐기 시작 요청  | Y       |
-|  2   | `request-ecdh`         | /api/v1/request-ecdh         | ECDH 요청          | Y       |
-|  3   | `request-create-token` | /api/v1/request-create-token | 서버토큰 생성 요청 | Y       |
-|  4   | `request-revoke-vc`    | /api/v1/request-revoke-vc    | VC 폐기 요청       | Y       |
-|  5   | `confirm-revoke-vc`    | /api/v1/confirm-revoke-vc    | VC 폐기 완료       | Y       |
+<div style="page-break-after: always; margin-top: 40px;"></div>
+
+#### 3.1.8. P220 - VC Revocation Protocol
+
+| Seq. | API                    | URL                              | Description                    | Standard API |
+| :--: | ---------------------- | -------------------------------- | ------------------------------ | ------------ |
+|  1   | `propose-revoke-vc`    | /api/v1/propose-revoke-vc        | VC revocation request          | Y            |
+|  2   | `request-ecdh`         | /api/v1/request-ecdh             | ECDH request                   | Y            |
+|  3   | `request-create-token` | /api/v1/request-create-token     | Server token creation request  | Y            |
+|  4   | `request-revoke-vc`    | /api/v1/request-revoke-vc        | VC revocation request          | Y            |
+|  5   | `confirm-revoke-vc`    | /api/v1/confirm-revoke-vc        | VC revocation completion       | Y            |
 
 <div style="page-break-after: always; margin-top: 50px;"></div>
 
-### 3.2. 단일호출 API
-| API                         | URL                               | Description                | 표준API |
-| --------------------------- | --------------------------------- | -------------------------- | ------- |
-| `send-email`                | /noti/api/v1/send-email           | 이메일 발송                | N       |
-| `send-push`                 | /noti/api/v1/send-push            | Push 전송                  | N       |
-| `update-push-token`         | /api/v1/update-push-token         | Push 토큰 업데이트         | N       |
-| `get-vcplan-list`           | /list/api/v1/vcplan/list          | 모든 VC Plan 목록 조회     | Y       |
-| `get-vcplan`                | /list/api/v1/vcplan/id            | VC Plan 조회               | Y       |
-| `get-allowed-ca-list`       | /list/api/v1/allowed-ca/list      | 월렛에 허용된 CA 목록 조회 | Y       |
-| `get-certificate-vc`        | /api/v1/certificate-vc            | 가입증명서 조회            | N       |
-| `get-vcschema`              | /api/v1/vc-schema                  | VC 스키마 조회             | N       |
-| `update-diddoc-deactivated` | /api/v1/update-diddoc-deactivated | DIDDoc 비활성화            | N       |
-| `update-diddoc-revoked`     | /api/v1/update-diddoc-revoked     | DIDDoc 폐기                | N       |
+### 3.2. Single Call APIs
+| API                         | URL                               | Description                        | Standard API |
+| --------------------------- | --------------------------------- | ---------------------------------- | ------------ |
+| `send-email`                | /noti/api/v1/send-email           | Email sending                      | N            |
+| `send-push`                 | /noti/api/v1/send-push            | Push transmission                  | N            |
+| `update-push-token`         | /api/v1/update-push-token         | Push token update                  | N            |
+| `get-vcplan-list`           | /list/api/v1/vcplan/list          | Retrieve all VC Plan list          | Y            |
+| `get-vcplan`                | /list/api/v1/vcplan/id            | Retrieve VC Plan                   | Y            |
+| `get-allowed-ca-list`       | /list/api/v1/allowed-ca/list      | Retrieve CA list allowed for wallet| Y            |
+| `get-certificate-vc`        | /api/v1/certificate-vc            | Retrieve enrollment certificate    | N            |
+| `get-vcschema`              | /api/v1/vc-schema                 | Retrieve VC schema                 | N            |
+| `update-diddoc-deactivated` | /api/v1/update-diddoc-deactivated | DIDDoc deactivation                | N            |
+| `update-diddoc-revoked`     | /api/v1/update-diddoc-revoked     | DIDDoc revocation                  | N            |
 
-> **주의사항**
+> **Note**
 > 
-> - 현재 Trust Agent는 Noti 사업자와 List 사업자의 역할도 함께 수행하고 있다. URL이 `noti`와 `list`로 시작하는 API들은 이러한 기능을 제공하는 API들이다.
-> - 사업자 간의 역할을 명확하게 구분하고 혼동을 방지하기 위해, 각 사업자의 API는 **context path**를 구별하여 구성하는 것이 좋다.
+> - Currently, Trust Agent also performs the roles of Noti provider and List provider. APIs with URLs starting with `noti` and `list` provide these functionalities.
+> - To clearly distinguish roles between providers and prevent confusion, it is recommended to configure each provider's APIs with distinct **context paths**.
 >   - Trust Agent API: `/tas/api/~`
 >   - List API: `/list/api/~`
 
 <div style="page-break-after: always; margin-top: 50px;"></div>
 
-## 4. P110 - TAS 등록 프로토콜
+## 4. P110 - TAS Registration Protocol
 
-| Seq. | API                  | Description | 표준API |
-| :--: | -------------------- | ----------- | ------- |
-|  1   | `request-enroll-tas` | TAS 등록    | Y       |
+| Seq. | API                  | Description     | Standard API |
+| :--: | -------------------- | --------------- | ------------ |
+|  1   | `request-enroll-tas` | TAS registration| Y            |
 
 <div style="page-break-after: always; margin-top: 40px;"></div>
 
 ### 4.1. Request Enroll TAS
 
-사전에 등록된 정보를 바탕으로 TAS 가입증명서 VC를 발급한다.
-정보 등록 시 할당된 비밀번호를 입력으로 받아 권한을 확인한다.
+Issues TAS enrollment certificate VC based on pre-registered information.
+Receives and verifies authority using the password assigned during information registration.
 
 | Item          | Description                  | Remarks |
 | ------------- | ---------------------------- | ------- |
@@ -289,7 +287,7 @@ N/A
 **■ Body**
 
 ```c#
-def object M110_RequestEnrollTas: "Request Enroll TAS 요청문"
+def object M110_RequestEnrollTas: "Request Enroll TAS request message"
 {
     //--- Common Part ---
     + messageId "id": "message id"
@@ -297,64 +295,64 @@ def object M110_RequestEnrollTas: "Request Enroll TAS 요청문"
     //--- Data Part ---
     + object "request": "request information"
     {
-        + string "password": "사전에 배포된 비밀번호"
+        + string "password": "pre-distributed password"
     }
 }
 ```
 
 - `~/request`
-    - `password`: 비밀번호의 구성은 각 구현에 따른다.
+    - `password`: Password composition depends on each implementation.
 
 <div style="page-break-after: always; margin-top: 30px;"></div>
 
 #### 4.1.2. Response
 
-TAS는 본 요청을 받아 TAS용 가입증명서를 발급하고 게시 주소를 응답한다.
-TAS 등록을 위해 필요한 데이터는 다음과 같다.
+TAS receives this request, issues TAS enrollment certificate, and responds with the publication address.
+Data required for TAS registration includes:
 
-- Subject DN: DN(Distinguished Name) 형태의 주체 정보
-- Role: "Tas"로 고정
-- Evidence 정보
-- 가입증명서 VC 게시 주소
+- Subject DN: Subject information in Distinguished Name format
+- Role: Fixed as "Tas"
+- Evidence information
+- Enrollment certificate VC publication address
 
 **■ Process**
 
-1. 수행 권한 확인
-    - `~/request/password`가 사전에 지정한 값과 일치하는지 확인
-1. 현재 등록 가능한 상태인지 확인
-1. 발급을 위한 데이터 조회
-    - subject, role, evidence, 가입증명서 VC 게시 주소 등
-1. 가입증명서 VC 발급
-    - 가입증명서 VC 게시
+1. Verify execution authority
+    - Check if `~/request/password` matches the pre-specified value
+1. Check if currently in registerable state
+1. Retrieve data for issuance
+    - subject, role, evidence, enrollment certificate VC publication address, etc.
+1. Issue enrollment certificate VC
+    - Publish enrollment certificate VC
 
 **■ Status 200 - Success**
 
 ```c#
-def object _M110_RequestEnrollTas: "Request Enroll TAS 응답문"
+def object _M110_RequestEnrollTas: "Request Enroll TAS response message"
 {
     //--- Common Part ---
     + uuid "txId": "transaction id"
 
     //--- Data Part ---
-    + url "certVcRef": "TAS 가입증명서 VC URL"
+    + url "certVcRef": "TAS enrollment certificate VC URL"
 }
 ```
 
 **■ Status 400 - Client error**
 
-|     Code     | Description     |
-| :----------: | --------------- |
-| SSRVTRA12010 | 비밀번호 불일치합니다. |
+|     Code     | Description               |
+| :----------: | ------------------------- |
+| SSRVTRA12010 | Password mismatch.        |
 
 **■ Status 500 - Server error**
 
-|     Code     | Description                                        |
-| :----------: | -------------------------------------------------- |
-| SSRVTRA13001 | TAS의 DID Document가 등록되지 않았습니다.          |
-| SSRVTRA13003 | TAS가 이미 등록된 상태입니다.                      |
-| SSRVTRA18515 | VC 생성에 실패했습니다.                            |
-| SSRVTRA15004 | VC 메타데이터 게시에 실패했습니다.                 |
-| SSRVTRA13006 | 'propose-enroll-tas' API 요청 처리에 실패했습니다. |
+|     Code     | Description                                              |
+| :----------: | -------------------------------------------------------- |
+| SSRVTRA13001 | TAS DID Document is not registered.                     |
+| SSRVTRA13003 | TAS is already in registered state.                     |
+| SSRVTRA18515 | VC creation failed.                                      |
+| SSRVTRA15004 | VC metadata publication failed.                         |
+| SSRVTRA13006 | 'propose-enroll-tas' API request processing failed.     |
 
 <div style="page-break-after: always; margin-top: 30px;"></div>
 
@@ -392,18 +390,18 @@ Content-Type: application/json;charset=utf-8
 
 <div style="page-break-after: always; margin-top: 50px;"></div>
 
-## 5. P120 - Entity 등록 프로토콜
+## 5. P120 - Entity Registration Protocol
 
-| Seq. | API                   | Description           | 표준API |
-| :--: | --------------------- | --------------------- | ------- |
-|  1   | propose-enroll-entity | Entity 등록 시작 요청 | Y       |
-|  2   | request-ecdh          | ECDH 요청             | Y       |
-|  3   | request-enroll-entity | Entity 등록 요청      | Y       |
-|  4   | confirm-enroll-entity | Entity 등록 완료      | Y       |
+| Seq. | API                   | Description                   | Standard API |
+| :--: | --------------------- | ----------------------------- | ------------ |
+|  1   | propose-enroll-entity | Entity registration request   | Y            |
+|  2   | request-ecdh          | ECDH request                  | Y            |
+|  3   | request-enroll-entity | Entity registration request   | Y            |
+|  4   | confirm-enroll-entity | Entity registration completion| Y            |
 
 ### 5.1. Propose Enroll Entity
 
-각종 사업자의 entity 등록 거래를 시작한다.
+Initiates entity registration transaction for various service providers.
 
 | Item          | Description                     | Remarks |
 | ------------- | ------------------------------- | ------- |
@@ -412,6 +410,7 @@ Content-Type: application/json;charset=utf-8
 | Authorization | -                               |         |
 
 <div style="page-break-after: always; margin-top: 30px;"></div>
+
 
 #### 5.1.1. Request
 
@@ -432,29 +431,27 @@ N/A
 **■ Body**
 
 ```c#
-def object M120_ProposeEnrollEntity: "Propose Enroll Entity 요청문"
+def object M120_ProposeEnrollEntity: "Propose Enroll Entity request message"
 {
     //--- Common Part ---
     + messageId "id": "message id"
 }
 ```
 
-<div style="page-break-after: always; margin-top: 30px;"></div>
-
 #### 5.1.2. Response
 
-거래코드를 생성하고 DID Auth를 위한 난수를 생성한다.
+Generates transaction code and creates nonce for DID Auth.
 
 **■ Process**
 
-1. `txId` = 거래코드 생성
-1. `authNonce` = DID Auth 용 16-byte nonce 생성
-1. `txId`, `authNonce` 저장
+1. `txId` = Generate transaction code
+1. `authNonce` = Generate 16-byte nonce for DID Auth
+1. Save `txId`, `authNonce`
 
 **■ Status 200 - Success**
 
 ```c#
-def object _M120_ProposeEnrollEntity: "Propose Enroll Entity 응답문"
+def object _M120_ProposeEnrollEntity: "Propose Enroll Entity response message"
 {    
     //--- Common Part ---
     + uuid "txId": "transaction id"
@@ -472,9 +469,7 @@ N/A
 
 |     Code     | Description                                           |
 | :----------: | ----------------------------------------------------- |
-| SSRVTRA14005 | 'propose-enroll-entity' API 요청 처리에 실패했습니다. |
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
+| SSRVTRA14005 | 'propose-enroll-entity' API request processing failed. |
 
 #### 5.1.3. Example
 
@@ -505,19 +500,15 @@ Content-Type: application/json;charset=utf-8
 }
 ```
 
-<div style="page-break-after: always; margin-top: 40px;"></div>
-
 ### 5.2. Request ECDH
 
-세션 암호화를 위한 키교환을 수행한다.
+Performs key exchange for session encryption.
 
 | Item          | Description            | Remarks |
 | ------------- | ---------------------- | ------- |
 | Method        | `POST`                 |         |
 | Path          | `/api/v1/request-ecdh` |         |
 | Authorization | -                      |         |
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
 
 #### 5.2.1. Request
 
@@ -538,7 +529,7 @@ N/A
 **■ Body**
 
 ```c#
-def object M120_RequestEcdh: "ECDH 요청문"
+def object M120_RequestEcdh: "ECDH request message"
 {
     //--- Common Part ---
     + messageId "id"  : "message id"
@@ -550,40 +541,38 @@ def object M120_RequestEcdh: "ECDH 요청문"
 ```
 
 - `~/reqEcdh`
-    - `client`: 클라이언트 DID
-    - `clientNonce`: 클라이언트가 생성한 난수
-    - `curve`: ECDH용 ECC 곡선 타입 (클라이언트가 하나를 지정)
-    - `publicKey`: 상기 `curve` 유형으로 생성한 임시키쌍의 공개키
+    - `client`: Client DID
+    - `clientNonce`: Nonce generated by client
+    - `curve`: ECC curve type for ECDH (client specifies one)
+    - `publicKey`: Public key of temporary key pair generated with above `curve` type
     - `candidate` 
-        - `ciphers`: 클라이언트가 지원하는 cipher 알고리즘 목록
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
+        - `ciphers`: List of cipher algorithms supported by client
 
 #### 5.2.2. Response
 
 **■ Process**
 
-1. 거래코드 확인
-1. `~/reqEcdh/proof` 서명 검증
-1. 클라이언트 요청값(`~/reqEcdh`) 정합성 확인 및 cipher 알고리즘 선택
-    - `cipherAlg` = cipher 알고리즘 선택
-    - `padding` = 패딩 방식 선택
-1. ECIES 세션키 생성
+1. Verify transaction code
+1. Verify `~/reqEcdh/proof` signature
+1. Validate client request values (`~/reqEcdh`) and select cipher algorithm
+    - `cipherAlg` = Select cipher algorithm
+    - `padding` = Select padding method
+1. Generate ECIES session key
     - `clientNonce` = `~/reqEcdh/clientNonce`
-    - `severNonce` = 16-byte nonce 생성
+    - `severNonce` = Generate 16-byte nonce
     - `mergedNonce` = sha256(serverNonce, clientNonce)
     - `clientPubKey` = `~/reqEcdh/publicKey`
-    - `serverPubKey`, `serverPriKey` = `~/reqEcdh/curve` 타입의 서버 임시키쌍 생성
+    - `serverPubKey`, `serverPriKey` = Generate server temporary key pair of `~/reqEcdh/curve` type
     - `sesKey` = ecies(serverPriKey, clientPubKey, mergedNonce, cipherAlg)
-1. ECDH 정보 저장
-    - 클라이언트 DID, 거래코드
+1. Save ECDH information
+    - Client DID, transaction code
     - `sesKey`, `cipherAlg`, `padding`
-1. ECDH 수락 데이터 생성 및 서명
+1. Generate and sign ECDH acceptance data
 
 **■ Status 200 - Success**
 
 ```c#
-def object _M120_RequestEcdh: "Request ECDH 응답문"
+def object _M120_RequestEcdh: "Request ECDH response message"
 {    
     //--- Common Part ---
     + uuid "txId": "transaction id"
@@ -594,33 +583,31 @@ def object _M120_RequestEcdh: "Request ECDH 응답문"
 ```
 
 - `~/accEcdh`
-    - `server`: 서버 DID
-    - `serverNonce`: 서버가 생성한 난수
-    - `publicKey`: 서버가 생성한 임시키쌍의 공개키(`serverPubKey`)
-    - `cipher`: 클라이언트의 후보 중 서버가 선택한 cipher 알고리즘
-    - `padding`: 서버가 선택한 패딩 방식
+    - `server`: Server DID
+    - `serverNonce`: Nonce generated by server
+    - `publicKey`: Public key of server-generated temporary key pair (`serverPubKey`)
+    - `cipher`: Cipher algorithm selected by server from client candidates
+    - `padding`: Padding method selected by server
 
 **■ Status 400 - Client error**
 
 |     Code     | Description                                               |
 | :----------: | --------------------------------------------------------- |
-| SSRVTRA16519 | 클라이언트 Nonce 처리 실패: 잘못된 Nonce입니다.           |
-| SSRVTRA16000 | 트랜잭션을 찾지 못했습니다: 트랜잭션이 존재하지 않습니다. |
-| SSRVTRA16001 | 트랜잭션 처리 실패: 트랜잭션이 유효하지 않습니다.         |
-| SSRVTRA16002 | 트랜잭션 처리 실패: 트랜잭션이 만료되었습니다.            |
-| SSRVTRA16510 | 서명 검증 실패: 서명이 유효하지 않습니다.                 |
-| SSRVTRA16511 | 서명 검증에 실패했습니다.                                 |
-| SSRVTRA12008 | 지원되지 않는 Cipher Type 입니다.                         |
+| SSRVTRA16519 | Client Nonce processing failed: Invalid Nonce.           |
+| SSRVTRA16000 | Transaction not found: Transaction does not exist.       |
+| SSRVTRA16001 | Transaction processing failed: Transaction is invalid.   |
+| SSRVTRA16002 | Transaction processing failed: Transaction has expired.  |
+| SSRVTRA16510 | Signature verification failed: Signature is invalid.     |
+| SSRVTRA16511 | Signature verification failed.                           |
+| SSRVTRA12008 | Unsupported Cipher Type.                                 |
 
 **■ Status 500 - Server error**
 
 |     Code     | Description                                  |
 | :----------: | -------------------------------------------- |
-| SSRVTRA16504 | Nonce 생성에 실패했습니다.                   |
-| SSRVTRA16506 | 세션키 생성에 실패했습니다.                  |
-| SSRVTRA16521 | 'request-ecdh' API 요청 처리에 실패했습니다. |
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
+| SSRVTRA16504 | Nonce generation failed.                     |
+| SSRVTRA16506 | Session key generation failed.               |
+| SSRVTRA16521 | 'request-ecdh' API request processing failed.|
 
 #### 5.2.3. Example
 
@@ -631,6 +618,7 @@ curl -v -X POST "http://${Host}:${Port}/tas/api/v1/request-ecdh" \
 -H "Content-Type: application/json;charset=utf-8" \
 -d @"data.json"
 ```
+
 
 ```json
 //data.json
@@ -698,16 +686,13 @@ Content-Type: application/json;charset=utf-8
 
 ### 5.3. Request Enroll Entity
 
-DID Auth 서명 검증 후 Entity 용 가입증명서 VC를 발급하고,
-VC를 세션키로 암호화하여 응답한다.
+After DID Auth signature verification, issues Entity enrollment certificate VC and responds with the VC encrypted with session key.
 
 | Item          | Description                     | Remarks |
 | ------------- | ------------------------------- | ------- |
 | Method        | `POST`                          |         |
 | Path          | `/api/v1/request-enroll-entity` |         |
 | Authorization | -                               |         |
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
 
 #### 5.3.1. Request
 
@@ -728,7 +713,7 @@ N/A
 **■ Body**
 
 ```c#
-def object M120_RequestEnrollEntity: "Request Enroll Entity 요청문"
+def object M120_RequestEnrollEntity: "Request Enroll Entity request message"
 {
     //--- Common Part ---
     + messageId "id"  : "message id"
@@ -740,40 +725,37 @@ def object M120_RequestEnrollEntity: "Request Enroll Entity 요청문"
 ```
 
 - `~/didAuth`
-    - `did`: 등록을 요청하는 entity의 DID
+    - `did`: DID of entity requesting registration
     - `authNonce`: `_M120_ProposeEnrollEntity:~/authNonce`
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
 
 #### 5.3.2. Response
 
-이전에 서버가 보낸 `authNonce`를 포함하여 authentication proof를 검증한 후
-가입증명서 VC를 발급한다.
+Verifies authentication proof including the `authNonce` previously sent by server, then issues enrollment certificate VC.
 
 **■ Process**
 
-1. 거래코드 확인
-1. DID Auth 검증
-    - `authNonce`와 `_M120_ProposeEnrollEntity:~/authNonce` 일치여부 확인
-    - `didAuth/proof` 서명 검증
-1. 발급을 위한 데이터 조회
+1. Verify transaction code
+1. Verify DID Auth
+    - Check if `authNonce` matches `_M120_ProposeEnrollEntity:~/authNonce`
+    - Verify `didAuth/proof` signature
+1. Retrieve data for issuance
     - subject, role, evidence
-1. `vc` = 가입증명서 VC 발급
-1. VC 세션키 암호화
-    - `iv` = 16-byte IV 생성
+1. `vc` = Issue enrollment certificate VC
+1. Encrypt VC with session key
+    - `iv` = Generate 16-byte IV
     - `encVc` = multibase(enc(vc, sesKey, iv, padding))
 
 **■ Status 200 - Success**
 
 ```c#
-def object _M120_RequestEnrollEntity: "Request Enroll Entity 응답문"
+def object _M120_RequestEnrollEntity: "Request Enroll Entity response message"
 {    
     //--- Common Part ---
     + uuid      "txId": "transaction id"
-    + multibase "iv"  : "세션키 암복호화 IV"
+    + multibase "iv"  : "session key encryption/decryption IV"
 
     //--- Data Part ---
-    + multibase "encVc": "암호화된 가입증명서 VC"
+    + multibase "encVc": "encrypted enrollment certificate VC"
 }
 ```
 
@@ -781,28 +763,26 @@ def object _M120_RequestEnrollEntity: "Request Enroll Entity 응답문"
 
 |     Code     | Description                                               |
 | :----------: | --------------------------------------------------------- |
-| SSRVTRA16000 | 트랜잭션을 찾지 못했습니다: 트랜잭션이 존재하지 않습니다. |
-| SSRVTRA16001 | 트랜잭션 처리 실패: 트랜잭션이 유효하지 않습니다.         |
-| SSRVTRA16002 | 트랜잭션 처리 실패: 트랜잭션이 만료되었습니다.            |
-| SSRVTRA16510 | 서명 검증 실패: 서명이 유효하지 않습니다.                 |
-| SSRVTRA16511 | 서명 검증에 실패했습니다.                                 |
-| SSRVTRA16509 | DID Auth 검증에 실패했습니다.                             |
-| SSRVTRA14006 | 요청한 DID와 등록을 요청한 Entity와 일치하지 않습니다.    |
-| SSRVTRA16520 | 'authNonce' 가 일치하지 않습니다.                         |
+| SSRVTRA16000 | Transaction not found: Transaction does not exist.       |
+| SSRVTRA16001 | Transaction processing failed: Transaction is invalid.   |
+| SSRVTRA16002 | Transaction processing failed: Transaction has expired.  |
+| SSRVTRA16510 | Signature verification failed: Signature is invalid.     |
+| SSRVTRA16511 | Signature verification failed.                           |
+| SSRVTRA16509 | DID Auth verification failed.                           |
+| SSRVTRA14006 | Requested DID does not match Entity requesting registration.|
+| SSRVTRA16520 | 'authNonce' does not match.                              |
 
 **■ Status 500 - Server error**
 
 |     Code     | Description                                           |
 | :----------: | ----------------------------------------------------- |
-| SSRVTRA16510 | 서명 검증 실패: 서명이 유효하지 않습니다.             |
-| SSRVTRA16511 | 서명 검증에 실패했습니다.                             |
-| SSRVTRA16509 | DID Auth 검증에 실패했습니다.                         |
-| SSRVTRA18515 | VC 생성에 실패했습니다.                               |
-| SSRVTRA15004 | VC 메타데이터 게시에 실패했습니다.                    |
-| SSRVTRA10004 | 데이터 암호화에 실패했습니다.                         |
-| SSRVTRA14007 | 'request-enroll-entity' API 요청 처리에 실패했습니다. |
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
+| SSRVTRA16510 | Signature verification failed: Signature is invalid. |
+| SSRVTRA16511 | Signature verification failed.                       |
+| SSRVTRA16509 | DID Auth verification failed.                        |
+| SSRVTRA18515 | VC creation failed.                                  |
+| SSRVTRA15004 | VC metadata publication failed.                      |
+| SSRVTRA10004 | Data encryption failed.                              |
+| SSRVTRA14007 | 'request-enroll-entity' API request processing failed.|
 
 #### 5.3.3. Example
 
@@ -846,19 +826,15 @@ Content-Type: application/json;charset=utf-8
 }
 ```
 
-<div style="page-break-after: always; margin-top: 40px;"></div>
-
 ### 5.4. Confirm Enroll Entity
 
-Entity 등록 거래를 종료한다.
+Terminates Entity registration transaction.
 
 | Item          | Description                     | Remarks |
 | ------------- | ------------------------------- | ------- |
 | Method        | `POST`                          |         |
 | Path          | `/api/v1/confirm-enroll-entity` |         |
 | Authorization | -                               |         |
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
 
 #### 5.4.1. Request
 
@@ -879,7 +855,7 @@ N/A
 **■ Body**
 
 ```c#
-def object M120_ConfirmEnrollEntity: "Confirm Enroll Entity 요청문"
+def object M120_ConfirmEnrollEntity: "Confirm Enroll Entity request message"
 {
     //--- Common Part ---
     + messageId "id"  : "message id"
@@ -890,23 +866,21 @@ def object M120_ConfirmEnrollEntity: "Confirm Enroll Entity 요청문"
 }
 ```
 
-- `~/vcId`: 발급받은 가입증명서 VC의 id
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
+- `~/vcId`: ID of issued enrollment certificate VC
 
 #### 5.4.2. Response
 
-가입증명서 VC id 일치여부 확인 후 Entity 등록 프로토콜을 종료한다.
+Verifies VC ID match and terminates Entity registration protocol.
 
 **■ Process**
 
-1. 거래코드 확인
-1. `vcId` 일치여부 확인
+1. Verify transaction code
+1. Verify `vcId` match
 
 **■ Status 200 - Success**
 
 ```c#
-def object _M120_ConfirmEnrollEntity: "Confirm Enroll Entity 응답문"
+def object _M120_ConfirmEnrollEntity: "Confirm Enroll Entity response message"
 {
     //--- Common Part ---
     + uuid "txId": "transaction id"
@@ -917,10 +891,10 @@ def object _M120_ConfirmEnrollEntity: "Confirm Enroll Entity 응답문"
 
 |     Code     | Description                                               |
 | :----------: | --------------------------------------------------------- |
-| SSRVTRA16000 | 트랜잭션을 찾지 못했습니다: 트랜잭션이 존재하지 않습니다. |
-| SSRVTRA16001 | 트랜잭션 처리 실패: 트랜잭션이 유효하지 않습니다.         |
-| SSRVTRA16002 | 트랜잭션 처리 실패: 트랜잭션이 만료되었습니다.            |
-| SSRVTRA18500 | VC ID가 일치하지 않습니다.                                |
+| SSRVTRA16000 | Transaction not found: Transaction does not exist.       |
+| SSRVTRA16001 | Transaction processing failed: Transaction is invalid.   |
+| SSRVTRA16002 | Transaction processing failed: Transaction has expired.  |
+| SSRVTRA18500 | VC ID does not match.                                    |
 
 **■ Status 500 - Server error**
 
@@ -956,34 +930,30 @@ Content-Type: application/json;charset=utf-8
 }
 ```
 
-<div style="page-break-after: always; margin-top: 50px;"></div>
+## 6. P131 - Wallet Registration Protocol
 
-## 6. P131 - 월렛 등록 프로토콜
-
-| Seq. | API                       | Description | 표준API |
-| :--: | ------------------------- | ----------- | ------- |
-|  1   | `request-register-wallet` | Wallet 등록 | Y       |
+| Seq. | API                       | Description         | Standard API |
+| :--: | ------------------------- | ------------------- | ------------ |
+|  1   | `request-register-wallet` | Wallet registration | Y            |
 
 ### 6.1. Request Register Wallet
 
-사용자용 모바일 월렛을 생성하고 TAS에 등록하는 절차이다.
-처리 순서는 다음과 같다.
+This is the procedure for creating and registering user mobile wallet to TAS.
+The processing sequence is as follows:
 
-- 월렛 DID Document 생성하고 키별 proof 추가
-- 월렛 사업자가 월렛 식별자와 DID Document에 대해 서명
-- TAS에 등록
-    - 등록된 월렛 사업자인지 확인
-    - 월렛 사업자 서명과 DID Document 내 서명을 검증
-    - DID Document를 신뢰저장소에 등록
-    - 월렛을 TAS에 등록
+- Generate wallet DID Document and add proofs for each key
+- Wallet provider signs wallet identifier and DID Document
+- Register to TAS
+    - Verify if registered wallet provider
+    - Verify wallet provider signature and signatures within DID Document
+    - Register DID Document to trust repository
+    - Register wallet to TAS
 
 | Item          | Description                       | Remarks |
 | ------------- | --------------------------------- | ------- |
 | Method        | `POST`                            |         |
 | Path          | `/api/v1/request-register-wallet` |         |
 | Authorization | -                                 |         |
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
 
 #### 6.1.1. Request
 
@@ -1004,7 +974,7 @@ N/A
 **■ Body**
 
 ```c#
-def object M131_RequestRegisterWallet: "Request Register Wallet 요청문"
+def object M131_RequestRegisterWallet: "Request Register Wallet request message"
 {
     //--- Common Part ---
     + messageId "id": "message id"
@@ -1015,42 +985,39 @@ def object M131_RequestRegisterWallet: "Request Register Wallet 요청문"
 ```
 
 - `~/attestedDidDoc`
-    - `walletId`: 월렛이 생성한 월렛 식별자
-    - `ownerDidDoc`: Wallet DID 키 별 서명이 추가된 DID Document
-    - `provider`: 월렛 사업자 정보
-        - `did`: 월렛 사업자 DID
-        - `certVcRef`: 월렛 사업자 가입증명서 VC URL
-    - `proof`: 등록 요청 정보에 대해 월렛 사업자가 서명
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
+    - `walletId`: Wallet identifier created by wallet
+    - `ownerDidDoc`: DID Document with signatures added for each Wallet DID key
+    - `provider`: Wallet provider information
+        - `did`: Wallet provider DID
+        - `certVcRef`: Wallet provider enrollment certificate VC URL
+    - `proof`: Wallet provider signature on registration request information
 
 #### 6.1.2. Response
 
-TAS는 월렛 사업자의 서명을 확인한 후 DID Document를 신뢰저장소에 등록하고
-`walletId`를 식별자로 하여 월렛을 등록한다.
+TAS verifies wallet provider's signature, registers DID Document to trust repository, and registers wallet using `walletId` as identifier.
 
 **■ Process**
 
-1. 월렛 사업자 관련 확인
-    - `~/attestedDidDoc/provider/did`가 등록된 운영중인 사업자가 맞는지 확인
-    - (OPTIONAL)`~/attestedDidDoc/provider/certVcRef` 가입증명서 VC 검증
-1. Attestation proof 검증
-    - `~/attestedDidDoc/proof/verificationMethod`가 상기 provider의 DID와 일치하는지 확인
-    - 서명 검증(원문은 요청문 전체가 아닌 `~/attestedDidDoc` 이다)
-1. walletId 중복여부 등 확인
-1. DID 키 서명 검증
-    - (OwnerDidDoc)`ownerDidDoc` 내 proofs 서명 검증
-    - (DidDoc)`didDoc` = DID Document 원문 추출
-1. DID Document를 신뢰저장소에 등록
-    - (InvokedDidDoc)`invokedDidDoc` = `didDoc`에 대해 TAS 서명 첨부
-    - 신뢰저장소 등록
-1. 월렛 등록정보 매핑하여 저장
+1. Wallet provider related verification
+    - Verify if `~/attestedDidDoc/provider/did` is registered and operational provider
+    - (OPTIONAL) Verify `~/attestedDidDoc/provider/certVcRef` enrollment certificate VC
+1. Verify Attestation proof
+    - Verify if `~/attestedDidDoc/proof/verificationMethod` matches above provider's DID
+    - Verify signature (original text is `~/attestedDidDoc`, not entire request message)
+1. Check walletId duplication, etc.
+1. Verify DID key signatures
+    - (OwnerDidDoc) Verify `ownerDidDoc` internal proofs signatures
+    - (DidDoc) Extract DID Document original text as `didDoc`
+1. Register DID Document to trust repository
+    - (InvokedDidDoc) `invokedDidDoc` = Attach TAS signature to `didDoc`
+    - Register to trust repository
+1. Map and save wallet registration information
     - `walletId`, wallet DID, wallet provider DID
 
 **■ Status 200 - Success**
 
 ```c#
-def object _M131_RequestRegisterWallet: "Request Register Wallet 응답문"
+def object _M131_RequestRegisterWallet: "Request Register Wallet response message"
 {
     //--- Common Part ---
     + uuid "txId": "transaction id"
@@ -1059,29 +1026,27 @@ def object _M131_RequestRegisterWallet: "Request Register Wallet 응답문"
 
 **■ Status 400 - Client error**
 
-|     Code     | Description                                 |
-| :----------: | ------------------------------------------- |
-| SSRVTRA17500 | 월렛 사업자가 등록되지 않았습니다.          |
-| SSRVTRA14003 | Entity가 등록 완료된 상태가 아닙니다.       |
-| SSRVTRA18510 | 가입증명서 VC를 찾을 수 없습니다.           |
-| SSRVTRA12007 | Provider DID가 일치하지 않습니다.           |
-| SSRVTRA18511 | 유효하지 않은 가입증명서 VC의 Issuer입니다. |
-| SSRVTRA16510 | 서명 검증 실패: 서명이 유효하지 않습니다.   |
-| SSRVTRA16511 | 서명 검증에 실패했습니다.                   |
-| SSRVTRA17501 | Wallet ID가 이미 존재합니다.                |
-| SSRVTRA16516 | DID Document 키 서명 검증에 실패했습니다.    |
+|     Code     | Description                                           |
+| :----------: | ----------------------------------------------------- |
+| SSRVTRA17500 | Wallet provider is not registered.                   |
+| SSRVTRA14003 | Entity is not in completed registration state.       |
+| SSRVTRA18510 | Enrollment certificate VC not found.                 |
+| SSRVTRA12007 | Provider DID does not match.                         |
+| SSRVTRA18511 | Invalid enrollment certificate VC Issuer.            |
+| SSRVTRA16510 | Signature verification failed: Signature is invalid. |
+| SSRVTRA16511 | Signature verification failed.                       |
+| SSRVTRA17501 | Wallet ID already exists.                            |
+| SSRVTRA16516 | DID Document key signature verification failed.      |
 
 **■ Status 500 - Server error**
 
 |     Code     | Description                                             |
 | :----------: | ------------------------------------------------------- |
-| SSRVTRA18017 | Invoked Document 생성에 실패했습니다.                   |
-| SSRVTRA18016 | DID Document 등록에 실패했습니다.                       |
-| SSRVTRA17510 | 'request-register-wallet' API 요청 처리에 실패했습니다. |
+| SSRVTRA18017 | Invoked Document creation failed.                       |
+| SSRVTRA18016 | DID Document registration failed.                       |
+| SSRVTRA17510 | 'request-register-wallet' API request processing failed.|
 
-<div style="page-break-after: always; margin-top: 30px;"></div>
-
-#### 5.4.3. Example
+#### 6.1.3. Example
 
 **■ Request**
 
@@ -1090,6 +1055,7 @@ curl -v -X POST "http://${Host}:${Port}/tas/api/v1/request-register-wallet" \
 -H "Content-Type: application/json;charset=utf-8" \
 -d @"data.json"
 ```
+
 
 ```json
 //data.json
@@ -1124,31 +1090,26 @@ Content-Type: application/json;charset=utf-8
 }
 ```
 
-<div style="page-break-after: always; margin-top: 50px;"></div>
+## 7. P132 - User Registration Protocol
 
-## 7. P132 - 사용자 등록 프로토콜
-
-| Seq. | API                   | Description           | 표준API |
-| :--: | --------------------- | --------------------- | ------- |
-|  1   | propose-register-user | 사용자 등록 시작 요청 | Y       |
-|  2   | request-ecdh          | ECDH 요청             | Y       |
-|  3   | request-create-token  | 서버토큰 생성 요청    | Y       |
-|  4   | retrieve-kyc          | KYC 결과 회신 요청    | N       |
-|  5   | request-register-user | 사용자 등록 요청      | Y       |
-|  6   | confirm-register-user | 사용자 등록 완료      | Y       |
+| Seq. | API                   | Description                   | Standard API |
+| :--: | --------------------- | ----------------------------- | ------------ |
+|  1   | propose-register-user | User registration request     | Y            |
+|  2   | request-ecdh          | ECDH request                  | Y            |
+|  3   | request-create-token  | Server token creation request | Y            |
+|  4   | retrieve-kyc          | KYC result response request   | N            |
+|  5   | request-register-user | User registration request     | Y            |
+|  6   | confirm-register-user | User registration completion  | Y            |
 
 ### 7.1. Propose Register User
 
-사용자 등록 거래를 시작한다.
+Initiates user registration transaction.
 
 | Item          | Description                     | Remarks |
 | ------------- | ------------------------------- | ------- |
 | Method        | `POST`                          |         |
 | Path          | `/api/v1/propose-register-user` |         |
 | Authorization | -                               |         |
-
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
 
 #### 7.1.1. Request
 
@@ -1169,28 +1130,26 @@ N/A
 **■ Body**
 
 ```c#
-def object M132_ProposeRegisterUser: "Propose Register User 요청문"
+def object M132_ProposeRegisterUser: "Propose Register User request message"
 {
     //--- Common Part ---
     + messageId "id": "message id"
 }
 ```
 
-<div style="page-break-after: always; margin-top: 30px;"></div>
-
 #### 7.1.2. Response
 
-거래코드를 생성하고 사용자 등록 거래를 시작한다.
+Generates transaction code and initiates user registration transaction.
 
 **■ Process**
 
-1. `txId` = 거래코드 생성
-1. `txId` 저장
+1. `txId` = Generate transaction code
+1. Save `txId`
 
 **■ Status 200 - Success**
 
 ```c#
-def object _M132_ProposeRegisterUser: "Propose Register User 응답문"
+def object _M132_ProposeRegisterUser: "Propose Register User response message"
 {    
     //--- Common Part ---
     + uuid "txId": "transaction id"
@@ -1205,9 +1164,7 @@ N/A
 
 |     Code     | Description                                           |
 | :----------: | ----------------------------------------------------- |
-| SSRVTRA17008 | 'propose-register-user' API 요청 처리에 실패했습니다. |
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
+| SSRVTRA17008 | 'propose-register-user' API request processing failed.|
 
 #### 7.1.3. Example
 
@@ -1237,11 +1194,9 @@ Content-Type: application/json;charset=utf-8
 }
 ```
 
-<div style="page-break-after: always; margin-top: 40px;"></div>
-
 ### 7.2. Request ECDH
 
-세션 암호화를 위한 키교환을 수행한다.
+Performs key exchange for session encryption.
 
 | Item          | Description            | Remarks |
 | ------------- | ---------------------- | ------- |
@@ -1268,7 +1223,7 @@ N/A
 **■ Body**
 
 ```c#
-def object M132_RequestEcdh: "ECDH 요청문"
+def object M132_RequestEcdh: "ECDH request message"
 {
     //--- Common Part ---
     + messageId "id"  : "message id"
@@ -1280,12 +1235,12 @@ def object M132_RequestEcdh: "ECDH 요청문"
 ```
 
 - `~/reqEcdh`
-    - `client`: 클라이언트 DID
-    - `clientNonce`: 클라이언트가 생성한 난수
-    - `curve`: ECDH용 ECC 곡선 타입 (클라이언트가 하나를 지정)
-    - `publicKey`: 상기 `curve` 유형으로 생성한 임시키쌍의 공개키
+    - `client`: Client DID
+    - `clientNonce`: Random number generated by client
+    - `curve`: ECC curve type for ECDH (client specifies one)
+    - `publicKey`: Public key of temporary key pair generated with the above `curve` type
     - `candidate` 
-        - `ciphers`: 클라이언트가 지원하는 cipher 알고리즘 목록
+        - `ciphers`: List of cipher algorithms supported by client
 
 <div style="page-break-after: always; margin-top: 30px;"></div>
 
@@ -1293,27 +1248,27 @@ def object M132_RequestEcdh: "ECDH 요청문"
 
 **■ Process**
 
-1. 거래코드 확인
-1. `~/reqEcdh/proof` 서명 검증
-1. 클라이언트 요청값(`~/reqEcdh`) 정합성 확인 및 cipher 알고리즘 선택
-    - `cipherAlg` = cipher 알고리즘 선택
-    - `padding` = 패딩 방식 선택
-1. ECIES 세션키 생성
+1. Verify transaction code
+1. Verify signature of `~/reqEcdh/proof`
+1. Verify client request values (`~/reqEcdh`) integrity and select cipher algorithm
+    - `cipherAlg` = Select cipher algorithm
+    - `padding` = Select padding method
+1. Generate ECIES session key
     - `clientNonce` = `~/reqEcdh/clientNonce`
-    - `severNonce` = 16-byte nonce 생성
+    - `severNonce` = Generate 16-byte nonce
     - `mergedNonce` = sha256(serverNonce, clientNonce)
     - `clientPubKey` = `~/reqEcdh/publicKey`
-    - `serverPubKey`, `serverPriKey` = `~/reqEcdh/curve` 타입의 서버 임시키쌍 생성
+    - `serverPubKey`, `serverPriKey` = Generate server temporary key pair of `~/reqEcdh/curve` type
     - `sesKey` = ecies(serverPriKey, clientPubKey, mergedNonce, cipherAlg)
-1. ECDH 정보 저장
-    - 클라이언트 DID, 거래코드
+1. Store ECDH information
+    - Client DID, transaction code
     - `sesKey`, `cipherAlg`, `padding`
-1. ECDH 수락 데이터 생성 및 서명
+1. Generate and sign ECDH acceptance data
 
 **■ Status 200 - Success**
 
 ```c#
-def object _M132_RequestEcdh: "Request ECDH 응답문"
+def object _M132_RequestEcdh: "Request ECDH response message"
 {    
     //--- Common Part ---
     + uuid "txId": "transaction id"
@@ -1324,31 +1279,31 @@ def object _M132_RequestEcdh: "Request ECDH 응답문"
 ```
 
 - `~/accEcdh`
-    - `server`: 서버 DID
-    - `serverNonce`: 서버가 생성한 난수
-    - `publicKey`: 서버가 생성한 임시키쌍의 공개키(`serverPubKey`)
-    - `cipher`: 클라이언트의 후보 중 서버가 선택한 cipher 알고리즘
-    - `padding`: 서버가 선택한 패딩 방식
+    - `server`: Server DID
+    - `serverNonce`: Random number generated by server
+    - `publicKey`: Public key of temporary key pair generated by server (`serverPubKey`)
+    - `cipher`: Cipher algorithm selected by server from client candidates
+    - `padding`: Padding method selected by server
 
 **■ Status 400 - Client error**
 
 |     Code     | Description                                               |
 | :----------: | --------------------------------------------------------- |
-| SSRVTRA16519 | 클라이언트 Nonce 처리 실패: 잘못된 Nonce입니다.           |
-| SSRVTRA16000 | 트랜잭션을 찾지 못했습니다: 트랜잭션이 존재하지 않습니다. |
-| SSRVTRA16001 | 트랜잭션 처리 실패: 트랜잭션이 유효하지 않습니다.         |
-| SSRVTRA16002 | 트랜잭션 처리 실패: 트랜잭션이 만료되었습니다.            |
-| SSRVTRA16510 | 서명 검증 실패: 서명이 유효하지 않습니다.                 |
-| SSRVTRA16511 | 서명 검증에 실패했습니다.                                 |
-| SSRVTRA12008 | 지원되지 않는 Cipher Type 입니다.                         |
+| SSRVTRA16519 | Client Nonce processing failed: Invalid Nonce.           |
+| SSRVTRA16000 | Transaction not found: Transaction does not exist.       |
+| SSRVTRA16001 | Transaction processing failed: Transaction is invalid.   |
+| SSRVTRA16002 | Transaction processing failed: Transaction has expired.  |
+| SSRVTRA16510 | Signature verification failed: Signature is invalid.     |
+| SSRVTRA16511 | Signature verification failed.                           |
+| SSRVTRA12008 | Unsupported Cipher Type.                                 |
 
 **■ Status 500 - Server error**
 
 |     Code     | Description                                  |
 | :----------: | -------------------------------------------- |
-| SSRVTRA16504 | Nonce 생성에 실패했습니다.                   |
-| SSRVTRA16506 | 세션키 생성에 실패했습니다.                  |
-| SSRVTRA16521 | 'request-ecdh' API 요청 처리에 실패했습니다. |
+| SSRVTRA16504 | Failed to generate Nonce.                   |
+| SSRVTRA16506 | Failed to generate session key.             |
+| SSRVTRA16521 | Failed to process 'request-ecdh' API request.|
 
 <div style="page-break-after: always; margin-top: 30px;"></div>
 
@@ -1412,7 +1367,7 @@ Content-Type: application/json;charset=utf-8
 
 ### 7.3. Request Create Token
 
-인가앱이 TAS에게 서버토큰 생성을 요청한다.
+CA app requests TAS to create server token.
 
 | Item          | Description                    | Remarks |
 | ------------- | ------------------------------ | ------- |
@@ -1422,14 +1377,14 @@ Content-Type: application/json;charset=utf-8
 
 #### 7.3.1. Request
 
-서버토큰을 생성하기 위해서는 아래와 같은 토큰시드를 넘겨줘야 한다.
+To create server token, the following token seed must be provided:
 
 - `(ServerTokenSeed)seed`
-    - `purpose`: "CreateDid" 또는 "CreateDidAndIssueVc"
-    - `walletInfo`: 서명된 월렛정보 (월렛 SDK 호출하여 획득)
-    - `caAppInfo`: 서명된 인가앱정보 (인가앱 사업자 API 호출하여 획득)
+    - `purpose`: "CreateDid" or "CreateDidAndIssueVc"
+    - `walletInfo`: Signed wallet information (obtained by calling wallet SDK)
+    - `caAppInfo`: Signed CA app information (obtained by calling CA app provider API)
 
-자세한 내용은 [DATA-SPEC]을 참조한다.
+For detailed information, refer to [DATA-SPEC].
 
 **■ Headers**
 
@@ -1448,7 +1403,7 @@ N/A
 **■ Body**
 
 ```c#
-def object M132_RequestCreateToken: "Request Create Token 요청문"
+def object M132_RequestCreateToken: "Request Create Token request message"
 {
     //--- Common Part ---
     + messageId "id"  : "message id"
@@ -1460,74 +1415,70 @@ def object M132_RequestCreateToken: "Request Create Token 요청문"
 ```
 
 - `~/seed`
-    - `purpose`: 토큰 사용 목적
-    - `walletInfo`: 서명된 월렛 정보
-    - `caAppInfo`: 서명된 인가앱 정보
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
+    - `purpose`: Token usage purpose
+    - `walletInfo`: Signed wallet information
+    - `caAppInfo`: Signed CA app information
 
 #### 7.3.2. Response
 
-클라이언트가 넘겨준 seed 내 서명 검증 후 서버토큰 데이터를 생성하여 응답한다.
-응답 데이터는 세션키로 암호화한다.
+Verifies signatures within client-provided seed, generates server token data, and responds.
+Response data is encrypted with session key.
 
 **■ Process**
 
-1. 거래코드 확인
-1. purpose 유효성 확인
-1. `~/seed` 내 proof 서명 검증
-    - `walletInfo.proof` 월렛 서명 검증
-    - `caAppInfo.proof` 월렛 사업자 서명 검증
-1. 데이터 준비
-    - 토큰 유효일시 설정
-    - 기타 난수 등 생성
-1. 상기 데이터를 서명하여 `(ServerTokenData)std` 생성
-1. 서버토큰 생성하여 저장
+1. Verify transaction code
+1. Validate purpose
+1. Verify proof signatures within `~/seed`
+    - Verify `walletInfo.proof` wallet signature
+    - Verify `caAppInfo.proof` wallet provider signature
+1. Prepare data
+    - Set token validity period
+    - Generate other random values etc.
+1. Sign above data to generate `(ServerTokenData)std`
+1. Generate and save server token
     - `serverToken` = sha256(std)
-1. 응답 데이터 준비
+1. Prepare response data
     - `encStd` = multibase(enc(std, sesKey, iv, padding))
 
 **■ Status 200 - Success**
 
 ```c#
-def object _M132_RequestCreateToken: "Request Create Token 응답문"
+def object _M132_RequestCreateToken: "Request Create Token response message"
 {    
     //--- Common Part ---
     + uuid      "txId": "transaction id"
-    + multibase "iv"  : "세션키 암복호화 IV"
+    + multibase "iv"  : "session key encryption/decryption IV"
     
     //--- Data Part ---
     + multibase "encStd": "multibase(enc((ServerTokenData)std))"
 }
 ```
 
-- `~/encStd`: 암호화된 서버토큰 데이터
+- `~/encStd`: Encrypted server token data
 
 **■ Status 400 - Client error**
 
 |     Code     | Description                                               |
 | :----------: | --------------------------------------------------------- |
-| SSRVTRA16000 | 트랜잭션을 찾지 못했습니다: 트랜잭션이 존재하지 않습니다. |
-| SSRVTRA16001 | 트랜잭션 처리 실패: 트랜잭션이 유효하지 않습니다.         |
-| SSRVTRA16002 | 트랜잭션 처리 실패: 트랜잭션이 만료되었습니다.            |
-| SSRVTRA12005 | 지원하지 않는 'token purpose' 입니다.                     |
-| SSRVTRA17502 | Wallet을 찾을 수 없습니다: Wallet이 등록되지 않았습니다.  |
-| SSRVTRA16510 | 서명 검증 실패: 서명이 유효하지 않습니다.                 |
-| SSRVTRA16511 | 서명 검증에 실패했습니다.                                 |
-| SSRVTRA18510 | 가입증명서 VC를 찾을 수 없습니다.                         |
-| SSRVTRA12007 | Provider DID가 일치하지 않습니다.                         |
-| SSRVTRA18511 | 유효하지 않은 가입증명서 VC의 Issuer입니다.               |
-| SSRVTRA18519 | VC 검증에 실패했습니다.                                   |
+| SSRVTRA16000 | Transaction not found: Transaction does not exist.       |
+| SSRVTRA16001 | Transaction processing failed: Transaction is invalid.   |
+| SSRVTRA16002 | Transaction processing failed: Transaction has expired.  |
+| SSRVTRA12005 | Unsupported 'token purpose'.                             |
+| SSRVTRA17502 | Wallet not found: Wallet is not registered.              |
+| SSRVTRA16510 | Signature verification failed: Signature is invalid.     |
+| SSRVTRA16511 | Signature verification failed.                           |
+| SSRVTRA18510 | Enrollment certificate VC not found.                     |
+| SSRVTRA12007 | Provider DID does not match.                             |
+| SSRVTRA18511 | Invalid enrollment certificate VC Issuer.                |
+| SSRVTRA18519 | VC verification failed.                                   |
 
 **■ Status 500 - Server error**
 
 |     Code     | Description                                          |
 | :----------: | ---------------------------------------------------- |
-| SSRVTRA19000 | 서버 토큰 생성에 실패했습니다.                       |
-| SSRVTRA19001 | 서버 토큰 데이터를 암호화하는 데 실패했습니다.       |
-| SSRVTRA19005 | 'request-create-token' API 요청 처리에 실패했습니다. |
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
+| SSRVTRA19000 | Server token creation failed.                        |
+| SSRVTRA19001 | Server token data encryption failed.                 |
+| SSRVTRA19005 | 'request-create-token' API request processing failed.|
 
 #### 7.3.3. Example
 
@@ -1542,37 +1493,37 @@ curl -v -X POST "http://${Host}:${Port}/tas/api/v1/request-create-token" \
 ```json
 //data.json
 {
-   "id":"202409051657283100001C7EAC45",
-   "txId":"61e4164d-939d-4252-b2f4-5026c8225a3b",
+   "id":"202409051713135030009A02C148",
+   "txId":"cad7a1e8-0e27-47f3-b9dd-b6590a349852",
    "seed":{
-      "purpose":5,
+      "purpose":6,
       "walletInfo":{
          "wallet":{
-            "id":"WID202409fZzUMQO359p",
-            "did":"did:omn:2kEDLDEjCxNUCPBL4VMJ7hmDAdHc"
+            "id":"WID202409HFaOFhPdgvY",
+            "did":"did:omn:3yybwkGEF46BXaqhXSJDhWE7ptN8"
          },
-         "nonce":"zBkNQ6fiQ6hM772BJRDHGW8",
+         "nonce":"z12N48Lbt8cBWtRWSBe41Z4",
          "proof":{
             "type":"Secp256r1Signature2018",
-            "created":"2024-09-05T07:57:28Z",
-            "verificationMethod":"did:omn:2kEDLDEjCxNUCPBL4VMJ7hmDAdHc?versionId=1#assert",
+            "created":"2024-09-05T08:13:13Z",
+            "verificationMethod":"did:omn:3yybwkGEF46BXaqhXSJDhWE7ptN8?versionId=1#assert",
             "proofPurpose":"assertionMethod",
-            "proofValue":"z3uLoJjDsTMvK7RFW28Eeq46MKDe8uUcEnbsiRMez98bqfX2B13zEohNoNq6TXagJ2uUt7GJrHBEAbzE5V42FT3hqp"
+            "proofValue":"z3oUFPoVwmjZ221gToC6BxFkwYpBQ4qb1AQhJwZBTUvKH4qvim9KfZ9ARGvxRJNGx7UH2j7Vx16uyXg35R4oeBCPT5"
          }
       },
       "caAppInfo":{
-         "appId":"202409G2u67yk1X8l",
+         "appId":"202409Btz6cMklY2a",
          "provider":{
             "did":"did:omn:cas",
             "certVcRef":"http://192.168.3.130:8094/cas/api/v1/certificate-vc"
          },
-         "nonce":"mcUm9ylVEgYk/NalyZbOjoA",
+         "nonce":"mba89KNRDoJKr7eH6kv60mg",
          "proof":{
             "type":"Secp256r1Signature2018",
-            "created":"2024-09-05T16:57:27.893047Z",
+            "created":"2024-09-05T17:13:13.067488Z",
             "verificationMethod":"did:omn:cas?versionId=1#assert",
             "proofPurpose":"assertionMethod",
-            "proofValue":"mILBzHDclcVNpLm/y7sjd+cT8epOOXnF75kpmbg9cgZruYXQmvz2oC2E1by8+OJPPv3vG9NeB9zlzKEcR9GQEvQU"
+            "proofValue":"mIAX852dupvgF3P6JsvDNuWwjM1KrRySGBbnVrOzbXIcBE4T42/thIvHNXRZiocTFhCAt21QgUtJRCVCu1xse+lE"
          }
       }
    }
@@ -1584,23 +1535,20 @@ curl -v -X POST "http://${Host}:${Port}/tas/api/v1/request-create-token" \
 ```http
 HTTP/1.1 200 OK
 Content-Type: application/json;charset=utf-8
-
 {
-   "txId":"61e4164d-939d-4252-b2f4-5026c8225a3b",
-   "iv":"m269B16J8Sl0jar6LJWcyWA",
-   "encStd":"mHRB7lOr7fAeMMvhB9rOU5/wLMk7rSJZI0U0lpBrF8oOKEc1ctRC7/uTDmotpL1mF/hrjmqXMaQ39GnoLTefzmtrP82bAIpbTrxwU9cYmOvJNqUYswy8+9IX7jGRX0hto22oDlMn6LUC6SCJ/wmi/KrtnmLDkBY0gu629BES13vgY/b9sBcw7zA+CCV1St5szAYwmfwN4QubIIe4W/rVS//Ucz+azbMKYI7REmCNdpI3EPzYSc5L9Hd3E8PTYzmxfRj1OG56lAJeQHtH8/1kBgDXp+1zeT37X/dDTs0OlwckpD7yN/BltABQK/Wi8wRzmjj3S6F3zd2S5GphzfjEvJUMx4z6qXhTiH4FEtV/tJgl44G/hlWKw70OKdvuhBUSXlfgDF/PgMhhx5KgmhZUCMGev3M9y7CVugu38V6GYsmYuuYjQn1y7BRtnKrWuOaak0vSOv5MYg5qbUfHNAYmqZNFgjyJA4tBELWukeEi6raOzg2FO6ZesHR7jcArskWkqdVtQIyvuMavu4hNnQDeHbAfrnPe5NGaZjCZ2mA/vMCRo09qotFG2LfPb8+4tIbOUqA+DMQVfljKsxlr1s8z3Ghz9SJf/LhqAtxzXdHaYIiijCzMAy3ZJFHglrPnWMxtaw/cUghffdrNYgIE8EBu4VzHiZQ+sljachNrISOaiAW9yT0Gka5tEvetilmpi7YgL"
+   "txId":"cad7a1e8-0e27-47f3-b9dd-b6590a349852",
+   "iv":"z75M7MfQsC4p2rTxeKxYh2M",
+   "encStd":"zHri4iJ8q2mcv4GKmrb3GgnsyY6hT93rbvQir1eAmnqvMrfRcRUTfs16NQvrReuV9hx76X5qSpQ19NVm78ca4jnRuDoqbDwAqmtGPLwUvVaLUFMh6oEXZzfQQ5ds6JHMDvcYpeKCHtmyfUb2W7DbhZNEg9D4Au5TqQomey9A2vWG9FrN91PUg9nfyt9NCfqX6s38JHvedKCjqixBiv4Gs5hk2HNN3aCuS5Y53ACGeADA3cKFHwpJZNYBubHN7QAraBFu5zjWRv4RgK46MnTmfyxXzPLucjeRg9qAUabCJWmb6RwWT1SoUFzk8CMoQtppfn8GDHfcUrhGHEFcU2PYu3kKr97NLGbrpdftha2wVprd4ZKD4YS78pLSeXKGGEsnWU5CatFN7ayZqTU5ZspwZ567SUohWfJZn3XXp9y938rDr5WW1RtWD6UsxFxSY14h7C694DUkNsZKJejcnBxLqdqxbeqRn8AMvx"
 }
 ```
 
-<div style="page-break-after: always; margin-top: 40px;"></div>
-
 ### 7.4. Retrieve KYC
 
-사용자의 PII(Personally Identifiable Information)를 등록한다.
+Registers user's PII (Personally Identifiable Information).
 
-Trust Agent는 사용자의 개인 식별 정보(PII)를 등록해야 한다. 이를 위해 Trust Agent는 사용자에게 KYC(고객 신원 확인) 절차를 진행하여 PII를 얻어야 하지만, KYC 과정은 Open DID 시스템에서 지원하지 않는 기능이다. 따라서, Trust Agent는 사용자가 이미 KYC를 완료했다고 가정하고, retrieve-kyc API를 호출하기 전에 KYC의 결과로 생성된 kycTxId를 전달받아야 한다.
+Trust Agent must register user's personally identifiable information (PII). For this, Trust Agent should perform KYC (Know Your Customer) procedures to obtain PII from users, but the KYC process is not a function supported by the Open DID system. Therefore, Trust Agent assumes that users have already completed KYC and must receive the kycTxId generated as a result of KYC before calling the retrieve-kyc API.
 
-Trust Agent는 kycTxId를 사용하여 미리 연동된 KYC 서버로부터 사용자의 개인 식별 정보(PII)를 얻어야 한다. 이 과정에서 CAS가 KYC 서버 역할을 대신하여, 사용자의 PII를 제공하도록 한다.
+Trust Agent must obtain user's personally identifiable information (PII) from a pre-integrated KYC server using kycTxId. In this process, CAS acts as the KYC server proxy to provide user's PII.
 
 | Item          | Description                | Remarks |
 | ------------- | -------------------------- | ------- |
@@ -1627,7 +1575,7 @@ N/A
 **■ HTTP Body**
 
 ```c#
-def object RetrieveKyc: "Retrieve KYC 요청문"
+def object RetrieveKyc: "Retrieve KYC request message"
 {    
     //--- Common Part ---
     + messageId     "id"    : "message id"
@@ -1635,25 +1583,23 @@ def object RetrieveKyc: "Retrieve KYC 요청문"
 
     //--- Data Part ---
     + multibase "serverToken"       : "multibase(serverToken)"
-    + string    "kycTxId"           : "KYC 식별자"
+    + string    "kycTxId"           : "KYC identifier"
 }
 ```
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
 
 #### 7.4.2. Response
 
 **■ Process**
-1. 거래코드 확인
-1. 서버토큰 일치여부 확인 
-1. KYC 서버로 PII 확인
-1. pii 매핑하여 저장
+1. Verify transaction code
+1. Verify server token match 
+1. Check PII with KYC server
+1. Map and save pii
     - pii, txId
 
 **■ Status 200 - Success**
 
 ```c#
-def object _RetrieveKyc: "Retrieve KYC 응답문"
+def object _RetrieveKyc: "Retrieve KYC response message"
 {    
     + uuid  "txId": "transaction id"
 }
@@ -1663,20 +1609,18 @@ def object _RetrieveKyc: "Retrieve KYC 응답문"
 
 | Code         | Description                                               |
 | ------------ | --------------------------------------------------------- |
-| SSRVTRA16000 | 트랜잭션을 찾지 못했습니다: 트랜잭션이 존재하지 않습니다. |
-| SSRVTRA16001 | 트랜잭션 처리 실패: 트랜잭션이 유효하지 않습니다.         |
-| SSRVTRA16002 | 트랜잭션 처리 실패: 트랜잭션이 만료되었습니다.            |
-| SSRVTRA19004 | 토큰을 찾을 수 없습니다: 토큰이 등록되지 않았습니다.      |
-| SSRVTRA19002 | 토큰 처리에 실패했습니다: 토큰이 만료되었습니다.          |
-| SSRVTRA19003 | 인증에 실패했습니다: 제공된 토큰이 유효하지 않습니다.     |
+| SSRVTRA16000 | Transaction not found: Transaction does not exist.       |
+| SSRVTRA16001 | Transaction processing failed: Transaction is invalid.   |
+| SSRVTRA16002 | Transaction processing failed: Transaction has expired.  |
+| SSRVTRA19004 | Token not found: Token is not registered.                |
+| SSRVTRA19002 | Token processing failed: Token has expired.              |
+| SSRVTRA19003 | Authentication failed: Provided token is invalid.        |
 
 **■ Status 500 - Server error**
 
 | Code         | Description                                           |
 | ------------ | ----------------------------------------------------- |
-| SSRVTRA17018 | 'retrieve-kyc' API 요청 처리에 실패했습니다. |
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
+| SSRVTRA17018 | 'retrieve-kyc' API request processing failed.        |
 
 #### 7.4.3. Example
 
@@ -1709,15 +1653,11 @@ Content-Type: application/json;charset=utf-8
 }
 ```
 
-<div style="page-break-after: always; margin-top: 40px;"></div>
-
 ### 7.5. Request Register User
 
-- 전송: 월렛 → TAS
+- Transmission: Wallet → TAS
 
-월렛이 사용자 DID Document를 생성하고 등록을 요청하기 위한 서명된 등록 요청 데이터를
-생성하여 TAS에 직접 등록을 요청한다.
-
+Wallet generates signed registration request data for user DID Document registration and directly requests registration to TAS.
 
 | Item          | Description                     | Remarks |
 | ------------- | ------------------------------- | ------- |
@@ -1744,7 +1684,7 @@ N/A
 **■ Body**
 
 ```c#
-def object M132_RequestRegisterUser: "Request Register User 요청문"
+def object M132_RequestRegisterUser: "Request Register User request message"
 {
     //--- Common Part ---
     + messageId "id"  : "message id"
@@ -1756,34 +1696,32 @@ def object M132_RequestRegisterUser: "Request Register User 요청문"
 }
 ```
 
-- `~/serverToken`: 이전에 생성한 서버토큰
-- `~/signedDidDoc`: 월렛이 생성한 월렛 서명 사용자 DID Document
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
+- `~/serverToken`: Previously generated server token
+- `~/signedDidDoc`: Wallet-signed user DID Document generated by wallet
 
 #### 7.5.2. Response
 
 **■ Process**
 
-1. 거래코드 확인
-1. 서버토큰 일치여부 확인
-1. 월렛 서명 검증
-    - `~/signedDidDoc/proof` 검증
-1. DID 키 별 서명 검증
-    - `~/signedDidDoc/ownerDidDoc/proofs` 검증
-1. `didDoc` = DidDoc 원문 추출
-1. 신뢰저장소에 DidDoc 등록
-    - (InvokedDidDoc)idd = TAS 서명하여 신뢰저장소 등록 요청 데이터 생성
-1. 사용자 매핑 정보 저장
-    - pii (개인식별자)
+1. Verify transaction code
+1. Verify server token match
+1. Verify wallet signature
+    - Verify `~/signedDidDoc/proof`
+1. Verify signatures for each DID key
+    - Verify `~/signedDidDoc/ownerDidDoc/proofs`
+1. `didDoc` = Extract DidDoc original text
+1. Register DidDoc to trust repository
+    - (InvokedDidDoc)idd = Generate trust repository registration request data with TAS signature
+1. Save user mapping information
+    - pii (personal identifier)
     - holderDid (Holder DID)
-    - walletId (월렛 식별자)
-    - appId (인가앱 식별자)
+    - walletId (wallet identifier)
+    - appId (CA app identifier)
 
 **■ Status 200 - Success**
 
 ```c#
-def object _M132_RequestRegisterUser: "Request Register User 응답문"
+def object _M132_RequestRegisterUser: "Request Register User response message"
 {    
     //--- Common Part ---
     + uuid "txId": "transaction id"
@@ -1794,28 +1732,26 @@ def object _M132_RequestRegisterUser: "Request Register User 응답문"
 
 |     Code     | Description                                                   |
 | :----------: | ------------------------------------------------------------- |
-| SSRVTRA16000 | 트랜잭션을 찾지 못했습니다: 트랜잭션이 존재하지 않습니다.     |
-| SSRVTRA16001 | 트랜잭션 처리 실패: 트랜잭션이 유효하지 않습니다.             |
-| SSRVTRA16002 | 트랜잭션 처리 실패: 트랜잭션이 만료되었습니다.                |
-| SSRVTRA19004 | 토큰을 찾을 수 없습니다: 토큰이 등록되지 않았습니다.          |
-| SSRVTRA19002 | 토큰 처리에 실패했습니다: 토큰이 만료되었습니다.              |
-| SSRVTRA19003 | 인증에 실패했습니다: 제공된 토큰이 유효하지 않습니다.         |
-| SSRVTRA17502 | Wallet을 찾을 수 없습니다: Wallet이 등록되지 않았습니다.      |
-| SSRVTRA16510 | 서명 검증 실패: 서명이 유효하지 않습니다.                     |
-| SSRVTRA16511 | 서명 검증에 실패했습니다.                                     |
-| SSRVTRA12006 | DID Document를 파싱하는 데 실패했습니다.                      |
-| SSRVTRA17000 | 사용자 DID 등록에 실패했습니다: 사용자 DID가 이미 존재합니다. |
-| SSRVTRA16516 | DID Document 키 서명 검증에 실패했습니다.    |
+| SSRVTRA16000 | Transaction not found: Transaction does not exist.           |
+| SSRVTRA16001 | Transaction processing failed: Transaction is invalid.       |
+| SSRVTRA16002 | Transaction processing failed: Transaction has expired.      |
+| SSRVTRA19004 | Token not found: Token is not registered.                    |
+| SSRVTRA19002 | Token processing failed: Token has expired.                  |
+| SSRVTRA19003 | Authentication failed: Provided token is invalid.            |
+| SSRVTRA17502 | Wallet not found: Wallet is not registered.                  |
+| SSRVTRA16510 | Signature verification failed: Signature is invalid.         |
+| SSRVTRA16511 | Signature verification failed.                               |
+| SSRVTRA12006 | DID Document parsing failed.                                 |
+| SSRVTRA17000 | User DID registration failed: User DID already exists.       |
+| SSRVTRA16516 | DID Document key signature verification failed.              |
 
 **■ Status 500 - Server error**
 
 |     Code     | Description                                                |
 | :----------: | ---------------------------------------------------------- |
-| SSRVTRA18017 | Invoked Document 생성에 실패했습니다.                   |
-| SSRVTRA18016 | DID Document 등록에 실패했습니다.                       |
-| SSRVTRA17009 | 'request-register-user' API 요청 처리에 실패했습니다. |
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
+| SSRVTRA18017 | Invoked Document creation failed.                          |
+| SSRVTRA18016 | DID Document registration failed.                          |
+| SSRVTRA17009 | 'request-register-user' API request processing failed.     |
 
 #### 7.5.3. Example
 
@@ -1826,6 +1762,7 @@ curl -v -X POST "http://${Host}:${Port}/tas/api/v1/request-register-user" \
 -H "Content-Type: application/json;charset=utf-8" \
 -d @"data.json"
 ```
+
 
 ```json
 //data.json
@@ -1862,11 +1799,9 @@ Content-Type: application/json;charset=utf-8
 }
 ```
 
-<div style="page-break-after: always; margin-top: 40px;"></div>
-
 ### 7.6. Confirm Register User
 
-사용자 등록 거래를 종료한다.
+Terminates user registration transaction.
 
 | Item          | Description                     | Remarks |
 | ------------- | ------------------------------- | ------- |
@@ -1874,11 +1809,10 @@ Content-Type: application/json;charset=utf-8
 | Path          | `/api/v1/confirm-register-user` |         |
 | Authorization | -                               |         |
 
-
 #### 7.6.1. Request
 
-월렛이 TAS를 통해 사용자의 DID Document 등록을 완료한 후 TAS 응답문의 `txId`를 회신한다.
-인가앱은 서버토큰과 함께 `txId`를 거래코드에 담아 사용자 등록 완료를 요청한다.
+After wallet completes user DID Document registration through TAS, it returns the `txId` from TAS response.
+CA app requests user registration completion with `txId` along with server token in transaction code.
 
 **■ Headers**
 
@@ -1897,7 +1831,7 @@ N/A
 **■ Body**
 
 ```c#
-def object M132_ConfirmRegisterUser: "Confirm Register User 요청문"
+def object M132_ConfirmRegisterUser: "Confirm Register User request message"
 {
     //--- Common Part ---
     + messageId "id"  : "message id"
@@ -1908,24 +1842,22 @@ def object M132_ConfirmRegisterUser: "Confirm Register User 요청문"
 }
 ```
 
-- `~/txId`: `_M132_RequestRegisterUser.txId` (월렛으로부터 전달 받음)
-- `~/serverToken`: 이전에 생성한 서버토큰
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
+- `~/txId`: `_M132_RequestRegisterUser.txId` (received from wallet)
+- `~/serverToken`: Previously generated server token
 
 #### 7.6.2. Response
 
-서버토큰, 거래코드 일치여부 확인 후 사용자 등록 프로토콜을 종료한다.
+Verifies server token and transaction code match, then terminates user registration protocol.
 
 **■ Process**
 
-1. 거래코드 확인
-1. 서버토큰 일치여부 확인
+1. Verify transaction code
+1. Verify server token match
 
 **■ Status 200 - Success**
 
 ```c#
-def object _M132_ConfirmRegisterUser: "Confirm Register User 응답문"
+def object _M132_ConfirmRegisterUser: "Confirm Register User response message"
 {
     //--- Common Part ---
     + uuid "txId": "transaction id"
@@ -1936,21 +1868,21 @@ def object _M132_ConfirmRegisterUser: "Confirm Register User 응답문"
 
 |     Code     | Description                                               |
 | :----------: | --------------------------------------------------------- |
-| SSRVTRA16000 | 트랜잭션을 찾지 못했습니다: 트랜잭션이 존재하지 않습니다. |
-| SSRVTRA16001 | 트랜잭션 처리 실패: 트랜잭션이 유효하지 않습니다.         |
-| SSRVTRA16002 | 트랜잭션 처리 실패: 트랜잭션이 만료되었습니다.            |
-| SSRVTRA19004 | 토큰을 찾을 수 없습니다: 토큰이 등록되지 않았습니다.      |
-| SSRVTRA19002 | 토큰 처리에 실패했습니다: 토큰이 만료되었습니다.          |
-| SSRVTRA19003 | 인증에 실패했습니다: 제공된 토큰이 유효하지 않습니다.     |
-| SSRVTRA17502 | Wallet을 찾을 수 없습니다: Wallet이 등록되지 않았습니다.  |
-| SSRVTRA16510 | 서명 검증 실패: 서명이 유효하지 않습니다.                 |
-| SSRVTRA16511 | 서명 검증에 실패했습니다.                                 |
+| SSRVTRA16000 | Transaction not found: Transaction does not exist.       |
+| SSRVTRA16001 | Transaction processing failed: Transaction is invalid.   |
+| SSRVTRA16002 | Transaction processing failed: Transaction has expired.  |
+| SSRVTRA19004 | Token not found: Token is not registered.                |
+| SSRVTRA19002 | Token processing failed: Token has expired.              |
+| SSRVTRA19003 | Authentication failed: Provided token is invalid.        |
+| SSRVTRA17502 | Wallet not found: Wallet is not registered.              |
+| SSRVTRA16510 | Signature verification failed: Signature is invalid.     |
+| SSRVTRA16511 | Signature verification failed.                           |
 
 **■ Status 500 - Server error**
 
 |     Code     | Description                                          |
 | :----------: | ---------------------------------------------------- |
-| SSRVTRA17010 | 'request-confirm-user' API 요청 처리에 실패했습니다. |
+| SSRVTRA17010 | 'request-confirm-user' API request processing failed.|
 
 #### 7.6.3. Example
 
@@ -1982,28 +1914,25 @@ Content-Type: application/json;charset=utf-8
 }
 ```
 
-<div style="page-break-after: always; margin-top: 50px;"></div>
+## 8. P141 - User DID Document Update Protocol
 
-## 8. P141 - 사용자 DID Document 갱신 프로토콜
-
-| Seq. | API                   | Description                        | 표준API |
-| :--: | --------------------- | ---------------------------------- | ------- |
-|  1   | propose-update-diddoc | 사용자 DID Document 갱신 시작 요청 | Y       |
-|  2   | request-ecdh          | ECDH 요청                          | Y       |
-|  3   | request-create-token  | 서버토큰 생성 요청                 | Y       |
-|  4   | request-update-diddoc | 사용자 DID Document 갱신 요청      | Y       |
-|  5   | confirm-update-diddoc | 사용자 DID Document 갱신 완료      | Y       |
+| Seq. | API                   | Description                            | Standard API |
+| :--: | --------------------- | -------------------------------------- | ------------ |
+|  1   | propose-update-diddoc | User DID Document update request       | Y            |
+|  2   | request-ecdh          | ECDH request                           | Y            |
+|  3   | request-create-token  | Server token creation request          | Y            |
+|  4   | request-update-diddoc | User DID Document update request       | Y            |
+|  5   | confirm-update-diddoc | User DID Document update completion    | Y            |
 
 ### 8.1. Propose Update DidDoc
 
-사용자 DID Document 갱신 거래를 시작한다.
+Initiates user DID Document update transaction.
 
 | Item          | Description                     | Remarks |
 | ------------- | ------------------------------- | ------- |
 | Method        | `POST`                          |         |
 | Path          | `/api/v1/propose-update-diddoc` |         |
 | Authorization | -                               |         |
-
 
 #### 8.1.1. Request
 
@@ -2024,7 +1953,7 @@ N/A
 **■ Body**
 
 ```c#
-def object M141_ProposeUpdateDidDoc: "Propose Update DidDoc 요청문"
+def object M141_ProposeUpdateDidDoc: "Propose Update DidDoc request message"
 {
     //--- Common Part ---
     + messageId "id": "message id"
@@ -2034,24 +1963,22 @@ def object M141_ProposeUpdateDidDoc: "Propose Update DidDoc 요청문"
 }
 ```
 
-<div style="page-break-after: always; margin-top: 40px;"></div>
-
 #### 8.1.2. Response
 
-거래코드를 생성하고 사용자 DID Document 갱신 거래를 시작한다.
+Generates transaction code and initiates user DID Document update transaction.
 
 **■ Process**
 
-1. `txId` = 거래코드 생성
-1. `did`가 변경 가능한 상태인지 확인
-1. `authNonce` = DID Auth 용 16-byte nonce 생성
-1. `authNonce` 저장
-1. `txId`, `did` 저장
+1. `txId` = Generate transaction code
+1. Check if `did` is in updatable state
+1. `authNonce` = Generate 16-byte nonce for DID Auth
+1. Save `authNonce`
+1. Save `txId`, `did`
 
 **■ Status 200 - Success**
 
 ```c#
-def object _M141_ProposeUpdateDidDoc: "Propose Update DidDoc 응답문"
+def object _M141_ProposeUpdateDidDoc: "Propose Update DidDoc response message"
 {    
     //--- Common Part ---
     + uuid "txId": "transaction id"
@@ -2065,15 +1992,13 @@ def object _M141_ProposeUpdateDidDoc: "Propose Update DidDoc 응답문"
 
 |     Code     | Description                                                     |
 | :----------: | --------------------------------------------------------------- |
-| SSRVTRA17003 | 요청 처리에 실패했습니다: 사용자 상태가 'Activated'가 아닙니다. |
+| SSRVTRA17003 | Request processing failed: User state is not 'Activated'.      |
 
 **■ Status 500 - Server error**
 
 |     Code     | Description                                           |
 | :----------: | ----------------------------------------------------- |
-| SSRVTRA17011 | 'propose-update-diddoc' API 요청 처리에 실패했습니다. |
-
-<div style="page-break-after: always; margin-top: 40px;"></div>
+| SSRVTRA17011 | 'propose-update-diddoc' API request processing failed.|
 
 #### 8.1.3. Example
 
@@ -2105,18 +2030,15 @@ Content-Type: application/json;charset=utf-8
 }
 ```
 
-<div style="page-break-after: always; margin-top: 40px;"></div>
-
 ### 8.2. Request ECDH
 
-세션 암호화를 위한 키교환을 수행한다.
+Performs key exchange for session encryption.
 
 | Item          | Description            | Remarks |
 | ------------- | ---------------------- | ------- |
 | Method        | `POST`                 |         |
 | Path          | `/api/v1/request-ecdh` |         |
 | Authorization | -                      |         |
-
 
 #### 8.2.1. Request
 
@@ -2137,7 +2059,7 @@ N/A
 **■ Body**
 
 ```c#
-def object M141_RequestEcdh: "ECDH 요청문"
+def object M141_RequestEcdh: "ECDH request message"
 {
     //--- Common Part ---
     + messageId "id"  : "message id"
@@ -2149,12 +2071,12 @@ def object M141_RequestEcdh: "ECDH 요청문"
 ```
 
 - `~/reqEcdh`
-    - `client`: 클라이언트 DID
-    - `clientNonce`: 클라이언트가 생성한 난수
-    - `curve`: ECDH용 ECC 곡선 타입 (클라이언트가 하나를 지정)
-    - `publicKey`: 상기 `curve` 유형으로 생성한 임시키쌍의 공개키
+    - `client`: Client DID
+    - `clientNonce`: Random number generated by client
+    - `curve`: ECC curve type for ECDH (client specifies one)
+    - `publicKey`: Public key of temporary key pair generated with the above `curve` type
     - `candidate` 
-        - `ciphers`: 클라이언트가 지원하는 cipher 알고리즘 목록
+        - `ciphers`: List of cipher algorithms supported by client
 
 <div style="page-break-after: always; margin-top: 30px;"></div>
 
@@ -2162,28 +2084,28 @@ def object M141_RequestEcdh: "ECDH 요청문"
 
 **■ Process**
 
-1. 거래코드 확인
-1. `~/reqEcdh/proof` 서명 검증
-1. 클라이언트 요청값(`~/reqEcdh`) 정합성 확인 및 cipher 알고리즘 선택
+1. Verify transaction code
+1. Verify signature of `~/reqEcdh/proof`
+1. Validate client request values (`~/reqEcdh`) and select cipher algorithm
     - `client` = `M141_ProposeUpdateDidDoc:~/did`
-    - `cipherAlg` = cipher 알고리즘 선택
-    - `padding` = 패딩 방식 선택
-1. ECIES 세션키 생성
+    - `cipherAlg` = Select cipher algorithm
+    - `padding` = Select padding method
+1. Generate ECIES session key
     - `clientNonce` = `~/reqEcdh/clientNonce`
-    - `severNonce` = 16-byte nonce 생성
+    - `severNonce` = Generate 16-byte nonce
     - `mergedNonce` = sha256(serverNonce, clientNonce)
     - `clientPubKey` = `~/reqEcdh/publicKey`
-    - `serverPubKey`, `serverPriKey` = `~/reqEcdh/curve` 타입의 서버 임시키쌍 생성
+    - `serverPubKey`, `serverPriKey` = Generate server temporary key pair of `~/reqEcdh/curve` type
     - `sesKey` = ecies(serverPriKey, clientPubKey, mergedNonce, cipherAlg)
-1. ECDH 정보 저장
-    - 클라이언트 DID, 거래코드
+1. Store ECDH information
+    - Client DID, transaction code
     - `sesKey`, `cipherAlg`, `padding`
-1. ECDH 수락 데이터 생성 및 서명
+1. Generate and sign ECDH acceptance data
 
 **■ Status 200 - Success**
 
 ```c#
-def object _M141_RequestEcdh: "Request ECDH 응답문"
+def object _M141_RequestEcdh: "Request ECDH response message"
 {    
     //--- Common Part ---
     + uuid "txId": "transaction id"
@@ -2194,31 +2116,31 @@ def object _M141_RequestEcdh: "Request ECDH 응답문"
 ```
 
 - `~/accEcdh`
-    - `server`: 서버 DID
-    - `serverNonce`: 서버가 생성한 난수
-    - `publicKey`: 서버가 생성한 임시키쌍의 공개키(`serverPubKey`)
-    - `cipher`: 클라이언트의 후보 중 서버가 선택한 cipher 알고리즘
-    - `padding`: 서버가 선택한 패딩 방식
+    - `server`: Server DID
+    - `serverNonce`: Random number generated by server
+    - `publicKey`: Public key of temporary key pair generated by server (`serverPubKey`)
+    - `cipher`: Cipher algorithm selected by server from client candidates
+    - `padding`: Padding method selected by server
 
 **■ Status 400 - Client error**
 
 |     Code     | Description                                               |
 | :----------: | --------------------------------------------------------- |
-| SSRVTRA16519 | 클라이언트 Nonce 처리 실패: 잘못된 Nonce입니다.           |
-| SSRVTRA16000 | 트랜잭션을 찾지 못했습니다: 트랜잭션이 존재하지 않습니다. |
-| SSRVTRA16001 | 트랜잭션 처리 실패: 트랜잭션이 유효하지 않습니다.         |
-| SSRVTRA16002 | 트랜잭션 처리 실패: 트랜잭션이 만료되었습니다.            |
-| SSRVTRA16510 | 서명 검증 실패: 서명이 유효하지 않습니다.                 |
-| SSRVTRA16511 | 서명 검증에 실패했습니다.                                 |
-| SSRVTRA12008 | 지원되지 않는 Cipher Type 입니다.                         |
+| SSRVTRA16519 | Client Nonce processing failed: Invalid Nonce.           |
+| SSRVTRA16000 | Transaction not found: Transaction does not exist.       |
+| SSRVTRA16001 | Transaction processing failed: Transaction is invalid.   |
+| SSRVTRA16002 | Transaction processing failed: Transaction has expired.  |
+| SSRVTRA16510 | Signature verification failed: Signature is invalid.     |
+| SSRVTRA16511 | Signature verification failed.                            |
+| SSRVTRA12008 | Unsupported Cipher Type.                                  |
 
 **■ Status 500 - Server error**
 
 |     Code     | Description                                  |
 | :----------: | -------------------------------------------- |
-| SSRVTRA16504 | Nonce 생성에 실패했습니다.                   |
-| SSRVTRA16506 | 세션키 생성에 실패했습니다.                  |
-| SSRVTRA16521 | 'request-ecdh' API 요청 처리에 실패했습니다. |
+| SSRVTRA16504 | Failed to generate Nonce.                   |
+| SSRVTRA16506 | Failed to generate session key.             |
+| SSRVTRA16521 | Failed to process 'request-ecdh' API request. |
 
 <div style="page-break-after: always; margin-top: 30px;"></div>
 
@@ -2282,7 +2204,7 @@ Content-Type: application/json;charset=utf-8
 
 ### 8.3. Request Create Token
 
-인가앱이 TAS에게 서버토큰 생성을 요청한다.
+The authorization app requests TAS to create a server token.
 
 | Item          | Description                    | Remarks |
 | ------------- | ------------------------------ | ------- |
@@ -2290,17 +2212,16 @@ Content-Type: application/json;charset=utf-8
 | Path          | `/api/v1/request-create-token` |         |
 | Authorization | -                              |         |
 
-
 #### 8.3.1. Request
 
-서버토큰을 생성하기 위해서는 아래와 같은 토큰시드를 넘겨줘야 한다.
+To create a server token, the following token seed must be provided.
 
 - `(ServerTokenSeed)seed`
     - `purpose`: "UpdateDid"
-    - `walletInfo`: 서명된 월렛정보 (월렛 SDK 호출하여 획득)
-    - `caAppInfo`: 서명된 인가앱정보 (인가앱 사업자 API 호출하여 획득)
+    - `walletInfo`: Signed wallet information (obtained by calling wallet SDK)
+    - `caAppInfo`: Signed authorization app information (obtained by calling authorization app provider API)
 
-자세한 내용은 [DATA-SPEC]을 참조한다.
+For detailed information, refer to [DATA-SPEC].
 
 **■ Headers**
 
@@ -2319,7 +2240,7 @@ N/A
 **■ Body**
 
 ```c#
-def object M141_RequestCreateToken: "Request Create Token 요청문"
+def object M141_RequestCreateToken: "Request Create Token request message"
 {
     //--- Common Part ---
     + messageId "id"  : "message id"
@@ -2331,72 +2252,72 @@ def object M141_RequestCreateToken: "Request Create Token 요청문"
 ```
 
 - `~/seed`
-    - `purpose`: 토큰 사용 목적
-    - `walletInfo`: 서명된 월렛 정보
-    - `caAppInfo`: 서명된 인가앱 정보
+    - `purpose`: Token usage purpose
+    - `walletInfo`: Signed wallet information
+    - `caAppInfo`: Signed authorization app information
 
 <div style="page-break-after: always; margin-top: 30px;"></div>
 
 #### 8.3.2. Response
 
-클라이언트가 넘겨준 seed 내 서명 검증 후 서버토큰 데이터를 생성하여 응답한다.
-응답 데이터는 세션키로 암호화한다.
+After verifying signatures within the seed provided by the client, generates server token data and responds.
+Response data is encrypted with session key.
 
 **■ Process**
 
-1. 거래코드 확인
-1. purpose 유효성 확인
-1. `~/seed` 내 proof 서명 검증
-    - `walletInfo.proof` 월렛 서명 검증
-    - `caAppInfo.proof` 월렛 사업자 서명 검증
-1. 데이터 준비
-    - 토큰 유효일시 설정
-    - 기타 난수 등 생성
-1. 상기 데이터를 서명하여 `(ServerTokenData)std` 생성
-1. 서버토큰 생성하여 저장
+1. Verify transaction code
+1. Validate purpose validity
+1. Verify proof signatures within `~/seed`
+    - Verify `walletInfo.proof` wallet signature
+    - Verify `caAppInfo.proof` wallet provider signature
+1. Prepare data
+    - Set token expiration date/time
+    - Generate other random numbers, etc.
+1. Sign the above data to create `(ServerTokenData)std`
+1. Create and store server token
     - `serverToken` = sha256(std)
-1. 응답 데이터 준비
+1. Prepare response data
     - `encStd` = multibase(enc(std, sesKey, iv, padding))
 
 **■ Status 200 - Success**
 
 ```c#
-def object _M141_RequestCreateToken: "Request Create Token 응답문"
+def object _M141_RequestCreateToken: "Request Create Token response message"
 {    
     //--- Common Part ---
     + uuid      "txId": "transaction id"
-    + multibase "iv"  : "세션키 암복호화 IV"
+    + multibase "iv"  : "Session key encryption/decryption IV"
     
     //--- Data Part ---
     + multibase "encStd": "multibase(enc((ServerTokenData)std))"
 }
 ```
 
-- `~/encStd`: 암호화된 서버토큰 데이터
+- `~/encStd`: Encrypted server token data
 
 **■ Status 400 - Client error**
 
 |     Code     | Description                                               |
 | :----------: | --------------------------------------------------------- |
-| SSRVTRA16000 | 트랜잭션을 찾지 못했습니다: 트랜잭션이 존재하지 않습니다. |
-| SSRVTRA16001 | 트랜잭션 처리 실패: 트랜잭션이 유효하지 않습니다.         |
-| SSRVTRA16002 | 트랜잭션 처리 실패: 트랜잭션이 만료되었습니다.            |
-| SSRVTRA12005 | 지원하지 않는 'token purpose' 입니다.                     |
-| SSRVTRA17502 | Wallet을 찾을 수 없습니다: Wallet이 등록되지 않았습니다.  |
-| SSRVTRA16510 | 서명 검증 실패: 서명이 유효하지 않습니다.                 |
-| SSRVTRA16511 | 서명 검증에 실패했습니다.                                 |
-| SSRVTRA18510 | 가입증명서 VC를 찾을 수 없습니다.                         |
-| SSRVTRA12007 | Provider DID가 일치하지 않습니다.                         |
-| SSRVTRA18511 | 유효하지 않은 가입증명서 VC의 Issuer입니다.               |
-| SSRVTRA18519 | VC 검증에 실패했습니다.                                   |
+| SSRVTRA16000 | Transaction not found: Transaction does not exist.       |
+| SSRVTRA16001 | Transaction processing failed: Transaction is invalid.   |
+| SSRVTRA16002 | Transaction processing failed: Transaction has expired.  |
+| SSRVTRA12005 | Unsupported 'token purpose'.                             |
+| SSRVTRA17502 | Cannot find Wallet: Wallet is not registered.           |
+| SSRVTRA16510 | Signature verification failed: Signature is invalid.     |
+| SSRVTRA16511 | Signature verification failed.                            |
+| SSRVTRA18510 | Cannot find registration certificate VC.                 |
+| SSRVTRA12007 | Provider DID does not match.                             |
+| SSRVTRA18511 | Invalid registration certificate VC Issuer.              |
+| SSRVTRA18519 | VC verification failed.                                   |
 
 **■ Status 500 - Server error**
 
 |     Code     | Description                                          |
 | :----------: | ---------------------------------------------------- |
-| SSRVTRA19000 | 서버 토큰 생성에 실패했습니다.                       |
-| SSRVTRA19001 | 서버 토큰 데이터를 암호화하는 데 실패했습니다.       |
-| SSRVTRA19005 | 'request-create-token' API 요청 처리에 실패했습니다. |
+| SSRVTRA19000 | Failed to create server token.                      |
+| SSRVTRA19001 | Failed to encrypt server token data.                |
+| SSRVTRA19005 | Failed to process 'request-create-token' API request. |
 
 <div style="page-break-after: always; margin-top: 30px;"></div>
 
@@ -2467,35 +2388,33 @@ Content-Type: application/json;charset=utf-8
 
 ### 8.4. Request Update DidDoc
 
-- 전송: 월렛 → TAS
+- Transmission: Wallet → TAS
 
-월렛이 사용자 DID Document 갱신을 요청하기 위한 서명된 등록 요청 데이터를
-생성하여 TAS에 직접 등록을 요청한다.
+Wallet generates signed registration request data for user DID Document update and directly requests to TAS.
 
-DID Document의 갱신은 생애주기 상태가 `ACTIVATED`인 경우에만 가능하며,
-사용자의 요청에 의해 변경 가능한 항목은 다음과 같다.
+DID Document update is only possible when lifecycle state is `ACTIVATED`.
+Items that can be changed by user request are:
 
-- DID 키
-- Service endpoint(추가/수정/삭제 등)
+- DID keys
+- Service endpoints (add/modify/delete etc.)
 
-또한 아래의 항목은 무조건 최신의 값으로 변경되어야 하며,
-TAS는 이전 DID Document와 비교하여 값의 유효성을 확인하여 한다.
+Also, the following items must be changed to latest values unconditionally, and TAS must verify value validity by comparing with previous DID Document.
 
-- `~/updated`: 최종 변경 일시
-    - 변경 전 문서(현재 신뢰 저장소에 등록된 문서)의 값보다 이후의 시간이어야 한다.
-    - 가능하면 현재 시간과 큰 차이가 없는지 확인한다.
-- `~/versionId`: 버전
-    - 변경 전 문서보다 1 큰 값이어야 한다.
+- `~/updated`: Final modification time
+    - Must be later than the value in pre-change document (currently registered in trust repository)
+    - Should preferably verify no significant difference from current time
+- `~/versionId`: Version
+    - Must be 1 greater than pre-change document
 
-아래의 항목은 이전 문서와 동일하여야 한다.
+The following items must be same as previous document:
 
-- `~/@conctext`
+- `~/@context`
 - `~/id`
 - `~/controller`
 - `~/created`
 - `~/deactivated`
 
-DID Document의 변경을 사용자가 승인하였음을 확인하기 위해 DID Auth를 수행한다.
+DID Auth is performed to confirm user approval of DID Document changes.
 
 | Item          | Description                     | Remarks |
 | ------------- | ------------------------------- | ------- |
@@ -2522,7 +2441,7 @@ N/A
 **■ Body**
 
 ```c#
-def object M141_RequestUpdateDidDoc: "Request Update DidDoc 요청문"
+def object M141_RequestUpdateDidDoc: "Request Update DidDoc request message"
 {
     //--- Common Part ---
     + messageId "id"  : "message id"
@@ -2535,38 +2454,36 @@ def object M141_RequestUpdateDidDoc: "Request Update DidDoc 요청문"
 }
 ```
 
-- `~/serverToken`: 이전에 생성한 서버토큰
-- `~/didAuth`: 사용자 인증 정보
-- `~/signedDidDoc`: 월렛이 생성한 월렛 서명 사용자 DID Document
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
+- `~/serverToken`: Previously generated server token
+- `~/didAuth`: User authentication information
+- `~/signedDidDoc`: Wallet-signed user DID Document generated by wallet
 
 #### 8.4.2. Response
 
 **■ Process**
 
-1. 거래코드 확인
-1. 서버토큰 일치여부 확인
-1. DID Auth 검증
-1. 월렛 서명 검증
-    - `~/signedDidDoc/proof` 검증
-1. DID 키 별 서명 검증
-    - `~/signedDidDoc/ownerDidDoc/proofs` 검증
-1. `didDoc` = DidDoc 원문 추출
-    - `didDoc:~/id`와 `M141_ProposeUpdateDidDoc:~/did` 일치여부 확인
-    - `didDoc:~/id`와 `~/didAuth.did` 일치여부 확인
-1. DB에 저장된 사용자 매핑 정보 확인
+1. Verify transaction code
+1. Verify server token match
+1. Verify DID Auth
+1. Verify wallet signature
+    - Verify `~/signedDidDoc/proof`
+1. Verify signatures for each DID key
+    - Verify `~/signedDidDoc/ownerDidDoc/proofs`
+1. `didDoc` = Extract DidDoc original text
+    - Verify if `didDoc:~/id` matches `M141_ProposeUpdateDidDoc:~/did`
+    - Verify if `didDoc:~/id` matches `~/didAuth.did`
+1. Check user mapping information stored in DB
     - holderDid (Holder DID)
-    - walletId (월렛 식별자)
-    - appId (인가앱 식별자)
-1. 신뢰저장소에 DidDoc 등록
-    - (InvokedDidDoc)idd = TAS 서명하여 신뢰저장소 등록 요청 데이터 생성
-    - 신뢰저장소에 등록 요청
+    - walletId (wallet identifier)
+    - appId (CA app identifier)
+1. Register DidDoc to trust repository
+    - (InvokedDidDoc)idd = Generate trust repository registration request data with TAS signature
+    - Request registration to trust repository
 
 **■ Status 200 - Success**
 
 ```c#
-def object _M141_RequestUpdateDidDoc: "Request Update DidDoc 응답문"
+def object _M141_RequestUpdateDidDoc: "Request Update DidDoc response message"
 {    
     //--- Common Part ---
     + uuid "txId": "transaction id"
@@ -2577,40 +2494,37 @@ def object _M141_RequestUpdateDidDoc: "Request Update DidDoc 응답문"
 
 |     Code     | Description                                                                |
 | :----------: | -------------------------------------------------------------------------- |
-| SSRVTRA16000 | 트랜잭션을 찾지 못했습니다: 트랜잭션이 존재하지 않습니다.                  |
-| SSRVTRA16001 | 트랜잭션 처리 실패: 트랜잭션이 유효하지 않습니다.                          |
-| SSRVTRA16002 | 트랜잭션 처리 실패: 트랜잭션이 만료되었습니다.                             |
-| SSRVTRA19004 | 토큰을 찾을 수 없습니다: 토큰이 등록되지 않았습니다.                       |
-| SSRVTRA19002 | 토큰 처리에 실패했습니다: 토큰이 만료되었습니다.                           |
-| SSRVTRA19003 | 인증에 실패했습니다: 제공된 토큰이 유효하지 않습니다.                      |
-| SSRVTRA17502 | Wallet을 찾을 수 없습니다: Wallet이 등록되지 않았습니다.                   |
-| SSRVTRA16510 | 서명 검증 실패: 서명이 유효하지 않습니다.                                  |
-| SSRVTRA16511 | 서명 검증에 실패했습니다.                                                  |
-| SSRVTRA12006 | DID Document를 파싱하는 데 실패했습니다.                                   |
-| SSRVTRA12009 | Invalid DID Document version.                                              |
-| SSRVTRA18006 | DID Document 처리 실패: 잘못된 updated 입니다.                             |
-| SSRVTRA18007 | DID Document 처리 실패: 잘못된 context 입니다.                             |
-| SSRVTRA18008 | DID Document 처리 실패: 잘못된 id 입니다.                                  |
-| SSRVTRA18009 | DID Document 처리 실패: 잘못된 controller 입니다.                          |
-| SSRVTRA18014 | DID Document 처리 실패: 잘못된 creation 입니다.                            |
-| SSRVTRA18015 | DID Document 처리 실패: 잘못된 deactivated 입니다.                         |
-| SSRVTRA17002 | 사용자를 찾을 수 없습니다: 사용자가 등록되지 않았습니다.                   |
-| SSRVTRA16520 | 'authNonce' 가 일치하지 않습니다.                                          |
-| SSRVTRA16516 | DID Document 키 서명 검증에 실패했습니다.                                  |
-| SSRVTRA18018 | 요청 처리 실패: DID Document의 ID가 이전에 요청된 DID와 일치하지 않습니다. |
-| SSRVTRA17005 | 앱 인증 실패: app ID가 일치하지 않습니다.                                  |
-| SSRVTRA17508 | Wallet 인증 실패: Wallet ID가 일치하지 않습니다.                           |
-    
+| SSRVTRA16000 | Transaction not found: Transaction does not exist.                        |
+| SSRVTRA16001 | Transaction processing failed: Transaction is invalid.                    |
+| SSRVTRA16002 | Transaction processing failed: Transaction has expired.                   |
+| SSRVTRA19004 | Token not found: Token is not registered.                                 |
+| SSRVTRA19002 | Token processing failed: Token has expired.                               |
+| SSRVTRA19003 | Authentication failed: Provided token is invalid.                         |
+| SSRVTRA17502 | Wallet not found: Wallet is not registered.                               |
+| SSRVTRA16510 | Signature verification failed: Signature is invalid.                      |
+| SSRVTRA16511 | Signature verification failed.                                            |
+| SSRVTRA12006 | DID Document parsing failed.                                              |
+| SSRVTRA12009 | Invalid DID Document version.                                             |
+| SSRVTRA18006 | DID Document processing failed: Invalid updated.                          |
+| SSRVTRA18007 | DID Document processing failed: Invalid context.                          |
+| SSRVTRA18008 | DID Document processing failed: Invalid id.                               |
+| SSRVTRA18009 | DID Document processing failed: Invalid controller.                       |
+| SSRVTRA18014 | DID Document processing failed: Invalid creation.                         |
+| SSRVTRA18015 | DID Document processing failed: Invalid deactivated.                      |
+| SSRVTRA17002 | User not found: User is not registered.                                   |
+| SSRVTRA16520 | 'authNonce' does not match.                                               |
+| SSRVTRA16516 | DID Document key signature verification failed.                           |
+| SSRVTRA18018 | Request processing failed: DID Document ID does not match previously requested DID. |
+| SSRVTRA17005 | App authentication failed: app ID does not match.                         |
+| SSRVTRA17508 | Wallet authentication failed: Wallet ID does not match.                   |
 
 **■ Status 500 - Server error**
 
 |     Code     | Description                                             |
 | :----------: | ------------------------------------------------------- |
-| SSRVTRA18017 | Invoked Document 생성에 실패했습니다.                   |
-| SSRVTRA18016 | DID Document 등록에 실패했습니다.                       |
-| SSRVTRA17012 | 'request-update-diddoc' API 요청 처리에 실패했습니다. |
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
+| SSRVTRA18017 | Invoked Document creation failed.                       |
+| SSRVTRA18016 | DID Document registration failed.                       |
+| SSRVTRA17012 | 'request-update-diddoc' API request processing failed.  |
 
 #### 8.4.3. Example
 
@@ -2657,11 +2571,9 @@ Content-Type: application/json;charset=utf-8
 }
 ```
 
-<div style="page-break-after: always; margin-top: 40px;"></div>
-
 ### 8.5. Confirm Update DidDoc
 
-사용자 DID Document 갱신 거래를 종료한다.
+Terminates user DID Document update transaction.
 
 | Item          | Description                     | Remarks |
 | ------------- | ------------------------------- | ------- |
@@ -2669,10 +2581,9 @@ Content-Type: application/json;charset=utf-8
 | Path          | `/api/v1/confirm-update-diddoc` |         |
 | Authorization | -                               |         |
 
-
 #### 8.5.1. Request
 
-월렛이 TAS를 통해 사용자의 DID Document 등록을 완료한 후 TAS 응답문의 `txId`를 회신한다.
+After wallet completes user DID Document registration through TAS, it returns the `txId` from TAS response.
 
 **■ Headers**
 
@@ -2691,7 +2602,7 @@ N/A
 **■ Body**
 
 ```c#
-def object M141_ConfirmUpdateDidDoc: "Confirm Update DidDoc 요청문"
+def object M141_ConfirmUpdateDidDoc: "Confirm Update DidDoc request message"
 {
     //--- Common Part ---
     + messageId "id"  : "message id"
@@ -2702,24 +2613,22 @@ def object M141_ConfirmUpdateDidDoc: "Confirm Update DidDoc 요청문"
 }
 ```
 
-- `~/txId`: `_M141_RequestUpdateDidDoc.txId` (월렛으로부터 전달 받음)
-- `~/serverToken`: 이전에 생성한 서버토큰
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
+- `~/txId`: `_M141_RequestUpdateDidDoc.txId` (received from wallet)
+- `~/serverToken`: Previously generated server token
 
 #### 8.5.2. Response
 
-서버토큰, 거래코드 일치여부 확인 후 사용자 DID Document 갱신 프로토콜을 종료한다.
+Verifies server token and transaction code match, then terminates user DID Document update protocol.
 
 **■ Process**
 
-1. 거래코드 확인
-1. 서버토큰 일치여부 확인
+1. Verify transaction code
+1. Verify server token match
 
 **■ Status 200 - Success**
 
 ```c#
-def object _M141_ConfirmUpdateDidDoc: "Confirm Update DidDoc 응답문"
+def object _M141_ConfirmUpdateDidDoc: "Confirm Update DidDoc response message"
 {
     //--- Common Part ---
     + uuid "txId": "transaction id"
@@ -2730,21 +2639,19 @@ def object _M141_ConfirmUpdateDidDoc: "Confirm Update DidDoc 응답문"
 
 |     Code     | Description                                               |
 | :----------: | --------------------------------------------------------- |
-| SSRVTRA16000 | 트랜잭션을 찾지 못했습니다: 트랜잭션이 존재하지 않습니다. |
-| SSRVTRA16001 | 트랜잭션 처리 실패: 트랜잭션이 유효하지 않습니다.         |
-| SSRVTRA16002 | 트랜잭션 처리 실패: 트랜잭션이 만료되었습니다.            |
-| SSRVTRA19004 | 토큰을 찾을 수 없습니다: 토큰이 등록되지 않았습니다.      |
-| SSRVTRA19002 | 토큰 처리에 실패했습니다: 토큰이 만료되었습니다.          |
-| SSRVTRA19003 | 인증에 실패했습니다: 제공된 토큰이 유효하지 않습니다.     |
-| SSRVTRA17502 | Wallet을 찾을 수 없습니다: Wallet이 등록되지 않았습니다.  |
+| SSRVTRA16000 | Transaction not found: Transaction does not exist.       |
+| SSRVTRA16001 | Transaction processing failed: Transaction is invalid.   |
+| SSRVTRA16002 | Transaction processing failed: Transaction has expired.  |
+| SSRVTRA19004 | Token not found: Token is not registered.                |
+| SSRVTRA19002 | Token processing failed: Token has expired.              |
+| SSRVTRA19003 | Authentication failed: Provided token is invalid.        |
+| SSRVTRA17502 | Wallet not found: Wallet is not registered.              |
 
 **■ Status 500 - Server error**
 
 |     Code     | Description                                           |
 | :----------: | ----------------------------------------------------- |
-| SSRVTRA17013 | 'confirm-update-diddoc' API 요청 처리에 실패했습니다. |
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
+| SSRVTRA17013 | 'confirm-update-diddoc' API request processing failed.|
 
 #### 8.5.3. Example
 
@@ -2776,37 +2683,35 @@ Content-Type: application/json;charset=utf-8
 }
 ```
 
-<div style="page-break-after: always; margin-top: 50px;"></div>
+## 9. P142 - User DID Document Recovery Protocol
 
-## 9. P142 - 사용자 DID Document 복구 프로토콜
-
-| Seq. | API                     | Description                            | 표준API |
-| :--: | ----------------------- | -------------------------------------- | ------- |
-|  1   | offer-restore-did-push  | 사용자 DID Document Offer 요청 (Push)  | N       |
-|  1   | offer-restore-did-email | 사용자 DID Document Offer 요청 (Email) | N       |
-|  2   | propose-restore-diddoc  | 사용자 DID Document 복구 시작 요청     | Y       |
-|  3   | request-ecdh            | ECDH 요청                              | Y       |
-|  4   | request-create-token    | 서버토큰 생성 요청                     | Y       |
-|  5   | request-restore-diddoc  | 사용자 DID Document 복구 요청          | Y       |
-|  6   | confirm-restore-diddoc  | 사용자 DID Document 복구 완료          | Y       |
+| Seq. | API                     | Description                                | Standard API |
+| :--: | ----------------------- | ------------------------------------------ | ------------ |
+|  1   | offer-restore-did-push  | User DID Document Offer request (Push)     | N            |
+|  1   | offer-restore-did-email | User DID Document Offer request (Email)    | N            |
+|  2   | propose-restore-diddoc  | User DID Document recovery request         | Y            |
+|  3   | request-ecdh            | ECDH request                               | Y            |
+|  4   | request-create-token    | Server token creation request              | Y            |
+|  5   | request-restore-diddoc  | User DID Document recovery request         | Y            |
+|  6   | confirm-restore-diddoc  | User DID Document recovery completion      | Y            |
 
 ### 9.1. Offer Restore DidDoc (Push)
 
-DID Document 복구 세션 정보를 요청한다.
+Requests DID Document recovery session information.
 
-Trsut Agent는 Portal 사이트 등을 통해서 사용자의 인증을 진행하고, DID Document 복구 프로세스를 진행할 수 있다.
-이 때의 복구 세션정보를 DID Restore Offer라고 칭한다. 
+Trust Agent can proceed with user authentication through Portal site etc. and conduct DID Document recovery process.
+The recovery session information at this time is called DID Restore Offer.
 
-Offer의 종류는 3가지가 있으며, 각각 복구 세션 정보를 전달하는 방식이 다르다:
-1. **offer-restore-vc-push**: Push 알림을 통해 복구 세션 정보를 전달.
-2. **offer-restore-vc-email**: 이메일을 통해 복구 세션 정보를 전달.
+There are 3 types of Offers, each with different methods of delivering recovery session information:
+1. **offer-restore-vc-push**: Deliver recovery session information through Push notifications.
+2. **offer-restore-vc-email**: Deliver recovery session information through email.
 
-해당 API는 DID Restore Offer의 Payload를 Push 메시지를 통해서 전송한다.
+This API sends DID Restore Offer Payload through Push messages.
 
 | Item          | Description                          | Remarks |
 | ------------- | ------------------------------------ | ------- |
 | Method        | `POST`                               |         |
-| Path          | `/api/v1/offer-restore-did/push` |         |
+| Path          | `/api/v1/offer-restore-did/push`     |         |
 | Authorization | -                                    |         |
 
 #### 9.1.1. Request
@@ -2828,33 +2733,31 @@ N/A
 **■ HTTP Body**
 
 ```c#
-def object OfferRestoreDidPush: "Offer Restore DID Push 요청문"
+def object OfferRestoreDidPush: "Offer Restore DID Push request message"
 {    
     //--- Common Part ---
     + messageId "id"        : "message id"
 
     //--- Data Part ---
-    + string    "did"       : "사용자 DID"
+    + string    "did"       : "user DID"
 }
 ```
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
 
 #### 9.1.2. Response
 
 **■ Process**
-1. DID로 사용자 정보 확인
-1. 사용자 DID Document가 '폐기' 상태인지 확인 
-1. 사용자의 Push Token 조회
-1. Push 메시지 발송
-1. Offer 정보 DB 저장
+1. Retrieve user information by DID
+1. Check if user DID Document is in 'revoked' state 
+1. Retrieve user's Push Token
+1. Send Push message
+1. Save Offer information to DB
 
 **■ Status 200 - Success**
 
 ```c#
-def object _OfferRestoreDidPush: "Offer Restore DID Push 응답문"
+def object _OfferRestoreDidPush: "Offer Restore DID Push response message"
 {    
-    + uuid    "offerId"           : "복구 offer id"
+    + uuid    "offerId"           : "recovery offer id"
 }
 ```
 
@@ -2862,20 +2765,18 @@ def object _OfferRestoreDidPush: "Offer Restore DID Push 응답문"
 
 | Code         | Description                                                       |
 | ------------ | ----------------------------------------------------------------- |
-| SSRVTRA17002 | 사용자를 찾을 수 없습니다: 사용자가 등록되지 않았습니다.          |
-| SSRVTRA17014 | 요청 처리에 실패했습니다: 사용자 상태가 'Deactivated'가 아닙니다. |
-| SSRVTRA17004 | 앱을 찾을 수 없습니다: 앱이 등록되지 않았습니다.                  |
-| SSRVTRA17007 | Push 토큰을 조회할 수 없습니다.                                   |
+| SSRVTRA17002 | User not found: User is not registered.                          |
+| SSRVTRA17014 | Request processing failed: User state is not 'Deactivated'.      |
+| SSRVTRA17004 | App not found: App is not registered.                            |
+| SSRVTRA17007 | Push token cannot be retrieved.                                   |
 
 **■ Status 500 - Server error**
 
 | Code         | Description                                            |
 | ------------ | ------------------------------------------------------ |
-| SSRVTRA12003 | Push 데이터 생성에 실패하였습니다.                     |
-| SSRVTRA13501 | FCM 메시지 전송에 실패했습니다.                        |
-| SSRVTRA17019 | 'offer-restore-did-push' API 요청 처리에 실패했습니다. |
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
+| SSRVTRA12003 | Push data creation failed.                             |
+| SSRVTRA13501 | FCM message transmission failed.                       |
+| SSRVTRA17019 | 'offer-restore-did-push' API request processing failed.|
 
 #### 9.1.3. Example
 
@@ -2906,25 +2807,21 @@ Content-Type: application/json;charset=utf-8
 }
 ```
 
-<div style="page-break-after: always; margin-top: 40px;"></div>
-
-
 ### 9.2. Offer Restore DidDoc (Email)
 
-DID Document 회수 세션 정보를 요청한다.
+Requests DID Document recovery session information.
 
-TA는 Portal 사이트 등을 통해서 사용자의 인증을 진행하고, DID Document 복구 프로세스를 진행할 수 있다.
-이 때의 복구 세션정보를 DID Restore Offer라고 칭한다. 
+TA can proceed with user authentication through Portal site etc. and conduct DID Document recovery process.
+The recovery session information at this time is called DID Restore Offer.
 
-Offer의 종류는 3가지가 있으며, 각각 복구 세션 정보를 전달하는 방식이 다르다:
-1. **offer-restore-vc-push**: Push 알림을 통해 복구 세션 정보를 전달.
-2. **offer-restore-vc-email**: 이메일을 통해 복구 세션 정보를 전달.
-
+There are 3 types of Offers, each with different methods of delivering recovery session information:
+1. **offer-restore-vc-push**: Deliver recovery session information through Push notifications.
+2. **offer-restore-vc-email**: Deliver recovery session information through email.
 
 | Item          | Description                           | Remarks |
 | ------------- | ------------------------------------- | ------- |
 | Method        | `POST`                                |         |
-| Path          | `/api/v1/offer-restore-did/email` |         |
+| Path          | `/api/v1/offer-restore-did/email`     |         |
 | Authorization | -                                     |         |
 
 #### 9.2.1. Request
@@ -2946,33 +2843,31 @@ N/A
 **■ HTTP Body**
 
 ```c#
-def object OfferRestoreDidEmail: "Offer Restore DID Email 요청문"
+def object OfferRestoreDidEmail: "Offer Restore DID Email request message"
 {    
     //--- Common Part ---
     + messageId     "id"    : "message id"
 
     //--- Data Part ---
-    + string    "did"       : "사용자 DID"
-    + string    "email"     : "사용자 이메일 주소"
+    + string    "did"       : "user DID"
+    + string    "email"     : "user email address"
 }
 ```
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
 
 #### 9.2.2. Response
 
 **■ Process**
-1. DID로 사용자 정보 확인
-1. 사용자 DID Document가 '폐기' 상태인지 확인 
-1. 이메일 발송
-1. Offer 정보 DB 저장
+1. Retrieve user information by DID
+1. Check if user DID Document is in 'revoked' state 
+1. Send email
+1. Save Offer information to DB
 
 **■ Status 200 - Success**
 
 ```c#
-def object _OfferRestoreDidPush: "Offer Restore DID Push 응답문"
+def object _OfferRestoreDidEmail: "Offer Restore DID Email response message"
 {    
-    + uuid    "offerId"           : "복구 offer id"
+    + uuid    "offerId"           : "recovery offer id"
 }
 ```
 
@@ -2980,18 +2875,16 @@ def object _OfferRestoreDidPush: "Offer Restore DID Push 응답문"
 
 | Code         | Description                                                       |
 | ------------ | ----------------------------------------------------------------- |
-| SSRVTRA17002 | 사용자를 찾을 수 없습니다: 사용자가 등록되지 않았습니다.          |
-| SSRVTRA17014 | 요청 처리에 실패했습니다: 사용자 상태가 'Deactivated'가 아닙니다. |
-| SSRVTRA13500 | 이메일 템플릿 조회가 실패했습니다.                                |
-| SSRVTRA15504 | 이메일 전송에 실패했습니다.                                       |
+| SSRVTRA17002 | User not found: User is not registered.                          |
+| SSRVTRA17014 | Request processing failed: User state is not 'Deactivated'.      |
+| SSRVTRA13500 | Email template retrieval failed.                                  |
+| SSRVTRA15504 | Email transmission failed.                                        |
 
 **■ Status 500 - Server error**
 
 | Code         | Description                                             |
 | ------------ | ------------------------------------------------------- |
-| SSRVTRA20020 | 'offer-restore-did-email' API 요청 처리에 실패했습니다. |
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
+| SSRVTRA20020 | 'offer-restore-did-email' API request processing failed.|
 
 #### 9.2.3. Example
 
@@ -3011,7 +2904,6 @@ curl -v -X POST "http://${Host}:${Port}/tas/api/v1/offer-restore-did/email" \
    "email":"test@example.com"
 }
 ```
-
 **■ Response**
 
 ```http
@@ -3023,18 +2915,15 @@ Content-Type: application/json;charset=utf-8
 }
 ```
 
-<div style="page-break-after: always; margin-top: 40px;"></div>
-
 ### 9.3. Propose Restore DidDoc
 
-사용자 DID Document 복구 거래를 시작한다.
+Initiates user DID Document recovery transaction.
 
 | Item          | Description                      | Remarks |
 | ------------- | -------------------------------- | ------- |
 | Method        | `POST`                           |         |
 | Path          | `/api/v1/propose-restore-diddoc` |         |
 | Authorization | -                                |         |
-
 
 #### 9.3.1. Request
 
@@ -3055,7 +2944,7 @@ N/A
 **■ Body**
 
 ```c#
-def object M142_ProposeRestoreDidDoc: "Propose Restore DidDoc 요청문"
+def object M142_ProposeRestoreDidDoc: "Propose Restore DidDoc request message"
 {
     //--- Common Part ---
     + messageId "id": "message id"
@@ -3066,26 +2955,24 @@ def object M142_ProposeRestoreDidDoc: "Propose Restore DidDoc 요청문"
 }
 ```
 
-<div style="page-break-after: always; margin-top: 30px;"></div>
-
 #### 9.3.2. Response
 
-거래코드를 생성하고 사용자 DID Document 복구 거래를 시작한다.
+Generates transaction code and initiates user DID Document recovery transaction.
 
 **■ Process**
 
-1. `txId` = 거래코드 생성
-1. TAS가 발송한 `RestoreDidOfferPayload`의 `offerId`와 `did`가 일치하는지 확인
-1. `did`의 상태가 복구 가능한 상태인지 확인
-    - 생애주기 상태가 `DEACTIVATED`가 아니면 에러
-1. `authNonce` = DID Auth 용 16-byte nonce 생성
-1. `authNonce` 저장
-1. `txId`, `offerId`, `did` 저장
+1. `txId` = Generate transaction code
+1. Check if `RestoreDidOfferPayload` `offerId` and `did` sent by TAS match
+1. Check if `did` state is recoverable
+    - Error if lifecycle state is not `DEACTIVATED`
+1. `authNonce` = Generate 16-byte nonce for DID Auth
+1. Save `authNonce`
+1. Save `txId`, `offerId`, `did`
 
 **■ Status 200 - Success**
 
 ```c#
-def object _M142_ProposeRestoreDidDoc: "Propose Restore DidDoc 응답문"
+def object _M142_ProposeRestoreDidDoc: "Propose Restore DidDoc response message"
 {    
     //--- Common Part ---
     + uuid "txId": "transaction id"
@@ -3099,18 +2986,16 @@ def object _M142_ProposeRestoreDidDoc: "Propose Restore DidDoc 응답문"
 
 |     Code     | Description                                                       |
 | :----------: | ----------------------------------------------------------------- |
-| SSRVTRA11001 | DID Offer 정보를 찾을 수 없습니다.                                |
-| SSRVTRA12011 | 요청한 DID와 Offer의 DID가 일치하지 않습니다.                     |
-| SSRVTRA17002 | 사용자를 찾을 수 없습니다: 사용자가 등록되지 않았습니다.          |
-| SSRVTRA17014 | 요청 처리에 실패했습니다: 사용자 상태가 'Deactivated'가 아닙니다. |
+| SSRVTRA11001 | DID Offer information not found.                                 |
+| SSRVTRA12011 | Requested DID does not match Offer's DID.                        |
+| SSRVTRA17002 | User not found: User is not registered.                          |
+| SSRVTRA17014 | Request processing failed: User state is not 'Deactivated'.      |
 
 **■ Status 500 - Server error**
 
 |     Code     | Description                                                 |
 | :----------: | ----------------------------------------------------------- |
-| SSRVTRA17015 | 'propose-restore-diddoc' API 요청 처리에 실패했습니다. |
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
+| SSRVTRA17015 | 'propose-restore-diddoc' API request processing failed.    |
 
 #### 9.3.3. Example
 
@@ -3143,11 +3028,9 @@ Content-Type: application/json;charset=utf-8
 }
 ```
 
-<div style="page-break-after: always; margin-top: 40px;"></div>
-
 ### 9.4. Request ECDH
 
-세션 암호화를 위한 키교환을 수행한다.
+Performs key exchange for session encryption.
 
 | Item          | Description            | Remarks |
 | ------------- | ---------------------- | ------- |
@@ -3175,7 +3058,7 @@ N/A
 **■ Body**
 
 ```c#
-def object M142_RequestEcdh: "ECDH 요청문"
+def object M142_RequestEcdh: "ECDH request message"
 {
     //--- Common Part ---
     + messageId "id"  : "message id"
@@ -3187,12 +3070,12 @@ def object M142_RequestEcdh: "ECDH 요청문"
 ```
 
 - `~/reqEcdh`
-    - `client`: 클라이언트 DID
-    - `clientNonce`: 클라이언트가 생성한 난수
-    - `curve`: ECDH용 ECC 곡선 타입 (클라이언트가 하나를 지정)
-    - `publicKey`: 상기 `curve` 유형으로 생성한 임시키쌍의 공개키
+    - `client`: Client DID
+    - `clientNonce`: Random number generated by client
+    - `curve`: ECC curve type for ECDH (client specifies one)
+    - `publicKey`: Public key of temporary key pair generated with the above `curve` type
     - `candidate` 
-        - `ciphers`: 클라이언트가 지원하는 cipher 알고리즘 목록
+        - `ciphers`: List of cipher algorithms supported by client
 
 <div style="page-break-after: always; margin-top: 30px;"></div>
 
@@ -3200,28 +3083,28 @@ def object M142_RequestEcdh: "ECDH 요청문"
 
 **■ Process**
 
-1. 거래코드 확인
-1. `~/reqEcdh/proof` 서명 검증
-1. 클라이언트 요청값(`~/reqEcdh`) 정합성 확인 및 cipher 알고리즘 선택
+1. Verify transaction code
+1. Verify signature of `~/reqEcdh/proof`
+1. Verify client request values (`~/reqEcdh`) integrity and select cipher algorithm
     - `client` = `M142_ProposeRestoreDidDoc:~/did`
-    - `cipherAlg` = cipher 알고리즘 선택
-    - `padding` = 패딩 방식 선택
-1. ECIES 세션키 생성
+    - `cipherAlg` = Select cipher algorithm
+    - `padding` = Select padding method
+1. Generate ECIES session key
     - `clientNonce` = `~/reqEcdh/clientNonce`
-    - `severNonce` = 16-byte nonce 생성
+    - `severNonce` = Generate 16-byte nonce
     - `mergedNonce` = sha256(serverNonce, clientNonce)
     - `clientPubKey` = `~/reqEcdh/publicKey`
-    - `serverPubKey`, `serverPriKey` = `~/reqEcdh/curve` 타입의 서버 임시키쌍 생성
+    - `serverPubKey`, `serverPriKey` = Generate server temporary key pair of `~/reqEcdh/curve` type
     - `sesKey` = ecies(serverPriKey, clientPubKey, mergedNonce, cipherAlg)
-1. ECDH 정보 저장
-    - 클라이언트 DID, 거래코드
+1. Store ECDH information
+    - Client DID, transaction code
     - `sesKey`, `cipherAlg`, `padding`
-1. ECDH 수락 데이터 생성 및 서명
+1. Generate and sign ECDH acceptance data
 
 **■ Status 200 - Success**
 
 ```c#
-def object _M142_RequestEcdh: "Request ECDH 응답문"
+def object _M142_RequestEcdh: "Request ECDH response message"
 {    
     //--- Common Part ---
     + uuid "txId": "transaction id"
@@ -3232,31 +3115,31 @@ def object _M142_RequestEcdh: "Request ECDH 응답문"
 ```
 
 - `~/accEcdh`
-    - `server`: 서버 DID
-    - `serverNonce`: 서버가 생성한 난수
-    - `publicKey`: 서버가 생성한 임시키쌍의 공개키(`serverPubKey`)
-    - `cipher`: 클라이언트의 후보 중 서버가 선택한 cipher 알고리즘
-    - `padding`: 서버가 선택한 패딩 방식
+    - `server`: Server DID
+    - `serverNonce`: Random number generated by server
+    - `publicKey`: Public key of temporary key pair generated by server (`serverPubKey`)
+    - `cipher`: Cipher algorithm selected by server from client candidates
+    - `padding`: Padding method selected by server
 
 **■ Status 400 - Client error**
 
 |     Code     | Description                                               |
 | :----------: | --------------------------------------------------------- |
-| SSRVTRA16519 | 클라이언트 Nonce 처리 실패: 잘못된 Nonce입니다.           |
-| SSRVTRA16000 | 트랜잭션을 찾지 못했습니다: 트랜잭션이 존재하지 않습니다. |
-| SSRVTRA16001 | 트랜잭션 처리 실패: 트랜잭션이 유효하지 않습니다.         |
-| SSRVTRA16002 | 트랜잭션 처리 실패: 트랜잭션이 만료되었습니다.            |
-| SSRVTRA16510 | 서명 검증 실패: 서명이 유효하지 않습니다.                 |
-| SSRVTRA16511 | 서명 검증에 실패했습니다.                                 |
-| SSRVTRA12008 | 지원되지 않는 Cipher Type 입니다.                         |
+| SSRVTRA16519 | Client Nonce processing failed: Invalid Nonce.           |
+| SSRVTRA16000 | Transaction not found: Transaction does not exist.       |
+| SSRVTRA16001 | Transaction processing failed: Transaction is invalid.   |
+| SSRVTRA16002 | Transaction processing failed: Transaction has expired.  |
+| SSRVTRA16510 | Signature verification failed: Signature is invalid.     |
+| SSRVTRA16511 | Signature verification failed.                           |
+| SSRVTRA12008 | Unsupported Cipher Type.                                 |
 
 **■ Status 500 - Server error**
 
 |     Code     | Description                                  |
 | :----------: | -------------------------------------------- |
-| SSRVTRA16504 | Nonce 생성에 실패했습니다.                   |
-| SSRVTRA16506 | 세션키 생성에 실패했습니다.                  |
-| SSRVTRA16521 | 'request-ecdh' API 요청 처리에 실패했습니다. |
+| SSRVTRA16504 | Failed to generate Nonce.                   |
+| SSRVTRA16506 | Failed to generate session key.             |
+| SSRVTRA16521 | Failed to process 'request-ecdh' API request.|
 
 <div style="page-break-after: always; margin-top: 30px;"></div>
 
@@ -3320,7 +3203,7 @@ Content-Type: application/json;charset=utf-8
 
 ### 9.5. Request Create Token
 
-인가앱이 TAS에게 서버토큰 생성을 요청한다.
+CA app requests TAS to create server token.
 
 | Item          | Description                    | Remarks |
 | ------------- | ------------------------------ | ------- |
@@ -3329,190 +3212,16 @@ Content-Type: application/json;charset=utf-8
 | Authorization | -                              |         |
 
 
-#### 9.5.1. Request
-
-서버토큰을 생성하기 위해서는 아래와 같은 토큰시드를 넘겨줘야 한다.
-
-- `(ServerTokenSeed)seed`
-    - `purpose`: "RestoreDid"
-    - `walletInfo`: 서명된 월렛정보 (월렛 SDK 호출하여 획득)
-    - `caAppInfo`: 서명된 인가앱정보 (인가앱 사업자 API 호출하여 획득)
-
-자세한 내용은 [DATA-SPEC]을 참조한다.
-
-**■ Headers**
-
-| Header           | Value                            | Remarks |
-| ---------------- | -------------------------------- | ------- |
-| + `Content-Type` | `application/json;charset=utf-8` |         |
-
-**■ Path Parameters**
-
-N/A
-
-**■ Query Parameters**
-
-N/A
-
-**■ Body**
-
-```c#
-def object M142_RequestCreateToken: "Request Create Token 요청문"
-{
-    //--- Common Part ---
-    + messageId "id"  : "message id"
-    + uuid      "txId": "transaction id"
-
-    //--- Data Part ---
-    + ServerTokenSeed "seed": "server token seed"
-}
-```
-
-- `~/seed`
-    - `purpose`: 토큰 사용 목적
-    - `walletInfo`: 서명된 월렛 정보
-    - `caAppInfo`: 서명된 인가앱 정보
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
-
-#### 9.5.2. Response
-
-클라이언트가 넘겨준 seed 내 서명 검증 후 서버토큰 데이터를 생성하여 응답한다.
-응답 데이터는 세션키로 암호화한다.
-
-**■ Process**
-
-1. 거래코드 확인
-1. purpose 유효성 확인
-1. `~/seed` 내 proof 서명 검증
-    - `walletInfo.proof` 월렛 서명 검증
-    - `caAppInfo.proof` 월렛 사업자 서명 검증
-1. 데이터 준비
-    - 토큰 유효일시 설정
-    - 기타 난수 등 생성
-1. 상기 데이터를 서명하여 `(ServerTokenData)std` 생성
-1. 서버토큰 생성하여 저장
-    - `serverToken` = sha256(std)
-1. 응답 데이터 준비
-    - `encStd` = multibase(enc(std, sesKey, iv, padding))
-
-**■ Status 200 - Success**
-
-```c#
-def object _M142_RequestCreateToken: "Request Create Token 응답문"
-{    
-    //--- Common Part ---
-    + uuid      "txId": "transaction id"
-    + multibase "iv"  : "세션키 암복호화 IV"
-    
-    //--- Data Part ---
-    + multibase "encStd": "multibase(enc((ServerTokenData)std))"
-}
-```
-
-- `~/encStd`: 암호화된 서버토큰 데이터
-
-**■ Status 400 - Client error**
-
-|     Code     | Description                                               |
-| :----------: | --------------------------------------------------------- |
-| SSRVTRA16000 | 트랜잭션을 찾지 못했습니다: 트랜잭션이 존재하지 않습니다. |
-| SSRVTRA16001 | 트랜잭션 처리 실패: 트랜잭션이 유효하지 않습니다.         |
-| SSRVTRA16002 | 트랜잭션 처리 실패: 트랜잭션이 만료되었습니다.            |
-| SSRVTRA12005 | 지원하지 않는 'token purpose' 입니다.                     |
-| SSRVTRA17502 | Wallet을 찾을 수 없습니다: Wallet이 등록되지 않았습니다.  |
-| SSRVTRA16510 | 서명 검증 실패: 서명이 유효하지 않습니다.                 |
-| SSRVTRA16511 | 서명 검증에 실패했습니다.                                 |
-| SSRVTRA18510 | 가입증명서 VC를 찾을 수 없습니다.                         |
-| SSRVTRA12007 | Provider DID가 일치하지 않습니다.                         |
-| SSRVTRA18511 | 유효하지 않은 가입증명서 VC의 Issuer입니다.               |
-| SSRVTRA18519 | VC 검증에 실패했습니다.                                   |
-
-**■ Status 500 - Server error**
-
-|     Code     | Description                                          |
-| :----------: | ---------------------------------------------------- |
-| SSRVTRA19000 | 서버 토큰 생성에 실패했습니다.                       |
-| SSRVTRA19001 | 서버 토큰 데이터를 암호화하는 데 실패했습니다.       |
-| SSRVTRA19005 | 'request-create-token' API 요청 처리에 실패했습니다. |
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
-
-#### 9.5.3. Example
-
-**■ Request**
-
-```shell
-curl -v -X POST "http://${Host}:${Port}/tas/api/v1/request-create-token" \
--H "Content-Type: application/json;charset=utf-8" \
--d @"data.json"
-```
-
-```json
-//data.json
-{
-   "id":"202409061024378200004A6EE7C2",
-   "txId":"cad7a1e8-0e27-47f3-b9dd-b6590a349852",
-   "seed":{
-      "purpose":7,
-      "walletInfo":{
-         "wallet":{
-            "id":"WID202409HFaOFhPdgvY",
-            "did":"did:omn:3yybwkGEF46BXaqhXSJDhWE7ptN8"
-         },
-         "nonce":"zLJoyk4d9cKHK5gcqrYxsvm",
-         "proof":{
-            "type":"Secp256r1Signature2018",
-            "created":"2024-09-06T01:24:37Z",
-            "verificationMethod":"did:omn:3yybwkGEF46BXaqhXSJDhWE7ptN8?versionId=1#assert",
-            "proofPurpose":"assertionMethod",
-            "proofValue":"z3phZ31Z8jSYeRGZrwdggBz8L6sr69mQgu4k89HegX36AxqJLxqK6dYizFwCu5apUy3e958Rxha3MKwdhK1CtMihRR"
-         }
-      },
-      "caAppInfo":{
-         "appId":"202409Btz6cMklY2a",
-         "provider":{
-            "did":"did:omn:cas",
-            "certVcRef":"http://192.168.3.130:8094/cas/api/v1/certificate-vc"
-         },
-         "nonce":"mr8H6sYyMnNHT3Urz6HQgaw",
-         "proof":{
-            "type":"Secp256r1Signature2018",
-            "created":"2024-09-06T10:24:37.604775Z",
-            "verificationMethod":"did:omn:cas?versionId=1#assert",
-            "proofPurpose":"assertionMethod",
-            "proofValue":"mIMrVCiyWS8Tp2rHUaaw0JfQfgfaIKB7n7mUTzFPRbqgsRQ/VtcfXq672G7pBLqctJEyaaZarvbOAiibJqdUFXLM"
-         }
-      }
-   }
-}
-```
-
-**■ Response**
-
-```http
-HTTP/1.1 200 OK
-Content-Type: application/json;charset=utf-8
-
-{
-   "txId":"cad7a1e8-0e27-47f3-b9dd-b6590a349852",
-   "iv":"z75M7MfQsC4p2rTxeKxYh2M",
-   "encStd":"zHri4iJ8q2mcv4GKmrb3GgnsyY6hT93rbvQir1eAmnqvMrfRcRUTfs16NQvrReuV9hx76X5qSpQ19NVm78ca4jnRuDoqbDwAqmtGPLwUvVaLUFMh6oEXZzfQQ5ds6JHMDvcYpeKCHtmyfUb2W7DbhZNEg9D4Au5TqQomey9A2vWG9FrN91PUg9nfyt9NCfqX6s38JHvedKCjqixBiv4Gs5hk2HNN3aCuS5Y53ACGeADA3cKFHwpJZNYBubHN7QAraBFu5zjWRv4RgK46MnTmfyxXzPLucjeRg9qAUabCJWmb6RwWT1SoUFzk8CMoQtppfn8GDHfcUrhGHEFcU2PYu3kKr97NLGbrpdftha2wVprd4ZKD4YS78pLSeXKGGEsnWU5CatFN7ayZqTU5ZspwZ567SUohWfJZn3XXp9y938rDr5WW1RtWD6UsxFxSY14h7C694DUkNsZKJejcnBxLqdqxbeqRn8AMvx"
-}
-```
-
-<div style="page-break-after: always; margin-top: 40px;"></div>
-
 ### 9.6. Request Restore DidDoc
 
-- 전송: 월렛 → TAS
+- Transmission: Wallet → TAS
 
-월렛이 사용자 DID Document 복구를 TAS에 직접 요청한다.
+Wallet directly requests user DID Document recovery to TAS.
 
-DID Document의 복구는 생애주기 상태가 `DEACTIVATED`인 경우에만 가능하다.
-복구의 경우는 `DidDoc:~/deactivated`만 false로 변경되고 `DidDoc:~/versionId`를 포함한 그 어떤 값도 변경되지 않는다.
+DID Document recovery is only possible when lifecycle state is `DEACTIVATED`.
+For recovery, only `DidDoc:~/deactivated` is changed to false and no other values including `DidDoc:~/versionId` are changed.
 
-DID Document 복구를 사용자가 승인하였음을 확인하기 위해 DID Auth를 수행한다.
+DID Auth is performed to confirm user approval of DID Document recovery.
 
 | Item          | Description                      | Remarks |
 | ------------- | -------------------------------- | ------- |
@@ -3539,7 +3248,7 @@ N/A
 **■ Body**
 
 ```c#
-def object M142_RequestRestoreDidDoc: "Request Restore DidDoc 요청문"
+def object M142_RequestRestoreDidDoc: "Request Restore DidDoc request message"
 {
     //--- Common Part ---
     + messageId "id"  : "message id"
@@ -3551,33 +3260,31 @@ def object M142_RequestRestoreDidDoc: "Request Restore DidDoc 요청문"
 }
 ```
 
-- `~/serverToken`: 이전에 생성한 서버토큰
-- `~/didAuth`: 사용자 인증 정보
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
+- `~/serverToken`: Previously generated server token
+- `~/didAuth`: User authentication information
 
 #### 9.6.2. Response
 
 **■ Process**
 
-1. 거래코드 확인
-1. 서버토큰 일치여부 확인
-1. DID Auth 검증
-1. 복구된 DidDoc 생성
-    - `didDoc` = 신뢰저장소에서 DidDoc 조회
-    - `deactivated` = false로 변경
-1. DB에 저장된 사용자 매핑 정보 확인
+1. Verify transaction code
+1. Verify server token match
+1. Verify DID Auth
+1. Generate recovered DidDoc
+    - `didDoc` = Retrieve DidDoc from trust repository
+    - Change `deactivated` to false
+1. Check user mapping information stored in DB
     - holderDid (Holder DID)
-    - walletId (월렛 식별자)
-    - appId (인가앱 식별자)
-1. 신뢰저장소에 DidDoc 갱신
-    - (InvokedDidDoc)idd = TAS 서명하여 신뢰저장소 갱신 요청 데이터 생성
-    - DidDoc 갱신하고 활성화 상태로 변경 요청
+    - walletId (wallet identifier)
+    - appId (CA app identifier)
+1. Update DidDoc in trust repository
+    - (InvokedDidDoc)idd = Generate trust repository update request data with TAS signature
+    - Request DidDoc update and change to active state
 
 **■ Status 200 - Success**
 
 ```c#
-def object _M142_RequestRestoreDidDoc: "Request Restore DidDoc 응답문"
+def object _M142_RequestRestoreDidDoc: "Request Restore DidDoc response message"
 {    
     //--- Common Part ---
     + uuid "txId": "transaction id"
@@ -3588,27 +3295,25 @@ def object _M142_RequestRestoreDidDoc: "Request Restore DidDoc 응답문"
 
 |     Code     | Description                                               |
 | :----------: | --------------------------------------------------------- |
-| SSRVTRA16000 | 트랜잭션을 찾지 못했습니다: 트랜잭션이 존재하지 않습니다. |
-| SSRVTRA16001 | 트랜잭션 처리 실패: 트랜잭션이 유효하지 않습니다.         |
-| SSRVTRA16002 | 트랜잭션 처리 실패: 트랜잭션이 만료되었습니다.            |
-| SSRVTRA19004 | 토큰을 찾을 수 없습니다: 토큰이 등록되지 않았습니다.      |
-| SSRVTRA19002 | 토큰 처리에 실패했습니다: 토큰이 만료되었습니다.          |
-| SSRVTRA19003 | 인증에 실패했습니다: 제공된 토큰이 유효하지 않습니다.     |
-| SSRVTRA16510 | 서명 검증 실패: 서명이 유효하지 않습니다.                 |
-| SSRVTRA16511 | 서명 검증에 실패했습니다.                                 |
-| SSRVTRA16520 | 'authNonce' 가 일치하지 않습니다.                         |
-| SSRVTRA12011 | 요청한 DID와 Offer의 DID가 일치하지 않습니다.             |
-| SSRVTRA17005 | 앱 인증 실패: app ID가 일치하지 않습니다.                 |
-| SSRVTRA17508 | Wallet 인증 실패: Wallet ID가 일치하지 않습니다.          |
-| SSRVTRA15003 | 블록체인에서 DID Document 업데이트에 실패했습니다.        |
+| SSRVTRA16000 | Transaction not found: Transaction does not exist.       |
+| SSRVTRA16001 | Transaction processing failed: Transaction is invalid.   |
+| SSRVTRA16002 | Transaction processing failed: Transaction has expired.  |
+| SSRVTRA19004 | Token not found: Token is not registered.                |
+| SSRVTRA19002 | Token processing failed: Token has expired.              |
+| SSRVTRA19003 | Authentication failed: Provided token is invalid.        |
+| SSRVTRA16510 | Signature verification failed: Signature is invalid.     |
+| SSRVTRA16511 | Signature verification failed.                           |
+| SSRVTRA16520 | 'authNonce' does not match.                              |
+| SSRVTRA12011 | Requested DID does not match Offer's DID.                |
+| SSRVTRA17005 | App authentication failed: app ID does not match.        |
+| SSRVTRA17508 | Wallet authentication failed: Wallet ID does not match.  |
+| SSRVTRA15003 | DID Document update in blockchain failed.                |
 
 **■ Status 500 - Server error**
 
 |     Code     | Description                                                 |
 | :----------: | ----------------------------------------------------------- |
-| SSRVTRA17016 | 'request-restore-diddoc' API 요청 처리에 실패했습니다. |
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
+| SSRVTRA17016 | 'request-restore-diddoc' API request processing failed.    |
 
 #### 9.6.3. Example
 
@@ -3651,11 +3356,9 @@ Content-Type: application/json;charset=utf-8
 }
 ```
 
-<div style="page-break-after: always; margin-top: 40px;"></div>
-
 ### 9.7. Confirm Restore DidDoc
 
-사용자 DID Document 복구 거래를 종료한다.
+Terminates user DID Document recovery transaction.
 
 | Item          | Description                      | Remarks |
 | ------------- | -------------------------------- | ------- |
@@ -3663,10 +3366,9 @@ Content-Type: application/json;charset=utf-8
 | Path          | `/api/v1/confirm-restore-diddoc` |         |
 | Authorization | -                                |         |
 
-
 #### 9.7.1. Request
 
-월렛이 TAS를 통해 사용자의 DID Document 등록을 완료한 후 TAS 응답문의 `txId`를 회신한다.
+After wallet completes user DID Document registration through TAS, it returns the `txId` from TAS response.
 
 **■ Headers**
 
@@ -3685,7 +3387,7 @@ N/A
 **■ Body**
 
 ```c#
-def object M142_ConfirmRestoreDidDoc: "Confirm Restore DidDoc 요청문"
+def object M142_ConfirmRestoreDidDoc: "Confirm Restore DidDoc request message"
 {
     //--- Common Part ---
     + messageId "id"  : "message id"
@@ -3696,24 +3398,22 @@ def object M142_ConfirmRestoreDidDoc: "Confirm Restore DidDoc 요청문"
 }
 ```
 
-- `~/txId`: `_M142_RequestRestoreDidDoc.txId` (월렛으로부터 전달 받음)
-- `~/serverToken`: 이전에 생성한 서버토큰
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
+- `~/txId`: `_M142_RequestRestoreDidDoc.txId` (received from wallet)
+- `~/serverToken`: Previously generated server token
 
 #### 9.7.2. Response
 
-서버토큰, 거래코드 일치여부 확인 후 사용자 DID Document 복구 프로토콜을 종료한다.
+Verifies server token and transaction code match, then terminates user DID Document recovery protocol.
 
 **■ Process**
 
-1. 거래코드 확인
-1. 서버토큰 일치여부 확인
+1. Verify transaction code
+1. Verify server token match
 
 **■ Status 200 - Success**
 
 ```c#
-def object _M142_ConfirmRestoreDidDoc: "Confirm Restore DidDoc 응답문"
+def object _M142_ConfirmRestoreDidDoc: "Confirm Restore DidDoc response message"
 {
     //--- Common Part ---
     + uuid "txId": "transaction id"
@@ -3724,20 +3424,18 @@ def object _M142_ConfirmRestoreDidDoc: "Confirm Restore DidDoc 응답문"
 
 |     Code     | Description                                               |
 | :----------: | --------------------------------------------------------- |
-| SSRVTRA16000 | 트랜잭션을 찾지 못했습니다: 트랜잭션이 존재하지 않습니다. |
-| SSRVTRA16001 | 트랜잭션 처리 실패: 트랜잭션이 유효하지 않습니다.         |
-| SSRVTRA16002 | 트랜잭션 처리 실패: 트랜잭션이 만료되었습니다.            |
-| SSRVTRA19004 | 토큰을 찾을 수 없습니다: 토큰이 등록되지 않았습니다.      |
-| SSRVTRA19002 | 토큰 처리에 실패했습니다: 토큰이 만료되었습니다.          |
-| SSRVTRA19003 | 인증에 실패했습니다: 제공된 토큰이 유효하지 않습니다.     |
+| SSRVTRA16000 | Transaction not found: Transaction does not exist.       |
+| SSRVTRA16001 | Transaction processing failed: Transaction is invalid.   |
+| SSRVTRA16002 | Transaction processing failed: Transaction has expired.  |
+| SSRVTRA19004 | Token not found: Token is not registered.                |
+| SSRVTRA19002 | Token processing failed: Token has expired.              |
+| SSRVTRA19003 | Authentication failed: Provided token is invalid.        |
 
 **■ Status 500 - Server error**
 
 |     Code     | Description                                                 |
 | :----------: | ----------------------------------------------------------- |
-| SSRVTRA17017 | 'confirm-restore-diddoc' API 요청 처리에 실패했습니다. |
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
+| SSRVTRA17017 | 'confirm-restore-diddoc' API request processing failed.    |
 
 #### 9.7.3. Example
 
@@ -3769,33 +3467,30 @@ Content-Type: application/json;charset=utf-8
 }
 ```
 
-<div style="page-break-after: always; margin-top: 50px;"></div>
+## 10. P210 - VC Issuance Protocol
 
-## 10. P210 - VC 발급 프로토콜
-
-| Seq. | API                   | Description                | 표준API |
-| :--: | --------------------- | -------------------------- | ------- |
-|  1   | offer-issue-vc-qr     | VC 발급 Offer 요청 (QR)    | N       |
-|  1   | offer-issue-vc-push   | VC 발급 Offer 요청 (Push)  | N       |
-|  1   | offer-issue-vc-email  | VC 발급 Offer 요청 (Email) | N       |
-|  2   | propose-issue-vc      | VC 발급 시작 요청          | Y       |
-|  3   | request-ecdh          | ECDH 요청                  | Y       |
-|  4   | request-create-token  | 서버토큰 생성 요청         | Y       |
-|  5   | request-issue-profile | Issue Profile 요청         | Y       |
-|  6   | request-issue-vc      | VC 발급 요청               | Y       |
-|  7   | confirm-issue-vc      | VC 발급 완료               | Y       |
-
+| Seq. | API                   | Description                    | Standard API |
+| :--: | --------------------- | ------------------------------ | ------------ |
+|  1   | offer-issue-vc-qr     | VC issuance Offer request (QR) | N            |
+|  1   | offer-issue-vc-push   | VC issuance Offer request (Push)| N           |
+|  1   | offer-issue-vc-email  | VC issuance Offer request (Email)| N          |
+|  2   | propose-issue-vc      | VC issuance request            | Y            |
+|  3   | request-ecdh          | ECDH request                   | Y            |
+|  4   | request-create-token  | Server token creation request  | Y            |
+|  5   | request-issue-profile | Issue Profile request          | Y            |
+|  6   | request-issue-vc      | VC issuance request            | Y            |
+|  7   | confirm-issue-vc      | VC issuance completion         | Y            |
 
 ### 10.1 Offer Issue VC (QR)
 
-VC 발급을 위해 발급 세션 정보를 요청하는 과정이다. Issuer(발급자)는 발급할 VC와 관련된 사용자의 정보를 미리 알고 있어, 발급 세션 정보를 인가앱에 제공할 수 있다. 이 발급 세션 정보는 Issue Offer라고 하며, 사용자는 이 정보를 통해 발급 절차를 시작할 수 있다.
+This is the process of requesting issuance session information for VC issuance. The Issuer knows the user's information related to the VC to be issued in advance, so they can provide issuance session information to the CA app. This issuance session information is called Issue Offer, and users can start the issuance procedure through this information.
 
-예를 들어, 특정 기관의 직원만 발급받을 수 있는 공무원증과 같은 경우, 해당 직원의 정보는 이미 등록되어 있으며, 발급자는 이를 바탕으로 발급 세션을 생성하고 QR 코드를 통해 발급 링크를 제공할 수 있다. 사용자는 QR 코드를 스캔하여 VC 발급 절차를 시작할 수 있다.
+For example, in the case of civil servant ID that can only be issued to employees of specific institutions, the employee's information is already registered, and the issuer can create an issuance session based on this and provide an issuance link through QR code. Users can start the VC issuance procedure by scanning the QR code.
 
-Offer의 종류는 3가지가 있으며, 각각 발급 세션 정보를 전달하는 방식이 다르다:
-1. **offer-issue-vc-qr**: QR 코드를 통해 발급 세션 정보를 전달.
-2. **offer-issue-vc-push**: Push 알림을 통해 발급 세션 정보를 전달.
-3. **offer-issue-vc-email**: 이메일을 통해 발급 세션 정보를 전달.
+There are 3 types of Offers, each with different methods of delivering issuance session information:
+1. **offer-issue-vc-qr**: Deliver issuance session information through QR code.
+2. **offer-issue-vc-push**: Deliver issuance session information through Push notifications.
+3. **offer-issue-vc-email**: Deliver issuance session information through email.
 
 | Item          | Description                     | Remarks |
 | ------------- | ------------------------------- | ------- |
@@ -3822,7 +3517,7 @@ N/A
 **■ HTTP Body**
 
 ```c#
-def object OfferIssueVcQr: "Offer Issue VC QR 요청문"
+def object OfferIssueVcQr: "Offer Issue VC QR request message"
 {    
     //--- Common Part ---
     + messageId     "id"            : "message id"
@@ -3833,22 +3528,20 @@ def object OfferIssueVcQr: "Offer Issue VC QR 요청문"
 }
 ```
 
-<div style="page-break-after: always; margin-top: 30px;"></div>
-
 #### 10.1.2. Response
 
 **■ Process**
-1. issuer로 Entity 정보 조회
-1. issuer server로 OfferIssueVc 메시지 전송
+1. Retrieve Entity information by issuer
+1. Send OfferIssueVc message to issuer server
 
 **■ Status 200 - Success**
 
 ```c#
-def object _OfferIssueVcQr: "Offer Issue VC QR 응답문"
+def object _OfferIssueVcQr: "Offer Issue VC QR response message"
 {    
-    + uuid                  "offerId"           : "VC 발급 offer id"
-    + utcDatetime           "validUntil"        : "발급 가능 종료일시"
-    + IssueOfferPayload     "issueOfferPayload" : "VC Plan ID" // 데이터 명세서 참고
+    + uuid                  "offerId"           : "VC issuance offer id"
+    + utcDatetime           "validUntil"        : "issuance availability end time"
+    + IssueOfferPayload     "issueOfferPayload" : "VC Plan ID" // Refer to data specification
 }
 ```
 
@@ -3856,18 +3549,16 @@ def object _OfferIssueVcQr: "Offer Issue VC QR 응답문"
 
 | Code         | Description                                             |
 | ------------ | ------------------------------------------------------- |
-| SSRVISSXXXXX | Issuer_API 문서를 참고해 주세요.                        |
-| SSRVTRA14001 | Issuer를 찾을 수 없습니다: Issur가 등록되지 않았습니다. |
-| SSRVTRA14002 | Issuer 등록이 완료되지 않았습니다.                      |
+| SSRVISSXXXXX | Please refer to Issuer_API documentation.              |
+| SSRVTRA14001 | Issuer not found: Issuer is not registered.            |
+| SSRVTRA14002 | Issuer registration is not completed.                   |
 
 **■ Status 500 - Server error**
 
 |     Code     | Description                                                   |
 | :----------: | ------------------------------------------------------------- |
-| SSRVTRA15502 | Issuer와 통신에 실패했습니다: 알 수 없는 오류가 발생했습니다. |
-| SSRVTRA18527 | 'offer-issue-vc-qr' API 요청 처리에 실패했습니다. |
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
+| SSRVTRA15502 | Communication with Issuer failed: Unknown error occurred.    |
+| SSRVTRA18527 | 'offer-issue-vc-qr' API request processing failed.          |
 
 #### 10.1.3. Example
 
@@ -3907,18 +3598,16 @@ Content-Type: application/json;charset=utf-8
 }
 ```
 
-<div style="page-break-after: always; margin-top: 40px;"></div>
+## 10.2 Offer Issue VC (Push)
 
-### 10.2 Offer Issue VC (Push)
+This process requests issuance session information for VC issuance. The Issuer already knows the user information related to the VC to be issued and can provide issuance session information to the authorization app. This issuance session information is called an Issue Offer, and users can initiate the issuance process using this information.
 
-VC 발급을 위해 발급 세션 정보를 요청하는 과정이다. Issuer(발급자)는 발급할 VC와 관련된 사용자의 정보를 미리 알고 있어, 발급 세션 정보를 인가앱에 제공할 수 있다. 이 발급 세션 정보는 Issue Offer라고 하며, 사용자는 이 정보를 통해 발급 절차를 시작할 수 있다.
+For example, in the case of a government employee ID that can only be issued to employees of a specific institution, the employee's information is already registered, and the issuer can create an issuance session based on this information and provide an issuance link through Push notifications. Users can receive the Push notification and start the VC issuance process.
 
-예를 들어, 특정 기관의 직원만 발급받을 수 있는 공무원증과 같은 경우, 해당 직원의 정보는 이미 등록되어 있으며, 발급자는 이를 바탕으로 발급 세션을 생성하고 Push 알림을 통해 발급 링크를 제공할 수 있다. 사용자는 Push 알림을 수신하여 VC 발급 절차를 시작할 수 있다.
-
-Offer의 종류는 3가지가 있으며, 각각 발급 세션 정보를 전달하는 방식이 다르다:
-1. **offer-issue-vc-qr**: QR 코드를 통해 발급 세션 정보를 전달.
-2. **offer-issue-vc-push**: Push 알림을 통해 발급 세션 정보를 전달.
-3. **offer-issue-vc-email**: 이메일을 통해 발급 세션 정보를 전달.
+There are 3 types of Offers, each with different methods of delivering issuance session information:
+1. **offer-issue-vc-qr**: Delivers issuance session information through QR code.
+2. **offer-issue-vc-push**: Delivers issuance session information through Push notifications.
+3. **offer-issue-vc-email**: Delivers issuance session information through email.
 
 | Item          | Description                     | Remarks |
 | ------------- | ------------------------------- | ------- |
@@ -3929,31 +3618,26 @@ Offer의 종류는 3가지가 있으며, 각각 발급 세션 정보를 전달�
 #### 10.2.1. Request
 
 **■ HTTP Headers**
-
 | Header           | Value                            | Remarks |
 | ---------------- | -------------------------------- | ------- |
 | + `Content-Type` | `application/json;charset=utf-8` |         |     
 
 **■ Path Parameters**
-
 N/A
 
 **■ Query Parameters**
-
 N/A
 
 **■ HTTP Body**
-
 ```c#
-def object OfferIssueVcPush: "Offer Issue VC Push 요청문"
+def object OfferIssueVcPush: "Offer Issue VC Push request"
 {    
     //--- Common Part ---
     + messageId     "id"            : "message id"
-
     //--- Data Part ---
     + vcPlanId      "vcPlanId"      : "VC Plan ID"
     + did           "issuer"        : "Issuer DID"
-    + did           "holder"        : "사용자 DID"
+    + did           "holder"        : "User DID"
 }
 ```
 
@@ -3962,37 +3646,34 @@ def object OfferIssueVcPush: "Offer Issue VC Push 요청문"
 #### 10.2.2. Response
 
 **■ Process**
-1. issuer로 Entity 정보 조회
-1. issuer server로 OfferIssueVc 메시지 전송
-1. holder로 사용자 Push Token 조회
-1. push 메시지 생성 후 전송
+1. Retrieve Entity information by issuer
+1. Send OfferIssueVc message to issuer server
+1. Retrieve user Push Token by holder
+1. Generate and send push message
 
 **■ Status 200 - Success**
-
 ```c#
-def object _OfferIssueVcPush: "Offer Issue VC Push 응답문"
+def object _OfferIssueVcPush: "Offer Issue VC Push response"
 {    
-    + uuid                  "offerId"           : "VC 발급 offer id"
-    + utcDatetime           "validUntil"        : "발급 가능 종료일시"
+    + uuid                  "offerId"           : "VC issuance offer id"
+    + utcDatetime           "validUntil"        : "Issuance available end date/time"
 }
 ```
 
 **■ Status 400 - Client error**
-
 | Code         | Description                                             |
 | ------------ | ------------------------------------------------------- |
-| SSRVISSXXXXX | Issuer_API 문서를 참고해 주세요.                        |
-| SSRVTRA14001 | Issuer를 찾을 수 없습니다: Issur가 등록되지 않았습니다. |
-| SSRVTRA14002 | Issuer 등록이 완료되지 않았습니다.                      |
+| SSRVISSXXXXX | Please refer to the Issuer_API documentation.          |
+| SSRVTRA14001 | Issuer not found: Issuer is not registered.            |
+| SSRVTRA14002 | Issuer registration is not completed.                  |
 
 **■ Status 500 - Server error**
-
 | Code         | Description                                                   |
 | ------------ | ------------------------------------------------------------- |
-| SSRVTRA15502 | Issuer와 통신에 실패했습니다: 알 수 없는 오류가 발생했습니다. |
-| SSRVTRA12003 | Push 데이터 생성에 실패하였습니다.                            |
-| SSRVTRA13501 | FCM 메시지 전송에 실패했습니다.                               |
-| SSRVTRA18528 | 'offer-issue-vc-push' API 요청 처리에 실패했습니다.           |
+| SSRVTRA15502 | Failed to communicate with Issuer: An unknown error occurred. |
+| SSRVTRA12003 | Failed to generate Push data.                                |
+| SSRVTRA13501 | Failed to send FCM message.                                  |
+| SSRVTRA18528 | Failed to process 'offer-issue-vc-push' API request.         |
 
 <div style="page-break-after: always; margin-top: 30px;"></div>
 
@@ -4013,8 +3694,7 @@ curl -v -X POST "http://${Host}:${Port}/tas/api/v1/offer-issue-vc/push" \
    "vcPlanId":"vcplanid000000000001",
    "issuer":"did:omn:issuer",
    "holder":"did:omn:gagws6YDE6qAGac2MsjPkAQah3t"
-}
-```
+}```
 
 **■ Response**
 
@@ -4028,18 +3708,16 @@ Content-Type: application/json;charset=utf-8
 }
 ```
 
-<div style="page-break-after: always; margin-top: 40px;"></div>
-
 ### 10.3 Offer Issue VC (Email)
 
-VC 발급을 위해 발급 세션 정보를 요청하는 과정이다. Issuer(발급자)는 발급할 VC와 관련된 사용자의 정보를 미리 알고 있어, 발급 세션 정보를 인가앱에 제공할 수 있다. 이 발급 세션 정보는 Issue Offer라고 하며, 사용자는 이 정보를 통해 발급 절차를 시작할 수 있다.
+This is the process of requesting issuance session information for VC issuance. The Issuer knows the user's information related to the VC to be issued in advance, so they can provide issuance session information to the CA app. This issuance session information is called Issue Offer, and users can start the issuance procedure through this information.
 
-예를 들어, 특정 기관의 직원만 발급받을 수 있는 공무원증과 같은 경우, 해당 직원의 정보는 이미 등록되어 있으며, 발급자는 이를 바탕으로 발급 세션을 생성하고 이메일을 통해 발급 링크를 제공할 수 있다. 사용자는 이메일을 통해 VC 발급 절차를 시작할 수 있다.
+For example, in the case of civil servant ID that can only be issued to employees of specific institutions, the employee's information is already registered, and the issuer can create an issuance session based on this and provide an issuance link through email. Users can start the VC issuance procedure through email.
 
-Offer의 종류는 3가지가 있으며, 각각 발급 세션 정보를 전달하는 방식이 다르다:
-1. **offer-issue-vc-qr**: QR 코드를 통해 발급 세션 정보를 전달.
-2. **offer-issue-vc-push**: Push 알림을 통해 발급 세션 정보를 전달.
-3. **offer-issue-vc-email**: 이메일을 통해 발급 세션 정보를 전달.
+There are 3 types of Offers, each with different methods of delivering issuance session information:
+1. **offer-issue-vc-qr**: Deliver issuance session information through QR code.
+2. **offer-issue-vc-push**: Deliver issuance session information through Push notifications.
+3. **offer-issue-vc-email**: Deliver issuance session information through email.
 
 | Item          | Description                        | Remarks |
 | ------------- | ---------------------------------- | ------- |
@@ -4066,7 +3744,7 @@ N/A
 **■ HTTP Body**
 
 ```c#
-def object OfferIssueVcEmail: "Offer Issue VC Email 요청문"
+def object OfferIssueVcEmail: "Offer Issue VC Email request message"
 {    
     //--- Common Part ---
     + messageId     "id"            : "message id"
@@ -4074,26 +3752,24 @@ def object OfferIssueVcEmail: "Offer Issue VC Email 요청문"
     //--- Data Part ---
     + vcPlanId      "vcPlanId"      : "VC Plan ID"
     + did           "issuer"        : "Issuer DID"
-    + string        "email"      : "사용자 Email 주소"
+    + string        "email"         : "user Email address"
 }
 ```
 
-<div style="page-break-after: always; margin-top: 30px;"></div>
-
-#### 10.3.1. Response
+#### 10.3.2. Response
 
 **■ Process**
-1. issuer로 Entity 정보 조회
-1. issuer server로 OfferIssueVc 메시지 전송
-1. 이메일 메시지 생성 후 발송
+1. Retrieve Entity information by issuer
+1. Send OfferIssueVc message to issuer server
+1. Generate and send email message
 
 **■ Status 200 - Success**
 
 ```c#
-def object _OfferIssueVcPush: "Offer Issue VC Push 응답문"
+def object _OfferIssueVcPush: "Offer Issue VC Push response message"
 {    
-    + uuid                  "offerId"           : "VC 발급 offer id"
-    + utcDatetime           "validUntil"        : "발급 가능 종료일시"
+    + uuid                  "offerId"           : "VC issuance offer id"
+    + utcDatetime           "validUntil"        : "issuance availability end time"
 }
 ```
 
@@ -4101,21 +3777,18 @@ def object _OfferIssueVcPush: "Offer Issue VC Push 응답문"
 
 | Code         | Description                                             |
 | ------------ | ------------------------------------------------------- |
-| SSRVISSXXXXX | Issuer_API 문서를 참고해 주세요.                        |
-| SSRVTRA14001 | Issuer를 찾을 수 없습니다: Issur가 등록되지 않았습니다. |
-| SSRVTRA14002 | Issuer 등록이 완료되지 않았습니다.                      |
-| SSRVTRA13500 | 이메일 템플릿 조회가 실패했습니다.                      |
-| SSRVTRA15504 | 이메일 전송에 실패했습니다.                             |
-
+| SSRVISSXXXXX | Please refer to Issuer_API documentation.              |
+| SSRVTRA14001 | Issuer not found: Issuer is not registered.            |
+| SSRVTRA14002 | Issuer registration is not completed.                   |
+| SSRVTRA13500 | Email template retrieval failed.                        |
+| SSRVTRA15504 | Email transmission failed.                              |
 
 **■ Status 500 - Server error**
 
 | Code         | Description                                                   |
 | ------------ | ------------------------------------------------------------- |
-| SSRVTRA15502 | Issuer와 통신에 실패했습니다: 알 수 없는 오류가 발생했습니다. |
-| SSRVTRA18529 | 'offer-issue-vc-email' API 요청 처리에 실패했습니다.           |
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
+| SSRVTRA15502 | Communication with Issuer failed: Unknown error occurred.    |
+| SSRVTRA18529 | 'offer-issue-vc-email' API request processing failed.        |
 
 #### 10.3.3. Example
 
@@ -4149,18 +3822,15 @@ Content-Type: application/json;charset=utf-8
 }
 ```
 
-<div style="page-break-after: always; margin-top: 40px;"></div>
-
 ### 10.4. Propose Issue VC
 
-VC 발급 거래를 시작한다.
+Initiates VC issuance transaction.
 
 | Item          | Description                | Remarks |
 | ------------- | -------------------------- | ------- |
 | Method        | `POST`                     |         |
 | Path          | `/api/v1/propose-issue-vc` |         |
 | Authorization | -                          |         |
-
 
 #### 10.4.1. Request
 
@@ -4181,7 +3851,7 @@ N/A
 **■ Body**
 
 ```c#
-def object M210_ProposeIssueVc: "Propose Issue VC 요청문"
+def object M210_ProposeIssueVc: "Propose Issue VC request message"
 {
     //--- Common Part ---
     + messageId "id": "message id"
@@ -4193,33 +3863,31 @@ def object M210_ProposeIssueVc: "Propose Issue VC 요청문"
 }
 ```
 
-<div style="page-break-after: always; margin-top: 30px;"></div>
-
 #### 10.4.2. Response
 
-`vcPlanId`에 지정된 VC Plan을 확인한 후 VC 발급이 가능한지 확인하다.
+Checks the VC Plan specified in `vcPlanId` and verifies if VC issuance is possible.
 
 **■ Process**
 
-1. VC plan 유효성 확인
-    - `vcPlanId`로 VC plan 검색
-    - `issuer`가 지정된 경우 해당 VC plan에 발급 가능한 이슈어(delegator 포함) 등록 여부 확인
-    - 발급이슈어 = 어떤 이슈어가 발급을 진행하는지 조회 (TAS DB 등에 저장된 정보 조회)
-1. 발급이슈어에게 발급 가능여부 확인 (`vcPlanId`, `issuer`, `offerId` 전달)
-    - `refId` = 참조번호 생성
-1. `txId` = 거래코드 생성
-1. `txId`, `refId` 저장
+1. Verify VC plan validity
+    - Search VC plan by `vcPlanId`
+    - If `issuer` is specified, check registration of issuable issuer (including delegator) for that VC plan
+    - Issuance issuer = Retrieve which issuer will proceed with issuance (retrieve information stored in TAS DB etc.)
+1. Check issuance availability with issuance issuer (pass `vcPlanId`, `issuer`, `offerId`)
+    - `refId` = Generate reference number
+1. `txId` = Generate transaction code
+1. Save `txId`, `refId`
 
 **■ Status 200 - Success**
 
 ```c#
-def object _M210_ProposeIssueVc: "Propose Issue VC 응답문"
+def object _M210_ProposeIssueVc: "Propose Issue VC response message"
 {    
     //--- Common Part ---
     + uuid "txId": "transaction id"
 
     //--- Data Part ---
-    + refId "refId": "참조번호"
+    + refId "refId": "reference number"
 }
 ```
 
@@ -4227,19 +3895,16 @@ def object _M210_ProposeIssueVc: "Propose Issue VC 응답문"
 
 |     Code     | Description                                             |
 | :----------: | ------------------------------------------------------- |
-| SSRVISSXXXXX | Issuer_API 문서를 참고해 주세요.                        |
-| SSRVTRA14001 | Issuer를 찾을 수 없습니다: Issur가 등록되지 않았습니다. |
-| SSRVTRA14002 | Issuer 등록이 완료되지 않았습니다.                      |
-
+| SSRVISSXXXXX | Please refer to Issuer_API documentation.              |
+| SSRVTRA14001 | Issuer not found: Issuer is not registered.            |
+| SSRVTRA14002 | Issuer registration is not completed.                   |
 
 **■ Status 500 - Server error**
 
 |     Code     | Description                                                   |
 | :----------: | ------------------------------------------------------------- |
-| SSRVTRA15502 | Issuer와 통신에 실패했습니다: 알 수 없는 오류가 발생했습니다. |
-| SSRVTRA18520 | 'propose-issue-vc' API 요청 처리에 실패했습니다.              |
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
+| SSRVTRA15502 | Communication with Issuer failed: Unknown error occurred.    |
+| SSRVTRA18520 | 'propose-issue-vc' API request processing failed.            |
 
 #### 10.4.3. Example
 
@@ -4273,11 +3938,9 @@ Content-Type: application/json;charset=utf-8
 }
 ```
 
-<div style="page-break-after: always; margin-top: 40px;"></div>
-
 ### 10.5. Request ECDH
 
-세션 암호화를 위한 키교환을 수행한다.
+Performs key exchange for session encryption.
 
 | Item          | Description            | Remarks |
 | ------------- | ---------------------- | ------- |
@@ -4305,7 +3968,7 @@ N/A
 **■ Body**
 
 ```c#
-def object M210_RequestEcdh: "ECDH 요청문"
+def object M210_RequestEcdh: "ECDH request message"
 {
     //--- Common Part ---
     + messageId "id"  : "message id"
@@ -4317,12 +3980,12 @@ def object M210_RequestEcdh: "ECDH 요청문"
 ```
 
 - `~/reqEcdh`
-    - `client`: 클라이언트 DID
-    - `clientNonce`: 클라이언트가 생성한 난수
-    - `curve`: ECDH용 ECC 곡선 타입 (클라이언트가 하나를 지정)
-    - `publicKey`: 상기 `curve` 유형으로 생성한 임시키쌍의 공개키
+    - `client`: Client DID
+    - `clientNonce`: Random number generated by client
+    - `curve`: ECC curve type for ECDH (client specifies one)
+    - `publicKey`: Public key of temporary key pair generated with the above `curve` type
     - `candidate` 
-        - `ciphers`: 클라이언트가 지원하는 cipher 알고리즘 목록
+        - `ciphers`: List of cipher algorithms supported by client
 
 <div style="page-break-after: always; margin-top: 30px;"></div>
 
@@ -4330,27 +3993,27 @@ def object M210_RequestEcdh: "ECDH 요청문"
 
 **■ Process**
 
-1. 거래코드 확인
-1. `~/reqEcdh/proof` 서명 검증
-1. 클라이언트 요청값(`~/reqEcdh`) 정합성 확인 및 cipher 알고리즘 선택
-    - `cipherAlg` = cipher 알고리즘 선택
-    - `padding` = 패딩 방식 선택
-1. ECIES 세션키 생성
+1. Verify transaction code
+1. Verify signature of `~/reqEcdh/proof`
+1. Verify client request values (`~/reqEcdh`) integrity and select cipher algorithm
+    - `cipherAlg` = Select cipher algorithm
+    - `padding` = Select padding method
+1. Generate ECIES session key
     - `clientNonce` = `~/reqEcdh/clientNonce`
-    - `severNonce` = 16-byte nonce 생성
+    - `severNonce` = Generate 16-byte nonce
     - `mergedNonce` = sha256(serverNonce, clientNonce)
     - `clientPubKey` = `~/reqEcdh/publicKey`
-    - `serverPubKey`, `serverPriKey` = `~/reqEcdh/curve` 타입의 서버 임시키쌍 생성
+    - `serverPubKey`, `serverPriKey` = Generate server temporary key pair of `~/reqEcdh/curve` type
     - `sesKey` = ecies(serverPriKey, clientPubKey, mergedNonce, cipherAlg)
-1. ECDH 정보 저장
-    - 클라이언트 DID, 거래코드
+1. Store ECDH information
+    - Client DID, transaction code
     - `sesKey`, `cipherAlg`, `padding`
-1. ECDH 수락 데이터 생성 및 서명
+1. Generate and sign ECDH acceptance data
 
 **■ Status 200 - Success**
 
 ```c#
-def object _M210_RequestEcdh: "Request ECDH 응답문"
+def object _M210_RequestEcdh: "Request ECDH response message"
 {    
     //--- Common Part ---
     + uuid "txId": "transaction id"
@@ -4361,32 +4024,32 @@ def object _M210_RequestEcdh: "Request ECDH 응답문"
 ```
 
 - `~/accEcdh`
-    - `server`: 서버 DID
-    - `serverNonce`: 서버가 생성한 난수
-    - `publicKey`: 서버가 생성한 임시키쌍의 공개키(`serverPubKey`)
-    - `cipher`: 클라이언트의 후보 중 서버가 선택한 cipher 알고리즘
-    - `padding`: 서버가 선택한 패딩 방식
+    - `server`: Server DID
+    - `serverNonce`: Random number generated by server
+    - `publicKey`: Public key of temporary key pair generated by server (`serverPubKey`)
+    - `cipher`: Cipher algorithm selected by server from client candidates
+    - `padding`: Padding method selected by server
 
 
 **■ Status 400 - Client error**
 
 |     Code     | Description                                               |
 | :----------: | --------------------------------------------------------- |
-| SSRVTRA16519 | 클라이언트 Nonce 처리 실패: 잘못된 Nonce입니다.           |
-| SSRVTRA16000 | 트랜잭션을 찾지 못했습니다: 트랜잭션이 존재하지 않습니다. |
-| SSRVTRA16001 | 트랜잭션 처리 실패: 트랜잭션이 유효하지 않습니다.         |
-| SSRVTRA16002 | 트랜잭션 처리 실패: 트랜잭션이 만료되었습니다.            |
-| SSRVTRA16510 | 서명 검증 실패: 서명이 유효하지 않습니다.                 |
-| SSRVTRA16511 | 서명 검증에 실패했습니다.                                 |
-| SSRVTRA12008 | 지원되지 않는 Cipher Type 입니다.                         |
+| SSRVTRA16519 | Client Nonce processing failed: Invalid Nonce.           |
+| SSRVTRA16000 | Transaction not found: Transaction does not exist.       |
+| SSRVTRA16001 | Transaction processing failed: Transaction is invalid.   |
+| SSRVTRA16002 | Transaction processing failed: Transaction has expired.  |
+| SSRVTRA16510 | Signature verification failed: Signature is invalid.     |
+| SSRVTRA16511 | Signature verification failed.                           |
+| SSRVTRA12008 | Unsupported Cipher Type.                                 |
 
 **■ Status 500 - Server error**
 
 |     Code     | Description                                  |
 | :----------: | -------------------------------------------- |
-| SSRVTRA16504 | Nonce 생성에 실패했습니다.                   |
-| SSRVTRA16506 | 세션키 생성에 실패했습니다.                  |
-| SSRVTRA16521 | 'request-ecdh' API 요청 처리에 실패했습니다. |
+| SSRVTRA16504 | Failed to generate Nonce.                   |
+| SSRVTRA16506 | Failed to generate session key.             |
+| SSRVTRA16521 | Failed to process 'request-ecdh' API request.|
 
 <div style="page-break-after: always; margin-top: 30px;"></div>
 
@@ -4450,7 +4113,7 @@ Content-Type: application/json;charset=utf-8
 
 ### 10.6. Request Create Token
 
-인가앱이 TAS에게 서버토큰 생성을 요청한다.
+The authorized app requests TAS to generate a server token.
 
 | Item          | Description                    | Remarks |
 | ------------- | ------------------------------ | ------- |
@@ -4460,14 +4123,14 @@ Content-Type: application/json;charset=utf-8
 
 #### 10.6.1. Request
 
-서버토큰을 생성하기 위해서는 아래와 같은 토큰시드를 넘겨줘야 한다.
+To generate a server token, the following token seed must be provided:
 
 - `(ServerTokenSeed)seed`
     - `purpose`: "IssueVc"
-    - `walletInfo`: 서명된 월렛정보 (월렛 SDK 호출하여 획득)
-    - `caAppInfo`: 서명된 인가앱정보 (인가앱 사업자 API 호출하여 획득)
+    - `walletInfo`: Signed wallet information (obtained by calling wallet SDK)
+    - `caAppInfo`: Signed authorized app information (obtained by calling authorized app provider API)
 
-자세한 내용은 [DATA-SPEC]을 참조한다.
+For detailed information, refer to [DATA-SPEC].
 
 **■ Headers**
 
@@ -4486,7 +4149,7 @@ N/A
 **■ Body**
 
 ```c#
-def object M210_RequestCreateToken: "Request Create Token 요청문"
+def object M210_RequestCreateToken: "Request Create Token message"
 {
     //--- Common Part ---
     + messageId "id"  : "message id"
@@ -4498,74 +4161,74 @@ def object M210_RequestCreateToken: "Request Create Token 요청문"
 ```
 
 - `~/seed`
-    - `purpose`: 토큰 사용 목적
-    - `walletInfo`: 서명된 월렛 정보
-    - `caAppInfo`: 서명된 인가앱 정보
+    - `purpose`: Token usage purpose
+    - `walletInfo`: Signed wallet information
+    - `caAppInfo`: Signed authorized app information
 
 <div style="page-break-after: always; margin-top: 30px;"></div>
 
 #### 10.6.2. Response
 
-클라이언트가 넘겨준 seed 내 서명 검증 후 서버토큰 데이터를 생성하여 응답한다.
-응답 데이터는 세션키로 암호화한다.
+After verifying the signatures in the seed provided by the client, generates server token data and responds.
+The response data is encrypted with the session key.
 
 **■ Process**
 
-1. 거래코드 확인
-1. purpose 유효성 확인
-1. `~/seed` 내 proof 서명 검증
-    - `walletInfo.proof` 월렛 서명 검증
-    - `caAppInfo.proof` 월렛 사업자 서명 검증
-1. 데이터 준비
-    - 토큰 유효일시 설정
-    - 기타 난수 등 생성
-1. 상기 데이터를 서명하여 `(ServerTokenData)std` 생성
-1. 서버토큰 생성하여 저장
+1. Verify transaction code
+1. Verify purpose validity
+1. Verify proof signatures in `~/seed`
+    - Verify `walletInfo.proof` wallet signature
+    - Verify `caAppInfo.proof` wallet provider signature
+1. Prepare data
+    - Set token expiration time
+    - Generate other random numbers, etc.
+1. Sign the above data to generate `(ServerTokenData)std`
+1. Generate and store server token
     - `serverToken` = sha256(std)
-1. 응답 데이터 준비
+1. Prepare response data
     - `tmp` = enc(std, sesKey, iv, padding)
     - `encStd` = multibase(tmp)
 
 **■ Status 200 - Success**
 
 ```c#
-def object _M210_RequestCreateToken: "Request Create Token 응답문"
+def object _M210_RequestCreateToken: "Request Create Token response message"
 {    
     //--- Common Part ---
     + uuid      "txId": "transaction id"
-    + multibase "iv"  : "세션키 암복호화 IV"
+    + multibase "iv"  : "session key encryption/decryption IV"
     
     //--- Data Part ---
     + multibase "encStd": "multibase(enc((ServerTokenData)std))"
 }
 ```
 
-- `~/encStd`: 암호화된 서버토큰 데이터
+- `~/encStd`: Encrypted server token data
 
 
 **■ Status 400 - Client error**
 
 |     Code     | Description                                               |
 | :----------: | --------------------------------------------------------- |
-| SSRVTRA16000 | 트랜잭션을 찾지 못했습니다: 트랜잭션이 존재하지 않습니다. |
-| SSRVTRA16001 | 트랜잭션 처리 실패: 트랜잭션이 유효하지 않습니다.         |
-| SSRVTRA16002 | 트랜잭션 처리 실패: 트랜잭션이 만료되었습니다.            |
-| SSRVTRA12005 | 지원하지 않는 'token purpose' 입니다.                     |
-| SSRVTRA17502 | Wallet을 찾을 수 없습니다: Wallet이 등록되지 않았습니다.  |
-| SSRVTRA16510 | 서명 검증 실패: 서명이 유효하지 않습니다.                 |
-| SSRVTRA16511 | 서명 검증에 실패했습니다.                                 |
-| SSRVTRA18510 | 가입증명서 VC를 찾을 수 없습니다.                         |
-| SSRVTRA12007 | Provider DID가 일치하지 않습니다.                         |
-| SSRVTRA18511 | 유효하지 않은 가입증명서 VC의 Issuer입니다.               |
-| SSRVTRA18519 | VC 검증에 실패했습니다.                                   |
+| SSRVTRA16000 | Transaction not found: Transaction does not exist.       |
+| SSRVTRA16001 | Transaction processing failed: Transaction is invalid.   |
+| SSRVTRA16002 | Transaction processing failed: Transaction has expired.  |
+| SSRVTRA12005 | Unsupported 'token purpose'.                             |
+| SSRVTRA17502 | Wallet not found: Wallet is not registered.              |
+| SSRVTRA16510 | Signature verification failed: Signature is invalid.     |
+| SSRVTRA16511 | Signature verification failed.                           |
+| SSRVTRA18510 | Registration certificate VC not found.                   |
+| SSRVTRA12007 | Provider DID does not match.                             |
+| SSRVTRA18511 | Invalid registration certificate VC Issuer.              |
+| SSRVTRA18519 | VC verification failed.                                   |
 
 **■ Status 500 - Server error**
 
 |     Code     | Description                                          |
 | :----------: | ---------------------------------------------------- |
-| SSRVTRA19000 | 서버 토큰 생성에 실패했습니다.                       |
-| SSRVTRA19001 | 서버 토큰 데이터를 암호화하는 데 실패했습니다.       |
-| SSRVTRA19005 | 'request-create-token' API 요청 처리에 실패했습니다. |
+| SSRVTRA19000 | Failed to generate server token.                    |
+| SSRVTRA19001 | Failed to encrypt server token data.                |
+| SSRVTRA19005 | Failed to process 'request-create-token' API request.|
 
 <div style="page-break-after: always; margin-top: 30px;"></div>
 
@@ -4636,15 +4299,14 @@ Content-Type: application/json;charset=utf-8
 
 ### 10.7. Request Issue Profile
 
-VC 발급을 위한 IssueProfile을 요청한다.
-TAS는 식별된 발급 사업자에게 IssueProfile 생성을 요청하여 인가앱에 전달한다.
+Requests IssueProfile for VC issuance.
+TAS requests IssueProfile creation from identified issuer provider and delivers to CA app.
 
 | Item          | Description                     | Remarks |
 | ------------- | ------------------------------- | ------- |
 | Method        | `POST`                          |         |
 | Path          | `/api/v1/request-issue-profile` |         |
 | Authorization | -                               |         |
-
 
 #### 10.7.1. Request
 
@@ -4665,33 +4327,31 @@ N/A
 **■ Body**
 
 ```c#
-def object M210_RequestIssueProfile: "Request Issue Profile 요청문"
+def object M210_RequestIssueProfile: "Request Issue Profile request message"
 {
     //--- Common Part ---
     + messageId "id"  : "message id"
     + uuid      "txId": "transaction id"
 
     //--- Data Part ---
-    + multibase "serverToken": "서버토큰"
+    + multibase "serverToken": "server token"
 }
 ```
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
 
 #### 10.7.2. Response
 
 **■ Process**
 
-1. 거래코드 확인
-1. 서버토큰 유효성 확인
-1. 이슈어에 IssueProfile 요청
-1. `authNonce` = DID Auth 용 16-byte nonce 생성
-1. `authNonce` 저장
+1. Verify transaction code
+1. Verify server token validity
+1. Request IssueProfile from issuer
+1. `authNonce` = Generate 16-byte nonce for DID Auth
+1. Save `authNonce`
 
 **■ Status 200 - Success**
 
 ```c#
-def object _M210_RequestIssueProfile: "Request Issue Profile 응답문"
+def object _M210_RequestIssueProfile: "Request Issue Profile response message"
 {    
     //--- Common Part ---
     + uuid "txId": "transaction id"
@@ -4706,25 +4366,23 @@ def object _M210_RequestIssueProfile: "Request Issue Profile 응답문"
 
 |     Code     | Description                                               |
 | :----------: | --------------------------------------------------------- |
-| SSRVISSXXXXX | Issuer_API 문서를 참고해 주세요.                          |
-| SSRVTRA16000 | 트랜잭션을 찾지 못했습니다: 트랜잭션이 존재하지 않습니다. |
-| SSRVTRA16001 | 트랜잭션 처리 실패: 트랜잭션이 유효하지 않습니다.         |
-| SSRVTRA16002 | 트랜잭션 처리 실패: 트랜잭션이 만료되었습니다.            |
-| SSRVTRA14001 | Issuer를 찾을 수 없습니다: Issur가 등록되지 않았습니다.   |
-| SSRVTRA14002 | Issuer 등록이 완료되지 않았습니다.                        |
-| SSRVTRA19004 | 토큰을 찾을 수 없습니다: 토큰이 등록되지 않았습니다.      |
-| SSRVTRA19002 | 토큰 처리에 실패했습니다: 토큰이 만료되었습니다.          |
-| SSRVTRA19003 | 인증에 실패했습니다: 제공된 토큰이 유효하지 않습니다.     |
-| SSRVTRA17502 | Wallet을 찾을 수 없습니다: Wallet이 등록되지 않았습니다.  |
+| SSRVISSXXXXX | Please refer to Issuer_API documentation.                |
+| SSRVTRA16000 | Transaction not found: Transaction does not exist.       |
+| SSRVTRA16001 | Transaction processing failed: Transaction is invalid.   |
+| SSRVTRA16002 | Transaction processing failed: Transaction has expired.  |
+| SSRVTRA14001 | Issuer not found: Issuer is not registered.              |
+| SSRVTRA14002 | Issuer registration is not completed.                    |
+| SSRVTRA19004 | Token not found: Token is not registered.                |
+| SSRVTRA19002 | Token processing failed: Token has expired.              |
+| SSRVTRA19003 | Authentication failed: Provided token is invalid.        |
+| SSRVTRA17502 | Wallet not found: Wallet is not registered.              |
 
 **■ Status 500 - Server error**
 
 |     Code     | Description                                                   |
 | :----------: | ------------------------------------------------------------- |
-| SSRVTRA15502 | Issuer와 통신에 실패했습니다: 알 수 없는 오류가 발생했습니다. |
-| SSRVTRA18521 | 'request-issue-profile' API 요청 처리에 실패했습니다. |
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
+| SSRVTRA15502 | Communication with Issuer failed: Unknown error occurred.    |
+| SSRVTRA18521 | 'request-issue-profile' API request processing failed.       |
 
 #### 10.7.3. Example
 
@@ -4796,26 +4454,23 @@ Content-Type: application/json;charset=utf-8
 }
 ```
 
-<div style="page-break-after: always; margin-top: 40px;"></div>
-
 ### 10.8. Request Issue VC
 
-- 전송: 월렛 → TAS
+- Transmission: Wallet → TAS
 
-월렛이 VC 발급을 위한 아래 정보를 생성하여 TAS에 요청한다.
+Wallet generates the following information for VC issuance and requests to TAS.
 
-- DID Auth 정보: TAS가 검증
-- 암호화된 발급요청 정보: 이슈어가 검증
-- E2E 수락정보
+- DID Auth information: Verified by TAS
+- Encrypted issuance request information: Verified by issuer
+- E2E acceptance information
 
-TAS는 DID Auth 검증 후 나머지 정보를 이슈어 전달하여 발급을 요청한다.
+TAS verifies DID Auth and then delivers remaining information to issuer to request issuance.
 
 | Item          | Description                | Remarks |
 | ------------- | -------------------------- | ------- |
 | Method        | `POST`                     |         |
 | Path          | `/api/v1/request-issue-vc` |         |
 | Authorization | -                          |         |
-
 
 #### 10.8.1. Request
 
@@ -4836,52 +4491,50 @@ N/A
 **■ Body**
 
 ```c#
-def object M210_RequestIssueVc: "Request Issue VC 요청문"
+def object M210_RequestIssueVc: "Request Issue VC request message"
 {
     //--- Common Part ---
     + messageId "id"  : "message id"
     + uuid      "txId": "transaction id"
 
     //--- Data Part ---
-    + mulitbase "serverToken": "서버토큰"
+    + mulitbase "serverToken": "server token"
     + DidAuth   "didAuth"    : "DID Auth data"
-    + AccE2e    "accE2e"     : "E2E 수락정보"
+    + AccE2e    "accE2e"     : "E2E acceptance information"
     + multibase "encReqVc"   : "multibase(enc((ReqVc)reqVc))"
 }
 ```
 
-- `~/didAuth`: 사용자 인증 정보
-- `~/accE2e`: `IssueProfile:~/profile/process/reqE2e`에 대응한 E2E 수락정보
-- `~/encReqVc`: E2E 키로 암호화된 VC 발급요청 정보
+- `~/didAuth`: User authentication information
+- `~/accE2e`: E2E acceptance information corresponding to `IssueProfile:~/profile/process/reqE2e`
+- `~/encReqVc`: VC issuance request information encrypted with E2E key
     - `refId`: `_M210_ProposeIssueVc:~/refId`
     - `profile`
         - `id`: `IssueProfile:~/id` 
         - `issuerNonce`: `IssueProfile:~/profile/process/issuerNonce` 
 
-<div style="page-break-after: always; margin-top: 30px;"></div>
-
 #### 10.8.2. Response
 
 **■ Process**
 
-1. 거래코드 확인
-1. DID Auth 검증
-1. 이슈어에 발급 요청
-    - Issue VC {accE2e, encReqVc} API 호출
-    - {encVc, iv} 수신
+1. Verify transaction code
+1. Verify DID Auth
+1. Request issuance from issuer
+    - Call Issue VC {accE2e, encReqVc} API
+    - Receive {encVc, iv}
 
 **■ Status 200 - Success**
 
 ```c#
-def object _M210_RequestIssueVc: "Request Issue VC 응답문"
+def object _M210_RequestIssueVc: "Request Issue VC response message"
 {    
     //--- Common Part ---
     + uuid "txId": "transaction id"
 
     //--- Data Part ---
-    + object "e2e": "E2E 암호화 정보"
+    + object "e2e": "E2E encryption information"
     {
-        + multibase "iv"   : "E2E 암복호화 IV", byte_length(16)
+        + multibase "iv"   : "E2E encryption/decryption IV", byte_length(16)
         + multibase "encVc": "multibase(enc(vc))"
     }
 }
@@ -4891,26 +4544,24 @@ def object _M210_RequestIssueVc: "Request Issue VC 응답문"
 
 |     Code     | Description                                               |
 | :----------: | --------------------------------------------------------- |
-| SSRVISSXXXXX | Issuer_API 문서를 참고해 주세요.                          |
-| SSRVTRA16000 | 트랜잭션을 찾지 못했습니다: 트랜잭션이 존재하지 않습니다. |
-| SSRVTRA16001 | 트랜잭션 처리 실패: 트랜잭션이 유효하지 않습니다.         |
-| SSRVTRA16002 | 트랜잭션 처리 실패: 트랜잭션이 만료되었습니다.            |
-| SSRVTRA14001 | Issuer를 찾을 수 없습니다: Issur가 등록되지 않았습니다.   |
-| SSRVTRA14002 | Issuer 등록이 완료되지 않았습니다.                        |
-| SSRVTRA19004 | 토큰을 찾을 수 없습니다: 토큰이 등록되지 않았습니다.      |
-| SSRVTRA19002 | 토큰 처리에 실패했습니다: 토큰이 만료되었습니다.          |
-| SSRVTRA19003 | 인증에 실패했습니다: 제공된 토큰이 유효하지 않습니다.     |
-| SSRVTRA17502 | Wallet을 찾을 수 없습니다: Wallet이 등록되지 않았습니다.  |
-| SSRVTRA16520 | 'authNonce' 가 일치하지 않습니다.                         |
+| SSRVISSXXXXX | Please refer to Issuer_API documentation.                |
+| SSRVTRA16000 | Transaction not found: Transaction does not exist.       |
+| SSRVTRA16001 | Transaction processing failed: Transaction is invalid.   |
+| SSRVTRA16002 | Transaction processing failed: Transaction has expired.  |
+| SSRVTRA14001 | Issuer not found: Issuer is not registered.              |
+| SSRVTRA14002 | Issuer registration is not completed.                    |
+| SSRVTRA19004 | Token not found: Token is not registered.                |
+| SSRVTRA19002 | Token processing failed: Token has expired.              |
+| SSRVTRA19003 | Authentication failed: Provided token is invalid.        |
+| SSRVTRA17502 | Wallet not found: Wallet is not registered.              |
+| SSRVTRA16520 | 'authNonce' does not match.                              |
 
 **■ Status 500 - Server error**
 
 |     Code     | Description                                                   |
 | :----------: | ------------------------------------------------------------- |
-| SSRVTRA15502 | Issuer와 통신에 실패했습니다: 알 수 없는 오류가 발생했습니다. |
-| SSRVTRA18522 | 'request-issue-vc' API 요청 처리에 실패했습니다.         |
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
+| SSRVTRA15502 | Communication with Issuer failed: Unknown error occurred.    |
+| SSRVTRA18522 | 'request-issue-vc' API request processing failed.            |
 
 #### 10.8.3. Example
 
@@ -4973,7 +4624,7 @@ Content-Type: application/json;charset=utf-8
 
 ### 10.9. Confirm Issue VC
 
-VC 발급 거래를 종료한다.
+Terminates VC issuance transaction.
 
 | Item          | Description                | Remarks |
 | ------------- | -------------------------- | ------- |
@@ -4983,8 +4634,8 @@ VC 발급 거래를 종료한다.
 
 #### 10.9.1. Request
 
-월렛이 발급된 VC를 수신하여 저장 후 `vcId`를 회신한다.
-인가앱은 서버토큰, `vcId`를 전달하여 VC 발급 완료를 요청한다.
+After wallet receives and stores issued VC, it returns `vcId`.
+CA app delivers server token and `vcId` to request VC issuance completion.
 
 **■ Headers**
 
@@ -5003,7 +4654,7 @@ N/A
 **■ Body**
 
 ```c#
-def object M210_ConfirmIssueVc: "Confirm Issue VC 요청문"
+def object M210_ConfirmIssueVc: "Confirm Issue VC request message"
 {
     //--- Common Part ---
     + messageId "id"  : "message id"
@@ -5015,25 +4666,23 @@ def object M210_ConfirmIssueVc: "Confirm Issue VC 요청문"
 }
 ```
 
-- `~/serverToken`: 이전에 생성한 서버토큰
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
+- `~/serverToken`: Previously generated server token
 
 #### 10.9.2. Response
 
-서버토큰, 거래코드 일치여부 확인 후 VC 발급 프로토콜을 종료한다.
+Verifies server token and transaction code match, then terminates VC issuance protocol.
 
 **■ Process**
 
-1. 거래코드, 서버토큰 일치여부 확인
-1. 이슈어에 발급 완료를 요청한다.
-    - Complete VC {vcId} API 호출
-1. 거래코드, 서버토큰 폐기
+1. Verify transaction code and server token match
+1. Request issuance completion to issuer
+    - Call Complete VC {vcId} API
+1. Discard transaction code and server token
 
 **■ Status 200 - Success**
 
 ```c#
-def object _M210_ConfirmIssueVc: "Confirm Issue VC 응답문"
+def object _M210_ConfirmIssueVc: "Confirm Issue VC response message"
 {
     //--- Common Part ---
     + uuid "txId": "transaction id"
@@ -5044,24 +4693,22 @@ def object _M210_ConfirmIssueVc: "Confirm Issue VC 응답문"
 
 |     Code     | Description                                               |
 | :----------: | --------------------------------------------------------- |
-| SSRVISSXXXXX | Issuer_API 문서를 참고해 주세요.                          |
-| SSRVTRA16000 | 트랜잭션을 찾지 못했습니다: 트랜잭션이 존재하지 않습니다. |
-| SSRVTRA16001 | 트랜잭션 처리 실패: 트랜잭션이 유효하지 않습니다.         |
-| SSRVTRA16002 | 트랜잭션 처리 실패: 트랜잭션이 만료되었습니다.            |
-| SSRVTRA14001 | Issuer를 찾을 수 없습니다: Issur가 등록되지 않았습니다.   |
-| SSRVTRA14002 | Issuer 등록이 완료되지 않았습니다.                        |
-| SSRVTRA19004 | 토큰을 찾을 수 없습니다: 토큰이 등록되지 않았습니다.      |
-| SSRVTRA19002 | 토큰 처리에 실패했습니다: 토큰이 만료되었습니다.          |
-| SSRVTRA19003 | 인증에 실패했습니다: 제공된 토큰이 유효하지 않습니다.     |
+| SSRVISSXXXXX | Please refer to Issuer_API documentation.                |
+| SSRVTRA16000 | Transaction not found: Transaction does not exist.       |
+| SSRVTRA16001 | Transaction processing failed: Transaction is invalid.   |
+| SSRVTRA16002 | Transaction processing failed: Transaction has expired.  |
+| SSRVTRA14001 | Issuer not found: Issuer is not registered.              |
+| SSRVTRA14002 | Issuer registration is not completed.                    |
+| SSRVTRA19004 | Token not found: Token is not registered.                |
+| SSRVTRA19002 | Token processing failed: Token has expired.              |
+| SSRVTRA19003 | Authentication failed: Provided token is invalid.        |
 
 **■ Status 500 - Server error**
 
 |     Code     | Description                                                   |
 | :----------: | ------------------------------------------------------------- |
-| SSRVTRA15502 | Issuer와 통신에 실패했습니다: 알 수 없는 오류가 발생했습니다. |
-| SSRVTRA18523 | 'confirm-issue-vc' API 요청 처리에 실패했습니다.              |
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
+| SSRVTRA15502 | Communication with Issuer failed: Unknown error occurred.    |
+| SSRVTRA18523 | 'confirm-issue-vc' API request processing failed.            |
 
 #### 10.9.3. Example
 
@@ -5094,21 +4741,19 @@ Content-Type: application/json;charset=utf-8
 }
 ```
 
-<div style="page-break-after: always; margin-top: 50px;"></div>
+## 11. P220 - VC Revocation Protocol
 
-## 11. P220 - VC 폐기 프로토콜
-
-| Seq. | API                  | Description        | 표준API |
-| :--: | -------------------- | ------------------ | ------- |
-|  1   | propose-revoke-vc    | VC 폐기 시작 요청  | Y       |
-|  2   | request-ecdh         | ECDH 요청          |         |
-|  3   | request-create-token | 서버토큰 생성 요청 | Y       |
-|  4   | request-revoke-vc    | VC 폐기 요청       | Y       |
-|  5   | confirm-revoke-vc    | VC 폐기 완료       | Y       |
+| Seq. | API                  | Description                    | Standard API |
+| :--: | -------------------- | ------------------------------ | ------------ |
+|  1   | propose-revoke-vc    | VC revocation request          | Y            |
+|  2   | request-ecdh         | ECDH request                   | Y            |
+|  3   | request-create-token | Server token creation request  | Y            |
+|  4   | request-revoke-vc    | VC revocation request          | Y            |
+|  5   | confirm-revoke-vc    | VC revocation completion       | Y            |
 
 ### 11.1. Propose Revoke VC
 
-VC 폐기 거래를 시작한다.
+Initiates VC revocation transaction.
 
 | Item          | Description                 | Remarks |
 | ------------- | --------------------------- | ------- |
@@ -5135,7 +4780,7 @@ N/A
 **■ Body**
 
 ```c#
-def object M220_ProposeRevokeVc: "Propose Revoke VC 요청문"
+def object M220_ProposeRevokeVc: "Propose Revoke VC request message"
 {
     //--- Common Part ---
     + messageId "id": "message id"
@@ -5145,34 +4790,32 @@ def object M220_ProposeRevokeVc: "Propose Revoke VC 요청문"
 }
 ```
 
-<div style="page-break-after: always; margin-top: 30px;"></div>
-
 #### 11.1.2. Response
 
-`vcId`로 Issuer를 식별하여 해당 Issuer에 폐기 요청을 전달한다.
+Identifies Issuer by `vcId` and delivers revocation request to that Issuer.
 
 **■ Process**
 
-1. `txId` = 거래코드 생성
-1. 해당 VC를 발급한 Issuer 식별
-    - `vcId`로 `VcMeta`를 조회하여 Issuer의 DID 확인
-    - `issuer` = Issuer DID 또는 Issuer 식별자
-1. Issuer API "Inspect Propose Revoke" 호출
-1. Issuer의 응답값 (`issuerNonce`, `authType`) 회신
-    - 단, 클라이언트에 회신하는 `txId`는 TAS가 생성한 것
-1. `txId`, `issuer` 저장
+1. `txId` = Generate transaction code
+1. Identify Issuer that issued the VC
+    - Retrieve `VcMeta` by `vcId` to check Issuer's DID
+    - `issuer` = Issuer DID or Issuer identifier
+1. Call Issuer API "Inspect Propose Revoke"
+1. Return Issuer's response values (`issuerNonce`, `authType`)
+    - However, `txId` returned to client is generated by TAS
+1. Save `txId`, `issuer`
 
 **■ Status 200 - Success**
 
 ```c#
-def object _M220_ProposeRevokeVc: "Propose Revoke VC 응답문"
+def object _M220_ProposeRevokeVc: "Propose Revoke VC response message"
 {    
     //--- Common Part ---
     + uuid "txId": "transaction id"
 
     //--- Data Part ---
     + multibase        "issuerNonce": "issuer nonce", byte_length(16)
-    + VERIFY_AUTH_TYPE "authType"   : "인증수단"
+    + VERIFY_AUTH_TYPE "authType"   : "authentication method"
 }
 ```
 
@@ -5180,18 +4823,16 @@ def object _M220_ProposeRevokeVc: "Propose Revoke VC 응답문"
 
 |     Code     | Description                                           |
 | :----------: | ----------------------------------------------------- |
-| SSRVISSXXXXX | Issuer_API 문서를 참고해 주세요.                      |
-| SSRVTRA15005 | 블록체인에서 VC 메타데이터를 가져오는데 실패했습니다. |
-| SSRVTRA18518 | VC 해지에 실패했습니다: VC가 이미 해지되었습니다.     |
+| SSRVISSXXXXX | Please refer to Issuer_API documentation.            |
+| SSRVTRA15005 | Failed to retrieve VC metadata from blockchain.      |
+| SSRVTRA18518 | VC revocation failed: VC is already revoked.         |
 
 **■ Status 500 - Server error**
 
 |     Code     | Description                                                   |
 | :----------: | ------------------------------------------------------------- |
-| SSRVTRA15502 | Issuer와 통신에 실패했습니다: 알 수 없는 오류가 발생했습니다. |
-| SSRVTRA18524 | 'propose-revoke-vc' API 요청 처리에 실패했습니다.             |
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
+| SSRVTRA15502 | Communication with Issuer failed: Unknown error occurred.    |
+| SSRVTRA18524 | 'propose-revoke-vc' API request processing failed.           |
 
 #### 11.1.3. Example
 
@@ -5224,18 +4865,19 @@ Content-Type: application/json;charset=utf-8
 }
 ```
 
-<div style="page-break-after: always; margin-top: 40px;"></div>
+Here’s the full **English translation** of the provided API documentation section:
+
+---
 
 ### 11.2. Request ECDH
 
-세션 암호화를 위한 키교환을 수행한다.
+Performs key exchange for session encryption.
 
 | Item          | Description            | Remarks |
 | ------------- | ---------------------- | ------- |
 | Method        | `POST`                 |         |
 | Path          | `/api/v1/request-ecdh` |         |
 | Authorization | -                      |         |
-
 
 #### 11.2.1. Request
 
@@ -5256,7 +4898,7 @@ N/A
 **■ Body**
 
 ```c#
-def object M220_RequestEcdh: "ECDH 요청문"
+def object M220_RequestEcdh: "ECDH Request"
 {
     //--- Common Part ---
     + messageId "id"  : "message id"
@@ -5267,13 +4909,15 @@ def object M220_RequestEcdh: "ECDH 요청문"
 }
 ```
 
-- `~/reqEcdh`
-    - `client`: 클라이언트 DID
-    - `clientNonce`: 클라이언트가 생성한 난수
-    - `curve`: ECDH용 ECC 곡선 타입 (클라이언트가 하나를 지정)
-    - `publicKey`: 상기 `curve` 유형으로 생성한 임시키쌍의 공개키
-    - `candidate` 
-        - `ciphers`: 클라이언트가 지원하는 cipher 알고리즘 목록
+* `~/reqEcdh`
+
+  * `client`: Client DID
+  * `clientNonce`: Random number generated by the client
+  * `curve`: ECC curve type for ECDH (client selects one)
+  * `publicKey`: Public key from a temporary key pair generated using the specified `curve`
+  * `candidate`
+
+    * `ciphers`: List of cipher algorithms supported by the client
 
 <div style="page-break-after: always; margin-top: 30px;"></div>
 
@@ -5281,27 +4925,30 @@ def object M220_RequestEcdh: "ECDH 요청문"
 
 **■ Process**
 
-1. 거래코드 확인
-1. `~/reqEcdh/proof` 서명 검증
-1. 클라이언트 요청값(`~/reqEcdh`) 정합성 확인 및 cipher 알고리즘 선택
-    - `cipherAlg` = cipher 알고리즘 선택
-    - `padding` = 패딩 방식 선택
-1. ECIES 세션키 생성
-    - `clientNonce` = `~/reqEcdh/clientNonce`
-    - `severNonce` = 16-byte nonce 생성
-    - `mergedNonce` = sha256(serverNonce, clientNonce)
-    - `clientPubKey` = `~/reqEcdh/publicKey`
-    - `serverPubKey`, `serverPriKey` = `~/reqEcdh/curve` 타입의 서버 임시키쌍 생성
-    - `sesKey` = ecies(serverPriKey, clientPubKey, mergedNonce, cipherAlg)
-1. ECDH 정보 저장
-    - 클라이언트 DID, 거래코드
-    - `sesKey`, `cipherAlg`, `padding`
-1. ECDH 수락 데이터 생성 및 서명
+1. Verify transaction code
+2. Verify signature on `~/reqEcdh/proof`
+3. Check the integrity of client request values (`~/reqEcdh`) and select cipher algorithm
+
+   * `cipherAlg` = selected cipher algorithm
+   * `padding` = selected padding method
+4. Generate ECIES session key
+
+   * `clientNonce` = `~/reqEcdh/clientNonce`
+   * `serverNonce` = generate 16-byte nonce
+   * `mergedNonce` = sha256(serverNonce, clientNonce)
+   * `clientPubKey` = `~/reqEcdh/publicKey`
+   * `serverPubKey`, `serverPriKey` = server temporary key pair generated using `~/reqEcdh/curve`
+   * `sesKey` = ecies(serverPriKey, clientPubKey, mergedNonce, cipherAlg)
+5. Store ECDH information
+
+   * Client DID, transaction code
+   * `sesKey`, `cipherAlg`, `padding`
+6. Generate and sign ECDH acceptance data
 
 **■ Status 200 - Success**
 
 ```c#
-def object _M220_RequestEcdh: "Request ECDH 응답문"
+def object _M220_RequestEcdh: "Request ECDH Response"
 {    
     //--- Common Part ---
     + uuid "txId": "transaction id"
@@ -5311,33 +4958,33 @@ def object _M220_RequestEcdh: "Request ECDH 응답문"
 }
 ```
 
-- `~/accEcdh`
-    - `server`: 서버 DID
-    - `serverNonce`: 서버가 생성한 난수
-    - `publicKey`: 서버가 생성한 임시키쌍의 공개키(`serverPubKey`)
-    - `cipher`: 클라이언트의 후보 중 서버가 선택한 cipher 알고리즘
-    - `padding`: 서버가 선택한 패딩 방식
+* `~/accEcdh`
 
+  * `server`: Server DID
+  * `serverNonce`: Random number generated by the server
+  * `publicKey`: Server-generated public key (`serverPubKey`)
+  * `cipher`: Cipher algorithm selected by the server (from the client’s candidates)
+  * `padding`: Padding method selected by the server
 
 **■ Status 400 - Client error**
 
-|     Code     | Description                                               |
-| :----------: | --------------------------------------------------------- |
-| SSRVTRA16519 | 클라이언트 Nonce 처리 실패: 잘못된 Nonce입니다.           |
-| SSRVTRA16000 | 트랜잭션을 찾지 못했습니다: 트랜잭션이 존재하지 않습니다. |
-| SSRVTRA16001 | 트랜잭션 처리 실패: 트랜잭션이 유효하지 않습니다.         |
-| SSRVTRA16002 | 트랜잭션 처리 실패: 트랜잭션이 만료되었습니다.            |
-| SSRVTRA16510 | 서명 검증 실패: 서명이 유효하지 않습니다.                 |
-| SSRVTRA16511 | 서명 검증에 실패했습니다.                                 |
-| SSRVTRA12008 | 지원되지 않는 Cipher Type 입니다.                         |
+|     Code     | Description                                             |
+| :----------: | ------------------------------------------------------- |
+| SSRVTRA16519 | Failed client nonce processing: Invalid nonce.          |
+| SSRVTRA16000 | Transaction not found: Transaction does not exist.      |
+| SSRVTRA16001 | Transaction processing failed: Transaction is invalid.  |
+| SSRVTRA16002 | Transaction processing failed: Transaction has expired. |
+| SSRVTRA16510 | Signature verification failed: Signature is invalid.    |
+| SSRVTRA16511 | Signature verification failed.                          |
+| SSRVTRA12008 | Unsupported cipher type.                                |
 
 **■ Status 500 - Server error**
 
-|     Code     | Description                                  |
-| :----------: | -------------------------------------------- |
-| SSRVTRA16504 | Nonce 생성에 실패했습니다.                   |
-| SSRVTRA16506 | 세션키 생성에 실패했습니다.                  |
-| SSRVTRA16521 | 'request-ecdh' API 요청 처리에 실패했습니다. |
+|     Code     | Description                                       |
+| :----------: | ------------------------------------------------- |
+| SSRVTRA16504 | Failed to generate nonce.                         |
+| SSRVTRA16506 | Failed to generate session key.                   |
+| SSRVTRA16521 | Failed to process the 'request-ecdh' API request. |
 
 <div style="page-break-after: always; margin-top: 30px;"></div>
 
@@ -5399,9 +5046,11 @@ Content-Type: application/json;charset=utf-8
 
 <div style="page-break-after: always; margin-top: 40px;"></div>
 
+---
+
 ### 11.3. Request Create Token
 
-인가앱이 TAS에게 서버토큰 생성을 요청한다.
+The authorized app requests the TAS to generate a server token.
 
 | Item          | Description                    | Remarks |
 | ------------- | ------------------------------ | ------- |
@@ -5411,14 +5060,15 @@ Content-Type: application/json;charset=utf-8
 
 #### 11.3.1. Request
 
-서버토큰을 생성하기 위해서는 아래와 같은 토큰시드를 넘겨줘야 한다.
+To generate a server token, you must pass the following token seed.
 
-- `(ServerTokenSeed)seed`
-    - `purpose`: "RevokeVc"
-    - `walletInfo`: 서명된 월렛정보 (월렛 SDK 호출하여 획득)
-    - `caAppInfo`: 서명된 인가앱정보 (인가앱 사업자 API 호출하여 획득)
+* `(ServerTokenSeed)seed`
 
-자세한 내용은 [DATA-SPEC]을 참조한다.
+  * `purpose`: "RevokeVc"
+  * `walletInfo`: Signed wallet information (obtained via Wallet SDK)
+  * `caAppInfo`: Signed authorized app information (obtained via authorized app provider API)
+
+For details, refer to \[DATA-SPEC].
 
 **■ Headers**
 
@@ -5437,7 +5087,7 @@ N/A
 **■ Body**
 
 ```c#
-def object M220_RequestCreateToken: "Request Create Token 요청문"
+def object M220_RequestCreateToken: "Request Create Token"
 {
     //--- Common Part ---
     + messageId "id"  : "message id"
@@ -5448,75 +5098,79 @@ def object M220_RequestCreateToken: "Request Create Token 요청문"
 }
 ```
 
-- `~/seed`
-    - `purpose`: 토큰 사용 목적
-    - `walletInfo`: 서명된 월렛 정보
-    - `caAppInfo`: 서명된 인가앱 정보
+* `~/seed`
+
+  * `purpose`: Purpose of the token
+  * `walletInfo`: Signed wallet information
+  * `caAppInfo`: Signed authorized app information
 
 <div style="page-break-after: always; margin-top: 30px;"></div>
 
 #### 11.3.2. Response
 
-클라이언트가 넘겨준 seed 내 서명 검증 후 서버토큰 데이터를 생성하여 응답한다.
-응답 데이터는 세션키로 암호화한다.
+After verifying the signatures in the provided seed, the server generates the server token data and responds.
+The response data is encrypted using the session key.
 
 **■ Process**
 
-1. 거래코드 확인
-1. purpose 유효성 확인
-1. `~/seed` 내 proof 서명 검증
-    - `walletInfo.proof` 월렛 서명 검증
-    - `caAppInfo.proof` 월렛 사업자 서명 검증
-1. 데이터 준비
-    - 토큰 유효일시 설정
-    - 기타 난수 등 생성
-1. 상기 데이터를 서명하여 `(ServerTokenData)std` 생성
-1. 서버토큰 생성하여 저장
-    - `serverToken` = sha256(std)
-1. 응답 데이터 준비
-    - `tmp` = enc(std, sesKey, iv, padding)
-    - `encStd` = multibase(tmp)
+1. Verify transaction code
+2. Validate purpose
+3. Verify signatures in `~/seed`
+
+   * Verify `walletInfo.proof` wallet signature
+   * Verify `caAppInfo.proof` authorized app provider signature
+4. Prepare data
+
+   * Set token expiration time
+   * Generate additional random values
+5. Generate `(ServerTokenData)std` by signing the above data
+6. Create and store the server token
+
+   * `serverToken` = sha256(std)
+7. Prepare response data
+
+   * `tmp` = enc(std, sesKey, iv, padding)
+   * `encStd` = multibase(tmp)
 
 **■ Status 200 - Success**
 
 ```c#
-def object _M220_RequestCreateToken: "Request Create Token 응답문"
+def object _M220_RequestCreateToken: "Request Create Token Response"
 {    
     //--- Common Part ---
     + uuid      "txId": "transaction id"
-    + multibase "iv"  : "세션키 암복호화 IV"
+    + multibase "iv"  : "IV for session key encryption/decryption"
     
     //--- Data Part ---
     + multibase "encStd": "multibase(enc((ServerTokenData)std))"
 }
 ```
 
-- `~/encStd`: 암호화된 서버토큰 데이터
-
+* `~/encStd`: Encrypted server token data
 
 **■ Status 400 - Client error**
 
-|     Code     | Description                                               |
-| :----------: | --------------------------------------------------------- |
-| SSRVTRA16000 | 트랜잭션을 찾지 못했습니다: 트랜잭션이 존재하지 않습니다. |
-| SSRVTRA16001 | 트랜잭션 처리 실패: 트랜잭션이 유효하지 않습니다.         |
-| SSRVTRA16002 | 트랜잭션 처리 실패: 트랜잭션이 만료되었습니다.            |
-| SSRVTRA12005 | 지원하지 않는 'token purpose' 입니다.                     |
-| SSRVTRA17502 | Wallet을 찾을 수 없습니다: Wallet이 등록되지 않았습니다.  |
-| SSRVTRA16510 | 서명 검증 실패: 서명이 유효하지 않습니다.                 |
-| SSRVTRA16511 | 서명 검증에 실패했습니다.                                 |
-| SSRVTRA18510 | 가입증명서 VC를 찾을 수 없습니다.                         |
-| SSRVTRA12007 | Provider DID가 일치하지 않습니다.                         |
-| SSRVTRA18511 | 유효하지 않은 가입증명서 VC의 Issuer입니다.               |
-| SSRVTRA18519 | VC 검증에 실패했습니다.                                   |
+|     Code     | Description                                             |
+| :----------: | ------------------------------------------------------- |
+| SSRVTRA16000 | Transaction not found: Transaction does not exist.      |
+| SSRVTRA16001 | Transaction processing failed: Transaction is invalid.  |
+| SSRVTRA16002 | Transaction processing failed: Transaction has expired. |
+| SSRVTRA12005 | Unsupported 'token purpose'.                            |
+| SSRVTRA17502 | Wallet not found: Wallet is not registered.             |
+| SSRVTRA16510 | Signature verification failed: Signature is invalid.    |
+| SSRVTRA16511 | Signature verification failed.                          |
+| SSRVTRA18510 | Certificate VC not found.                               |
+| SSRVTRA12007 | Provider DID mismatch.                                  |
+| SSRVTRA18511 | Invalid issuer of the certificate VC.                   |
+| SSRVTRA18519 | Failed to verify VC.                                    |
 
 **■ Status 500 - Server error**
 
-|     Code     | Description                                          |
-| :----------: | ---------------------------------------------------- |
-| SSRVTRA19000 | 서버 토큰 생성에 실패했습니다.                       |
-| SSRVTRA19001 | 서버 토큰 데이터를 암호화하는 데 실패했습니다.       |
-| SSRVTRA19005 | 'request-create-token' API 요청 처리에 실패했습니다. |
+|     Code     | Description                                               |
+| :----------: | --------------------------------------------------------- |
+| SSRVTRA19000 | Failed to generate server token.                          |
+| SSRVTRA19001 | Failed to encrypt server token data.                      |
+| SSRVTRA19005 | Failed to process the 'request-create-token' API request. |
 
 <div style="page-break-after: always; margin-top: 30px;"></div>
 
@@ -5583,22 +5237,20 @@ Content-Type: application/json;charset=utf-8
 }
 ```
 
-<div style="page-break-after: always; margin-top: 40px;"></div>
 
 ### 11.4. Request Revoke VC
 
-- 전송: 월렛 → TAS
+- Transmission: Wallet → TAS
 
-월렛이 VC 폐기를 위한 아래 정보를 생성하여 TAS에 요청한다.
+Wallet generates the following information for VC revocation and requests to TAS.
 
-- VC 폐기요청 정보: 이슈어가 검증
+- VC revocation request information: Verified by issuer
 
 | Item          | Description                 | Remarks |
 | ------------- | --------------------------- | ------- |
 | Method        | `POST`                      |         |
 | Path          | `/api/v1/request-revoke-vc` |         |
 | Authorization | -                           |         |
-
 
 #### 11.4.1. Request
 
@@ -5619,31 +5271,29 @@ N/A
 **■ Body**
 
 ```c#
-def object M220_RequestRevokeVc: "Request Revoke VC 요청문"
+def object M220_RequestRevokeVc: "Request Revoke VC request message"
 {
     //--- Common Part ---
     + messageId "id"  : "message id"
     + uuid      "txId": "transaction id"
 
     //--- Data Part ---
-    + mulitbase   "serverToken": "서버토큰"
-    + ReqRevokeVc "request"    : "VC 폐기요청 정보"
+    + mulitbase   "serverToken": "server token"
+    + ReqRevokeVc "request"    : "VC revocation request information"
 }
 ```
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
 
 #### 11.4.2. Response
 
 **■ Process**
 
-1. 거래코드 확인
-1. Issuer API "Revoke VC" 호출
+1. Verify transaction code
+1. Call Issuer API "Revoke VC"
 
 **■ Status 200 - Success**
 
 ```c#
-def object _M220_RequestRevokeVc: "Request Revoke VC 응답문"
+def object _M220_RequestRevokeVc: "Request Revoke VC response message"
 {    
     //--- Common Part ---
     + uuid "txId": "transaction id"
@@ -5654,21 +5304,19 @@ def object _M220_RequestRevokeVc: "Request Revoke VC 응답문"
 
 |     Code     | Description                                               |
 | :----------: | --------------------------------------------------------- |
-| SSRVISSXXXXX | Issuer_API 문서를 참고해 주세요.                          |
-| SSRVTRA16000 | 트랜잭션을 찾지 못했습니다: 트랜잭션이 존재하지 않습니다. |
-| SSRVTRA16001 | 트랜잭션 처리 실패: 트랜잭션이 유효하지 않습니다.         |
-| SSRVTRA16002 | 트랜잭션 처리 실패: 트랜잭션이 만료되었습니다.            |
-| SSRVTRA19004 | 토큰을 찾을 수 없습니다: 토큰이 등록되지 않았습니다.      |
-| SSRVTRA19002 | 토큰 처리에 실패했습니다: 토큰이 만료되었습니다.          |
+| SSRVISSXXXXX | Please refer to Issuer_API documentation.                |
+| SSRVTRA16000 | Transaction not found: Transaction does not exist.       |
+| SSRVTRA16001 | Transaction processing failed: Transaction is invalid.   |
+| SSRVTRA16002 | Transaction processing failed: Transaction has expired.  |
+| SSRVTRA19004 | Token not found: Token is not registered.                |
+| SSRVTRA19002 | Token processing failed: Token has expired.              |
 
 **■ Status 500 - Server error**
 
 |     Code     | Description                                                   |
 | :----------: | ------------------------------------------------------------- |
-| SSRVTRA15502 | Issuer와 통신에 실패했습니다: 알 수 없는 오류가 발생했습니다. |
-| SSRVTRA18525 | 'request-revoke-vc' API 요청 처리에 실패했습니다.             |
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
+| SSRVTRA15502 | Communication with Issuer failed: Unknown error occurred.    |
+| SSRVTRA18525 | 'request-revoke-vc' API request processing failed.           |
 
 #### 11.4.3. Example
 
@@ -5711,11 +5359,9 @@ Content-Type: application/json;charset=utf-8
 }
 ```
 
-<div style="page-break-after: always; margin-top: 40px;"></div>
-
 ### 11.5. Confirm Revoke VC
 
-VC 폐기 거래를 종료한다.
+Terminates VC revocation transaction.
 
 | Item          | Description                 | Remarks |
 | ------------- | --------------------------- | ------- |
@@ -5725,7 +5371,7 @@ VC 폐기 거래를 종료한다.
 
 #### 11.5.1. Request
 
-인가앱은 서버토큰을 전달하여 VC 폐기 완료를 요청한다.
+CA app delivers server token to request VC revocation completion.
 
 **■ Headers**
 
@@ -5744,7 +5390,7 @@ N/A
 **■ Body**
 
 ```c#
-def object M220_ConfirmRevokeVc: "Confirm Revoke VC 요청문"
+def object M220_ConfirmRevokeVc: "Confirm Revoke VC request message"
 {
     //--- Common Part ---
     + messageId "id"  : "message id"
@@ -5755,24 +5401,22 @@ def object M220_ConfirmRevokeVc: "Confirm Revoke VC 요청문"
 }
 ```
 
-- `~/serverToken`: 이전에 생성한 서버토큰
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
+- `~/serverToken`: Previously generated server token
 
 #### 11.5.2. Response
 
-서버토큰 일치여부 확인 후 VC 폐기 프로토콜을 종료한다.
+Verifies server token match, then terminates VC revocation protocol.
 
 **■ Process**
 
-1. 거래코드, 서버토큰 일치여부 확인
-1. Issuer API "Complete Revoke" 호출
-1. 거래코드, 서버토큰 폐기
+1. Verify transaction code and server token match
+1. Call Issuer API "Complete Revoke"
+1. Discard transaction code and server token
 
 **■ Status 200 - Success**
 
 ```c#
-def object _M220_ConfirmRevokeVc: "Confirm Revoke VC 응답문"
+def object _M220_ConfirmRevokeVc: "Confirm Revoke VC response message"
 {
     //--- Common Part ---
     + uuid "txId": "transaction id"
@@ -5783,21 +5427,19 @@ def object _M220_ConfirmRevokeVc: "Confirm Revoke VC 응답문"
 
 |     Code     | Description                                               |
 | :----------: | --------------------------------------------------------- |
-| SSRVISSXXXXX | Issuer_API 문서를 참고해 주세요.                          |
-| SSRVTRA16000 | 트랜잭션을 찾지 못했습니다: 트랜잭션이 존재하지 않습니다. |
-| SSRVTRA16001 | 트랜잭션 처리 실패: 트랜잭션이 유효하지 않습니다.         |
-| SSRVTRA16002 | 트랜잭션 처리 실패: 트랜잭션이 만료되었습니다.            |
-| SSRVTRA19004 | 토큰을 찾을 수 없습니다: 토큰이 등록되지 않았습니다.      |
-| SSRVTRA19002 | 토큰 처리에 실패했습니다: 토큰이 만료되었습니다.          |
+| SSRVISSXXXXX | Please refer to Issuer_API documentation.                |
+| SSRVTRA16000 | Transaction not found: Transaction does not exist.       |
+| SSRVTRA16001 | Transaction processing failed: Transaction is invalid.   |
+| SSRVTRA16002 | Transaction processing failed: Transaction has expired.  |
+| SSRVTRA19004 | Token not found: Token is not registered.                |
+| SSRVTRA19002 | Token processing failed: Token has expired.              |
 
 **■ Status 500 - Server error**
 
 |     Code     | Description                                                   |
 | :----------: | ------------------------------------------------------------- |
-| SSRVTRA15502 | Issuer와 통신에 실패했습니다: 알 수 없는 오류가 발생했습니다. |
-| SSRVTRA18526 | 'confirm-revoke-vc' API 요청 처리에 실패했습니다.             |
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
+| SSRVTRA15502 | Communication with Issuer failed: Unknown error occurred.    |
+| SSRVTRA18526 | 'confirm-revoke-vc' API request processing failed.           |
 
 #### 11.5.3. Example
 
@@ -5831,50 +5473,47 @@ Content-Type: application/json;charset=utf-8
 
 <div style="page-break-after: always; margin-top: 50px;"></div>
 
-## 12. 단일 호출 API
+## 12. Single Call APIs
 
-단일 호출 API는 특정 기능을 수행하는 하나의 독립된 API이다.
-따라서 순서대로 호출해야 하는 API의 집단인 순차 API(aka, 프로토콜)이 아니므로 프로토콜 번호가 부여되지 않는다.
-TAS가 제공하는 단일 호출 API 목록은 아래 표와 같다.
+Single call APIs are independent APIs that perform specific functions.
+Therefore, they are not sequential APIs (aka protocols) that must be called in order, so protocol numbers are not assigned.
+The list of single call APIs provided by TAS is shown in the table below.
 
-| API                         | Path                              | Description                | 표준API |
-| --------------------------- | --------------------------------- | -------------------------- | ------- |
-| `get-vcplan-list`           | /list/api/v1/vcplan/list          | 모든 VC Plan 목록 조회     | Y       |
-| `get-vcplan`                | /list/api/v1/vcplan               | Id로 VC Plan 조회          | Y       |
-| `get-allowed-ca-list`       | /list/api/v1/allowed-ca/list      | 월렛에 허용된 CA 목록 조회 | Y       |
-| `send-email`                | /noti/api/v1/send-email           | 이메일 발송                | N       |
-| `send-push`                 | /noti/api/v1/send-push            | Push 전송                  | N       |
-| `update-push-token`         | /api/v1/update-push-token         | Push 토큰 업데이트         | N       |
-| `get-certificate-vc`        | /api/v1/certificate-vc            | 가입증명서 조회            | N       |
-| `get-vcschema`              | /api/v1/vc-schema                  | VC 스키마 조회             | N       |
-| `update-diddoc-deactivated` | /api/v1/update-diddoc-deactivated | DIDDoc 비활성화            | N       |
-| `update-diddoc-revoked`     | /api/v1/update-diddoc-revoked     | DIDDoc 폐기                | N       |
+| API                         | Path                              | Description                        | Standard API |
+| --------------------------- | --------------------------------- | ---------------------------------- | ------------ |
+| `get-vcplan-list`           | /list/api/v1/vcplan/list          | Retrieve all VC Plan list          | Y            |
+| `get-vcplan`                | /list/api/v1/vcplan               | Retrieve VC Plan by Id             | Y            |
+| `get-allowed-ca-list`       | /list/api/v1/allowed-ca/list      | Retrieve CA list allowed for wallet| Y            |
+| `send-email`                | /noti/api/v1/send-email           | Email sending                      | N            |
+| `send-push`                 | /noti/api/v1/send-push            | Push transmission                  | N            |
+| `update-push-token`         | /api/v1/update-push-token         | Push token update                  | N            |
+| `get-certificate-vc`        | /api/v1/certificate-vc            | Retrieve enrollment certificate    | N            |
+| `get-vcschema`              | /api/v1/vc-schema                 | Retrieve VC schema                 | N            |
+| `update-diddoc-deactivated` | /api/v1/update-diddoc-deactivated | DIDDoc deactivation                | N            |
+| `update-diddoc-revoked`     | /api/v1/update-diddoc-revoked     | DIDDoc revocation                  | N            |
 
-> **주의사항**
+> **Note**
 > 
-> - 현재 Trust Agent는 Noti 사업자와 List 사업자의 역할도 함께 수행하고 있다. URL이 `noti`와 `list`로 시작하는 API들은 이러한 기능을 제공하는 API들이다.
-> - 사업자 간의 역할을 명확하게 구분하고 혼동을 방지하기 위해, 각 사업자의 API는 **context path**를 구별하여 구성하는 것이 좋다.
+> - Currently, Trust Agent also performs the roles of Noti provider and List provider. APIs with URLs starting with `noti` and `list` provide these functionalities.
+> - To clearly distinguish roles between providers and prevent confusion, it is recommended to configure each provider's APIs with distinct **context paths**.
 >   - Trust Agent API: `/tas/api/~`
 >   - List API: `/list/api/~`
 
 ■ Authorization
 
-프로토콜에는 '호출자의 호출 권한을 확인'(authorization)하는 API가 포함되어 있다.
-상기 목록의 단일 호출 API는 authroization에 대하여 정의하지 않았으나,
-향후 다음의 방안을 고려하여 추가할 예정이다.
+Protocols include APIs that 'verify caller's access rights' (authorization).
+The single call APIs in the above list do not define authorization, but the following approaches are being considered for future addition:
 
-- 1안) 인가앱 사업자가 서명한 `AttestedAppInfo` 정보를 확인한 후 일정기간 사용이 가능한 토큰을 발급
-    - 단일 API 호출 시 헤더에 TAS 발행 토큰을 첨부
-    - 별도의 토큰 관리 API 필요
-- 2안) 인가앱 사업자가 인가앱에 토큰을 발행하고 TAS가 인가앱 사업자에 토큰 검증을 요청
-    - 단일 API 호출 시 헤더에 인가앱 사업자 발행 토큰을 첨부
-    - 인가앱 사업자가 토큰을 발행하고 검증해주는 기능 구현 필요
-
-<div style="page-break-after: always; margin-top: 40px;"></div>
+- Option 1) Issue tokens usable for a certain period after verifying `AttestedAppInfo` information signed by CA app provider
+    - Attach TAS-issued tokens to headers when calling single APIs
+    - Separate token management APIs required
+- Option 2) CA app provider issues tokens to CA apps and TAS requests token verification from CA app provider
+    - Attach CA app provider-issued tokens to headers when calling single APIs
+    - CA app provider needs to implement token issuance and verification functions
 
 ### 12.1. Get VcPlan List
 
-모든 VC plan 목록을 조회한다.
+Retrieves list of all VC plans.
 
 | Item          | Description                | Remarks |
 | ------------- | -------------------------- | ------- |
@@ -5896,25 +5535,23 @@ N/A
 
 **■ Query Parameters**
 
-| Parameter | Type       | Description     | Remarks |
-| --------- | ---------- | --------------- | ------- |
-| - `tags`  | `string[]` | 검색할 해시태그 |         |
+| Parameter | Type       | Description           | Remarks |
+| --------- | ---------- | --------------------- | ------- |
+| - `tags`  | `string[]` | Hashtags to search    |         |
 
-- `tags`: 검색할 해시태그를 1개 이상 지정
-    - 예시: "?tags[]=id&tags[]=student"
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
+- `tags`: Specify one or more hashtags to search
+    - Example: "?tags[]=id&tags[]=student"
 
 #### 12.1.2. Response
 
 **■ Process**
 
-1. 모든 VC plan 조회하여 목록 응답
+1. Retrieve all VC plans and respond with list
 
 **■ Status 200 - Success**
 
 ```c#
-def object _GetVcPlanList: "Get VcPlan List 응답문"
+def object _GetVcPlanList: "Get VcPlan List response message"
 {
     + int           "count": "number of items"
     + array(VcPlan) "items": "VC plan list", emptiable(false)
@@ -5925,15 +5562,13 @@ def object _GetVcPlanList: "Get VcPlan List 응답문"
 
 | Code         | Description                 |
 | ------------ | --------------------------- |
-| SSRVTRA18501 | VC Plan 조회가 실패하였습니다. |
+| SSRVTRA18501 | VC Plan retrieval failed.   |
 
 **■ Status 500 - Server error**
 
 | Code         | Description                                          |
 | ------------ | ---------------------------------------------------- |
-| SSRVTRA19500 | 'get-vcplan-list' API 요청 처리에 실패했습니다.  |
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
+| SSRVTRA19500 | 'get-vcplan-list' API request processing failed.    |
 
 #### 12.1.3. Example
 
@@ -5979,9 +5614,10 @@ Content-Type: application/json;charset=utf-8
 
 <div style="page-break-after: always; margin-top: 40px;"></div>
 
+
 ### 12.2. Get VcPlan
 
-VC Plan 정보를 조회한다.
+Retrieves VC Plan information.
 
 | Item          | Description           | Remarks |
 | ------------- | --------------------- | ------- |
@@ -6005,7 +5641,7 @@ N/A
 
 | Parameter | Type       | Description           | Remarks |
 | --------- | ---------- | --------------------- | ------- |
-| + `id`    | `vcPlanId` | 조회할 VC plan 식별자 |         |
+| + `id`    | `vcPlanId` | VC plan identifier to retrieve |         |
 
 **■ HTTP Body**
 
@@ -6017,12 +5653,12 @@ N/A
 
 **■ Process**
 
-1. vcPlanId로 해당 VC plan 정보 조회
+1. Retrieve VC plan information by vcPlanId
 
 **■ Status 200 - Success**
 
 ```c#
-def object _GetVcPlan: "Get VC Plan 응답문"
+def object _GetVcPlan: "Get VC Plan response message"
 {
     @spread(VcPlan)
 }
@@ -6032,13 +5668,13 @@ def object _GetVcPlan: "Get VC Plan 응답문"
 
 | Code         | Description                 |
 | ------------ | --------------------------- |
-| SSRVTRA18501 | VC Plan 조회가 실패하였습니다. |
+| SSRVTRA18501 | VC Plan retrieval failed. |
 
 **■ Status 500 - Server error**
 
 | Code         | Description                                     |
 | ------------ | ----------------------------------------------- |
-| SSRVTRA19501 |'get-vcplan' API 요청 처리에 실패했습니다. |
+| SSRVTRA19501 | Failed to process 'get-vcplan' API request. |
 
 <div style="page-break-after: always; margin-top: 30px;"></div>
 
@@ -6083,9 +5719,9 @@ Content-Type: application/json;charset=utf-8
 
 ### 12.3. Get Allowed CA List
 
-- 전송: 월렛 → TAS
+- Transmission: Wallet → TAS
 
-월렛 서비스 별 사용이 허용된 CA 목록을 조회한다.
+Retrieves the list of CAs allowed for each wallet service.
 
 | Item          | Description                    | Remarks |
 | ------------- | ------------------------------ | ------- |
@@ -6109,11 +5745,11 @@ N/A
 
 | Parameter  | Type              | Description        | Remarks |
 | ---------- | ----------------- | ------------------ | ------- |
-| + `wallet` | `walletServiceId` | 월렛 서비스 식별자 |         |
+| + `wallet` | `walletServiceId` | Wallet service identifier |         |
 
 - `wallet`
-    - 월렛 사업자가 월렛 서비스를 목록 사업자에 등록할 때 목록 사업자로부터 할당 받은 식별자
-    - 월렛 SDK 빌드 시 고정된 상수값으로 정의되어 있으므로 월렛 인스턴스는 이미 알고 있는 값
+    - Identifier assigned by the list operator when wallet operators register their wallet service with the list operator
+    - A fixed constant value defined during wallet SDK build, so the wallet instance already knows this value
 
 **■ HTTP Body**
 
@@ -6125,15 +5761,15 @@ N/A
 
 **■ Process**
 
-1. `wallet`으로 해당 월렛 서비스의 사용이 허용된 CA 목록을 조회
+1. Retrieve the list of CAs allowed for use by the wallet service using `wallet`
 
 **■ Status 200 - Success**
 
 ```c#
-def object _GetAllowedCaList: "Get Allowed CA List 응답문"
+def object _GetAllowedCaList: "Get Allowed CA List response message"
 {
     + int           "count": "number of items"
-    + array(string) "items": "list of pakcage name of allowed CA", emptiable(false) 
+    + array(string) "items": "list of package name of allowed CA", emptiable(false) 
 }
 ```
 
@@ -6141,13 +5777,13 @@ def object _GetAllowedCaList: "Get Allowed CA List 응답문"
 
 | Code         | Description                       |
 | ------------ | --------------------------------- |
-| SSRVTRA12012 | 허용된 CA 목록을 찾지 못했습니다. |
+| SSRVTRA12012 | Could not find allowed CA list. |
 
 **■ Status 500 - Server error**
 
 | Code         | Description                                     |
 | ------------ | ----------------------------------------------- |
-| SSRVTRA19502 | 'get-allowed-ca-list' API 요청 처리에 실패했습니다. |
+| SSRVTRA19502 | Failed to process 'get-allowed-ca-list' API request. |
 
 <div style="page-break-after: always; margin-top: 30px;"></div>
 
@@ -6176,7 +5812,7 @@ Content-Type: application/json;charset=utf-8
 <div style="page-break-after: always; margin-top: 40px;"></div>
 
 ### 12.4. Send Email
-이메일을 발송한다.
+Sends an email.
 
 | Item          | Description                | Remarks |
 | ------------- | -------------------------- | ------- |
@@ -6203,12 +5839,12 @@ N/A
 **■ HTTP Body**
 
 ```c#
-def object SendEmail: "Send Email 요청문"
+def object SendEmail: "Send Email request message"
 {    
-    + string                "title"             : "email 제목"
-    - string                "senderAddress"     : "발신자 이메일 주소" 
-    + string                "recipientAddress"  : "수신자 이메일 주소"
-    + EMAIL_TEMPLATE_TYPE   "email"             : "email 템플릿 데이터" // A.2. EmailTemplate Object 참고
+    + string                "title"             : "email title"
+    - string                "senderAddress"     : "sender email address" 
+    + string                "recipientAddress"  : "recipient email address"
+    + EMAIL_TEMPLATE_TYPE   "email"             : "email template data" // Refer to A.2. EmailTemplate Object
 }
 ```
 
@@ -6217,14 +5853,14 @@ def object SendEmail: "Send Email 요청문"
 #### 12.4.2. Response
 
 **■ Process**
-1. 템플릿 타입으로 템플릿 파일 확인
-1. 동적 변환 데이터 적용
-1. 이메일 발송
+1. Check template file by template type
+1. Apply dynamic conversion data
+1. Send email
 
 **■ Status 200 - Success**
 
 ```c#
-def object _SendEmail: "Send Email 응답문"
+def object _SendEmail: "Send Email response message"
 {
 }
 ```
@@ -6233,14 +5869,14 @@ def object _SendEmail: "Send Email 응답문"
 
 | Code         | Description                        |
 | ------------ | ---------------------------------- |
-| SSRVTRA13500 | 이메일 템플릿 조회가 실패했습니다. |
-| SSRVTRA15504 | 이메일 전송에 실패했습니다.        |
+| SSRVTRA13500 | Email template retrieval failed. |
+| SSRVTRA15504 | Email transmission failed.        |
 
 **■ Status 500 - Server error**
 
 | Code         | Description                                     |
 | ------------ | ----------------------------------------------- |
-| SSRVTRA20000 | 'send-email' API 요청 처리에 실패했습니다. |
+| SSRVTRA20000 | Failed to process 'send-email' API request. |
 
 <div style="page-break-after: always; margin-top: 30px;"></div>
 
@@ -6249,7 +5885,27 @@ def object _SendEmail: "Send Email 응답문"
 **■ Request**
 
 ```shell
-curl -v -X POST "http://${Host}:${Port}/noti/api/v1/send-email" \
+curl -v -X POST "http://${Host}:${Port}/tas/api/v1/update-diddoc-revoked" \
+-H "Content-Type: application/json;charset=utf-8" \
+-d @"data.json"
+```
+
+```json
+//data.json
+{
+  "kycTxId": "4c6ea067"
+}
+```
+
+**■ Response**
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=utf-8
+
+{
+}
+```${Port}/noti/api/v1/send-email" \
 -H "Content-Type: application/json;charset=utf-8" \
 -d @"data.json"
 ```
@@ -6284,8 +5940,8 @@ Content-Type: application/json;charset=utf-8
 <div style="page-break-after: always; margin-top: 40px;"></div>
 
 
-### 12.5. Send push
-Push 메시지를 전송한다.
+### 12.5. Send Push
+Sends a push message.
 
 | Item          | Description                    | Remarks |
 | ------------- | ------------------------------ | ------- |
@@ -6312,11 +5968,11 @@ N/A
 **■ HTTP Body**
 
 ```c#
-def object SendPush: "Send Push 요청문"
+def object SendPush: "Send Push request message"
 {    
-    + FcmNotification "notification": "Fcm Notification 정보": // A.3. FcmNotification Object 참고
-    + map(contentKey, contentValue) "data": "Push 데이터"
-    + array(string) "targetDids": "Push 발송 대상 DID"
+    + FcmNotification "notification": "FCM Notification information": // Refer to A.3. FcmNotification Object
+    + map(contentKey, contentValue) "data": "Push data"
+    + array(string) "targetDids": "Target DIDs for push transmission"
 }
 ```
 
@@ -6325,17 +5981,17 @@ def object SendPush: "Send Push 요청문"
 #### 12.5.2. Response
 
 **■ Process**
-1. targetDids로 Push 토큰 조회
-2. notification와 data로 Push 메시지 생성
-3. Push 메시지 전송
+1. Retrieve push tokens using targetDids
+2. Create push message with notification and data
+3. Send push message
 
 **■ Status 200 - Success**
 
 ```c#
-def object _SendPush: "Send Email 응답문"
+def object _SendPush: "Send Email response message"
 {
-    + int "successCount": "Push 전송 성공 횟수"
-    + int "failureCount": "Push 전송 실패 횟수"
+    + int "successCount": "Number of successful push transmissions"
+    + int "failureCount": "Number of failed push transmissions"
 }
 ```
 
@@ -6343,16 +5999,16 @@ def object _SendPush: "Send Email 응답문"
 
 | Code         | Description                                              |
 | ------------ | -------------------------------------------------------- |
-| SSRVTRA17002 | 사용자를 찾을 수 없습니다: 사용자가 등록되지 않았습니다. |
-| SSRVTRA17004 | 앱을 찾을 수 없습니다: 앱이 등록되지 않았습니다.         |
-| SSRVTRA17007 | Push 토큰을 조회할 수 없습니다.                          |
+| SSRVTRA17002 | User not found: User is not registered. |
+| SSRVTRA17004 | App not found: App is not registered.         |
+| SSRVTRA17007 | Cannot retrieve push token.                          |
 
 **■ Status 500 - Server error**
 
 | Code         | Description                               |
 | ------------ | ----------------------------------------- |
-| SSRVTRA13501 | FCM 메시지 전송에 실패했습니다.           |
-| SSRVTRA20001 | 'send-push' API 요청 처리에 실패했습니다. |
+| SSRVTRA13501 | FCM message transmission failed.           |
+| SSRVTRA20001 | Failed to process 'send-push' API request. |
 
 <div style="page-break-after: always; margin-top: 30px;"></div>
 
@@ -6397,7 +6053,7 @@ Content-Type: application/json;charset=utf-8
 <div style="page-break-after: always; margin-top: 40px;"></div>
 
 ### 12.6. Update Push Token
-사용자의 Push Token을 업데이트 한다.
+Updates the user's push token.
 
 | Item          | Description                 | Remarks |
 | ------------- | --------------------------- | ------- |
@@ -6424,12 +6080,12 @@ N/A
 **■ HTTP Body**
 
 ```c#
-def object UpdatePushToken: "Update Push Token 요청문"
+def object UpdatePushToken: "Update Push Token request message"
 {    
     + messageId     "id"        : "message id"
     + did           "did"       : "user DID"
     + appId         "appId"     : "user's app id"
-    + string        "pushToken" : "push Token"
+    + string        "pushToken" : "push token"
 }
 ```
 
@@ -6438,14 +6094,14 @@ def object UpdatePushToken: "Update Push Token 요청문"
 #### 12.6.2. Response
 
 **■ Process**
-1. did, appId로 사용자의 appId 기 등록 여부 확인
-1. did와 proof.verificationMethod의 DID가 일치하는지 확인
-1. push token 갱신
+1. Check if user's appId is already registered using did and appId
+1. Verify if the DID matches between did and proof.verificationMethod
+1. Update push token
 
 **■ Status 200 - Success**
 
 ```c#
-def object _UpdatePushToken: "Update Push Token 응답문"
+def object _UpdatePushToken: "Update Push Token response message"
 {
 }
 ```
@@ -6454,15 +6110,15 @@ def object _UpdatePushToken: "Update Push Token 응답문"
 
 | Code         | Description                                              |
 | ------------ | -------------------------------------------------------- |
-| SSRVTRA17002 | 사용자를 찾을 수 없습니다: 사용자가 등록되지 않았습니다. |
-| SSRVTRA17004 | 앱을 찾을 수 없습니다: 앱이 등록되지 않았습니다.         |
-| SSRVTRA17005 | 앱 인증 실패: app ID가 일치하지 않습니다.                |
+| SSRVTRA17002 | User not found: User is not registered. |
+| SSRVTRA17004 | App not found: App is not registered.         |
+| SSRVTRA17005 | App authentication failed: app ID does not match.                |
 
 **■ Status 500 - Server error**
 
 | Code         | Description                               |
 | ------------ | ----------------------------------------- |
-| SSRVTRA20021 | 'update-push-token' API 요청 처리에 실패했습니다. |
+| SSRVTRA20021 | Failed to process 'update-push-token' API request. |
 
 <div style="page-break-after: always; margin-top: 30px;"></div>
 
@@ -6499,7 +6155,7 @@ Content-Type: application/json;charset=utf-8
 <div style="page-break-after: always; margin-top: 40px;"></div>
 
 ### 12.7. Get Certificate Vc
-Trust Agent의의 가입증명서를 조회한다.
+Retrieves the Trust Agent's enrollment certificate.
 
 | Item          | Description              | Remarks |
 | ------------- | ------------------------ | ------- |
@@ -6532,14 +6188,14 @@ N/A
 #### 12.7.2. Response
 
 **■ Process**
-1. Trust Agent의 가입증명서 조회
+1. Retrieve Trust Agent's enrollment certificate
 
 **■ Status 200 - Success**
 
 ```c#
-def object _GetCertificateVc: "Get Certificate VC 응답문"
+def object _GetCertificateVc: "Get Certificate VC response message"
 {
-    @spread(Vc)  // 데이터 명세서 참고
+    @spread(Vc)  // Refer to data specification
 }
 ```
 
@@ -6551,8 +6207,8 @@ N/A
 
 | Code         | Description                                        |
 | ------------ | -------------------------------------------------- |
-| SSRVTRA13002 | 가입증명서를 조회할 수 업습니다.                   |
-| SSRVTRA13007 | 'get-certificate-vc' API 요청 처리에 실패했습니다. |
+| SSRVTRA13002 | Cannot retrieve enrollment certificate.                   |
+| SSRVTRA13007 | Failed to process 'get-certificate-vc' API request. |
 
 <div style="page-break-after: always; margin-top: 30px;"></div>
 
@@ -6644,7 +6300,7 @@ Content-Type: application/json;charset=utf-8
 
 
 ### 12.8. Get Vc Schema
-VC Schema를 조회한다.
+Retrieves VC Schema.
 
 | Item          | Description        | Remarks |
 | ------------- | ------------------ | ------- |
@@ -6681,14 +6337,14 @@ N/A
 #### 12.8.2. Response
 
 **■ Process**
-1. name으로 VC Schema 조회
+1. Retrieve VC Schema by name
 
 **■ Status 200 - Success**
 
 ```c#
-def object _GetVcSchema: "Get VC Schema 응답문"
+def object _GetVcSchema: "Get VC Schema response message"
 {
-    @spread(VcSchema)  // 데이터 명세서 참고
+    @spread(VcSchema)  // Refer to data specification
 }
 ```
 
@@ -6700,7 +6356,7 @@ N/A
 
 | Code         | Description                                   |
 | ------------ | --------------------------------------------- |
-| SSRVTRA18530 | 'get-vc-schema' API 요청 처리에 실패했습니다. |
+| SSRVTRA18530 | Failed to process 'get-vc-schema' API request. |
 
 <div style="page-break-after: always; margin-top: 30px;"></div>
 
@@ -6757,7 +6413,7 @@ Content-Type: application/json;charset=utf-8
 <div style="page-break-after: always; margin-top: 40px;"></div>
 
 ### 12.9. Update DidDoc Deactivated
-사용자 DID Document를 비활성화 한다.
+Deactivates user DID Document.
 
 | Item          | Description                             | Remarks |
 | ------------- | --------------------------------------- | ------- |
@@ -6784,9 +6440,9 @@ N/A
 **■ HTTP Body**
 
 ```c#
-def object UpdateDidDocDeactivated: "DidDoc 분실 요청문"
+def object UpdateDidDocDeactivated: "DidDoc loss request message"
 {    
-    + string    "kycTxId"           : "KYC 식별자"
+    + string    "kycTxId"           : "KYC identifier"
 }
 ```
 
@@ -6795,16 +6451,16 @@ def object UpdateDidDocDeactivated: "DidDoc 분실 요청문"
 #### 12.9.2. Response
 
 **■ Process**
-1. KYC 서버로 PII 확인
-1. PII로 사용자 정보 확인
-1. DidDoc이 변경 가능한 상태인지 확인
-1. DidDoc 상태 변경 (deactivated)
+1. Verify PII with KYC server
+1. Verify user information with PII
+1. Check if DidDoc is in a changeable state
+1. Change DidDoc status (deactivated)
 
 
 **■ Status 200 - Success**
 
 ```c#
-def object _UpdateDidDocDeactivated: "DidDoc 분실 응답문"
+def object _UpdateDidDocDeactivated: "DidDoc loss response message"
 {
 }
 ```
@@ -6813,15 +6469,15 @@ def object _UpdateDidDocDeactivated: "DidDoc 분실 응답문"
 
 | Code         | Description                                              |
 | ------------ | -------------------------------------------------------- |
-| SSRVTRA17002 | 사용자를 찾을 수 없습니다: 사용자가 등록되지 않았습니다. |
-| SSRVTRA15002 | 블록체인에서 DID Document를 조회하는데 실패했습니다.     |
-| SSRVTRA15003 | DID Document를 업데이트하는데 실패했습니다.                  |
+| SSRVTRA17002 | User not found: User is not registered. |
+| SSRVTRA15002 | Failed to retrieve DID Document from blockchain.     |
+| SSRVTRA15003 | Failed to update DID Document.                  |
 
 **■ Status 500 - Server error**
 
 | Code         | Description                                               |
 | ------------ | --------------------------------------------------------- |
-| SSRVTRA20022 | 'update-diddoc-deactivated' API 요청 처리에 실패했습니다. |
+| SSRVTRA20022 | Failed to process 'update-diddoc-deactivated' API request. |
 
 <div style="page-break-after: always; margin-top: 30px;"></div>
 
@@ -6855,7 +6511,7 @@ Content-Type: application/json;charset=utf-8
 <div style="page-break-after: always; margin-top: 40px;"></div>
 
 ### 12.10. Update DidDoc Revoked
-사용자 DID Document를 폐기 처리한다.
+Revokes user DID Document.
 
 | Item          | Description                     | Remarks |
 | ------------- | ------------------------------- | ------- |
@@ -6882,9 +6538,9 @@ N/A
 **■ HTTP Body**
 
 ```c#
-def object UpdateDidDocRevoked: "DidDoc 폐기 요청문"
+def object UpdateDidDocRevoked: "DidDoc revocation request message"
 {    
-    + string    "kycTxId"           : "KYC 식별자"
+    + string    "kycTxId"           : "KYC identifier"
 }
 ```
 
@@ -6893,16 +6549,16 @@ def object UpdateDidDocRevoked: "DidDoc 폐기 요청문"
 #### 12.10.2. Response
 
 **■ Process**
-1. KYC 서버로 PII 확인
-1. PII로 사용자 정보 확인
-1. DidDoc이 변경 가능한 상태인지 확인
-1. DidDoc 상태 변경 (revoked)
+1. Verify PII with KYC server
+1. Verify user information with PII
+1. Check if DidDoc is in a changeable state
+1. Change DidDoc status (revoked)
 
 
 **■ Status 200 - Success**
 
 ```c#
-def object _UpdateDidDocRevoked: "DidDoc 폐기 응답문"
+def object _UpdateDidDocRevoked: "DidDoc revocation response message"
 {
 }
 ```
@@ -6911,15 +6567,15 @@ def object _UpdateDidDocRevoked: "DidDoc 폐기 응답문"
 
 | Code | Description        |
 |------|--------------------|
-| SSRVTRA17002 | 사용자를 찾을 수 없습니다: 사용자가 등록되지 않았습니다. |
-| SSRVTRA15002 | 블록체인에서 DID Document를 조회하는데 실패했습니다.     |
-| SSRVTRA15003 | DID Document를 업데이트하는데 실패했습니다.                  |
+| SSRVTRA17002 | User not found: User is not registered. |
+| SSRVTRA15002 | Failed to retrieve DID Document from blockchain.     |
+| SSRVTRA15003 | Failed to update DID Document.                  |
 
 **■ Status 500 - Server error**
 
 | Code         | Description                                               |
 | ------------ | --------------------------------------------------------- |
-| SSRVTRA20023 | 'update-diddoc-revoked' API 요청 처리에 실패했습니다. |
+| SSRVTRA20023 | Failed to process 'update-diddoc-revoked' API request. |
 
 <div style="page-break-after: always; margin-top: 30px;"></div>
 
@@ -6952,13 +6608,13 @@ Content-Type: application/json;charset=utf-8
 
 ### 12.11. Get VC Schema List
 
-모든 VC Schema 목록을 조회한다.
+Retrieves the list of all VC Schemas.
 
-| Item          | Description                | Remarks |
-| ------------- | -------------------------- | ------- |
-| Method        | `GET`                      |         |
+| Item          | Description                  | Remarks |
+| ------------- | ---------------------------- | ------- |
+| Method        | `GET`                        |         |
 | Path          | `/list/api/v1/vcSchema/list` |         |
-| Authorization | -                     
+| Authorization | -                            |         |
 
 #### 12.11.1. Request
 
@@ -6966,7 +6622,7 @@ Content-Type: application/json;charset=utf-8
 
 | Header           | Value                            | Remarks |
 | ---------------- | -------------------------------- | ------- |
-| + `Content-Type` | `application/json;charset=utf-8` |         |      
+| + `Content-Type` | `application/json;charset=utf-8` |         |
 
 **■ Path Parameters**
 
@@ -6976,17 +6632,16 @@ N/A
 
 N/A
 
-
 #### 12.11.2. Response
 
 **■ Process**
 
-1. 모든 VC Schema 조회하여 목록 응답
+1. Retrieve all VC Schemas and respond with the list.
 
 **■ Status 200 - Success**
 
 ```c#
-def object _GetVcPlanList: "Get Schema List 응답문"
+def object _GetVcPlanList: "Get Schema List Response"
 {
     + int             "count": "number of items"
     + array(VcSchema) "items": "VC Schema list", emptiable(false)
@@ -6995,15 +6650,15 @@ def object _GetVcPlanList: "Get Schema List 응답문"
 
 **■ Status 400 - Client error**
 
-| Code         | Description                 |
-| ------------ | --------------------------- |
-| SSRVTRA18503 | VC Schema 조회가 실패하였습니다. |
+| Code         | Description                        |
+| ------------ | ---------------------------------- |
+| SSRVTRA18503 | Failed to retrieve VC Schema list. |
 
 **■ Status 500 - Server error**
 
-| Code         | Description                                          |
-| ------------ | ---------------------------------------------------- |
-| SSRVTRA19500 | 'get-vcschema-list' API 요청 처리에 실패했습니다.  |
+| Code         | Description                                            |
+| ------------ | ------------------------------------------------------ |
+| SSRVTRA19500 | Failed to process the 'get-vcschema-list' API request. |
 
 <div style="page-break-after: always; margin-top: 30px;"></div>
 
@@ -7016,6 +6671,7 @@ curl -v -X GET "http://${Host}:${Port}/list/api/v1/vcschema/list"
 ```
 
 **■ Response**
+
 ```http
 HTTP/1.1 200 OK
 Content-Type: application/json;charset=utf-8
@@ -7072,16 +6728,17 @@ Content-Type: application/json;charset=utf-8
 
 <div style="page-break-after: always; margin-top: 30px;"></div>
 
+---
 
-### 12.12. Get Credential Schema 
+### 12.12. Get Credential Schema
 
-Credential Schema 정보를 조회한다.
+Retrieves credential schema information.
 
-| Item          | Description        | Remarks |
-| ------------- | ------------------ | ------- |
-| Method        | `GET`              |         |
+| Item          | Description                     | Remarks |
+| ------------- | ------------------------------- | ------- |
+| Method        | `GET`                           |         |
 | Path          | `list/api/v1/credential-schema` |         |
-| Authorization | -                  |         |
+| Authorization | -                               |         |
 
 #### 12.12.1. Request
 
@@ -7089,8 +6746,7 @@ Credential Schema 정보를 조회한다.
 
 | Header           | Value                            | Remarks |
 | ---------------- | -------------------------------- | ------- |
-| + `Content-Type` | `application/json;charset=utf-8` |         |      
-
+| + `Content-Type` | `application/json;charset=utf-8` |         |
 
 **■ Path Parameters**
 
@@ -7098,9 +6754,9 @@ N/A
 
 **■ Query Parameters**
 
-| name     | Description      | Remarks                         |
-| -------- | ---------------- | ------------------------------- |
-| - `credentialSchemaId`   | `credential Schema ID`   |         |
+| Name                 | Description          | Remarks |
+| -------------------- | -------------------- | ------- |
+| `credentialSchemaId` | Credential Schema ID |         |
 
 **■ HTTP Body**
 
@@ -7112,15 +6768,14 @@ N/A
 
 **■ Process**
 
-1. credentialSchemaId로 credential Schema 조회
-
+1. Retrieve the credential schema using `credentialSchemaId`.
 
 **■ Status 200 - Success**
 
 ```c#
-def object _GetCredentialSchema: "Get Credential Schema 응답문"
+def object _GetCredentialSchema: "Get Credential Schema Response"
 {
-    @spread(credentialSchema)  // 데이터 명세서 참고
+    @spread(credentialSchema)  // Refer to data spec
 }
 ```
 
@@ -7130,19 +6785,18 @@ N/A
 
 **■ Status 500 - Server error**
 
-| Code         | Description                                   |
-| ------------ | --------------------------------------------- |
-| SSRVTRA18530 | 'get-credential-schema' API 요청 처리에 실패했습니다. |
+| Code         | Description                                                |
+| ------------ | ---------------------------------------------------------- |
+| SSRVTRA18530 | Failed to process the 'get-credential-schema' API request. |
 
 <div style="page-break-after: always; margin-top: 30px;"></div>
-
 
 #### 12.12.3. Example
 
 **■ Request**
 
 ```shell
-curl -v -X GET "http://${Host}:${Port}/list/api/v1/credential-schema?credentialSchemaId=did%3Aomn%3Aissuer%3A2%3Azkpchemaample%3A1.0'
+curl -v -X GET "http://${Host}:${Port}/list/api/v1/credential-schema?credentialSchemaId=did%3Aomn%3Aissuer%3A2%3Azkpchemaample%3A1.0"
 ```
 
 **■ Response**
@@ -7168,7 +6822,7 @@ Content-Type: application/json;charset=utf-8
       "items": [
         {
           "label": "birth",
-          "caption": "Bitrh(yyyymmdd)",
+          "caption": "Birth (yyyymmdd)",
           "type": "NUMBER"
         },
         {
@@ -7185,34 +6839,35 @@ Content-Type: application/json;charset=utf-8
 
 <div style="page-break-after: always; margin-top: 40px;"></div>
 
+
 ## A. Non-standard Object Definitions
 
-비표준 API는 구현체에 따라 다르게 정의될 수 있으므로, 사용하는 객체들은 본 문서의 데이터 명세서에 포함되지 않고 이 장에서 따로 정의한다. 
+Non-standard APIs may be defined differently according to implementations, so the objects they use are not included in the data specification document but are defined separately in this chapter.
 
 ### A.1. Constant
 ```c#
 def enum EMAIL_TEMPLATE_TYPE: "character encoding"
 {
-    "ISSUE_VC" // VC 발급
+    "ISSUE_VC" // VC issuance
 }
 ```
 
 ### A.2. EmailTemplate Object
 
 ```c#
-def object EmailTemplate: "email 템플릿 정보"
+def object EmailTemplate: "email template information"
 {
-    + EMAIL_TEMPLATE_TYPE               "templateType"      : "이메일 템플릿 타입"
-    + map(contentKey, contentValue)     "contentData"       : "이메일 동적 변환 데이터"
+    + EMAIL_TEMPLATE_TYPE               "templateType"      : "email template type"
+    + map(contentKey, contentValue)     "contentData"       : "email dynamic conversion data"
 }
 ```
 
 ### A.3. FcmNotification Object
 
 ```c#
-def object FcmNotification: "FCM Notification 정보"
+def object FcmNotification: "FCM Notification information"
 {
-    + string               "title"      : "Push 메시지 타이틀"
-    + string               "body"       : "Push 메시지 분문"
+    + string               "title"      : "Push message title"
+    + string               "body"       : "Push message body"
 }
 ```

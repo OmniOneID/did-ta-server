@@ -13,27 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.omnione.did.tas.v1.agent.api.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-import org.omnione.did.data.model.did.InvokedDidDoc;
+import lombok.*;
 
-/**
- * DTO class used for communication with external servers.
- */
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @ToString
 @Builder
-public class RegisterDidApiReqDto {
-    private String roleType;
-    private InvokedDidDoc didDoc;
+@NoArgsConstructor
+@AllArgsConstructor
+public class InputVcSchemaReqDto {
+    private String did;
+    private String vcSchema;
 }

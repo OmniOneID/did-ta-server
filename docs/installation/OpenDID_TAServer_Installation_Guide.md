@@ -18,11 +18,12 @@ puppeteer:
 Open DID TA Server Installation And Operation Guide
 ==
 
-- Date: 2024-09-02
-- Version: v1.0.0
+- Date: 2025-05-30
+- Version: v2.0.0
 
 Table of Contents
 ==
+
 - [1. Introduction](#1-introduction)
   - [1.1. Overview](#11-overview)
   - [1.2. What is the TA Server?](#12-what-is-the-ta-server)
@@ -64,7 +65,7 @@ Table of Contents
     - [5.6.1. Wallet Access Configuration](#561-wallet-access-configuration)
   - [5.7. application-blockchain.yml](#57-application-blockchainyml)
   - [5.8. blockchain.properties](#58-blockchainproperties)
-    - [5.8.1. Blockchain Integration Settings](#581-blockchain-integration-settings)
+    - [5.8.1. Blockchain Integration Configuration](#581-blockchain-integration-configuration)
 - [6. Profile Configuration and Usage](#6-profile-configuration-and-usage)
   - [6.1. Profile Overview (`sample`, `dev`)](#61-profile-overview-sample-dev)
     - [6.1.1. `sample` Profile](#611-sample-profile)
@@ -74,12 +75,12 @@ Table of Contents
     - [6.2.2. When Using Console Commands](#622-when-using-console-commands)
     - [6.2.3. When Using Docker](#623-when-using-docker)
 - [7. Running After Building with Docker](#7-running-after-building-with-docker)
-  - [7.1. How to Build a Docker Image (Based on `Dockerfile`)](#71-how-to-build-a-docker-image-based-on-dockerfile)
-  - [7.2. Running the Docker Image](#72-running-the-docker-image)
-  - [7.3. Running with Docker Compose](#73-running-with-docker-compose)
-    - [7.3.1. `docker-compose.yml` File Explanation](#731-docker-composeyml-file-explanation)
-    - [7.3.2. Running and Managing Containers](#732-running-and-managing-containers)
-    - [7.3.3. How to Configure the Server](#733-how-to-configure-the-server)
+  - [7.1. Docker Image Build Method (Based on `Dockerfile`)](#71-docker-image-build-method-based-on-dockerfile)
+    - [7.1.1. Build Docker image](#711-build-docker-image)
+  - [7.2. Running with Docker Compose](#72-running-with-docker-compose)
+    - [7.2.1. Preparing Directories and Configuration Files](#721-preparing-directories-and-configuration-files)
+    - [7.2.2. Create `docker-compose.yml` file](#722-create-docker-composeyml-file)
+    - [7.2.3. Run Container](#723-run-container)
 - [8. Installing PostgreSQL with Docker](#8-installing-postgresql-with-docker)
   - [8.1. Installing PostgreSQL with Docker Compose](#81-installing-postgresql-with-docker-compose)
   - [8.2. Running the PostgreSQL Container](#82-running-the-postgresql-container)
@@ -107,7 +108,7 @@ Through this process, trusted data is stored on the blockchain, and the TA Serve
 <br/>
 
 ## 1.3. System Requirements
-- **Java 17** or higher
+- **Java 21** or higher
 - **Gradle 7.0** or higher
 - **Docker** and **Docker Compose** (when using Docker)
 - At least **2GB RAM** and **10GB of disk space**
@@ -202,24 +203,32 @@ did-ta-server
 ├── RELEASE-PROCESS.md
 ├── SECURITY.md
 ├── docs
-│   └── api
-│       └── TAS_API.md
-│   └── errorCode
-│       └── TAS_ErrorCode.md
-│   └── installation
-│       └── OpenDID_TASServer_InstallationAndOperation_Guide.md
-│   └── db
-│       └── OpenDID_TableDefinition_TAS.md
+│   └── admin
+│       ├── OpenDID_TAAdmin_Operation_Guide.md
+│       └── OpenDID_TAAdmin_Operation_Guide_ko.md
+│   └── api
+│       ├── TAS_API.md
+│       └── TAS_API_ko.md
+│   └── errorCode
+│       ├── TAS_ErrorCode.md
+│       └── TAS_ErrorCode_ko.md
+│   └── installation
+│       ├── OpenDID_TASServer_InstallationAndOperation_Guide.md
+│       └── OpenDID_TASServer_InstallationAndOperation_Guide_ko.md
+│   └── db
+│       ├── OpenDID_TableDefinition_TAS.md
+│       └── OpenDID_TableDefinition_TAS_ko.md
 └── source
     └── did-ta-server
         ├── gradle
         ├── libs
-            └── did-sdk-common-1.0.0.jar
-            └── did-blockchain-sdk-server-1.0.0.jar
-            └── did-core-sdk-server-1.0.0..jar
-            └── did-crypto-sdk-server-1.0.0.jar
-            └── did-datamodel-sdk-server-1.0.0.jar
-            └── did-wallet-sdk-server-1.0.0.jar
+            └── did-sdk-common-2.0.0.jar
+            └── did-blockchain-sdk-server-2.0.0.jar
+            └── did-core-sdk-server-2.0.0.jar
+            └── did-crypto-sdk-server-2.0.0.jar
+            └── did-datamodel-server-2.0.0.jar
+            └── did-wallet-sdk-server-2.0.0.jar
+            └── did-zkp-sdk-server-2.0.0.jar
         ├── sample
         └── src
         └── build.gradle
@@ -343,7 +352,7 @@ npm install
 npm run dev
 ```
 
-- Default Access URL: [http://localhost:5173](http://localhost:5173)
+- Default Access URL: [http://localhost:8090](http://localhost:8090)
 
 > 📌 **Note:**  
 > The backend (Spring Boot server) must be running separately.  
@@ -386,7 +395,7 @@ cd build/libs
 ls
 ```
 
-You should see the file: `did-tas-server-1.0.0.jar`
+You should see the file: `did-tas-server-2.0.0.jar`
 
 <br/>
 
@@ -395,7 +404,7 @@ You should see the file: `did-tas-server-1.0.0.jar`
 Run the server using the built JAR file:
 
 ```bash
-java -jar did-tas-server-1.0.0.jar
+java -jar did-tas-server-2.0.0.jar
 ```
 
 Once the server is running, open your browser and visit [http://localhost:8090/swagger-ui/index.html](http://localhost:8090/swagger-ui/index.html) to check that the Swagger UI is working properly.
@@ -769,36 +778,43 @@ logging:
 
 ## 5.8. blockchain.properties
 
-- Purpose: Defines the configuration for connecting the TA Server to the blockchain.  
-  When installing the Hyperledger Fabric test network as described in section `5.1.1. Hyperledger Fabric Test Network Installation` of the [Open DID Installation Guide], files for private key, certificate, and connection info are automatically generated.  
-  This file specifies the path to those files, the channel name used during network setup, and the chaincode name defined during deployment (see `5.1.2. Open DID Chaincode Deployment`).
+- Role: Configures blockchain server information for integration with the TA server. When you install the Hyperledger Besu network according to '5.3. Step 3: Blockchain Installation' in [Open DID Installation Guide], private keys, certificates, and server connection information configuration files are automatically generated. In blockchain.properties, you set the paths where these files are located and the network name entered during Hyperledger Besu installation.
 
-### 5.8.1. Blockchain Integration Settings
+- Location: `src/main/resources/properties`
 
-* `fabric.configFilePath`:  
-  - Path to the connection information file for Hyperledger Fabric.  
-    This file is automatically generated during test network installation and is usually named `connection-org1.json`.  
-  - Example: `{yourpath}/connection-org1.json`
+### 5.8.1. Blockchain Integration Configuration
 
-* `fabric.privateKeyFilePath`:  
-  - Path to the private key file used for signing and authentication on the network.  
-    This is generated automatically during network installation.  
-  - Example: `{yourpath}/{private-key-file}`
+#### EVM Network Configuration
 
-* `fabric.certificateFilePath`:  
-  - Path to the client's certificate file.  
-    This file is generated during network installation and is typically named `cert.pem`.  
-  - Example: `{yourpath}/cert.pem`
+- `evm.network.url`:
+  - EVM Network address. Use this fixed value when running Besu on the same local as the client. (Default Port: 8545)
+  - Example: http://localhost:8545
 
-* `fabric.mychannel`:  
-  - Name of the private network (channel) used in Hyperledger Fabric.  
-    This must match the channel name used during test network setup.  
-  - Example: `mychannel`
+- `evm.chainId`:
+  - Chain ID identifier. Currently uses a fixed value of 1337. (Default Value: 1337)
+  - Example: 1337
 
-* `fabric.chaincodeName`: 🔒  
-  - Name of the Open DID chaincode used in Hyperledger Fabric. This value is fixed and must be `opendid`.  
-  - Example: `opendid`
+- `evm.gas.limit`:
+  - Maximum gas limit allowed for Hyperledger Besu EVM transactions. Currently uses a fixed value as Free Gas. (Default Value: 100000000)
+  - Example: 100000000
 
+- `evm.gas.price`:
+  - Gas price per unit. Currently uses a fixed value of 0 as Free Gas. (Default Value: 0)
+  - Example: 0
+
+- `evm.connection.timeout`: 
+  - Network connection timeout value (milliseconds). Currently uses the recommended fixed value of 10000. (Default Value: 10000)
+  - Example: 10000
+
+#### EVM Contract Configuration
+
+- `evm.connection.address`: 
+  - Address value of the OpenDID Contract returned when deploying Smart Contract with Hardhat. For detailed guide, refer to [DID Besu Contract].
+  - Example: 0xa0E49611FB410c00f425E83A4240e1681c51DDf4
+
+- `evm.connection.privateKey`: 
+  - k1 key used for API access control. Enter the key string defined in accounts inside hardhat.config.js (remove the 0x string at the beginning) to enable API calls with Owner privileges (Default setting). For detailed guide, refer to [DID Besu Contract].
+  - Example: 0x8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63
 <br/>
 
 # 6. Profile Configuration and Usage
@@ -841,7 +857,7 @@ This section explains how to activate a specific profile depending on how the se
 - **Set profile:** Run the following command to activate the desired profile:
 
   ```bash
-  java -jar build/libs/did-tas-server-1.0.0.jar --spring.profiles.active={profile}
+  java -jar build/libs/did-tas-server-2.0.0.jar --spring.profiles.active={profile}
   ```
 
 - **Apply settings:** The specified profile will be used during execution.
@@ -864,59 +880,82 @@ You can flexibly switch between profiles based on the method of execution and ap
 
 # 7. Running After Building with Docker
 
-## 7.1. How to Build a Docker Image (Based on `Dockerfile`)
+## 7.1. Docker Image Build Method (Based on `Dockerfile`)
 
-Build the Docker image using the following command:
-
-```bash
-docker build -t did-tas-server .
-```
-
-## 7.2. Running the Docker Image
-
-Run the built image using the following command:
+### 7.1.1. Build Docker image
+Build the Docker image with the following command:
 
 ```bash
-docker run -d -p 8090:8090 did-tas-server
+cd {source_directory}
+docker build -t did-ta-server -f did-ta-server/Dockerfile .
 ```
 
-## 7.3. Running with Docker Compose
+<br/>
 
-### 7.3.1. `docker-compose.yml` File Explanation
+## 7.2. Running with Docker Compose
 
-You can easily manage multiple containers using a `docker-compose.yml` file.
+### 7.2.1. Preparing Directories and Configuration Files
 
-```yaml
+#### 1. Create docker-compose directory and config directory
+```bash
+mkdir -p {docker_compose_directory}/config
+```
+
+#### 2. Copy configuration files (yml) to config directory
+```bash
+cp {application_yml_directory}/* {docker_compose_directory}/config/
+cp {blockchain_properties_path} {docker_compose_directory}/config/
+```
+
+#### 3. Modify blockchain.properties file
+```yml
+evm.network.url=http://host.docker.internal:8545
+... (omitted)
+```
+
+> **host.docker.internal** is a special address that points to the host machine from within a Docker container.  
+> Since localhost inside a container refers to the container itself, you must use host.docker.internal to access services (PostgreSQL, blockchain) running on the host.
+
+#### 4. Modify application-database.yml file
+```yml
+spring:
+ ... (omitted)
+ datasource:
+   driver-class-name: org.postgresql.Driver
+   url: jdbc:postgresql://host.docker.internal:5430/tas
+   username: omn
+   password: omn
+ ... (omitted)
+```
+
+### 7.2.2. Create `docker-compose.yml` file
+You can easily manage multiple containers using the `docker-compose.yml` file.
+
+```yml
 version: '3'
 services:
-  app:
-    image: did-tas-server
-    ports:
-      - "8090:8090"
-    volumes:
-      - ${your-config-dir}:/app/config
-    environment:
-      - SPRING_PROFILES_ACTIVE=local
+ app:
+   image: did-ta-server
+   ports:
+     - "8090:8090"
+   volumes:
+     - {config_directory}:/app/config
+   environment:
+     - SPRING_PROFILES_ACTIVE=dev
+   extra_hosts:
+     - "host.docker.internal:host-gateway"
 ```
 
-### 7.3.2. Running and Managing Containers
+> - In the example above, the `config_directory` is mounted to `/app/config` inside the container to share configuration files.
+>   - Configuration files located in `config_directory` take priority over default configuration files.
+>   - For detailed configuration instructions, please refer to [5. Configuration Guide](#5-configuration-guide).
 
-Run the container using Docker Compose with the following command:
 
+### 7.2.3. Run Container
 ```bash
+cd {docker_compose_directory}
 docker-compose up -d
 ```
-
-### 7.3.3. How to Configure the Server
-
-In the example above, the `${your-config-dir}` directory is mounted to `/app/config` inside the container to share configuration files.
-
-- If additional configuration is needed, you can modify the settings by adding separate property files in the mounted folder.
-  - For example, add an `application.yml` file to `${your-config-dir}` and include your custom configurations in it.
-  - The `application.yml` file in `${your-config-dir}` will override the default settings.
-
-- For detailed configuration, refer to [5. Configuration Guide](#5-configuration-guide).
-
 
 <br/>
 
@@ -965,5 +1004,6 @@ docker-compose up -d
 This command runs the PostgreSQL container in the background. Based on the configured environment variables, the PostgreSQL server will start and the database will be ready for use. You can then proceed to connect your application to this database.
 
 <!-- References -->
-[Open DID Installation Guide]: https://github.com/OmniOneID/did-release/blob/develop/unrelease-V1.0.1.0/OepnDID_Installation_Guide-V1.0.1.0.md
+[Open DID Installation Guide]: https://github.com/OmniOneID/did-release/blob/develop/release-V2.0.0.0/OpenDID_Installation_Guide-V2.0.0.0_ko.md
+[DID Besu Contract]: https://github.com/OmniOneID/did-besu-contract
 [Open DID Admin Console Guide]: ../admin/OpenDID_TAAdmin_InstallationAndOperation_Guide_ko.md

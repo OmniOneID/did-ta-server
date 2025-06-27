@@ -1,4 +1,3 @@
-
 Open DID TAS Database Table Definition
 ==
 
@@ -10,13 +9,13 @@ Open DID TAS Database Table Definition
 | v1.0.1 | 2024-03-31 | Initial version |
 | v2.0.0  | 2025-05-29 | update Table    |
 
-Contents
+목차
 --
 - [Open DID TAS Database Table Definition](#open-did-tas-database-table-definition)
-  - [Contents](#contents)
-  - [1. Overview](#1-overview)
+  - [목차](#목차)
+  - [1. 개요](#1-개요)
     - [1.1 ERD](#11-erd)
-  - [2. Table Definition](#2-table-definition)
+  - [2. 테이블 정의](#2-테이블-정의)
     - [2.1. TAS](#21-tas)
     - [2.2. ENTITY](#22-entity)
     - [2.3. USER](#23-user)
@@ -41,19 +40,19 @@ Contents
     - [2.22. LIST\_CREDENTIAL\_DEFINITION](#222-list_credential_definition)
     - [2.23. DID\_DOCUMENT](#223-did_document)
 
-## 1. Overview
+## 1. 개요
 
-This document defines the structure of the database tables used in the TAS server. It describes the field attributes, relationships, and data flow for each table, serving as essential reference material for system development and maintenance.
+이 문서는 TAS 서버에서 사용되는 데이터베이스 테이블의 구조를 정의합니다. 각 테이블의 필드 속성, 관계, 데이터 흐름을 설명하며, 시스템 개발 및 유지보수를 위한 필수 참조 자료로 활용됩니다.
 
 ### 1.1 ERD
 
-Access the [ERD](https://www.erdcloud.com/d/TZGGs3GPE6orphstF) site to view the diagram, which visually represents the relationships between the tables in the TAS server database, including key attributes, primary keys, and foreign key relationships.
+[ERD](https://www.erdcloud.com/d/TZGGs3GPE6orphstF) 사이트에 접속하여 다이어그램을 확인하세요. 이 다이어그램은 TAS 서버 데이터베이스의 테이블 간 관계를 시각적으로 나타내며, 주요 속성, 기본 키, 외래 키 관계를 포함합니다.
 
-## 2. Table Definition
+## 2. 테이블 정의
 
 ### 2.1. TAS
 
-This table stores information related to TAS.
+이 테이블은 TAS와 관련된 정보를 저장합니다.
 
 | Key | Column Name     | Data Type | Length | Nullable | Default | Description              |
 | --- | --------------- | --------- | ------ | -------- | ------- | ------------------------ |
@@ -68,7 +67,7 @@ This table stores information related to TAS.
 
 ### 2.2. ENTITY
 
-This table stores information related to entities.
+이 테이블은 엔티티와 관련된 정보를 저장합니다.
 
 | Key | Column Name     | Data Type | Length | Nullable | Default | Description                 |
 | --- | --------------- | --------- | ------ | -------- | ------- | --------------------------- |
@@ -82,10 +81,9 @@ This table stores information related to entities.
 |     | created_at      | TIMESTAMP |        | NO       | now()   | created date                |
 |     | updated_at      | TIMESTAMP |        | YES      | N/A     | updated date                |
 
-
 ### 2.3. USER
 
-This table stores information related to users.
+이 테이블은 사용자와 관련된 정보를 저장합니다.
 
 | Key | Column Name | Data Type | Length | Nullable | Default | Description  |
 | --- | ----------- | --------- | ------ | -------- | ------- | ------------ |
@@ -96,10 +94,9 @@ This table stores information related to users.
 |     | created_at  | TIMESTAMP |        | NO       | now()   | created date |
 |     | updated_at  | TIMESTAMP |        | YES      | N/A     | updated date |
 
-
 ### 2.4. WALLET
 
-This table stores information related to wallets.
+이 테이블은 지갑과 관련된 정보를 저장합니다.
 
 | Key | Column Name   | Data Type | Length | Nullable | Default | Description              |
 | --- | ------------- | --------- | ------ | -------- | ------- | ------------------------ |
@@ -114,10 +111,9 @@ This table stores information related to wallets.
 |     | user_id       | BIGINT    |        | YES      | N/A     | user table key           |
 |     | entity_id     | BIGINT    |        | NO       | N/A     | entity table key         |
 
-
 ### 2.5. APP
 
-This table stores information related to apps.
+이 테이블은 앱과 관련된 정보를 저장합니다.
 
 | Key | Column Name | Data Type | Length | Nullable | Default | Description      |
 | --- | ----------- | --------- | ------ | -------- | ------- | ---------------- |
@@ -129,10 +125,9 @@ This table stores information related to apps.
 |     | updated_at  | TIMESTAMP |        | YES      | N/A     | updated date     |
 |     | user_id     | BIGINT    |        | NO       | N/A     | user table key   |
 
-
 ### 2.6. CERTIFICATE_VC
 
-This table stores information related to certificate VCs.
+이 테이블은 인증서 VC와 관련된 정보를 저장합니다.
 
 | Key | Column Name | Data Type | Length | Nullable | Default | Description                    |
 | --- | ----------- | --------- | ------ | -------- | ------- | ------------------------------ |
@@ -141,10 +136,9 @@ This table stores information related to certificate VCs.
 |     | created_at  | TIMESTAMP |        | NO       | now()   | created date                   |
 |     | updated_at  | TIMESTAMP |        | YES      | N/A     | updated date                   |
 
-
 ### 2.7. TRANSACTION
 
-This table stores information related to transactions.
+이 테이블은 트랜잭션과 관련된 정보를 저장합니다.
 
 | Key | Column Name    | Data Type | Length | Nullable | Default | Description                    |
 | --- | -------------- | --------- | ------ | -------- | ------- | ------------------------------ |
@@ -162,10 +156,9 @@ This table stores information related to transactions.
 |     | created_at     | TIMESTAMP |        | NO       | now()   | created date                   |
 |     | updated_at     | TIMESTAMP |        | YES      | N/A     | updated date                   |
 
-
 ### 2.8. SUB_TRANSACTION
 
-This table stores information related to sub-transactions.
+이 테이블은 서브 트랜잭션과 관련된 정보를 저장합니다.
 
 | Key | Column Name    | Data Type | Length | Nullable | Default | Description            |
 | --- | -------------- | --------- | ------ | -------- | ------- | ---------------------- |
@@ -177,10 +170,9 @@ This table stores information related to sub-transactions.
 |     | updated_at     | TIMESTAMP |        | YES      | N/A     | updated date           |
 |     | transaction_id | BIGINT    |        | NO       | N/A     | transaction table key  |
 
-
 ### 2.9. TOKEN
 
-This table stores information related to tokens.
+이 테이블은 토큰과 관련된 정보를 저장합니다.
 
 | Key | Column Name    | Data Type | Length | Nullable | Default | Description                      |
 | --- | -------------- | --------- | ------ | -------- | ------- | -------------------------------- |
@@ -194,10 +186,9 @@ This table stores information related to tokens.
 |     | updated_at     | TIMESTAMP |        | YES      | N/A     | updated date                     |
 |     | transaction_id | BIGINT    |        | NO       | N/A     | transaction management table key |
 
-
 ### 2.10. ECDH
 
-This table stores information related to ECDH transactions.
+이 테이블은 ECDH 트랜잭션과 관련된 정보를 저장합니다.
 
 | Key | Column Name    | Data Type | Length | Nullable | Default | Description                      |
 | --- | -------------- | --------- | ------ | -------- | ------- | -------------------------------- |
@@ -211,10 +202,9 @@ This table stores information related to ECDH transactions.
 |     | updated_at     | TIMESTAMP |        | YES      | N/A     | updated date                     |
 |     | transaction_id | BIGINT    |        | NO       | N/A     | transaction management table key |
 
-
 ### 2.11. DID_OFFER
 
-This table stores information related to DID offers.
+이 테이블은 DID 제안과 관련된 정보를 저장합니다.
 
 | Key | Column Name    | Data Type | Length | Nullable | Default | Description                      |
 | --- | -------------- | --------- | ------ | -------- | ------- | -------------------------------- |
@@ -229,7 +219,7 @@ This table stores information related to DID offers.
 
 ### 2.12. VC_SCHEMA
 
-This table stores information related to VC schema definitions.
+이 테이블은 VC 스키마 정의와 관련된 정보를 저장합니다.
 
 | Key | Column Name | Data Type | Length | Nullable | Default | Description                      |
 | --- | ----------- | --------- | ------ | -------- | ------- | -------------------------------- |
@@ -241,10 +231,9 @@ This table stores information related to VC schema definitions.
 |     | created_at  | TIMESTAMP |        | NO       | now()   | created date                     |
 |     | updated_at  | TIMESTAMP |        | YES      | N/A     | updated date                     |
 
-
 ### 2.13. KYC
 
-This table stores information related to KYC (Know Your Customer) services.
+이 테이블은 KYC(Know Your Customer) 서비스와 관련된 정보를 저장합니다.
 
 | Key | Column Name | Data Type | Length | Nullable | Default | Description                                    |
 | --- | ----------- | --------- | ------ | -------- | ------- | ---------------------------------------------- |
@@ -257,7 +246,7 @@ This table stores information related to KYC (Know Your Customer) services.
 
 ### 2.14. API
 
-This table stores information related to API configurations.
+이 테이블은 API 구성과 관련된 정보를 저장합니다.
 
 | Key | Column Name | Data Type | Length | Nullable | Default | Description                          |
 | --- | ----------- | --------- | ------ | -------- | ------- | ------------------------------------ |
@@ -269,7 +258,7 @@ This table stores information related to API configurations.
 
 ### 2.15. NOTIFICATION_SERVER
 
-This table stores configuration information for notification servers.
+이 테이블은 알림 서버의 구성 정보를 저장합니다.
 
 | Key | Column Name | Data Type | Length | Nullable | Default | Description                          |
 | --- | ----------- | --------- | ------ | -------- | ------- | ------------------------------------ |
@@ -281,7 +270,7 @@ This table stores configuration information for notification servers.
 
 ### 2.16. NOTIFICATION_TEMPLATE
 
-This table stores notification message templates based on server and template types.
+이 테이블은 서버 및 템플릿 유형에 따른 알림 메시지 템플릿을 저장합니다.
 
 | Key | Column Name   | Data Type | Length | Nullable | Default | Description                                           |
 | --- | ------------- | --------- | ------ | -------- | ------- | ----------------------------------------------------- |
@@ -294,7 +283,7 @@ This table stores notification message templates based on server and template ty
 
 ### 2.17. LIST_ALLOWED_CA
 
-This table stores a list of CA allowed for a specific wallet.
+이 테이블은 특정 지갑에 허용된 CA 목록을 저장합니다.
 
 | Key | Column Name | Data Type | Length | Nullable | Default | Description                      |
 | --- | ----------- | --------- | ------ | -------- | ------- | -------------------------------- |
@@ -306,7 +295,7 @@ This table stores a list of CA allowed for a specific wallet.
 
 ### 2.18. LIST_VC_SCHEMA
 
-This table stores VC schema information published by issuers, including metadata like title and description.
+이 테이블은 발급자가 발행한 VC 스키마 정보를 제목 및 설명과 같은 메타데이터와 함께 저장합니다.
 
 | Key | Column Name | Data Type | Length | Nullable | Default | Description                            |
 | --- | ----------- | --------- | ------ | -------- | ------- | -------------------------------------- |
@@ -322,7 +311,7 @@ This table stores VC schema information published by issuers, including metadata
 
 ### 2.19. LIST_VC_PLAN
 
-This table stores VC issuance plans published by issuers, including plan metadata and details.
+이 테이블은 발급자가 발행한 VC 발급 계획을 계획 메타데이터 및 세부 정보와 함께 저장합니다.
 
 | Key | Column Name | Data Type | Length | Nullable | Default | Description                       |
 | --- | ----------- | --------- | ------ | -------- | ------- | --------------------------------- |
@@ -338,7 +327,7 @@ This table stores VC issuance plans published by issuers, including plan metadat
 
 ### 2.20. ADMIN
 
-This table stores information about administrators who manage the system.
+이 테이블은 시스템을 관리하는 관리자에 대한 정보를 저장합니다.
 
 | Key | Column Name            | Data Type | Length | Nullable | Default | Description                                      |
 | --- | ---------------------- | --------- | ------ | -------- | ------- | ------------------------------------------------ |
@@ -355,7 +344,7 @@ This table stores information about administrators who manage the system.
 
 ### 2.21. LIST_CREDENTIAL_SCHEMA
 
-This table stores Credential Schemas published by issuers.
+이 테이블은 발급자가 발행한 자격 증명 스키마를 저장합니다.
 
 | Key | Column Name          | Data Type | Length | Nullable | Default | Description                             |
 | --- | -------------------- | --------- | ------ | -------- | ------- | --------------------------------------- |
@@ -368,10 +357,9 @@ This table stores Credential Schemas published by issuers.
 |     | created_at           | TIMESTAMP |        | NO       | now()   | created date                            |
 |     | updated_at           | TIMESTAMP |        | YES      | N/A     | updated date                            |
 
-
 ### 2.22. LIST_CREDENTIAL_DEFINITION
 
-This table stores Credential Definition metadata published by issuers.
+이 테이블은 발급자가 발행한 자격 증명 정의 메타데이터를 저장합니다.
 
 | Key | Column Name               | Data Type | Length | Nullable | Default | Description                                 |
 | --- | ------------------------- | --------- | ------ | -------- | ------- | ------------------------------------------- |
@@ -385,10 +373,9 @@ This table stores Credential Definition metadata published by issuers.
 |     | created_at                | TIMESTAMP |        | NO       | now()   | created date                                |
 |     | updated_at                | TIMESTAMP |        | YES      | N/A     | updated date                                |
 
-
 ### 2.23. DID_DOCUMENT
 
-This table stores DID Documents associated with entities.
+이 테이블은 엔티티와 연관된 DID 문서를 저장합니다.
 
 | Key | Column Name  | Data Type | Length | Nullable | Default | Description                 |
 | --- | ------------ | --------- | ------ | -------- | ------- | --------------------------- |
@@ -397,4 +384,3 @@ This table stores DID Documents associated with entities.
 |     | create_at    | TIMESTAMP |        | NO       | now()   | created date                |
 |     | updated_at   | TIMESTAMP |        | YES      | N/A     | updated date                |
 |     | entity_id    | BIGINT    |        | NO       | N/A     | related entity table key    |
-

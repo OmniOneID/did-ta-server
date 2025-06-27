@@ -29,6 +29,8 @@ const KycSettingPage: React.FC = () => {
   const [errors, setErrors] = useState<ErrorState>({});
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [isServerValid, setIsServerValid] = useState(false);
+  const [serverCheckMessage, setServerCheckMessage] = useState<string>('');
+  const [serverCheckStatus, setServerCheckStatus] = useState<'success' | 'error' | ''>('');
   const [isEditMode, setIsEditMode] = useState(false);
 
   useEffect(() => {
@@ -62,6 +64,8 @@ const KycSettingPage: React.FC = () => {
     if (field === 'serverUrl') {
       setIsServerValid(false);
       setErrors((prev) => ({ ...prev, serverUrl: undefined }));
+      setServerCheckMessage('');
+      setServerCheckStatus('');
     }
   };
 
@@ -69,12 +73,16 @@ const KycSettingPage: React.FC = () => {
     if (!formData.serverUrl) {
       setErrors((prev) => ({ ...prev, serverUrl: 'Please enter the server URL.' }));
       setIsServerValid(false);
+      setServerCheckMessage('Please enter the server URL.');
+      setServerCheckStatus('error');
       return;
     }
 
     if (!urlRegex.test(formData.serverUrl) && !ipRegex.test(formData.serverUrl)) {
       setErrors((prev) => ({ ...prev, serverUrl: 'Please enter a valid URL.' }));
       setIsServerValid(false);
+      setServerCheckMessage('Please enter a valid URL.');
+      setServerCheckStatus('error');
       return;
     }
 
@@ -85,6 +93,8 @@ const KycSettingPage: React.FC = () => {
     } catch (error) {
         setErrors((prev) => ({ ...prev, serverUrl: 'Invalid URL format.' }));
         setIsServerValid(false);
+        setServerCheckMessage('Invalid URL format.');
+        setServerCheckStatus('error');
         return;
     }
 
@@ -93,13 +103,19 @@ const KycSettingPage: React.FC = () => {
       if (response.data.isAvailable) {
         setIsServerValid(true);
         setErrors((prev) => ({ ...prev, serverUrl: undefined }));
+        setServerCheckMessage('Server connection test successful.');
+        setServerCheckStatus('success');
       } else {
         setErrors((prev) => ({ ...prev, serverUrl: 'Test Connection failed.' }));
         setIsServerValid(false);
+        setServerCheckMessage('Test connection failed. Please check the server URL.');
+        setServerCheckStatus('error');
       }
     } catch (error) {
       setErrors((prev) => ({ ...prev, serverUrl: 'Error occurred while testing connection.' }));
       setIsServerValid(false);
+      setServerCheckMessage('Error occurred while testing connection. Please try again.');
+      setServerCheckStatus('error');
     }
   };
 
@@ -107,6 +123,8 @@ const KycSettingPage: React.FC = () => {
     setFormData(initialData);
     setIsButtonDisabled(true);
     setErrors({});
+    setServerCheckMessage('');
+    setServerCheckStatus('');
   };
 
   const validate = () => {
@@ -246,8 +264,15 @@ const KycSettingPage: React.FC = () => {
               value={formData.serverUrl}
               onChange={handleChange('serverUrl')}
               error={!!errors.serverUrl}
-              helperText={errors.serverUrl}
-              sx={{ maxLength: 200 }}
+              helperText={errors.serverUrl || serverCheckMessage}
+              sx={{ 
+                maxLength: 200,
+                '& .MuiFormHelperText-root': {
+                  color: serverCheckStatus === 'success' ? 'green' : 
+                         serverCheckStatus === 'error' ? 'red' : 'inherit',
+                  fontWeight: serverCheckStatus ? 500 : 'inherit'
+                }
+              }}
             />
             <Button 
               variant="outlined" 

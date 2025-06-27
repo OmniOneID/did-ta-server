@@ -71,6 +71,15 @@ After QA approval, manage the complete version control of all modules in a separ
    | Repository         | Version | Changelog                                                                           | Release |
    | ------------------ | ------- | ----------------------------------------------------------------------------------- | ------- |
    | did-ta-server      | V1.0.0  | [Changelog](https://github.com/OmniOneID/did-ta-server/blob/main/CHANGELOG.md)    |         |
+   | ..                 | ..              | ..                           |
+
+   ## Release Note V2.0.0
+
+   | Repository         | Version         | Changelog                   | Release                    |
+   | ------------------ | --------------- | --------------------------- | --------------------------- |
+   | did-ta-server      | V2.0.0  | [Changelog](https://github.com/OmniOneID/did-ta-server/blob/main/CHANGELOG.md)    |         |
+   | ..                 | ..              | ..                           |
+
 
 <br>
 
