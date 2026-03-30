@@ -2,7 +2,7 @@
 import { Box, Link, styled, Typography } from '@mui/material';
 import { GridPaginationModel } from '@mui/x-data-grid';
 import { useDialogs } from '@toolpad/core';
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router';
 import FullscreenLoader from '../../components/loading/FullscreenLoader';
 import CustomDataGrid from '../../components/data-grid/CustomDataGrid';
@@ -32,9 +32,9 @@ const AdminManagementPage = (props: Props) => {
     const [selectedRow, setSelectedRow] = useState<string | number | null>(null);
     const [rows, setRows] = useState<AdminRow[]>([]);
     const [requirePasswordReset, setRequirePasswordReset] = useState(false);
-    const { session } = useSession(); 
+    const { session } = useSession();
     const [searchText, setSearchText] = useState<string>('');
-    const [selectedSearch, setSelectedSearch] = useState<string>('');
+    const [selectedSearch, setSelectedSearch] = useState<string>('loginId');
 
     const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
         page: 0,
@@ -44,11 +44,66 @@ const AdminManagementPage = (props: Props) => {
     const selectedRowData = useMemo(() => {
         return rows.find(row => row.id === selectedRow) || null;
     }, [rows, selectedRow]);
-  
+
+    const fetchData = useCallback(async () => {
+        setLoading(true);
+        try {
+            const response = await fetchAdminList(
+                paginationModel.page,
+                paginationModel.pageSize,
+                selectedSearch && searchText.trim() ? selectedSearch : null,
+                selectedSearch && searchText.trim() ? searchText.trim() : null
+            );
+            setRows(response.data.content);
+            setTotalRows(response.data.totalElements);
+        } catch (err) {
+            console.error("Failed to fetch Admin List ", err);
+            navigate('/error', { state: { message: formatErrorMessage(err, "Failed to retrieve Admin List") } });
+        } finally {
+            setLoading(false);
+        }
+    }, [paginationModel.page, paginationModel.pageSize, selectedSearch, searchText, navigate]);
+
+    const getData = useCallback(async () => {
+        setLoading(true);
+        try {
+            const response = await fetchAdminList(
+                0,
+                paginationModel.pageSize,
+                selectedSearch && searchText.trim() ? selectedSearch : null,
+                selectedSearch && searchText.trim() ? searchText.trim() : null
+            );
+            setRows(response.data.content);
+            setTotalRows(response.data.totalElements);
+            setPaginationModel((prev) => ({ ...prev, page: 0 }));
+        } catch (err) {
+            console.error("Failed to fetch Admin List ", err);
+            setLoading(false);
+            await dialogs.open(CustomDialog, {
+                title: 'Notification',
+                message: formatErrorMessage(err, 'Failed to retrieve Admin List'),
+                isModal: true,
+            });
+        } finally {
+            setLoading(false);
+        }
+    }, [paginationModel.pageSize, selectedSearch, searchText, navigate]);
+
+    const handleSearch = useCallback(
+        async (field: string, text: string) => {
+            const trimmed = text.trim();
+            if (!trimmed) return;
+
+            setSelectedSearch(field);
+            setSearchText(trimmed);
+            setPaginationModel((prev) => ({ ...prev, page: 0 }));
+        }, []
+    );
+
     const handleDelete = async () => {
       const id = selectedRowData?.id as number;
       if (id) {
-        
+
         if (selectedRowData?.role === 'ROOT') {
           dialogs.open(CustomDialog, {
             title: 'Notification',
@@ -119,18 +174,8 @@ const AdminManagementPage = (props: Props) => {
     };
 
     useEffect(() => {
-        setLoading(true);
-        fetchAdminList(paginationModel.page, paginationModel.pageSize, null, null)
-          .then((response) => {
-            setRows(response.data.content);
-            setTotalRows(response.data.totalElements);
-          })
-          .catch((err) => {
-            console.error("Failed to retrieve Admin List. ", err);
-            navigate('/error', { state: { message: formatErrorMessage(err, "Failed to fetch Admin List") } });
-          })
-          .finally(() => setLoading(false));
-    }, [paginationModel]);
+        fetchData();
+    }, [fetchData]);
 
     const StyledContainer = useMemo(() => styled(Box)(({ theme }) => ({
       margin: 'auto',
@@ -147,21 +192,21 @@ const AdminManagementPage = (props: Props) => {
         fontSize: '24px',
         fontWeight: 700,
     }), []);
-    
+
     return (
       <>
         <FullscreenLoader open={loading} />
         <StyledContainer>
           <StyledSubTitle>Admin Management</StyledSubTitle>
-          <CustomDataGrid 
-              rows={rows} 
+          <CustomDataGrid
+              rows={rows}
               columns={[
-                  { 
-                  field: 'loginId', 
-                  headerName: "ID", 
+                  {
+                  field: 'loginId',
+                  headerName: "ID",
                   width: 250,
                   renderCell: (params) => (
-                      <Link 
+                      <Link
                       component="button"
                       variant='body2'
                       onClick={() => navigate(`/admin-management/${params.row.id}`)}
@@ -173,14 +218,9 @@ const AdminManagementPage = (props: Props) => {
                   { field: 'role', headerName: "Role", width: 150},
                   { field: 'createdAt', headerName: "Registered At", width: 150},
                   { field: 'updatedAt', headerName: "Updated At", width: 150},
-              ]} 
-              selectedRow={selectedRow} 
+              ]}
+              selectedRow={selectedRow}
               setSelectedRow={setSelectedRow}
-              // onEdit={() => {
-              //     if (selectedRowData) {
-              //     navigate(`/list-settings/allowed-ca/allowed-ca-edit/${selectedRowData.id}`);
-              //     }
-              // }}
               onRegister={session?.user?.role === 'ROOT' ? () => navigate('/admin-management/admin-registration') : undefined}
               onDelete={session?.user?.role === 'ROOT' ? handleDelete : undefined}
               additionalButtons={
@@ -195,15 +235,30 @@ const AdminManagementPage = (props: Props) => {
                     ]
                   : []
               }
-              paginationMode="server" 
-              totalRows={totalRows} 
-              paginationModel={paginationModel} 
-              setPaginationModel={setPaginationModel} 
+              paginationMode="server"
+              totalRows={totalRows}
+              paginationModel={paginationModel}
+              setPaginationModel={setPaginationModel}
+              enableSearch={true}
               searchText={searchText}
               setSearchText={setSearchText}
               selectedSearch={selectedSearch}
               setSelectedSearch={setSelectedSearch}
-              enableSearch={false}
+              searchOptions={[
+                  { value: 'loginId', label: 'ID' },
+                  { value: 'role', label: 'Role' },
+              ]}
+              selectableFields={[
+                  {
+                      field: 'role',
+                      options: [
+                          { value: 'ROOT', label: 'Root' },
+                          { value: 'NORMAL', label: 'Normal' },
+                      ]
+                  },
+              ]}
+              onSearch={handleSearch}
+              onRefresh={getData}
           />
 
           <PasswordResetDialog
@@ -213,7 +268,7 @@ const AdminManagementPage = (props: Props) => {
           />
         </StyledContainer>
       </>
-      
+
   )
 }
 

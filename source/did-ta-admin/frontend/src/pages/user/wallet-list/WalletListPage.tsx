@@ -38,18 +38,14 @@ const WalletListPage = (props: Props) => {
   const [searchText, setSearchText] = useState('');
   const [selectedSearch, setSelectedSearch] = useState('walletId');
 
-  const selectedRowData = useMemo(() => {
-    return rows.find((row) => row.id === selectedRow) || null;
-  }, [rows, selectedRow]);
-
-  const fetchPage = useCallback(async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       const response = await fetchWallets(
         paginationModel.page,
         paginationModel.pageSize,
-        selectedSearch,
-        searchText.trim()
+        selectedSearch && searchText.trim() ? selectedSearch : null,
+        selectedSearch && searchText.trim() ? searchText.trim() : null
       );
       setRows(response.data.content);
       setTotalRows(response.data.totalElements);
@@ -64,33 +60,45 @@ const WalletListPage = (props: Props) => {
     }
   }, [paginationModel.page, paginationModel.pageSize, selectedSearch, searchText, dialogs]);
 
+  const getData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await fetchWallets(
+        0,
+        paginationModel.pageSize,
+        selectedSearch && searchText.trim() ? selectedSearch : null,
+        selectedSearch && searchText.trim() ? searchText.trim() : null
+      );
+      setRows(response.data.content);
+      setTotalRows(response.data.totalElements);
+      setPaginationModel((prev) => ({ ...prev, page: 0 }));
+    } catch (err) {
+      console.error('Failed to fetch Wallet List ', err);
+      setLoading(false);
+      await dialogs.open(CustomDialog, {
+        title: 'Notification',
+        message: formatErrorMessage(err, 'Failed to retrieve Wallet List'),
+        isModal: true,
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, [paginationModel.pageSize, selectedSearch, searchText, dialogs]);
+
   useEffect(() => {
-    fetchPage();
-  }, [fetchPage]);
+    fetchData();
+  }, [fetchData]);
 
   const handleSearch = useCallback(
-    async (field: string, text: string) => {
+    (field: string, text: string) => {
       const trimmed = text.trim();
       if (!trimmed) return;
 
-      setLoading(true);
+      setSelectedSearch(field);
+      setSearchText(trimmed);
       setPaginationModel((prev) => ({ ...prev, page: 0 }));
-
-      try {
-        const response = await fetchWallets(0, paginationModel.pageSize, field, trimmed);
-        setRows(response.data.content);
-        setTotalRows(response.data.totalElements);
-      } catch (err) {
-        dialogs.open(CustomDialog, {
-          title: 'Notification',
-          message: formatErrorMessage(err, 'Failed to search wallets'),
-          isModal: true,
-        });
-      } finally {
-        setLoading(false);
-      }
     },
-    [paginationModel.pageSize, dialogs]
+    []
   );
 
   const StyledContainer = useMemo(
@@ -155,13 +163,13 @@ const WalletListPage = (props: Props) => {
           searchOptions={[
             { value: 'did', label: 'DID' },
             { value: 'walletId', label: 'Wallet ID' },
-
           ]}
           searchText={searchText}
           setSearchText={setSearchText}
           selectedSearch={selectedSearch}
           setSelectedSearch={setSelectedSearch}
           onSearch={handleSearch}
+          onRefresh={getData}
         />
       </StyledContainer>
     </>

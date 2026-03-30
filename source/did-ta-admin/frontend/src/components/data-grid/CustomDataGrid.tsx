@@ -10,9 +10,11 @@ interface CustomDataGridProps {
   onRegister?: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
+  onRefresh?: () => void;
   selectedRow: string | number | null;
   setSelectedRow: (id: string | number | null) => void;
   searchOptions?: Array<{ value: string; label: string }>;
+  selectableFields?: Array<{ field: string; options: Array<{ value: string; label: string }> }>;
   additionalButtons?: Array<{
     label: string;
     onClick: () => void;
@@ -28,6 +30,7 @@ interface CustomDataGridProps {
   setSearchText: (text: string) => void;
   selectedSearch: string;
   setSelectedSearch: (value: string) => void;
+  getRowHeight?: (params: any) => number | 'auto';
 }
 
 export default function CustomDataGrid({
@@ -38,9 +41,11 @@ export default function CustomDataGrid({
   onRegister,
   onEdit,
   onDelete,
+  onRefresh,
   selectedRow,
   setSelectedRow,
   searchOptions,
+  selectableFields,
   additionalButtons = [],
   paginationMode,
   totalRows = 0,
@@ -51,6 +56,7 @@ export default function CustomDataGrid({
   setSearchText,
   selectedSearch,
   setSelectedSearch,
+  getRowHeight,
 }: CustomDataGridProps) {
 
   const CustomToolbarWrapper = React.memo((props: GridToolbarProps) => {
@@ -66,14 +72,16 @@ export default function CustomDataGrid({
         onRegister={onRegister}
         onEdit={onEdit}
         onDelete={onDelete}
+        onRefresh={onRefresh}
         disableEdit={!selectedRow}
         disableDelete={!selectedRow}
         searchOptions={searchOptions}
+        selectableFields={selectableFields}
         additionalButtons={additionalButtons}
       />
     );
   });
-  
+
   CustomToolbarWrapper.displayName = 'CustomToolbarWrapper';
 
   const handleRowSelectionModelChange = React.useCallback(
@@ -98,18 +106,20 @@ export default function CustomDataGrid({
     searchText,
     setSearchText,
     selectedSearch,
-    setSelectedSearch, 
+    setSelectedSearch,
     onSearch,
     onRegister,
     onEdit,
     onDelete,
+    onRefresh,
     disableEdit: !selectedRow,
     disableDelete: !selectedRow,
     searchOptions,
+    selectableFields,
     additionalButtons,
   }), [
     enableSearch, searchText, setSearchText, selectedSearch, setSelectedSearch,
-    onSearch, onRegister, onEdit, onDelete, selectedRow, searchOptions, additionalButtons
+    onSearch, onRegister, onEdit, onDelete, selectedRow, searchOptions, selectableFields, additionalButtons
   ]);
 
   return (
@@ -135,7 +145,7 @@ export default function CustomDataGrid({
           toolbar: toolbarProps,
         }}
         onRowSelectionModelChange={handleRowSelectionModelChange}
-        getRowHeight={() => 45}
+        getRowHeight={getRowHeight || (() => 45)}
       />
     </div>
   );

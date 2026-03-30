@@ -1,7 +1,7 @@
 import { Box, Link, styled, Typography } from '@mui/material';
 import { GridPaginationModel } from '@mui/x-data-grid';
 import { useDialogs } from '@toolpad/core/useDialogs';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { fetchEntities, registerEntitiesSimple, deleteEntity } from '../../apis/entity-api';
 import CustomDataGrid from '../../components/data-grid/CustomDataGrid';
@@ -26,7 +26,7 @@ const EntityManagementPage = (props: Props) => {
   const [totalRows, setTotalRows] = useState<number>(0);
   const [selectedRow, setSelectedRow] = useState<string | number | null>(null);
   const [searchText, setSearchText] = useState<string>('');
-  const [selectedSearch, setSelectedSearch] = useState<string>('');
+  const [selectedSearch, setSelectedSearch] = useState<string>('name');
 
   const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
     page: 0,
@@ -37,19 +37,65 @@ const EntityManagementPage = (props: Props) => {
       return rows.find(row => row.id === selectedRow) || null;
   }, [rows, selectedRow]);
 
-  useEffect(() => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
-    fetchEntities(paginationModel.page, paginationModel.pageSize, null, null)
-      .then((response) => {
-        setRows(response.data.content);
-        setTotalRows(response.data.totalElements);
-      })
-      .catch((err) => {
-        console.error("Failed to fetch Entity List ", err)
-        navigate('/error', { state: { message: formatErrorMessage(err, "Failed to retrieve Entity List") } });
-      })
-      .finally(() => setLoading(false));
-  }, [paginationModel]);
+    try {
+      const response = await fetchEntities(
+        paginationModel.page,
+        paginationModel.pageSize,
+        selectedSearch && searchText.trim() ? selectedSearch : null,
+        selectedSearch && searchText.trim() ? searchText.trim() : null
+      );
+      setRows(response.data.content);
+      setTotalRows(response.data.totalElements);
+    } catch (err) {
+      console.error("Failed to fetch Entity List ", err);
+      navigate('/error', { state: { message: formatErrorMessage(err, "Failed to retrieve Entity List") } });
+    } finally {
+      setLoading(false);
+    }
+  }, [paginationModel.page, paginationModel.pageSize, selectedSearch, searchText, navigate]);
+
+  const getData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await fetchEntities(
+        0,
+        paginationModel.pageSize,
+        selectedSearch && searchText.trim() ? selectedSearch : null,
+        selectedSearch && searchText.trim() ? searchText.trim() : null
+      );
+      setRows(response.data.content);
+      setTotalRows(response.data.totalElements);
+      setPaginationModel((prev) => ({ ...prev, page: 0 }));
+    } catch (err) {
+      console.error("Failed to fetch Entity List ", err);
+      setLoading(false);
+      await dialogs.open(CustomDialog, {
+        title: 'Notification',
+        message: formatErrorMessage(err, 'Failed to retrieve Entity List'),
+        isModal: true,
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, [paginationModel.pageSize, selectedSearch, searchText, dialogs]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  const handleSearch = useCallback(
+    (field: string, text: string) => {
+      const trimmed = text.trim();
+      if (!trimmed) return;
+
+      setSelectedSearch(field);
+      setSearchText(trimmed);
+      setPaginationModel((prev) => ({ ...prev, page: 0 }));
+    },
+    []
+  );
 
   const handelRegisterSimple = async () => {
     const result = await dialogs.open(CustomConfirmDialog, {
@@ -85,7 +131,7 @@ const EntityManagementPage = (props: Props) => {
       });
       return;
     }
-    
+
     const result = await dialogs.open(CustomConfirmDialog, {
       title: 'Confirmation',
       message: 'Are you sure you want to delete this entity?',
@@ -94,7 +140,7 @@ const EntityManagementPage = (props: Props) => {
 
     if (result) {
       setLoading(true);
-      
+
       await deleteEntity(id)
         .then(() => {
           setLoading(false);
@@ -137,7 +183,7 @@ const EntityManagementPage = (props: Props) => {
         <Typography sx={{ textAlign: 'left', fontSize: '24px', fontWeight: 700 }}>
           Entity Management
         </Typography>
-        <CustomDataGrid 
+        <CustomDataGrid
           rows={rows}
           columns={[
             { field: 'did', headerName: "DID", width: 200 },
@@ -190,14 +236,42 @@ const EntityManagementPage = (props: Props) => {
           onDelete={() => {
             const row = rows.find(r => r.id === selectedRow);
             if (row) handleDelete(row);
-          } }
+          }}
+          enableSearch={true}
+          searchText={searchText}
           setSearchText={setSearchText}
           selectedSearch={selectedSearch}
           setSelectedSearch={setSelectedSearch}
-          enableSearch={false} 
-          searchText={''}          
-          />
-        </StyledContainer>
+          searchOptions={[
+            { value: 'name', label: 'Name' },
+            { value: 'did', label: 'DID' },
+            { value: 'role', label: 'Role' },
+            { value: 'status', label: 'Status' },
+          ]}
+          selectableFields={[
+            {
+              field: 'role',
+              options: [
+                { value: 'ISSUER', label: 'Issuer' },
+                { value: 'VERIFIER', label: 'Verifier' },
+                { value: 'APP_PROVIDER', label: 'App Provider' },
+                { value: 'WALLET_PROVIDER', label: 'Wallet Provider' },
+                { value: 'OP_PROVIDER', label: 'OP Provider' },
+              ]
+            },
+            {
+              field: 'status',
+              options: [
+                { value: 'DID_DOCUMENT_REQUIRED', label: 'DID Document Required' },
+                { value: 'CERTIFICATE_VC_REQUIRED', label: 'Certificate VC Required' },
+                { value: 'COMPLETED', label: 'Registration Completed' },
+              ]
+            },
+          ]}
+          onSearch={handleSearch}
+          onRefresh={getData}
+        />
+      </StyledContainer>
     </>
   )
 }

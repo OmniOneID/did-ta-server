@@ -1,13 +1,12 @@
 import { Box, Link, styled, Typography } from '@mui/material';
 import { GridPaginationModel } from '@mui/x-data-grid';
 import { useDialogs } from '@toolpad/core';
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router';
 import FullscreenLoader from '../../../components/loading/FullscreenLoader';
 import CustomDataGrid from '../../../components/data-grid/CustomDataGrid';
-import CustomConfirmDialog from '../../../components/dialog/CustomConfirmDialog';
 import CustomDialog from '../../../components/dialog/CustomDialog';
-import  { fetchVcPlanList } from '../../../apis/list-api';
+import { fetchVcPlanList } from '../../../apis/list-api';
 import { formatErrorMessage } from '../../../utils/error-handler';
 
 type Props = {}
@@ -30,8 +29,8 @@ const VcPlanManagementPage = (props: Props) => {
     const [selectedRow, setSelectedRow] = useState<string | number | null>(null);
     const [rows, setRows] = useState<VcPlanRow[]>([]);
     const [searchText, setSearchText] = useState<string>('');
-    const [selectedSearch, setSelectedSearch] = useState<string>('');
-    
+    const [selectedSearch, setSelectedSearch] = useState<string>('vcPlanId');
+
     const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
         page: 0,
         pageSize: 10,
@@ -41,24 +40,65 @@ const VcPlanManagementPage = (props: Props) => {
         return rows.find(row => row.id === selectedRow) || null;
     }, [rows, selectedRow]);
 
-    const handleDelete = async () => {
-
-
-    };
-
-    useEffect(() => {
+    const fetchData = useCallback(async () => {
         setLoading(true);
-        fetchVcPlanList(paginationModel.page, paginationModel.pageSize, null, null)
-            .then((response) => {
+        try {
+            const response = await fetchVcPlanList(
+                paginationModel.page,
+                paginationModel.pageSize,
+                selectedSearch && searchText.trim() ? selectedSearch : null,
+                selectedSearch && searchText.trim() ? searchText.trim() : null
+            );
             setRows(response.data.content);
             setTotalRows(response.data.totalElements);
-            })
-            .catch((err) => {
-                console.error("Failed to fetch VC Plan List. ", err);
-                navigate('/error', { state: { message: formatErrorMessage(err, "Failed to fetch VC Plan List") } });
-            })
-            .finally(() => setLoading(false));
-    }, [paginationModel]);
+        } catch (err) {
+            console.error("Failed to fetch VC Plan List. ", err);
+            navigate('/error', { state: { message: formatErrorMessage(err, "Failed to fetch VC Plan List") } });
+        } finally {
+            setLoading(false);
+        }
+    }, [paginationModel.page, paginationModel.pageSize, selectedSearch, searchText, navigate]);
+
+    const getData = useCallback(async () => {
+        setLoading(true);
+        try {
+            const response = await fetchVcPlanList(
+                0,
+                paginationModel.pageSize,
+                selectedSearch && searchText.trim() ? selectedSearch : null,
+                selectedSearch && searchText.trim() ? searchText.trim() : null
+            );
+            setRows(response.data.content);
+            setTotalRows(response.data.totalElements);
+            setPaginationModel((prev) => ({ ...prev, page: 0 }));
+        } catch (err) {
+            console.error("Failed to fetch VC Plan List. ", err);
+            setLoading(false);
+            await dialogs.open(CustomDialog, {
+                title: 'Notification',
+                message: formatErrorMessage(err, 'Failed to retrieve VC Plan List'),
+                isModal: true,
+            });
+        } finally {
+            setLoading(false);
+        }
+    }, [paginationModel.pageSize, selectedSearch, searchText, dialogs]);
+
+    useEffect(() => {
+        fetchData();
+    }, [fetchData]);
+
+    const handleSearch = useCallback(
+        (field: string, text: string) => {
+            const trimmed = text.trim();
+            if (!trimmed) return;
+
+            setSelectedSearch(field);
+            setSearchText(trimmed);
+            setPaginationModel((prev) => ({ ...prev, page: 0 }));
+        },
+        []
+    );
 
     const StyledContainer = useMemo(() => styled(Box)(({ theme }) => ({
         margin: 'auto',
@@ -81,15 +121,15 @@ const VcPlanManagementPage = (props: Props) => {
             <FullscreenLoader open={loading} />
             <StyledContainer>
                 <StyledSubTitle>VC Plan Management</StyledSubTitle>
-                <CustomDataGrid 
-                    rows={rows} 
+                <CustomDataGrid
+                    rows={rows}
                     columns={[
-                        { 
-                        field: 'vcPlanId', 
-                        headerName: "ID", 
+                        {
+                        field: 'vcPlanId',
+                        headerName: "ID",
                         width: 250,
                         renderCell: (params) => (
-                            <Link 
+                            <Link
                             component="button"
                             variant='body2'
                             onClick={() => navigate(`/list-settings/vc-plan/${params.row.id}`)}
@@ -103,28 +143,27 @@ const VcPlanManagementPage = (props: Props) => {
                         { field: 'issuerName', headerName: "Issuer Name", width: 100},
                         { field: 'createdAt', headerName: "Registered At", width: 150},
                         { field: 'updatedAt', headerName: "Updated At", width: 150},
-                    ]} 
-                    selectedRow={selectedRow} 
-                    setSelectedRow={setSelectedRow}
-                    // onEdit={() => {
-                    //     if (selectedRowData) {
-                    //     navigate(`/list-settings/allowed-ca/allowed-ca-edit/${selectedRowData.id}`);
-                    //     }
-                    // }}
-                    // onRegister={() => navigate('/list-settings/allowed-ca/allowed-ca-registration')}
-                    // onDelete={handleDelete}
-                    additionalButtons={[
-                    
                     ]}
-                    paginationMode="server" 
-                    totalRows={totalRows} 
-                    paginationModel={paginationModel} 
-                    setPaginationModel={setPaginationModel} 
+                    selectedRow={selectedRow}
+                    setSelectedRow={setSelectedRow}
+                    additionalButtons={[]}
+                    paginationMode="server"
+                    totalRows={totalRows}
+                    paginationModel={paginationModel}
+                    setPaginationModel={setPaginationModel}
+                    enableSearch={true}
+                    searchText={searchText}
                     setSearchText={setSearchText}
                     selectedSearch={selectedSearch}
                     setSelectedSearch={setSelectedSearch}
-                    enableSearch={false} 
-                    searchText={''}   
+                    searchOptions={[
+                        { value: 'vcPlanId', label: 'VC Plan ID' },
+                        { value: 'name', label: 'Name' },
+                        { value: 'issuerDid', label: 'Issuer DID' },
+                        { value: 'issuerName', label: 'Issuer Name' },
+                    ]}
+                    onSearch={handleSearch}
+                    onRefresh={getData}
                 />
             </StyledContainer>
         </>

@@ -36,19 +36,14 @@ const UserListPage = (props: Props) => {
   const [searchText, setSearchText] = useState('');
   const [selectedSearch, setSelectedSearch] = useState('did');
 
-  const selectedRowData = useMemo(
-    () => rows.find((row) => row.id === selectedRow) || null,
-    [rows, selectedRow]
-  );
-
-  const fetchPage = useCallback(async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       const response = await fetchUsers(
         paginationModel.page,
         paginationModel.pageSize,
-        null,
-        null
+        selectedSearch && searchText.trim() ? selectedSearch : null,
+        selectedSearch && searchText.trim() ? searchText.trim() : null
       );
       setRows(response.data.content);
       setTotalRows(response.data.totalElements);
@@ -61,65 +56,48 @@ const UserListPage = (props: Props) => {
     } finally {
       setLoading(false);
     }
-  }, [paginationModel.page, paginationModel.pageSize, dialogs]);
+  }, [paginationModel.page, paginationModel.pageSize, selectedSearch, searchText, dialogs]);
+
+  const getData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await fetchUsers(
+        0,
+        paginationModel.pageSize,
+        selectedSearch && searchText.trim() ? selectedSearch : null,
+        selectedSearch && searchText.trim() ? searchText.trim() : null
+      );
+      setRows(response.data.content);
+      setTotalRows(response.data.totalElements);
+      setPaginationModel((prev) => ({ ...prev, page: 0 }));
+    } catch (err) {
+      console.error('Failed to fetch User List ', err);
+      setLoading(false);
+      await dialogs.open(CustomDialog, {
+        title: 'Notification',
+        message: formatErrorMessage(err, 'Failed to retrieve User List'),
+        isModal: true,
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, [paginationModel.pageSize, selectedSearch, searchText, dialogs]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const response = await fetchUsers(
-          paginationModel.page,
-          paginationModel.pageSize,
-          selectedSearch,
-          searchText.trim()
-        );
-        setRows(response.data.content);
-        setTotalRows(response.data.totalElements);
-      } catch (err) {
-        dialogs.open(CustomDialog, {
-          title: 'Notification',
-          message: formatErrorMessage(err, 'Failed to fetch User List'),
-          isModal: true,
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-  
     fetchData();
-  }, [paginationModel.page, paginationModel.pageSize, selectedSearch, searchText]);
+  }, [fetchData]);
 
   const handleSearch = useCallback(
-    async (field: string, text: string) => {
+    (field: string, text: string) => {
       const trimmed = text.trim();
       if (!trimmed) return;
-  
-      setLoading(true);
-  
+
+      setSelectedSearch(field);
+      setSearchText(trimmed);
       setPaginationModel((prev) => ({ ...prev, page: 0 }));
-  
-      try {
-        const response = await fetchUsers(
-          0,
-          paginationModel.pageSize,
-          field,
-          trimmed
-        );
-  
-        setRows(response.data.content);
-        setTotalRows(response.data.totalElements);
-      } catch (err) {
-        dialogs.open(CustomDialog, {
-          title: 'Notification',
-          message: formatErrorMessage(err, 'Failed to search users'),
-          isModal: true,
-        });
-      } finally {
-        setLoading(false);
-      }
     },
-    [paginationModel.pageSize, dialogs]
-  );  
+    []
+  );
 
   const StyledContainer = useMemo(
     () =>
@@ -188,6 +166,7 @@ const UserListPage = (props: Props) => {
           selectedSearch={selectedSearch}
           setSelectedSearch={setSelectedSearch}
           onSearch={handleSearch}
+          onRefresh={getData}
         />
       </StyledContainer>
     </>

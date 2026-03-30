@@ -22,9 +22,7 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.omnione.did.base.db.domain.ListCredentialSchema;
-import org.omnione.did.base.db.domain.ListVcSchema;
 import org.omnione.did.base.db.domain.QListCredentialSchema;
-import org.omnione.did.base.db.domain.QListVcSchema;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -62,16 +60,19 @@ public class ListCredentialSchemaRepositoryAdminImpl implements ListCredentialSc
     }
 
     public BooleanExpression buildPredicate(String searchKey, String searchValue) {
-        QListVcSchema qListVcSchema = QListVcSchema.listVcSchema;
+        QListCredentialSchema qListCredentialSchema = QListCredentialSchema.listCredentialSchema;
         BooleanExpression predicate = Expressions.asBoolean(true).isTrue();
 
         if (searchKey != null && searchValue != null && !searchValue.isEmpty()) {
             switch (searchKey) {
+                case "name":
+                    predicate = predicate.and(qListCredentialSchema.name.eq(searchValue));
+                    break;
                 case "issuerDid":
-                    predicate = predicate.and(qListVcSchema.issuerDid.eq(searchValue));
+                    predicate = predicate.and(qListCredentialSchema.issuerDid.eq(searchValue));
                     break;
                 case "issuerName":
-                    predicate = predicate.and(qListVcSchema.issuerName.eq(searchValue));
+                    predicate = predicate.and(qListCredentialSchema.issuerName.eq(searchValue));
                     break;
                 default:
                     predicate = predicate.and(Expressions.FALSE);
