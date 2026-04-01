@@ -1,11 +1,14 @@
-import { Box, Button, Popover, styled, TextField, Typography } from '@mui/material';
+import { Box, Button, Popover, styled, TextField, Typography, Dialog, DialogTitle, DialogContent, DialogActions, Tooltip, IconButton } from '@mui/material';
 import React, { useMemo, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router';
 import { useServerStatus } from '../../context/ServerStatusContext';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 export default function TrustAgentManagementPage() {
   const { taInfo, serverStatus } = useServerStatus();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const [certOpen, setCertOpen] = useState(false);
+  const [certData, setCertData] = useState<any>(null);
 
   if (!taInfo) {
     return (
@@ -14,6 +17,18 @@ export default function TrustAgentManagementPage() {
       </Box>
     );
   }
+
+  const copyJson = async () => {
+    if (!certData) return;
+    try { await navigator.clipboard.writeText(JSON.stringify(certData, null, 2)); } catch(err) {
+      console.error(err);
+    }
+  };
+
+  const openCertificate = async () => {
+    setCertOpen(true);
+    setCertData(JSON.parse(taInfo.certificateVc));
+  };
 
   const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -28,7 +43,7 @@ export default function TrustAgentManagementPage() {
   }
 
   const StyledContainer = useMemo(() => styled(Box)(({ theme }) => ({
-    width: 400,
+    width: 600,
     margin: 'auto',
     marginTop: theme.spacing(1),
     padding: theme.spacing(3),
@@ -134,17 +149,28 @@ export default function TrustAgentManagementPage() {
             slotProps={{ input: { readOnly: true } }} 
           />
 
-          <TextField 
-            fullWidth 
-            label="Certificate URL" 
-            variant="standard" 
-            margin="normal" 
-            value={taInfo.certificateUrl} 
-            slotProps={{ input: { readOnly: true } }} 
-          />
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <TextField
+              fullWidth
+              label="Certificate URL"
+              variant="standard"
+              margin="normal"
+              value={taInfo.certificateUrl}
+              slotProps={{ input: { readOnly: true } }}
+            />
 
-          <TextField 
-            fullWidth 
+            <Button
+                variant="outlined"
+                size="small"
+                onClick={openCertificate}
+                sx={{ height: '100%', flexShrink: 0, whiteSpace: 'nowrap', minWidth: 'auto' }}
+              >
+                View
+            </Button>
+          </Box>
+
+          <TextField
+            fullWidth
             label="Registered At" 
             variant="standard" 
             margin="normal" 
@@ -153,6 +179,44 @@ export default function TrustAgentManagementPage() {
           />
         </StyledInputArea>
       </StyledContainer>
+      <Dialog
+        open={certOpen}
+        onClose={() => setCertOpen(false)}
+        fullWidth
+        maxWidth="md"
+        disableEnforceFocus
+        disableRestoreFocus
+        PaperProps={{ sx: { height: { xs: '80vh', md: '70vh' } } }}
+      >
+        <DialogTitle sx={{ display: 'flex', alignItems: 'center' }}>
+          Certificate
+          <Box sx={{ flex: 1 }} />
+          <Tooltip title="Copy JSON">
+            <span>
+              <IconButton size="small" onClick={copyJson} disabled={!certData}><ContentCopyIcon fontSize="small" /></IconButton>
+            </span>
+          </Tooltip>
+        </DialogTitle>
+
+        <DialogContent dividers sx={{ bgcolor: '#fafafa' }}>
+            <Typography
+              component="pre"
+              sx={{
+                m: 0,
+                fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+                fontSize: 13,
+                whiteSpace: 'pre-wrap',
+                wordBreak: 'break-word',
+              }}
+            >
+              {JSON.stringify(certData ?? {}, null, 2)}
+            </Typography>
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={() => setCertOpen(false)} variant="contained">Close</Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }

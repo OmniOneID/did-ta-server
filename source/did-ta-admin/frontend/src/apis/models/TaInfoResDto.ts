@@ -7,6 +7,7 @@ export interface TaInfoResDto {
   status: TasStatus;
   serverUrl: string;
   certificateUrl: string;
+  certificateVc: string;
   didDocument?: any;
   createdAt: string;
   updatedAt: string;

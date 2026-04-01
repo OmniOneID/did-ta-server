@@ -100,9 +100,16 @@ public class TaManagementService {
             return TasInfoResDto.fromEntity(existedTas);
         }
 
-        log.debug("\t--> Finding TAS DID Document");
+        if (existedTas.getStatus() == TasStatus.CERTIFICATE_VC_REQUIRED) {
+            log.debug("\t--> Returning TAS info without certificate VC");
+            DidDocument tasDidDocument = findTasDidDocument(existedTas);
+            return TasInfoResDto.fromEntity(existedTas, tasDidDocument);
+        }
+
+        log.debug("\t--> Returning complete TAS info with DID document and certificate VC");
         DidDocument tasDidDocument = findTasDidDocument(existedTas);
-        return TasInfoResDto.fromEntity(existedTas, tasDidDocument);
+        String certificateVc = certificateVcQueryService.findCertificateVc().getVc();
+        return TasInfoResDto.fromEntity(existedTas, tasDidDocument, certificateVc);
     }
 
     /**

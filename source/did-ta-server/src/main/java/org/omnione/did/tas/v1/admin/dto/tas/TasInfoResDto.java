@@ -52,6 +52,7 @@ public class TasInfoResDto {
     private TasStatus status;
     private String serverUrl;
     private String certificateUrl;
+    private String certificateVc;
     private Map<String, Object> didDocument;
     private String createdAt;
     private String updatedAt;
@@ -79,6 +80,23 @@ public class TasInfoResDto {
                         .name(t.getName())
                         .status(t.getStatus())
                         .serverUrl(t.getServerUrl())
+                        .certificateUrl(t.getCertificateUrl())
+                        .didDocument(parseDidDocToMap(didDocument.toJson()))
+                        .createdAt(formatInstant(t.getCreatedAt()))
+                        .updatedAt(formatInstant(t.getUpdatedAt()))
+                        .build())
+                .orElse(null);
+    }
+
+    public static TasInfoResDto fromEntity(Tas tas, DidDocument didDocument, String certificateVc) {
+        return Optional.ofNullable(tas)
+                .map(t -> TasInfoResDto.builder()
+                        .id(t.getId())
+                        .did(t.getDid())
+                        .name(t.getName())
+                        .status(t.getStatus())
+                        .serverUrl(t.getServerUrl())
+                        .certificateVc(certificateVc)
                         .certificateUrl(t.getCertificateUrl())
                         .didDocument(parseDidDocToMap(didDocument.toJson()))
                         .createdAt(formatInstant(t.getCreatedAt()))
