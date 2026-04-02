@@ -251,3 +251,6 @@ src/main/resources/static/
 CLAUDE.md
 
 # End of https://www.toptal.com/developers/gitignore/api/react,visualstudiocode
+
+### Frontend build output ###
+**/src/main/resources/static/

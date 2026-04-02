@@ -23,6 +23,7 @@ import org.omnione.did.tas.v1.agent.api.dto.RegisterDidApiReqDto;
 import org.omnione.did.tas.v1.agent.api.dto.UpdateDidDocStatusReqDto;
 import org.omnione.did.tas.v1.agent.api.dto.UpdateVcMetaStatusReqDto;
 import org.omnione.did.tas.v1.common.dto.EmptyResDto;
+import org.omnione.did.tas.v1.agent.config.RepositoryFeignConfig;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +33,7 @@ import org.springframework.web.bind.annotation.*;
  * Feign client for the Storage server.
  * This class was temporarily used instead of the BlockChain service and is no longer in use.
  */
-@FeignClient(value = "Storage", url = "${lss.url:http://127.0.0.1:8098}" + UrlConstant.LSS.V1)
+@FeignClient(value = "Storage", url = "${lss.url:http://127.0.0.1:8098}" + UrlConstant.LSS.V1, configuration = RepositoryFeignConfig.class)
 public interface RepositoryFeign {
 
     /**
@@ -52,7 +53,7 @@ public interface RepositoryFeign {
     @PostMapping(value = UrlConstant.LSS.DID, consumes = MediaType.APPLICATION_JSON_VALUE)
     void registerDid(@RequestBody String apiRegisterDidReqDto);
 
-    @PatchMapping(UrlConstant.LSS.DID)
+    @PutMapping(UrlConstant.LSS.DID)
     ResponseEntity<EmptyResDto> updateDid(UpdateDidDocStatusReqDto updateDidDocStatusReqDto);
 
     /**

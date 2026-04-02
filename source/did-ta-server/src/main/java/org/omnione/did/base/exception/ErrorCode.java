@@ -294,6 +294,9 @@ public enum ErrorCode {
     ADMIN_INFO_NOT_FOUND("SSRVTRA21000", "Failed to find admin: admin is not registered.", 400),
     ADMIN_ALREADY_EXISTS("SSRVTRA21001", "Failed to register admin: admin is already registered.", 400),
 
+    // 18. Server config errors (21500 ~ 21999)
+    SERVER_CONFIG_KEY_NOT_FOUND("SSRVTRA21501", "Server configuration key not found.", 400),
+
     // 99. Miscellaneous errors (90000 ~ 99999)
     FILE_NOT_FOUND("SSRVTRA0000", "Failed to find file: requested file not found.", 400),
     TODO_CODE("SSRVTRA90001", "Temporary error code: to be replaced.", 400),
