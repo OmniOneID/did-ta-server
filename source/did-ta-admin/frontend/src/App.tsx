@@ -1,4 +1,5 @@
 import { CssBaseline, GlobalStyles, useTheme } from '@mui/material';
+import { PasswordPolicyProvider } from './context/PasswordPolicyContext';
 import type { Navigation, Session } from '@toolpad/core/AppProvider';
 import { ReactRouterAppProvider } from '@toolpad/core/react-router';
 import { DialogsProvider } from '@toolpad/core/useDialogs';
@@ -19,21 +20,22 @@ function AppContent() {
   const [isLoading, setIsLoading] = useState(true);
 
   const [session, setSessionState] = useState<ExtendedSession | null>(() => {
-    const storedSession = localStorage.getItem('session');
+    const storedSession = sessionStorage.getItem('session');
     return storedSession ? JSON.parse(storedSession) : null;
   });
 
   const [navigation, setNavigation] = useState<Navigation>(getNavigationByStatus(null));
 
-  const theme = useTheme(); 
-  
+  const theme = useTheme();
+
   const setSession = useCallback((newSession: ExtendedSession | null) => {
     setSessionState(newSession);
     if (newSession) {
-      localStorage.setItem('session', JSON.stringify(newSession));
+      sessionStorage.setItem('session', JSON.stringify(newSession));
     } else {
-      localStorage.removeItem('session'); 
+      sessionStorage.removeItem('session');
     }
+    localStorage.removeItem('session');
   }, []);
 
   const signIn = useCallback(() => {
@@ -105,9 +107,11 @@ function AppContent() {
 
 export default function App() {
   return (
-    <ServerStatusProvider>
-      <GlobalStyles styles={{ body: { padding: "10px" } }} />
-      <AppContent />
-    </ServerStatusProvider>
+    <PasswordPolicyProvider>
+      <ServerStatusProvider>
+        <GlobalStyles styles={{ body: { padding: "10px" } }} />
+        <AppContent />
+      </ServerStatusProvider>
+    </PasswordPolicyProvider>
   );
 }

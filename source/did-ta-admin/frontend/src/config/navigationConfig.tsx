@@ -109,8 +109,22 @@ export const getNavigationByStatus = (serverStatus: string | null): Navigation=>
       ],
     },
     {
-      segment: 'admin-management',
-      title: 'Admin Management', 
+      segment: 'server-configuration',
+      title: 'Server Configuration',
+    },
+    {
+      segment: 'admins',
+      title: 'Admin Management',
+      children: [
+        {
+          segment: 'admin-management',
+          title: 'Admin Management',
+        },
+        {
+          segment: 'password-policy',
+          title: 'Password Policy Settings',
+        },
+      ],
     },
     {
       kind: 'divider',

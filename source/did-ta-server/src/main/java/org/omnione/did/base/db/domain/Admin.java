@@ -19,8 +19,10 @@ import jakarta.persistence.*;
 import jakarta.persistence.Entity;
 import lombok.*;
 import org.omnione.did.base.db.constant.AdminRole;
+import org.omnione.did.base.db.constant.PasswordResetReason;
 
 import java.io.Serializable;
+import java.time.Instant;
 
 @Builder
 @AllArgsConstructor
@@ -57,4 +59,11 @@ public class Admin extends BaseEntity implements Serializable {
 
     @Column(name = "created_by", nullable = false, length = 50)
     private String createdBy;
+
+    @Column(name = "last_password_changed_at", nullable = true)
+    private Instant lastPasswordChangedAt;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "password_reset_reason", nullable = true, length = 20)
+    private PasswordResetReason passwordResetReason;
 }

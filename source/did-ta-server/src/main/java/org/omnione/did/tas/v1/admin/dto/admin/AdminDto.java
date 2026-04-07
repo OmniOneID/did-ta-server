@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.omnione.did.base.db.constant.AdminRole;
+import org.omnione.did.base.db.constant.PasswordResetReason;
 import org.omnione.did.base.db.domain.Admin;
 
 import java.time.Instant;
@@ -27,6 +28,8 @@ public class AdminDto {
     private final String createdBy;
     private final String createdAt;
     private final String updatedAt;
+    private final String passwordResetReason;
+    private final Boolean isPasswordExpired;
 
     public static AdminDto fromAdmin(Admin admin) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -41,6 +44,8 @@ public class AdminDto {
                 .createdBy(admin.getCreatedBy())
                 .createdAt(formatInstant(admin.getCreatedAt(), formatter))
                 .updatedAt(formatInstant(admin.getUpdatedAt(), formatter))
+                .passwordResetReason(admin.getPasswordResetReason() != null ? admin.getPasswordResetReason().name() : null)
+                .isPasswordExpired(admin.getPasswordResetReason() != null && admin.getPasswordResetReason().name().equals("EXPIRED"))
                 .build();
     }
 
