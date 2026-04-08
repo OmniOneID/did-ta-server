@@ -39,3 +39,7 @@ export const approveEntityDid = async (data: any) => {
 export const deleteEntity = async (id: number) => {
     return deleteData(API_BASE_URL, `entities?id=${id}`);
 }
+
+export const getEntitiesByRole = async (role: string) => {
+    return getData(API_BASE_URL, `entities/roles/${role}`);
+}

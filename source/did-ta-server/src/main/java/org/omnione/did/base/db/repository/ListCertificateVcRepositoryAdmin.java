@@ -13,14 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.omnione.did.base.db.repository;
 
-package org.omnione.did.base.db.constant;
+import org.omnione.did.base.db.domain.ListCertificateVc;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-/**
- * Enum class for the status column in the APP table.
- */
-public enum AppStatus {
-    ASSIGNED,
-    CANCELLED,
-    DEACTIVATED,
+public interface ListCertificateVcRepositoryAdmin {
+    Page<ListCertificateVc> searchCertificateVc(String searchKey, String searchValue, Pageable pageable);
 }

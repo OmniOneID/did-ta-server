@@ -33,6 +33,7 @@ import org.omnione.did.base.datamodel.enums.QrType;
 import org.omnione.did.base.datamodel.enums.ServerTokenPurpose;
 import org.omnione.did.base.db.constant.AppStatus;
 import org.omnione.did.base.db.constant.DidOfferType;
+import org.omnione.did.base.db.constant.KycVerificationType;
 import org.omnione.did.base.db.constant.SubTransactionStatus;
 import org.omnione.did.base.db.constant.SubTransactionType;
 import org.omnione.did.base.db.constant.TransactionStatus;
@@ -53,6 +54,7 @@ import org.omnione.did.base.db.repository.WalletRepository;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.base.response.ErrorResponse;
+import org.omnione.did.base.util.BaseAccessTokenUtil;
 import org.omnione.did.base.util.BaseBlockChainUtil;
 import org.omnione.did.base.util.BaseCoreDidUtil;
 import org.omnione.did.base.util.BaseDigestUtil;
@@ -128,6 +130,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * User service implementation for handling user-related operations.
@@ -232,9 +235,10 @@ public class UserServiceImpl implements UserService {
             log.debug("\t--> Validating server token");
             tokenValidator.validateServerToken(retrieveKycReqDto.getServerToken(), transaction.getId(), ServerTokenPurpose.CREATE_DID, ServerTokenPurpose.CREATE_DID_AND_ISSUE_VC);
 
-            // Retrieve PII information from KYC server
-            log.debug("\t--> Retrieving PII information from KYC server");
-            String pii = requestUserPii(retrieveKycReqDto.getKycTxId());
+            // Retrieve PII information based on KYC verification type
+            log.debug("\t--> Retrieving PII information");
+            Kyc kyc = kycQueryService.findKyc();
+            String pii = getUserPii(kyc, retrieveKycReqDto);
 
             // Update transaction PII.
             log.debug("\t--> Updating transaction PII for transaction ID: {}", transaction.getId());
@@ -283,6 +287,54 @@ public class UserServiceImpl implements UserService {
         if (subTransaction.getType() != SubTransactionType.REQUEST_CREATE_TOKEN) {
             log.error("\t--> Invalid sub-transaction type: {} for transaction ID: {}", subTransaction.getType(), transaction.getId());
             throw new OpenDidException(ErrorCode.TRANSACTION_INVALID);
+        }
+    }
+
+    /**
+     * Retrieves PII based on the KYC verification type configured in the KYC settings.
+     *
+     * @param kyc the KYC configuration
+     * @param dto the retrieve KYC request DTO
+     * @return the PII of the user
+     */
+    private String getUserPii(Kyc kyc, RetrieveKycReqDto dto) {
+        if (kyc.getKycVerificationType() == KycVerificationType.TOKEN) {
+            log.debug("\t--> KYC type: TOKEN — extracting PII from access token");
+            return getUserPiiFromToken(dto.getKycToken(), kyc);
+        } else {
+            log.debug("\t--> KYC type: TRANSACTION — retrieving PII from CA server");
+            return requestUserPii(dto.getKycTxId());
+        }
+    }
+
+    /**
+     * Extracts PII from an OP server-issued JWT access token.
+     * If signerDid is configured, the token signer is validated against it.
+     * If signerDid is null, the signer DID is extracted from the JWT header.
+     *
+     * @param kycToken the JWT access token from the OP server
+     * @param kyc      the KYC configuration
+     * @return the extracted PII
+     */
+    private String getUserPiiFromToken(String kycToken, Kyc kyc) {
+        try {
+            org.omnione.did.data.model.did.DidDocument signerDidDocument;
+            if (kyc.getSignerDid() != null) {
+                log.debug("\t--> Using configured signer DID: {}", kyc.getSignerDid());
+                signerDidDocument = storageService.findDidDoc(kyc.getSignerDid());
+            } else {
+                log.debug("\t--> Signer DID not configured, extracting from JWT header");
+                BaseAccessTokenUtil.JwtComponents jwtComponents = BaseAccessTokenUtil.splitJwtToken(kycToken);
+                String kid = BaseAccessTokenUtil.extractKidFromHeader(jwtComponents.getHeader());
+                String signerDid = DidUtil.extractDid(kid);
+                signerDidDocument = storageService.findDidDoc(signerDid);
+            }
+            return BaseAccessTokenUtil.validateTokenAndExtractPii(kycToken, signerDidDocument);
+        } catch (OpenDidException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to extract PII from KYC token: {}", e.getMessage(), e);
+            throw new OpenDidException(ErrorCode.KYC_COMMUNICATION_ERROR);
         }
     }
 
@@ -378,6 +430,9 @@ public class UserServiceImpl implements UserService {
             // Upload User DID document.
             log.debug("\t--> Uploading wallet DID document");
             storageService.registerDidDoc(invokedDidDoc, RoleType.ETC);
+
+            // Deactivate previous users with the same PII (non-critical).
+            deactivatePreviousUsers(transaction.getPii(), userDid);
 
             // Insert User information.
             log.debug("\t--> Inserting user information");
@@ -1324,12 +1379,98 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
+     * Deactivates previous users with the same PII (non-critical: does not fail registration if unsuccessful).
+     *
+     * @param pii        User PII to match
+     * @param newUserDid DID of the new user being registered
+     */
+    private void deactivatePreviousUsers(String pii, String newUserDid) {
+        try {
+            log.debug("\t--> Deactivating previous accounts with same PII");
+            List<User> activeUsers = findActiveUsersWithSamePiiExcludingNewUser(pii, newUserDid);
+            if (hasNoActiveUsers(activeUsers)) {
+                return;
+            }
+            deactivateUsers(activeUsers);
+            log.debug("*** Finished deactivating previous accounts ***");
+        } catch (Exception e) {
+            log.error("Failed to deactivate previous accounts, but continuing with registration: {}", e.getMessage());
+        }
+    }
+
+    private List<User> findActiveUsersWithSamePiiExcludingNewUser(String pii, String newUserDid) {
+        List<User> activeUsers = userQueryService.findActiveUsersByPii(pii);
+        return activeUsers.stream()
+                .filter(user -> !user.getDid().equals(newUserDid))
+                .collect(Collectors.toList());
+    }
+
+    private boolean hasNoActiveUsers(List<User> activeUsers) {
+        if (activeUsers.isEmpty()) {
+            log.debug("\t--> No previous active users found with the same PII");
+            return true;
+        }
+        log.debug("\t--> Found {} active users with the same PII", activeUsers.size());
+        return false;
+    }
+
+    private void deactivateUsers(List<User> activeUsers) {
+        for (User user : activeUsers) {
+            deactivateUserSafely(user);
+        }
+    }
+
+    /**
+     * Safely deactivates a single user: blockchain DID status → DB status → related App.
+     *
+     * @param user The user to deactivate
+     */
+    private void deactivateUserSafely(User user) {
+        try {
+            log.debug("\t--> Deactivating user: {}", user.getDid());
+
+            DidDocument userDidDoc = storageService.findDidDoc(user.getDid());
+            updateDidDocDeactivated(userDidDoc);
+
+            user.setStatus(UserStatus.DEACTIVATED);
+            userRepository.save(user);
+
+            try {
+                deactivateRelatedApps(user.getId());
+            } catch (Exception e) {
+                log.warn("Failed to deactivate related apps for user {}: {}", user.getDid(), e.getMessage());
+            }
+
+            log.debug("\t--> Successfully deactivated user: {}", user.getDid());
+        } catch (OpenDidException e) {
+            log.error("Failed to deactivate user {}: {}", user.getDid(), e.getMessage());
+            throw e;
+        }
+    }
+
+    /**
+     * Deactivates the App associated with the given user if its status is ASSIGNED.
+     *
+     * @param userId The ID of the user whose app should be deactivated
+     */
+    private void deactivateRelatedApps(Long userId) {
+        App userApp = appQueryService.findByUserId(userId);
+        if (userApp.getStatus() == AppStatus.ASSIGNED) {
+            userApp.setStatus(AppStatus.DEACTIVATED);
+            appRepository.save(userApp);
+            log.debug("\t--> App deactivated for userId: {} (appId: {})", userId, userApp.getAppId());
+        } else {
+            log.debug("\t--> App already inactive for userId: {} (status: {})", userId, userApp.getStatus());
+        }
+    }
+
+    /**
      * Updates the status of a DID document to DEACTIVATED in the blockchain.
      * @param userDidDoc The DID document to update
      */
     private void updateDidDocDeactivated(DidDocument userDidDoc) {
         String didWithVersion = BaseTasDidUtil.getDidWithVersion(userDidDoc);
-        BaseBlockChainUtil.updateDidDocStatus(didWithVersion, org.omnione.did.data.model.enums.did.DidDocStatus.DEACTIVATED);
+        storageService.updateDidDocStatus(didWithVersion, org.omnione.did.data.model.enums.did.DidDocStatus.DEACTIVATED);
     }
 
     /**

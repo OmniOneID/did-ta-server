@@ -17,10 +17,13 @@
 package org.omnione.did.base.db.constant;
 
 /**
- * Enum class for the status column in the APP table.
+ * Enum representing the KYC verification type.
+ * <ul>
+ *   <li>TRANSACTION: PII is retrieved from the CA server using a KYC transaction ID.</li>
+ *   <li>TOKEN: PII is extracted from a JWT access token issued by the OP server.</li>
+ * </ul>
  */
-public enum AppStatus {
-    ASSIGNED,
-    CANCELLED,
-    DEACTIVATED,
+public enum KycVerificationType {
+    TRANSACTION,
+    TOKEN
 }

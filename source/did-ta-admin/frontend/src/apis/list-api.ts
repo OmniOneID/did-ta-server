@@ -109,3 +109,21 @@ export const fetchCredentialDefinitionList = async (page: number, size: number, 
 export const getCredentialDefinitionInfo = async (id: number) => {
     return getData(API_BASE_URL, `credential-definitions?id=${id}`);
 }
+
+export const fetchCertificateVcList = async (page: number, size: number, searchKey: string|null, searchValue: string|null) => {
+    const params = new URLSearchParams({
+        page: page.toString(),
+        size: size.toString(),
+    });
+
+    if (searchKey && searchValue) {
+        params.append("searchKey", searchKey);
+        params.append("searchValue", searchValue);
+    }
+
+    return getData(API_BASE_URL, `certificate-vc/list?${params.toString()}`);
+};
+
+export const getCertificateVcInfo = async (id: number) => {
+    return getData(API_BASE_URL, `certificate-vc?id=${id}`);
+}

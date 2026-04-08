@@ -41,4 +41,5 @@ public interface UserRepository extends JpaRepository<User, Long>, QuerydslPredi
     List<Long> findIdsByDids(@Param("dids") List<String> dids);
     Optional<User> findTopByOrderByIdDesc();
     Optional<User> findByPiiAndStatus(String pii, UserStatus status);
+    List<User> findAllByPiiAndStatus(String pii, UserStatus status);
 }

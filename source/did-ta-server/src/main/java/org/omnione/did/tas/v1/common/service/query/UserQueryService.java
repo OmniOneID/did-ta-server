@@ -141,6 +141,10 @@ public class UserQueryService {
      * @return Found User
      * @throws OpenDidException if the User is not found
      */
+    public List<User> findActiveUsersByPii(String pii) {
+        return userRepository.findAllByPiiAndStatus(pii, UserStatus.ACTIVATED);
+    }
+
     public User findByPiiAndStatus(String pii, UserStatus status) {
         try {
             return userRepository.findByPiiAndStatus(pii, status)

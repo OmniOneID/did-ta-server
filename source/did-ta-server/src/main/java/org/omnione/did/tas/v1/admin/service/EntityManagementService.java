@@ -52,6 +52,7 @@ import org.omnione.did.tas.v1.admin.dto.entity.SendCertificateVcReqDto;
 import org.omnione.did.tas.v1.admin.dto.entity.VerifyEntityNameUniqueResDto;
 import org.omnione.did.tas.v1.agent.service.SignatureService;
 import org.omnione.did.tas.v1.common.dto.EmptyResDto;
+import org.omnione.did.list.v1.service.ListCertificateVcPublishService;
 import org.omnione.did.tas.v1.common.service.DidDocService;
 import org.omnione.did.tas.v1.common.service.SetupService;
 import org.omnione.did.tas.v1.common.service.StorageService;
@@ -84,6 +85,7 @@ public class EntityManagementService {
     private final SignatureService signatureService;
     private final DidDocumentRepository didDocumentRepository;
     private final DidDocumentQueryService didDocumentQueryService;
+    private final ListCertificateVcPublishService listCertificateVcPublishService;
 
     public Page<EntityInfoDto> searchEntities(String searchKey, String searchValue, Pageable pageable) {
         return entityQueryService.searchEntities(searchKey, searchValue, pageable);
@@ -292,6 +294,11 @@ public class EntityManagementService {
         signTasCertificateVc(entityCertificateVc, tas);
         registerEntityCertificateVcMeta(entityCertificateVc, entity);
         updateEntityStatus(entity.getId(), EntityStatus.COMPLETED);
+        try {
+            listCertificateVcPublishService.registerCertificateVc(entityCertificateVc);
+        } catch (Exception e) {
+            log.warn("[NON-CRITICAL] Failed to publish entity certificate VC to list: {}", e.getMessage());
+        }
 
         return entityCertificateVc;
     }
@@ -612,6 +619,31 @@ public class EntityManagementService {
         log.debug("=== Finished deleteEntity ===");
 
         return new EmptyResDto();
+    }
+
+    /**
+     * Find entities by role.
+     *
+     * @param role the role name (matches Role enum name, e.g. "OP_PROVIDER")
+     * @return a list of EntityInfoDto for entities with the specified role
+     */
+    public List<EntityInfoDto> findEntitiesByRole(String role) {
+        log.debug("=== Starting findEntitiesByRole: {} ===", role);
+        try {
+            Role roleEnum = Role.valueOf(role.toUpperCase());
+            List<Entity> entities = entityRepository.findByRoleOrderByRole(roleEnum);
+            return entities.stream()
+                    .map(EntityInfoDto::fromEntity)
+                    .toList();
+        } catch (IllegalArgumentException e) {
+            log.error("\t--> Invalid role: {}", role, e);
+            throw new OpenDidException(ErrorCode.INVALID_ROLE_TYPE);
+        } catch (OpenDidException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("\t--> Failed to find entities by role: {}", role, e);
+            throw new OpenDidException(ErrorCode.ENTITY_INFO_NOT_FOUND);
+        }
     }
 
 }

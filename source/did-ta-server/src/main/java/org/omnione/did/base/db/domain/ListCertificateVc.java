@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.omnione.did.base.db.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -29,11 +28,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.antlr.v4.runtime.misc.NotNull;
-import org.omnione.did.base.db.constant.KycVerificationType;
 
 import java.io.Serializable;
+import java.time.Instant;
 
+/**
+ * Entity class for the list_certificate_vc table.
+ * Stores published certificate VCs accessible via the list provider API.
+ */
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -41,28 +43,29 @@ import java.io.Serializable;
 @Setter
 @ToString
 @Entity
-@Table(name = "\"kyc\"")
-public class Kyc extends BaseEntity implements Serializable {
+@Table(name = "\"list_certificate_vc\"")
+public class ListCertificateVc extends BaseEntity implements Serializable {
+
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
+    @Column(name = "did", nullable = false, length = 200)
+    private String did;
+
     @Column(name = "name", nullable = false, length = 200)
     private String name;
 
-    @NotNull
-    @Column(name = "enabled", nullable = false)
-    private Boolean enabled;
+    @Column(name = "certificate_vc", nullable = false, columnDefinition = "text")
+    private String certificateVc;
 
-    @Column(name = "server_url", length = 2000)
-    private String serverUrl;
+    @Column(name = "published_url", nullable = false, length = 2000)
+    private String publishedUrl;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "verification_type", nullable = false, length = 50)
-    private KycVerificationType kycVerificationType;
+    @Column(name = "published_at", nullable = false)
+    private Instant publishedAt;
 
-    @Column(name = "signer_did", length = 200)
-    private String signerDid;
+    @Column(name = "expired_at", nullable = false)
+    private Instant expiredAt;
 }

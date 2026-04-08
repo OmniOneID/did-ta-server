@@ -29,6 +29,7 @@ import org.omnione.did.base.db.domain.Tas;
 import org.omnione.did.base.db.domain.Transaction;
 import org.omnione.did.base.db.repository.CertificateVcRepository;
 import org.omnione.did.base.db.repository.TasRepository;
+import org.omnione.did.list.v1.service.ListCertificateVcPublishService;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.base.property.TaAuthProperty;
@@ -71,6 +72,7 @@ public class TasServiceImpl implements TasService {
     private final FileWalletService fileWalletService;
     private final TaAuthProperty taAuthProperty;
     private final JsonParseService jsonParseService;
+    private final ListCertificateVcPublishService listCertificateVcPublishService;
 
     /**
      * Handles the request to enroll a TAS (Trust Anchor Service).
@@ -283,6 +285,11 @@ public class TasServiceImpl implements TasService {
         certificateVcRepository.save(CertificateVc.builder()
                 .vc(tasCertificateVc.toJson())
                 .build());
+        try {
+            listCertificateVcPublishService.registerCertificateVc(tasCertificateVc);
+        } catch (Exception e) {
+            log.warn("[NON-CRITICAL] Failed to publish TAS certificate VC to list: {}", e.getMessage());
+        }
     }
 
     /**

@@ -17,6 +17,7 @@ package org.omnione.did.tas.v1.admin.dto.kyc;
 
 import lombok.Builder;
 import lombok.Getter;
+import org.omnione.did.base.db.constant.KycVerificationType;
 import org.omnione.did.base.db.domain.Kyc;
 
 import java.time.Instant;
@@ -31,6 +32,8 @@ public class KycInfoDto {
     private final String name;
     private final String serverUrl;
     private final Boolean enabled;
+    private final KycVerificationType kycVerificationType;
+    private final String signerDid;
     private final String createdAt;
     private final String updatedAt;
 
@@ -42,6 +45,8 @@ public class KycInfoDto {
                 .name(kyc.getName())
                 .serverUrl(kyc.getServerUrl())
                 .enabled(kyc.getEnabled())
+                .kycVerificationType(kyc.getKycVerificationType())
+                .signerDid(kyc.getSignerDid())
                 .createdAt(formatInstant(kyc.getCreatedAt(), formatter))
                 .updatedAt(formatInstant(kyc.getUpdatedAt(), formatter))
                 .build();

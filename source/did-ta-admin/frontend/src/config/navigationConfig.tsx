@@ -88,6 +88,10 @@ export const getNavigationByStatus = (serverStatus: string | null): Navigation=>
           segment: 'credential-definition',
           title: 'Credential Definition Management',
         },
+        {
+          segment: 'certificate-vc',
+          title: 'Certification VC Management',
+        },
       ],
     },
     {

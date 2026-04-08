@@ -277,6 +277,9 @@ public enum ErrorCode {
     FAILED_API_GET_VCPLAN("SSRVTRA19501", "Failed to process the 'get-vcplan' API request.", 500),
     FAILED_API_GET_ALLOWED_CA_LIST("SSRVTRA19502", "Failed to process the 'get-allowed-ca-list' API request.", 500),
     LIST_ALLOWED_CA_NOT_FOUND("SSRVTRA19503", "Failed to find allowed CA: allowed CA list not found.", 500),
+    LIST_CERTIFICATE_VC_NOT_FOUND("SSRVTRA19504", "Failed to find certificate VC: certificate VC not found.", 500),
+    FAILED_TO_REGISTER_CERTIFICATE_VC("SSRVTRA19505", "Failed to register certificate VC to list.", 500),
+    INVALID_CERTIFICATE_VC("SSRVTRA19506", "Invalid certificate VC.", 500),
 
     // 15. Notification-related errors (20000 ~ 20499)
     FAILED_API_SEND_EMAIL("SSRVTRA20000", "Failed to process the 'send-email' API request.", 500),

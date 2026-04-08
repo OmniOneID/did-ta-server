@@ -22,6 +22,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.omnione.did.base.db.constant.KycVerificationType;
 
 @Getter
 @Setter
@@ -32,6 +33,13 @@ import lombok.ToString;
 public class RegisterKycReqDto {
     @NotNull(message = "name cannot be null")
     private String name;
-    @NotNull(message = "serverUrl cannot be null")
+
+    @NotNull(message = "type cannot be null")
+    private KycVerificationType kycVerificationType;
+
+    /** CA server URL — required when kycVerificationType is TRANSACTION */
     private String serverUrl;
+
+    /** OP server signer DID — required when kycVerificationType is TOKEN; null means accept any signer */
+    private String did;
 }

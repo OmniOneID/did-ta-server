@@ -36,5 +36,8 @@ public class RetrieveKycReqDto {
     private String id;
     private String txId;
     private String serverToken;
+    /** KYC transaction ID — used when kycVerificationType is TRANSACTION */
     private String kycTxId;
+    /** OP server access token — used when kycVerificationType is TOKEN */
+    private String kycToken;
 }

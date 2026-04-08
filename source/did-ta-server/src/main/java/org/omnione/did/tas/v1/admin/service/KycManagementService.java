@@ -47,7 +47,12 @@ public class KycManagementService {
     /**
      * Registers a new KYC server.
      *
-     * * <p>Currently, only one KYC server can be configured at a time.</p>
+     * <p>Currently, only one KYC server can be configured at a time.</p>
+     * <p>Based on kycVerificationType, either serverUrl or signerDid is set:</p>
+     * <ul>
+     *   <li>TRANSACTION type: uses serverUrl, signerDid is null</li>
+     *   <li>TOKEN type: uses signerDid (may be null to accept any signer), serverUrl is null</li>
+     * </ul>
      *
      * @param registerKycReqDto the KYC server information to register.
      * @return the registered KYC server information.
@@ -55,19 +60,34 @@ public class KycManagementService {
     public KycInfoDto registerKyc(RegisterKycReqDto registerKycReqDto) {
         Kyc kyc = kycQueryService.findKycOrNull();
 
+        String serverUrl = null;
+        String signerDid = null;
+
+        switch (registerKycReqDto.getKycVerificationType()) {
+            case TRANSACTION:
+                serverUrl = registerKycReqDto.getServerUrl();
+                break;
+            case TOKEN:
+                signerDid = registerKycReqDto.getDid();
+                break;
+        }
+
         if (kyc == null) {
             kyc = Kyc.builder()
                     .name(registerKycReqDto.getName())
-                    .serverUrl(registerKycReqDto.getServerUrl())
+                    .kycVerificationType(registerKycReqDto.getKycVerificationType())
+                    .serverUrl(serverUrl)
+                    .signerDid(signerDid)
                     .enabled(true)
                     .build();
         } else {
             kyc.setName(registerKycReqDto.getName());
-            kyc.setServerUrl(registerKycReqDto.getServerUrl());
+            kyc.setKycVerificationType(registerKycReqDto.getKycVerificationType());
+            kyc.setServerUrl(serverUrl);
+            kyc.setSignerDid(signerDid);
             kyc.setEnabled(true);
         }
 
         return KycInfoDto.fromKyc(kycRepository.save(kyc));
     }
-
 }

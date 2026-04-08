@@ -13,14 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.omnione.did.base.db.repository;
 
-package org.omnione.did.base.db.constant;
+import org.omnione.did.base.db.domain.ListCertificateVc;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
-/**
- * Enum class for the status column in the APP table.
- */
-public enum AppStatus {
-    ASSIGNED,
-    CANCELLED,
-    DEACTIVATED,
+import java.util.Optional;
+
+public interface ListCertificateVcRepository
+        extends JpaRepository<ListCertificateVc, Long>,
+                QuerydslPredicateExecutor<ListCertificateVc>,
+                ListCertificateVcRepositoryAdmin {
+
+    Optional<ListCertificateVc> findTopByDidOrderByPublishedAtDesc(String did);
 }

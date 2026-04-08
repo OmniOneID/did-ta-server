@@ -17,11 +17,13 @@
 package org.omnione.did.base.db.repository;
 
 import org.omnione.did.base.db.constant.EntityStatus;
+import org.omnione.did.base.db.constant.Role;
 import org.omnione.did.base.db.domain.Entity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -35,4 +37,5 @@ public interface EntityRepository extends JpaRepository<Entity, Long>, QuerydslP
     long countByDid(String did);
     long countByDidAndStatus(String did, EntityStatus status);
     long countByName(String name);
+    List<Entity> findByRoleOrderByRole(Role role);
 }

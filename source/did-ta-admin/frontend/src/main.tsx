@@ -43,6 +43,8 @@ import CredentialSchemaDetailPage from './pages/list-provider/credential-schema/
 import CredentialSchemaManagementPage from './pages/list-provider/credential-schema/CredentialSchemaManagementPage';
 import CredentialDefinitionDetailPage from './pages/list-provider/credential-definition/CredentialDefinitionDetailPage';
 import CredentialDefinitionManagementPage from './pages/list-provider/credential-definition/CredentialDefinitionManagementPage';
+import CertificateVcManagementPage from './pages/list-provider/certificate-vc/CertificateVcManagementPage';
+import CertificateVcDetailPage from './pages/list-provider/certificate-vc/CertificateVcDetailPage';
 import ServerConfigurationPage from './pages/server-configuration/ServerConfigurationPage';
 
 const router = createBrowserRouter([
@@ -164,6 +166,14 @@ const router = createBrowserRouter([
           {
             path: 'list-settings/credential-definition',
             Component: CredentialDefinitionManagementPage,
+          },
+          {
+            path: 'list-settings/certificate-vc/:id',
+            Component: CertificateVcDetailPage,
+          },
+          {
+            path: 'list-settings/certificate-vc',
+            Component: CertificateVcManagementPage,
           },
           {
             path: 'admins/admin-management/admin-registration',
