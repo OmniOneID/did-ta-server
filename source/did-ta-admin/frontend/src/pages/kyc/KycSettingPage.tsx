@@ -5,11 +5,9 @@ import {
     styled,
     TextField,
     Typography,
-    Select,
-    MenuItem,
     FormControl,
     InputLabel,
-    FormHelperText
+    OutlinedInput
 } from '@mui/material';
 import {useNavigate} from 'react-router';
 import FullscreenLoader from '../../components/loading/FullscreenLoader';
@@ -20,54 +18,30 @@ import {useDialogs} from '@toolpad/core/useDialogs';
 import CustomConfirmDialog from '../../components/dialog/CustomConfirmDialog';
 import CustomDialog from '../../components/dialog/CustomDialog';
 import {formatErrorMessage} from '../../utils/error-handler';
-import {getEntitiesByRole} from '../../apis/entity-api';
 
 interface KycFormData {
     name?: string;
-    kycVerificationType?: 'TOKEN' | 'TRANSACTION';
+    kycVerificationType?: 'TRANSACTION';
     serverUrl?: string;
-    signerDid?: string;
 }
 
 interface ErrorState {
     name?: string;
-    kycVerificationType?: string;
     serverUrl?: string;
-    signerDid?: string;
-}
-
-interface Entity {
-    id: number;
-    name: string;
-    did: string;
 }
 
 const KycSettingPage: React.FC = () => {
     const navigate = useNavigate();
     const dialogs = useDialogs();
     const [isLoading, setIsLoading] = useState(true);
-    const [formData, setFormData] = useState<KycFormData>({name: '', kycVerificationType: 'TOKEN', serverUrl: '', signerDid: ''});
-    const [initialData, setInitialData] = useState<KycFormData>({name: '', kycVerificationType: 'TOKEN', serverUrl: '', signerDid: ''});
+    const [formData, setFormData] = useState<KycFormData>({name: '', kycVerificationType: 'TRANSACTION', serverUrl: ''});
+    const [initialData, setInitialData] = useState<KycFormData>({name: '', kycVerificationType: 'TRANSACTION', serverUrl: ''});
     const [errors, setErrors] = useState<ErrorState>({});
     const [isButtonDisabled, setIsButtonDisabled] = useState(true);
     const [isServerValid, setIsServerValid] = useState(false);
     const [serverCheckMessage, setServerCheckMessage] = useState<string>('');
     const [serverCheckStatus, setServerCheckStatus] = useState<'success' | 'error' | ''>('');
     const [isEditMode, setIsEditMode] = useState(false);
-    const [didEntities, setDidEntities] = useState<Entity[]>([]);
-
-    useEffect(() => {
-        const fetchDidEntities = async () => {
-            try {
-                const {data} = await getEntitiesByRole('OP_PROVIDER');
-                setDidEntities(data || []);
-            } catch (err) {
-                setDidEntities([]);
-                setIsLoading(false);
-            }
-        };
-        fetchDidEntities();
-    }, []);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -75,31 +49,10 @@ const KycSettingPage: React.FC = () => {
                 const {data} = await getKycInfo();
 
                 if (data?.id) {
-                    let verificationType: 'TOKEN' | 'TRANSACTION' = 'TOKEN';
-
-                    const typeValue = data.type || data.kycVerificationType || data.verificationType;
-
-                    if (typeValue) {
-                        const normalizedType = typeValue.toString().toUpperCase();
-                        if (normalizedType === 'TRANSACTION') {
-                            verificationType = 'TRANSACTION';
-                        } else if (normalizedType === 'TOKEN') {
-                            verificationType = 'TOKEN';
-                        }
-                    }
-
-                    let signerDidValue = 'ALL';
-                    if (data.signerDid && data.signerDid !== '' && data.signerDid !== null) {
-                        signerDidValue = data.signerDid;
-                    } else if (data.did && data.did !== '' && data.did !== null) {
-                        signerDidValue = data.did;
-                    }
-
                     const kycData: KycFormData = {
                         name: data.name || '',
-                        kycVerificationType: verificationType,
+                        kycVerificationType: 'TRANSACTION',
                         serverUrl: data.serverUrl || '',
-                        signerDid: signerDidValue
                     };
 
                     setFormData(kycData);
@@ -123,22 +76,7 @@ const KycSettingPage: React.FC = () => {
 
     const handleChange = (field: keyof KycFormData) => (event: React.ChangeEvent<HTMLInputElement> | any) => {
         const newValue = event.target.value;
-
-        if (field === 'kycVerificationType') {
-            setFormData((prev) => ({
-                ...prev,
-                [field]: newValue,
-                serverUrl: newValue === 'TRANSACTION' ? prev.serverUrl : '',
-                signerDid: newValue === 'TOKEN' ? prev.signerDid : 'ALL'
-            }));
-
-            setErrors((prev) => ({...prev, serverUrl: undefined, signerDid: undefined}));
-            setServerCheckMessage('');
-            setServerCheckStatus('');
-            setIsServerValid(false);
-        } else {
-            setFormData((prev) => ({...prev, [field]: newValue}));
-        }
+        setFormData((prev) => ({...prev, [field]: newValue}));
 
         if (field === 'serverUrl') {
             setIsServerValid(false);
@@ -207,17 +145,9 @@ const KycSettingPage: React.FC = () => {
     };
 
     const validate = () => {
-        let tempErrors: ErrorState = {};
-
+        const tempErrors: ErrorState = {};
         tempErrors.name = validateName(formData.name);
-        tempErrors.kycVerificationType = validateType(formData.kycVerificationType);
-
-        if (formData.kycVerificationType === 'TRANSACTION') {
-            tempErrors.serverUrl = validateServerUrl(formData.serverUrl);
-        } else if (formData.kycVerificationType === 'TOKEN') {
-            tempErrors.signerDid = validateDid(formData.signerDid);
-        }
-
+        tempErrors.serverUrl = validateServerUrl(formData.serverUrl);
         setErrors(tempErrors);
         return Object.values(tempErrors).every((error) => !error);
     };
@@ -225,17 +155,6 @@ const KycSettingPage: React.FC = () => {
     const validateName = (name?: string): string | undefined => {
         if (!name) return 'Please enter a name.';
         if (name.length < 3 || name.length > 20) return 'Name must be between 3 and 20 characters.';
-        return undefined;
-    };
-
-    const validateType = (type?: string): string | undefined => {
-        if (!type) return 'Please select a type.';
-        if (!['TOKEN', 'TRANSACTION'].includes(type)) return 'Please select a valid type.';
-        return undefined;
-    };
-
-    const validateDid = (did?: string): string | undefined => {
-        if (!did) return 'Please select a DID.';
         return undefined;
     };
 
@@ -262,9 +181,8 @@ const KycSettingPage: React.FC = () => {
             try {
                 const submitData = {
                     name: formData.name,
-                    kycVerificationType: formData.kycVerificationType,
-                    serverUrl: formData.kycVerificationType === 'TRANSACTION' ? formData.serverUrl : '',
-                    signerDid: formData.kycVerificationType === 'TOKEN' && formData.signerDid !== 'ALL' ? formData.signerDid : null
+                    kycVerificationType: 'TRANSACTION',
+                    serverUrl: formData.serverUrl,
                 };
 
                 const response = await registerKycInfo(submitData);
@@ -363,68 +281,45 @@ const KycSettingPage: React.FC = () => {
                         sx={{minLength: 3, maxLength: 20}}
                     />
 
-                    <FormControl fullWidth margin="normal" error={!!errors.kycVerificationType}>
-                        <InputLabel>Type *</InputLabel>
-                        <Select
-                            value={formData.kycVerificationType || ''}
-                            onChange={handleChange('kycVerificationType')}
-                            label="Type *"
-                        >
-                            <MenuItem value="TOKEN">Token-Based</MenuItem>
-                            <MenuItem value="TRANSACTION">Transaction-Based</MenuItem>
-                        </Select>
-                        {errors.kycVerificationType && <FormHelperText>{errors.kycVerificationType}</FormHelperText>}
+                    <FormControl fullWidth margin="normal">
+                        <InputLabel shrink>Type</InputLabel>
+                        <OutlinedInput
+                            notched
+                            label="Type"
+                            value="Transaction-Based"
+                            readOnly
+                            inputProps={{style: {color: 'rgba(0,0,0,0.6)'}}}
+                        />
                     </FormControl>
 
-                    {formData.kycVerificationType === 'TOKEN' && (
-                        <FormControl fullWidth margin="normal" error={!!errors.signerDid}>
-                            <InputLabel>Token Signer DID *</InputLabel>
-                            <Select
-                                value={formData.signerDid || ''}
-                                onChange={handleChange('signerDid')}
-                                label="Token Signer DID *"
-                            >
-                                <MenuItem value="ALL">All</MenuItem>
-                                {didEntities.map((entity) => (
-                                    <MenuItem key={entity.id} value={entity.did}>
-                                        {entity.name}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                            {errors.signerDid && <FormHelperText>{errors.signerDid}</FormHelperText>}
-                        </FormControl>
-                    )}
-
-                    {formData.kycVerificationType === 'TRANSACTION' && (
-                        <Box sx={{display: 'flex', alignItems: 'center', gap: 2}}>
-                            <TextField
-                                fullWidth
-                                label="Server URL *"
-                                variant="outlined"
-                                margin="normal"
-                                value={formData.serverUrl}
-                                onChange={handleChange('serverUrl')}
-                                error={!!errors.serverUrl}
-                                helperText={errors.serverUrl || serverCheckMessage}
-                                sx={{
-                                    maxLength: 200,
-                                    '& .MuiFormHelperText-root': {
-                                        color: serverCheckStatus === 'success' ? 'green' :
-                                            serverCheckStatus === 'error' ? 'red' : 'inherit',
-                                        fontWeight: serverCheckStatus ? 500 : 'inherit'
-                                    }
-                                }}
-                            />
-                            <Button
-                                variant="outlined"
-                                onClick={handleTestServerConnection}
-                                disabled={!formData.serverUrl}
-                                sx={{minWidth: 150, whiteSpace: 'nowrap', textTransform: 'none'}}
-                            >
-                                Test Connection
-                            </Button>
-                        </Box>
-                    )}
+                    <Box sx={{display: 'flex', alignItems: 'center', gap: 2}}>
+                        <TextField
+                            fullWidth
+                            label="Server URL *"
+                            variant="outlined"
+                            margin="normal"
+                            value={formData.serverUrl}
+                            onChange={handleChange('serverUrl')}
+                            error={!!errors.serverUrl}
+                            helperText={errors.serverUrl || serverCheckMessage}
+                            sx={{
+                                maxLength: 200,
+                                '& .MuiFormHelperText-root': {
+                                    color: serverCheckStatus === 'success' ? 'green' :
+                                        serverCheckStatus === 'error' ? 'red' : 'inherit',
+                                    fontWeight: serverCheckStatus ? 500 : 'inherit'
+                                }
+                            }}
+                        />
+                        <Button
+                            variant="outlined"
+                            onClick={handleTestServerConnection}
+                            disabled={!formData.serverUrl}
+                            sx={{minWidth: 150, whiteSpace: 'nowrap', textTransform: 'none'}}
+                        >
+                            Test Connection
+                        </Button>
+                    </Box>
 
                     <Box sx={{display: 'flex', justifyContent: 'center', gap: 2, mt: 3}}>
                         <Button
