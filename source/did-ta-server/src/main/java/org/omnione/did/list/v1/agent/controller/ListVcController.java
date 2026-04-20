@@ -94,4 +94,15 @@ public class ListVcController {
     public ResponseEntity<CredentialSchema> getCredentialSchemaById(@RequestParam String credentialSchemaId) {
         return new ResponseEntity<>(listService.findCredentialSchemaByCredentialSchemaId(credentialSchemaId), HttpStatus.OK);
     }
+
+    /**
+     * Retrieves the latest certificate VC for a given DID.
+     *
+     * @param did The DID of the entity whose certificate VC is requested.
+     * @return The certificate VC as a JSON string.
+     */
+    @RequestMapping(value = "/certificate", method = RequestMethod.GET)
+    public String requestCertificate(@RequestParam String did) {
+        return listService.findCertificateVc(did);
+    }
 }

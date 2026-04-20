@@ -29,6 +29,7 @@ import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.common.exception.CommonSdkException;
 import org.omnione.did.common.util.JsonUtil;
 import org.omnione.did.list.v1.admin.dto.vcschema.ListVcSchemaDto;
+import org.omnione.did.list.v1.admin.service.query.ListCertificateVcQueryService;
 import org.omnione.did.list.v1.admin.service.query.ListCredentialDefinitionQueryService;
 import org.omnione.did.list.v1.admin.service.query.ListCredentialSchemaQueryService;
 import org.omnione.did.list.v1.admin.service.query.ListVcPlanQueryService;
@@ -57,6 +58,7 @@ import java.util.stream.Collectors;
 public class ListService {
     private final ListAllowedCaRepository listAllowedCaRepository;
     private final ListVcSchemaRepository listVcSchemaRepository;
+    private final ListCertificateVcQueryService listCertificateVcQueryService;
     private final ListCredentialDefinitionQueryService listCredentialDefinitionQueryService;
     private final ListCredentialSchemaQueryService listCredentialSchemaQueryService;
     private final ListVcPlanQueryService listVcPlanQueryService;
@@ -253,6 +255,21 @@ public class ListService {
         String credentialSchemaJson = listCredentialSchemaQueryService.findByCredentialSchemaId(credentialSchemaId)
                 .getCredentialSchema();
         return GsonWrapper.getGson().fromJson(credentialSchemaJson, CredentialSchema.class);
+    }
+
+    public String findCertificateVc(String did) {
+        try {
+            log.debug("=== Starting findCertificateVc ===");
+            String certificateVc = listCertificateVcQueryService.findByDid(did).getCertificateVc();
+            log.debug("*** Finished findCertificateVc ***");
+            return certificateVc;
+        } catch (OpenDidException e) {
+            log.error("\t--> Error retrieving certificate VC for DID {}: {}", did, e.getErrorCode().getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("\t--> An unknown error occurred retrieving certificate VC for DID {}: {}", did, e.getMessage());
+            throw new OpenDidException(ErrorCode.LIST_CERTIFICATE_VC_NOT_FOUND);
+        }
     }
 
     public CredentialDefinition findCredentialDefinitionByCredentialDefinitionId(String credentialDefinitionId) {

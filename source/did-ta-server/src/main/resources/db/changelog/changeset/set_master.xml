@@ -37,5 +37,9 @@
   <include file="set.5/create-table_list_certificate_vc.xml" relativeToChangelogFile="true"/>
   <include file="set.6/add-columns_kyc.xml" relativeToChangelogFile="true"/>
   <include file="set.7/alter-column_kyc_server_url_nullable.xml" relativeToChangelogFile="true"/>
+  <include file="set.8/add-column_entity_dn.xml" relativeToChangelogFile="true"/>
+  <include file="set.8/add-column_entity_published_certificate_url.xml" relativeToChangelogFile="true"/>
+  <include file="set.8/add-column_tas_dn.xml" relativeToChangelogFile="true"/>
+  <include file="set.8/add-column_tas_published_certificate_url.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

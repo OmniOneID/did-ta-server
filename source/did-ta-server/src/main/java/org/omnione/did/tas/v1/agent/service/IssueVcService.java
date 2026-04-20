@@ -143,6 +143,30 @@ public class IssueVcService {
     }
 
     /**
+     * Sets the entity claim information for the VC with custom DN.
+     *
+     * @param issueVcParam The parameter object for issuing a VC
+     * @param entity The entity for which the VC is being issued
+     * @param dn The custom DN (Distinguished Name) to use as subject
+     */
+    public void setEntityClaimInfo(IssueVcParam issueVcParam, Entity entity, String dn) {
+        HashMap<String, ClaimInfo> claimInfoMap = new HashMap<>();
+
+        ClaimInfo subjectClaim = new ClaimInfo();
+        subjectClaim.setCode("org.opendid.v1.subject");
+        subjectClaim.setValue(dn.getBytes(StandardCharsets.UTF_8));
+
+        ClaimInfo roleClaim = new ClaimInfo();
+        roleClaim.setCode("org.opendid.v1.role");
+        roleClaim.setValue(entity.getRole().toRoleType().getRawValue().getBytes(StandardCharsets.UTF_8));
+
+        claimInfoMap.put(subjectClaim.getCode(), subjectClaim);
+        claimInfoMap.put(roleClaim.getCode(), roleClaim);
+
+        BaseCoreVcUtil.setClaimInfo(issueVcParam, claimInfoMap);
+    }
+
+    /**
      * Sets the certificate VC types.
      *
      * @param issueVcParam The parameter object for issuing a VC

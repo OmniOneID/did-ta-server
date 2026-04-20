@@ -70,4 +70,10 @@ public class Tas extends BaseEntity implements Serializable {
 
     @Column(name = "certificate_url", nullable = false, length = 2000)
     private String certificateUrl;
+
+    @Column(name = "dn", length = 200)
+    private String dn;
+
+    @Column(name = "published_certificate_url", length = 2000)
+    private String publishedCertificateUrl;
 }

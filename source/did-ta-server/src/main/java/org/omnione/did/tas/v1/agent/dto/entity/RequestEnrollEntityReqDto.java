@@ -37,4 +37,5 @@ public class RequestEnrollEntityReqDto {
     private String txId;
     @Valid
     private DidAuth didAuth;
+    private String dn;
 }

@@ -45,6 +45,7 @@ import org.omnione.did.tas.v1.common.service.StorageService;
 import org.omnione.did.tas.v1.common.service.query.EcdhQueryService;
 import org.omnione.did.tas.v1.common.service.query.EntityQueryService;
 import org.omnione.did.tas.v1.common.service.query.TasQueryService;
+import org.omnione.did.tas.v1.agent.helper.PublishCertificateHelper;
 import org.omnione.did.tas.v1.agent.service.validator.DidAuthValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -78,6 +79,7 @@ public class EntityServiceImpl implements EntityService {
     private final StorageService storageService;
     private final IssueVcService issueVcService;
     private final FileWalletService fileWalletService;
+    private final PublishCertificateHelper publishCertificateHelper;
 
     /**
      * Proposes the enrollment of an entity.
@@ -164,14 +166,26 @@ public class EntityServiceImpl implements EntityService {
 
             // Generate Entity certificate VC.
             log.debug("\t--> Generating Entity certificate VC");
-            VerifiableCredential entityCertificateVc = generateEntityCertificateVc(entity, existedTas);
+            VerifiableCredential entityCertificateVc = generateEntityCertificateVc(entity, existedTas, requestEnrollEntityReqDto.getDn());
 
             log.debug("\t--> Signing TAS certificate VC.");
             signTasCertificateVc(entityCertificateVc, existedTas);
 
+            // Publish Entity certificate VC.
+            log.debug("\t--> Publishing Entity certificate VC");
+            String publishedCertificateUrl = publishCertificateHelper.publishEntityCertificateVc(entityCertificateVc);
+
             // Register Entity certificate VC meta.
             log.debug("\t--> Registering Entity certificate VC meta");
-            registerEntityCertificateVcMeta(entityCertificateVc, entity);
+            registerEntityCertificateVcMeta(entityCertificateVc, entity, existedTas);
+
+            // Update Entity published certificate URL.
+            log.debug("\t--> Updating Entity published certificate URL");
+            updateEntityPublishedCertificateUrl(entity, publishedCertificateUrl);
+
+            // Update Entity DN if provided in request
+            log.debug("\t--> Updating Entity DN if provided in request");
+            updateEntityDnIfProvided(entity, requestEnrollEntityReqDto.getDn());
 
             // Create IV.
             log.debug("\t--> Creating IV");
@@ -203,6 +217,7 @@ public class EntityServiceImpl implements EntityService {
                     .txId(requestEnrollEntityReqDto.getTxId())
                     .iv(encodedIv)
                     .encVc(encodedEncryptedEntityCertificateVc)
+                    .vcUrl(publishedCertificateUrl)
                     .build();
         } catch (OpenDidException e) {
             throw e;
@@ -250,15 +265,22 @@ public class EntityServiceImpl implements EntityService {
      * @param entity The entity for which to generate the certificate
      * @return VerifiableCredential The generated entity certificate VC
      */
-    private VerifiableCredential generateEntityCertificateVc(Entity entity, Tas tas) {
+    private VerifiableCredential generateEntityCertificateVc(Entity entity, Tas tas, String dn) {
         IssueVcParam issueVcParam = new IssueVcParam();
 
         issueVcService.setCertificateVcSchema(issueVcParam);
-        issueVcService.setIssuer(issueVcParam, tas, tas.getCertificateUrl());
-        issueVcService.setEntityClaimInfo(issueVcParam, entity);
+        issueVcService.setIssuer(issueVcParam, tas, publishCertificateHelper.getTasCertificateVcURL(tas));
+
+        if (dn != null && !dn.trim().isEmpty()) {
+            log.debug("\t--> Setting entity claim info with DN: {}", dn);
+            issueVcService.setEntityClaimInfo(issueVcParam, entity, dn);
+        } else {
+            issueVcService.setEntityClaimInfo(issueVcParam, entity);
+        }
+
         issueVcService.setCertificateVcTypes(issueVcParam);
         issueVcService.setCertificateEvidence(issueVcParam, tas);
-        issueVcService.setValidateUntil(issueVcParam,1);
+        issueVcService.setValidateUntil(issueVcParam, 1);
 
         return issueVcService.generateEntityCertificateVc(issueVcParam, entity);
     }
@@ -300,8 +322,8 @@ public class EntityServiceImpl implements EntityService {
      * @param verifiableCredential The VC to register
      * @param entity The entity associated with the VC
      */
-    private void registerEntityCertificateVcMeta(VerifiableCredential verifiableCredential, Entity entity) {
-        VcMeta vcMeta = BaseCoreVcUtil.generateVcMeta(verifiableCredential, entity.getCertificateUrl());
+    private void registerEntityCertificateVcMeta(VerifiableCredential verifiableCredential, Entity entity, Tas tas) {
+        VcMeta vcMeta = BaseCoreVcUtil.generateVcMeta(verifiableCredential, publishCertificateHelper.getTasCertificateVcURL(tas));
         storageService.registerVcMeta(vcMeta);
     }
     /**
@@ -413,5 +435,33 @@ public class EntityServiceImpl implements EntityService {
         entity.setStatus(entityStatus);
 
         entityRepository.save(entity);
+    }
+
+    /**
+     * Updates the published certificate URL of an entity if the provided URL is not null or empty.
+     *
+     * @param entity the Entity entity to update
+     * @param publishedCertificateUrl the published certificate URL from request
+     */
+    private void updateEntityPublishedCertificateUrl(Entity entity, String publishedCertificateUrl) {
+        if (publishedCertificateUrl != null && !publishedCertificateUrl.trim().isEmpty()) {
+            log.debug("\t--> Updating Entity published certificate URL: {}", publishedCertificateUrl);
+            entity.setPublishedCertificateUrl(publishedCertificateUrl);
+            entityRepository.save(entity);
+        }
+    }
+
+    /**
+     * Update Entity DN if the provided DN value is not null or empty.
+     *
+     * @param entity the Entity entity to update
+     * @param dn the DN value from request
+     */
+    private void updateEntityDnIfProvided(Entity entity, String dn) {
+        if (dn != null && !dn.trim().isEmpty()) {
+            log.debug("\t--> Updating Entity DN: {}", dn);
+            entity.setDn(dn);
+            entityRepository.save(entity);
+        }
     }
 }
