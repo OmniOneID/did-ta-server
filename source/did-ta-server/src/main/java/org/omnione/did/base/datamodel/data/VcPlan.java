@@ -23,6 +23,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.omnione.did.base.datamodel.data.zkp.CredentialDefinition;
+import org.omnione.did.base.datamodel.enums.VcIssuanceMode;
 
 import java.util.List;
 
@@ -50,4 +51,6 @@ public class VcPlan {
     private String delegator;
     private List<String> allowedIssuers;
     private String manager;
+    private VcIssuanceMode issuanceMode;
+    private List<String> endpoints;
 }
