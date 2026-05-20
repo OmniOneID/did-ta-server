@@ -41,4 +41,5 @@ public class GenerateIssueProfileApiResDto {
     private String txId;
     @Valid
     private ZkpIssueProfile profile;
+    private String authNonce;
 }
