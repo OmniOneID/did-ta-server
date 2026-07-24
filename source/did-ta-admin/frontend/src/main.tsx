@@ -46,6 +46,9 @@ import CredentialDefinitionManagementPage from './pages/list-provider/credential
 import CertificateVcManagementPage from './pages/list-provider/certificate-vc/CertificateVcManagementPage';
 import CertificateVcDetailPage from './pages/list-provider/certificate-vc/CertificateVcDetailPage';
 import ServerConfigurationPage from './pages/server-configuration/ServerConfigurationPage';
+import Oid4vciIssuerManagementPage from './pages/list-provider/oid4vci-issuer/Oid4vciIssuerManagementPage';
+import Oid4vciIssuerDetailPage from './pages/list-provider/oid4vci-issuer/Oid4vciIssuerDetailPage';
+import Oid4vciIssuerFormPage from './pages/list-provider/oid4vci-issuer/Oid4vciIssuerFormPage';
 
 const router = createBrowserRouter([
   {
@@ -174,6 +177,18 @@ const router = createBrowserRouter([
           {
             path: 'list-settings/certificate-vc',
             Component: CertificateVcManagementPage,
+          },
+          {
+            path: 'list-settings/oid4vci-issuers/:id/edit',
+            Component: Oid4vciIssuerFormPage,
+          },
+          {
+            path: 'list-settings/oid4vci-issuers/:id',
+            Component: Oid4vciIssuerDetailPage,
+          },
+          {
+            path: 'list-settings/oid4vci-issuers',
+            Component: Oid4vciIssuerManagementPage,
           },
           {
             path: 'admins/admin-management/admin-registration',

@@ -300,6 +300,15 @@ public enum ErrorCode {
     // 18. Server config errors (21500 ~ 21999)
     SERVER_CONFIG_KEY_NOT_FOUND("SSRVTRA21501", "Server configuration key not found.", 400),
 
+    // 19. OID4VCI issuer list errors (22000 ~ 22499)
+    OID4VCI_ISSUER_NOT_FOUND("SSRVTRA22000", "Credential Issuer registration was not found.", 404),
+    OID4VCI_ISSUER_ALREADY_EXISTS("SSRVTRA22001", "Credential Issuer is already registered.", 409),
+    OID4VCI_ISSUER_INVALID_URI("SSRVTRA22002", "Credential Issuer URI is invalid.", 400),
+    OID4VCI_METADATA_URI_INVALID("SSRVTRA22003", "Credential Issuer Metadata URI is invalid.", 400),
+    OID4VCI_USER_INITIATION_URI_INVALID("SSRVTRA22004", "User Initiation URI is invalid.", 400),
+    OID4VCI_STATUS_TRANSITION_INVALID("SSRVTRA22005", "Credential Issuer status transition is not allowed.", 400),
+    OID4VCI_STATUS_REASON_REQUIRED("SSRVTRA22006", "A reason is required for this status transition.", 400),
+
     // 99. Miscellaneous errors (90000 ~ 99999)
     FILE_NOT_FOUND("SSRVTRA0000", "Failed to find file: requested file not found.", 400),
     TODO_CODE("SSRVTRA90001", "Temporary error code: to be replaced.", 400),

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+    <changeSet id="create-table-list_oid4vci_issuer_status_history" author="openai">
+        <createTable tableName="list_oid4vci_issuer_status_history">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="issuer_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="previous_status" type="varchar(20)"/>
+            <column name="new_status" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="reason" type="varchar(1000)"/>
+            <column name="changed_by" type="varchar(200)"/>
+            <column name="changed_at" type="timestamp" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="list_oid4vci_issuer_status_history"
+                                 baseColumnNames="issuer_id"
+                                 referencedTableName="list_oid4vci_issuer"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_oid4vci_history_issuer"
+                                 onDelete="RESTRICT"/>
+        <createIndex tableName="list_oid4vci_issuer_status_history" indexName="idx_oid4vci_history_issuer_changed">
+            <column name="issuer_id"/>
+            <column name="changed_at"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

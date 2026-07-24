@@ -92,6 +92,10 @@ export const getNavigationByStatus = (serverStatus: string | null): Navigation=>
           segment: 'certificate-vc',
           title: 'Certification VC Management',
         },
+        {
+          segment: 'oid4vci-issuers',
+          title: 'OID4VCI Credential Issuers',
+        },
       ],
     },
     {

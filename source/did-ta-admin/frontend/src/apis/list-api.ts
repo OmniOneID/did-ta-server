@@ -1,4 +1,5 @@
-import { deleteData, getData, postData, putData } from "../utils/api";
+import { deleteData, getData, patchData, postData, putData } from "../utils/api";
+import type { Oid4vciIssuerForm, Oid4vciIssuerStatus } from "./models/Oid4vciIssuer";
 
 const API_BASE_URL = "/list/admin/v1";
 
@@ -127,3 +128,31 @@ export const fetchCertificateVcList = async (page: number, size: number, searchK
 export const getCertificateVcInfo = async (id: number) => {
     return getData(API_BASE_URL, `certificate-vc?id=${id}`);
 }
+
+export const fetchOid4vciIssuerList = async (
+    page: number,
+    size: number,
+    searchValue: string | null,
+    status: Oid4vciIssuerStatus | null,
+    sort = "createdAt,desc",
+) => {
+    const params = new URLSearchParams({ page: String(page), size: String(size), sort });
+    if (searchValue) params.set("searchValue", searchValue);
+    if (status) params.set("status", status);
+    return getData(API_BASE_URL, `oid4vci/issuers/list?${params.toString()}`);
+};
+
+export const getOid4vciIssuer = (id: number) =>
+    getData(API_BASE_URL, `oid4vci/issuers?id=${id}`);
+
+export const updateOid4vciIssuer = (id: number, data: Oid4vciIssuerForm) =>
+    putData(API_BASE_URL, "oid4vci/issuers", { id, ...data });
+
+export const changeOid4vciIssuerStatus = (
+    id: number,
+    status: Oid4vciIssuerStatus,
+    reason?: string,
+) => patchData(API_BASE_URL, `oid4vci/issuers/${id}/status`, { status, reason });
+
+export const getOid4vciIssuerStatusHistory = (id: number) =>
+    getData(API_BASE_URL, `oid4vci/issuers/${id}/status-history`);

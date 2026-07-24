@@ -10,7 +10,7 @@ type ApiErrorResponse = {
 const requestApi = async (
   baseUrl: string,
   endpoint: string,
-  method: "GET" | "POST" | "PUT" | "DELETE",
+  method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE",
   body?: any
 ): Promise<ApiResponse> => {
   const fullUrl = `${baseUrl}/${endpoint}`;
@@ -63,6 +63,9 @@ export const postData = (baseUrl: string, endpoint: string, body: any): Promise<
 
 export const putData = (baseUrl: string, endpoint: string, body: any): Promise<ApiResponse> =>
   requestApi(baseUrl, endpoint, "PUT", body);
+
+export const patchData = (baseUrl: string, endpoint: string, body: any): Promise<ApiResponse> =>
+  requestApi(baseUrl, endpoint, "PATCH", body);
 
 export const deleteData = (baseUrl: string, endpoint: string): Promise<ApiResponse> =>
   requestApi(baseUrl, endpoint, "DELETE");

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+    <changeSet id="create-table-list_oid4vci_issuer" author="openai">
+        <createTable tableName="list_oid4vci_issuer">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="credential_issuer" type="varchar(2000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="credential_issuer_metadata_uri" type="varchar(2000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_initiation_uri" type="varchar(2000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="timestamp" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp"/>
+        </createTable>
+        <addUniqueConstraint tableName="list_oid4vci_issuer"
+                             columnNames="credential_issuer"
+                             constraintName="uk_list_oid4vci_issuer_credential_issuer"/>
+        <createIndex tableName="list_oid4vci_issuer" indexName="idx_oid4vci_issuer_status">
+            <column name="status"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

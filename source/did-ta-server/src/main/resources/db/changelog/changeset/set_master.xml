@@ -41,5 +41,7 @@
   <include file="set.8/add-column_entity_published_certificate_url.xml" relativeToChangelogFile="true"/>
   <include file="set.8/add-column_tas_dn.xml" relativeToChangelogFile="true"/>
   <include file="set.8/add-column_tas_published_certificate_url.xml" relativeToChangelogFile="true"/>
+  <include file="set.9/create-table_list_oid4vci_issuer.xml" relativeToChangelogFile="true"/>
+  <include file="set.9/create-table_list_oid4vci_issuer_status_history.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>
