@@ -47,6 +47,7 @@ public class UrlConstant {
         public static final String AGENT_V1 = "/list/api/v1";
         public static final String ADMIN_V1 = "/list/admin/v1";
         public static final String OID4VCI_ISSUERS = "/oid4vci/issuers";
+        public static final String MDOC_ISSUERS = "/mdoc/issuers";
     }
 
     /**

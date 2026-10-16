@@ -1,5 +1,6 @@
 import { deleteData, getData, patchData, postData, putData } from "../utils/api";
 import type { Oid4vciIssuerForm, Oid4vciIssuerStatus } from "./models/Oid4vciIssuer";
+import type { MdocIssuerStatus, RegisterMdocIssuerRequest } from "./models/MdocIssuer";
 
 const API_BASE_URL = "/list/admin/v1";
 
@@ -156,3 +157,36 @@ export const changeOid4vciIssuerStatus = (
 
 export const getOid4vciIssuerStatusHistory = (id: number) =>
     getData(API_BASE_URL, `oid4vci/issuers/${id}/status-history`);
+
+export const fetchMdocIssuerList = async (
+    page: number,
+    size: number,
+    searchValue: string | null,
+    status: MdocIssuerStatus | null,
+) => {
+    const params = new URLSearchParams({ page: String(page), size: String(size) });
+    if (searchValue) params.set("searchValue", searchValue);
+    if (status) params.set("status", status);
+    return getData(API_BASE_URL, `mdoc/issuers/list?${params.toString()}`);
+};
+
+export const getMdocIssuer = (id: number) =>
+    getData(API_BASE_URL, `mdoc/issuers?id=${id}`);
+
+export const getMdocIssuerMetadata = (metadataUri: string) =>
+    getData(API_BASE_URL, `mdoc/issuers/metadata-doc-types?metadataUri=${encodeURIComponent(metadataUri)}`);
+
+export const registerMdocIssuer = (data: RegisterMdocIssuerRequest) =>
+    postData(API_BASE_URL, "mdoc/issuers", data);
+
+export const updateMdocIssuer = (id: number, metadataUri: string, docTypes: string[]) =>
+    putData(API_BASE_URL, "mdoc/issuers", { id, metadataUri, docTypes });
+
+export const changeMdocIssuerStatus = (
+    id: number,
+    status: MdocIssuerStatus,
+    reason?: string,
+) => patchData(API_BASE_URL, `mdoc/issuers/${id}/status`, { status, reason });
+
+export const getMdocIssuerStatusHistory = (id: number) =>
+    getData(API_BASE_URL, `mdoc/issuers/${id}/status-history`);

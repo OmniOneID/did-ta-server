@@ -309,6 +309,18 @@ public enum ErrorCode {
     OID4VCI_STATUS_TRANSITION_INVALID("SSRVTRA22005", "Credential Issuer status transition is not allowed.", 400),
     OID4VCI_STATUS_REASON_REQUIRED("SSRVTRA22006", "A reason is required for this status transition.", 400),
 
+    // 20. mDoc issuer list errors (22500 ~ 22999)
+    MDOC_ISSUER_NOT_FOUND("SSRVTRA22500", "mDoc Issuer registration was not found.", 404),
+    MDOC_ISSUER_ALREADY_EXISTS("SSRVTRA22501", "Entity is already registered as an mDoc Issuer.", 409),
+    MDOC_ISSUER_ENTITY_NOT_ELIGIBLE("SSRVTRA22502", "Entity must be an enrolled Issuer (role ISSUER, status COMPLETED).", 400),
+    MDOC_ISSUER_DOCTYPE_INVALID("SSRVTRA22503", "docTypes must contain at least one valid docType.", 400),
+    MDOC_ISSUER_STATUS_TRANSITION_INVALID("SSRVTRA22504", "mDoc Issuer status transition is not allowed.", 400),
+    MDOC_ISSUER_STATUS_REASON_REQUIRED("SSRVTRA22505", "A reason is required for this status transition.", 400),
+    MDOC_ISSUER_METADATA_URI_INVALID("SSRVTRA22507", "Issuer metadata URL must be a valid HTTP or HTTPS URL.", 400),
+    MDOC_ISSUER_METADATA_UNAVAILABLE("SSRVTRA22508", "Failed to retrieve issuer metadata from the URL.", 400),
+    MDOC_ISSUER_METADATA_NO_MDOC("SSRVTRA22509", "Issuer metadata declares no mso_mdoc docType.", 400),
+    MDOC_ISSUER_DOCTYPE_NOT_DECLARED("SSRVTRA22510", "docTypes must be declared as mso_mdoc in the issuer metadata.", 400),
+
     // 99. Miscellaneous errors (90000 ~ 99999)
     FILE_NOT_FOUND("SSRVTRA0000", "Failed to find file: requested file not found.", 400),
     TODO_CODE("SSRVTRA90001", "Temporary error code: to be replaced.", 400),

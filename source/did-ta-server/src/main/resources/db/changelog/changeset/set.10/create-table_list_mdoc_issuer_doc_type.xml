@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+    <changeSet id="create-table-list_mdoc_issuer_doc_type" author="jinhwankim">
+        <createTable tableName="list_mdoc_issuer_doc_type">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="mdoc_issuer_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="doc_type" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="timestamp" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="list_mdoc_issuer_doc_type"
+                                 baseColumnNames="mdoc_issuer_id"
+                                 referencedTableName="list_mdoc_issuer"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_mdoc_doc_type_issuer"
+                                 onDelete="RESTRICT"/>
+        <addUniqueConstraint tableName="list_mdoc_issuer_doc_type"
+                             columnNames="mdoc_issuer_id, doc_type"
+                             constraintName="uk_list_mdoc_issuer_doc_type"/>
+    </changeSet>
+</databaseChangeLog>

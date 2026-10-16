@@ -98,6 +98,7 @@ Table of Contents
   - [12.10. Update DidDoc Revoked](#1210-update-diddoc-revoked)
   - [12.11. Get VC Schema List](#1211-get-vc-schema-list)
   - [12.12. Get Credential Schema ](#1212-get-credential-schema)
+  - [12.13. Get mDoc Issuer List](#1213-get-mdoc-issuer-list)
 - [A. Non-standard Object Definitions](#a-non-standard-object-definitions)
   - [A.1. Constant](#a1-constant)
   - [A.2. EmailTemplate Object](#a2-emailtemplate-object)
@@ -233,6 +234,7 @@ This document defines the APIs provided by Trust Agent (TA or TAS).
 | `get-vcplan-list`           | /list/api/v1/vcplan/list          | Retrieve all VC Plan list          | Y            |
 | `get-vcplan`                | /list/api/v1/vcplan/id            | Retrieve VC Plan                   | Y            |
 | `get-allowed-ca-list`       | /list/api/v1/allowed-ca/list      | Retrieve CA list allowed for wallet| Y            |
+| `get-mdoc-issuer-list`      | /list/api/v1/mdoc/issuers         | Retrieve mDoc trusted issuer list | N            |
 | `get-certificate-vc`        | /api/v1/certificate-vc            | Retrieve enrollment certificate    | N            |
 | `get-vcschema`              | /api/v1/vc-schema                 | Retrieve VC schema                 | N            |
 | `update-diddoc-deactivated` | /api/v1/update-diddoc-deactivated | DIDDoc deactivation                | N            |
@@ -5484,6 +5486,7 @@ The list of single call APIs provided by TAS is shown in the table below.
 | `get-vcplan-list`           | /list/api/v1/vcplan/list          | Retrieve all VC Plan list          | Y            |
 | `get-vcplan`                | /list/api/v1/vcplan               | Retrieve VC Plan by Id             | Y            |
 | `get-allowed-ca-list`       | /list/api/v1/allowed-ca/list      | Retrieve CA list allowed for wallet| Y            |
+| `get-mdoc-issuer-list`      | /list/api/v1/mdoc/issuers         | Retrieve mDoc trusted issuer list | N            |
 | `send-email`                | /noti/api/v1/send-email           | Email sending                      | N            |
 | `send-push`                 | /noti/api/v1/send-push            | Push transmission                  | N            |
 | `update-push-token`         | /api/v1/update-push-token         | Push token update                  | N            |
@@ -6839,6 +6842,105 @@ Content-Type: application/json;charset=utf-8
 
 <div style="page-break-after: always; margin-top: 40px;"></div>
 
+
+### 12.13. Get mDoc Issuer List
+
+- Sender: mDoc Reader → TAS
+
+Retrieves the mDoc trusted issuer list that mDoc Readers (iOS/AOS) use for offline verification.
+Only issuers enrolled in TAS (`role=ISSUER`, `status=COMPLETED`) that an administrator granted mDoc docTypes to, and whose grant is `ACTIVE`, are included.
+
+| Item          | Description                 | Remarks |
+| ------------- | --------------------------- | ------- |
+| Method        | `GET`                       |         |
+| Path          | `/list/api/v1/mdoc/issuers` |         |
+| Authorization | -                           |         |
+
+#### 12.13.1. Request
+
+**■ HTTP Headers**
+
+N/A
+
+**■ Path Parameters**
+
+N/A
+
+**■ Query Parameters**
+
+N/A
+
+**■ HTTP Body**
+
+N/A
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+#### 12.13.2. Response
+
+**■ Process**
+
+1. Retrieve mDoc issuers whose status is `ACTIVE`
+2. Include only entries whose entity is an enrolled Issuer (`role=ISSUER`, `status=COMPLETED`)
+3. Compute the last change time of the list (`updatedAt`), which moves on registration, status change, and docType change
+
+**■ Status 200 - Success**
+
+```c#
+def object _GetMdocIssuerList: "Get mDoc Issuer List Response"
+{
+    + utcDatetime      "updatedAt": "Last change time of the list (ISO 8601, UTC, seconds precision)"
+    + int              "count"    : "number of items"
+    + array(MdocIssuer) "items"   : "mDoc trusted issuers", emptiable(true)
+}
+
+def object MdocIssuer: "mDoc trusted issuer"
+{
+    + did           "did"     : "Issuer base DID (no versionId or fragment)"
+    + string        "name"    : "Issuer name"
+    + array(string) "docTypes": "mDoc docTypes the issuer may issue", emptiable(false)
+}
+```
+
+- If no issuer is registered, `count` is 0 and `items` is an empty array.
+- Fields may be added to the response later, so clients must ignore unknown fields.
+
+**■ Status 500 - Server error**
+
+| Code         | Description                         |
+| ------------ | ----------------------------------- |
+| SSRVTRA90003 | An unknown server error has occurred. |
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+#### 12.13.3. Example
+
+**■ Request**
+
+```shell
+curl -v -X GET "http://${Host}:${Port}/list/api/v1/mdoc/issuers"
+```
+
+**■ Response**
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=utf-8
+
+{
+  "updatedAt": "2026-10-15T09:00:00Z",
+  "count": 1,
+  "items": [
+    {
+      "did": "did:omn:issuer",
+      "name": "issuer",
+      "docTypes": ["org.iso.18013.5.1.mDL", "eu.europa.ec.eudi.pid.1"]
+    }
+  ]
+}
+```
+
+<div style="page-break-after: always; margin-top: 40px;"></div>
 
 ## A. Non-standard Object Definitions
 

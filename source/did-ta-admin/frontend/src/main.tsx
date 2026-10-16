@@ -49,6 +49,9 @@ import ServerConfigurationPage from './pages/server-configuration/ServerConfigur
 import Oid4vciIssuerManagementPage from './pages/list-provider/oid4vci-issuer/Oid4vciIssuerManagementPage';
 import Oid4vciIssuerDetailPage from './pages/list-provider/oid4vci-issuer/Oid4vciIssuerDetailPage';
 import Oid4vciIssuerFormPage from './pages/list-provider/oid4vci-issuer/Oid4vciIssuerFormPage';
+import MdocIssuerManagementPage from './pages/list-provider/mdoc-issuer/MdocIssuerManagementPage';
+import MdocIssuerDetailPage from './pages/list-provider/mdoc-issuer/MdocIssuerDetailPage';
+import MdocIssuerFormPage from './pages/list-provider/mdoc-issuer/MdocIssuerFormPage';
 
 const router = createBrowserRouter([
   {
@@ -189,6 +192,22 @@ const router = createBrowserRouter([
           {
             path: 'list-settings/oid4vci-issuers',
             Component: Oid4vciIssuerManagementPage,
+          },
+          {
+            path: 'list-settings/mdoc-issuers/new',
+            Component: MdocIssuerFormPage,
+          },
+          {
+            path: 'list-settings/mdoc-issuers/:id/edit',
+            Component: MdocIssuerFormPage,
+          },
+          {
+            path: 'list-settings/mdoc-issuers/:id',
+            Component: MdocIssuerDetailPage,
+          },
+          {
+            path: 'list-settings/mdoc-issuers',
+            Component: MdocIssuerManagementPage,
           },
           {
             path: 'admins/admin-management/admin-registration',

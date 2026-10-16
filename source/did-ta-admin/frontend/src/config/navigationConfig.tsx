@@ -96,6 +96,10 @@ export const getNavigationByStatus = (serverStatus: string | null): Navigation=>
           segment: 'oid4vci-issuers',
           title: 'OID4VCI Credential Issuers',
         },
+        {
+          segment: 'mdoc-issuers',
+          title: 'mDoc Trusted Issuers',
+        },
       ],
     },
     {

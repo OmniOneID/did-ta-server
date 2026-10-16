@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+    <!-- Issuer OID4VCI metadata URL that granted docTypes are checked against. Nullable for rows created before it existed. -->
+    <changeSet id="add-column-list_mdoc_issuer-metadata_uri" author="jinhwankim">
+        <addColumn tableName="list_mdoc_issuer">
+            <column name="metadata_uri" type="varchar(2000)"/>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

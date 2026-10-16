@@ -100,6 +100,7 @@ TAS API
   - [12.10. Update DidDoc Revoked](#1210-update-diddoc-revoked)
   - [12.11. Get VC Schema List](#1211-get-vc-schema-list)
   - [12.12. Get Credential Schema ](#1212-get-credential-schema)
+  - [12.13. Get mDoc Issuer List](#1213-get-mdoc-issuer-list)
 - [A. Non-standard Object Definitions](#a-non-standard-object-definitions)
   - [A.1. Constant](#a1-constant)
   - [A.2. EmailTemplate Object](#a2-emailtemplate-object)
@@ -235,6 +236,7 @@ TAS API
 | `get-vcplan-list`           | /list/api/v1/vcplan/list          | 모든 VC Plan 목록 조회     | Y       |
 | `get-vcplan`                | /list/api/v1/vcplan/id            | VC Plan 조회               | Y       |
 | `get-allowed-ca-list`       | /list/api/v1/allowed-ca/list      | 월렛에 허용된 CA 목록 조회 | Y       |
+| `get-mdoc-issuer-list`      | /list/api/v1/mdoc/issuers         | mDoc 신뢰 발급자 목록 조회 | N       |
 | `get-certificate-vc`        | /api/v1/certificate-vc            | 가입증명서 조회            | N       |
 | `get-vcschema`              | /api/v1/vc-schema                  | VC 스키마 조회             | N       |
 | `update-diddoc-deactivated` | /api/v1/update-diddoc-deactivated | DIDDoc 비활성화            | N       |
@@ -5842,6 +5844,7 @@ TAS가 제공하는 단일 호출 API 목록은 아래 표와 같다.
 | `get-vcplan-list`           | /list/api/v1/vcplan/list          | 모든 VC Plan 목록 조회     | Y       |
 | `get-vcplan`                | /list/api/v1/vcplan               | Id로 VC Plan 조회          | Y       |
 | `get-allowed-ca-list`       | /list/api/v1/allowed-ca/list      | 월렛에 허용된 CA 목록 조회 | Y       |
+| `get-mdoc-issuer-list`      | /list/api/v1/mdoc/issuers         | mDoc 신뢰 발급자 목록 조회 | N       |
 | `send-email`                | /noti/api/v1/send-email           | 이메일 발송                | N       |
 | `send-push`                 | /noti/api/v1/send-push            | Push 전송                  | N       |
 | `update-push-token`         | /api/v1/update-push-token         | Push 토큰 업데이트         | N       |
@@ -7180,6 +7183,105 @@ Content-Type: application/json;charset=utf-8
     }
   ],
   "tag": "zkpschema"
+}
+```
+
+<div style="page-break-after: always; margin-top: 40px;"></div>
+
+### 12.13. Get mDoc Issuer List
+
+- 전송: mDoc Reader → TAS
+
+mDoc Reader(iOS/AOS)가 오프라인 검증에 사용할 mDoc 신뢰 발급자 목록을 조회한다.
+TAS에 가입 완료된 Issuer(`role=ISSUER`, `status=COMPLETED`) 중 관리자가 mDoc 권한(docType)을 부여하고 활성(`ACTIVE`) 상태인 발급자만 포함된다.
+
+| Item          | Description                 | Remarks |
+| ------------- | --------------------------- | ------- |
+| Method        | `GET`                       |         |
+| Path          | `/list/api/v1/mdoc/issuers` |         |
+| Authorization | -                           |         |
+
+#### 12.13.1. Request
+
+**■ HTTP Headers**
+
+N/A
+
+**■ Path Parameters**
+
+N/A
+
+**■ Query Parameters**
+
+N/A
+
+**■ HTTP Body**
+
+N/A
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+#### 12.13.2. Response
+
+**■ Process**
+
+1. 활성(`ACTIVE`) 상태의 mDoc 발급자 조회
+2. 발급자 Entity가 가입 완료된 Issuer(`role=ISSUER`, `status=COMPLETED`)인 항목만 포함
+3. 목록의 마지막 변경 시각(`updatedAt`) 산출 — 등록, 상태 변경, docType 변경 시 갱신
+
+**■ Status 200 - Success**
+
+```c#
+def object _GetMdocIssuerList: "Get mDoc Issuer List 응답문"
+{
+    + utcDatetime      "updatedAt": "목록 마지막 변경 시각 (ISO 8601, UTC, 초 단위)"
+    + int              "count"    : "number of items"
+    + array(MdocIssuer) "items"   : "mDoc 신뢰 발급자 목록", emptiable(true)
+}
+
+def object MdocIssuer: "mDoc 신뢰 발급자"
+{
+    + did           "did"     : "발급자 base DID (versionId, fragment 없음)"
+    + string        "name"    : "발급자 이름"
+    + array(string) "docTypes": "발급 가능한 mDoc docType", emptiable(false)
+}
+```
+
+- 등록된 발급자가 없으면 `count`는 0, `items`는 빈 배열이다.
+- 응답에 정의되지 않은 필드가 추가될 수 있으므로, 클라이언트는 모르는 필드를 무시해야 한다.
+
+**■ Status 500 - Server error**
+
+| Code         | Description                          |
+| ------------ | ------------------------------------ |
+| SSRVTRA90003 | 알 수 없는 서버 오류가 발생했습니다. |
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+#### 12.13.3. Example
+
+**■ Request**
+
+```shell
+curl -v -X GET "http://${Host}:${Port}/list/api/v1/mdoc/issuers"
+```
+
+**■ Response**
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=utf-8
+
+{
+  "updatedAt": "2026-10-15T09:00:00Z",
+  "count": 1,
+  "items": [
+    {
+      "did": "did:omn:issuer",
+      "name": "issuer",
+      "docTypes": ["org.iso.18013.5.1.mDL", "eu.europa.ec.eudi.pid.1"]
+    }
+  ]
 }
 ```
 
