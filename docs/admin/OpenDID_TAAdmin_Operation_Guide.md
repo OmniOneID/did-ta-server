@@ -18,8 +18,8 @@ puppeteer:
 Open DID TA Admin Console Guide
 ==
 
-- Date: 2025-04-24
-- Version: v1.0.1
+- Date: 2025-05-30
+- Version: v2.0.0
 
 Revision History
 ==
@@ -1732,7 +1732,7 @@ When you click **REGISTER** button on `Admin Management` screen, you move to reg
 | 7   | **RESET Button**            | Initialize all input values.                                               |
 | 8   | **CANCEL Button**           | Cancel registration and return to previous screen.                        |
 
-[Open DID Installation Guide]: https://github.com/OmniOneID/did-release/blob/develop/release-V2.0.0.0/OpenDID_Installation_Guide-V2.0.0.0_ko.md
+[Open DID Installation Guide]: https://github.com/OmniOneID/did-release/blob/main/release-V2.0.0.0/OpenDID_Installation_Guide-V2.0.0.0.md
 
 
 
