@@ -18,7 +18,7 @@ puppeteer:
 # TAS API
 
 - Date: 2026-10-29
-- Version: v2.1.0
+- Version: v3.0.0
 
 ## Revision History
 
@@ -28,7 +28,7 @@ puppeteer:
 | 1.0.1 (dev) | 2024-03-31 | [12.4 Send Email] Optional handling of senderAddress in request data |
 | 1.0.1 (dev) | 2024-03-31 | [12.8 Get Vc Schema] Changed request parameter from name -> id |
 | 2.0.0       | 2025-05-30 | [12.11 Get Vc Schema List] Request Add, [12.12 Get Credential Schema] Request Add  |
-| 2.1.0       | 2026-10-29 | Added OID4VCI issuer list, detail, and registration APIs |
+| 3.0.0       | 2026-10-29 | Added OID4VCI issuer list, detail, and registration APIs |
 
 <!-- TOC tocDepth:2..3 chapterDepth:2..6 -->
 

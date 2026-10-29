@@ -20,13 +20,13 @@ TAS Server Error Code
 ==
 
 - Date: 2026-10-29
-- Version: v2.1.0
+- Version: v3.0.0
 
 | Version | Date       | Changes         |
 | ------- | ---------- | --------------- |
 | v1.0.0  | 2024-08-20 | Initial version |
 | v2.0.0  | 2025-05-29 | update error    |
-| v2.1.0  | 2026-10-29 | Added server configuration and issuer list error codes |
+| v3.0.0  | 2026-10-29 | Added server configuration and issuer list error codes |
 
 <div style="page-break-after: always;"></div>
 

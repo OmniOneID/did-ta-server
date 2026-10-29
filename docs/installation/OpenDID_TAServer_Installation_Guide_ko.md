@@ -19,7 +19,7 @@ Open DID TA Server Installation Guide
 ==
 
 - Date: 2026-10-29
-- Version: v2.1.0
+- Version: v3.0.0
 
 목차
 ==

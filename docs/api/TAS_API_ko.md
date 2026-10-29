@@ -19,7 +19,7 @@ TAS API
 ==
 
 - 일자: 2026-10-29
-- 버전: v2.1.0
+- 버전: v3.0.0
 
 
 ## 개정 이력
@@ -30,7 +30,7 @@ TAS API
 | 1.0.1 (dev) | 2024-03-31 | [12.4 Send Email] 요청 데이터에서 senderAddress 옵션 처리 |
 | 1.0.1 (dev) | 2024-03-31 | [12.8 Get Vc Schema] 요청 파라미터에 name -> id로 변경    |
 | 2.0.0       | 2025-05-30 | [12.11 Get Vc Schema List] 요청 추가, [12.12 Get Credential Schema] 요청 추가   |
-| 2.1.0       | 2026-10-29 | OID4VCI 발급자 목록·상세·등록 API 추가 |
+| 3.0.0       | 2026-10-29 | OID4VCI 발급자 목록·상세·등록 API 추가 |
 
 <!-- TOC tocDepth:2..3 chapterDepth:2..6 -->
 

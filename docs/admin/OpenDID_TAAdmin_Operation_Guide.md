@@ -19,7 +19,7 @@ Open DID TA Admin Console Guide
 ==
 
 - Date: 2026-10-29
-- Version: v2.1.0
+- Version: v3.0.0
 
 Revision History
 ==
@@ -34,7 +34,7 @@ Revision History
 |         |            | Added `3.1.17. App List` section                      |
 |         |            | Added `3.1.18. Wallet List` section                   |
 | v2.0.0  | 2025-05-30 | Added Credential Schema and Credential Definition sections. |
-| v2.1.0  | 2026-10-29 | Updated console menus, password policy, and current screen captures. |
+| v3.0.0  | 2026-10-29 | Updated console menus, password policy, and current screen captures. |
 
 Table of Contents
 ==

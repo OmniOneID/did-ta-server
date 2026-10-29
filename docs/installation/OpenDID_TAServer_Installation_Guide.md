@@ -18,8 +18,8 @@ puppeteer:
 Open DID TA Server Installation And Operation Guide
 ==
 
-- Date: 2025-05-30
-- Version: v2.0.0
+- Date: 2026-10-29
+- Version: v3.0.0
 
 Table of Contents
 ==

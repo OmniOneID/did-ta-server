@@ -3,13 +3,13 @@ Open DID TAS Database Table Definition
 ==
 
 - Date: 2026-10-29
-- Version: v2.1.0
+- Version: v3.0.0
 
 | Version | Date       | Changes         |
 | ------- | ---------- | --------------- |
 | v1.0.1 | 2024-03-31 | Initial version |
 | v2.0.0  | 2025-05-29 | update Table    |
-| v2.1.0  | 2026-10-29 | Added tables introduced in Liquibase sets 3–10 |
+| v3.0.0  | 2026-10-29 | Added tables introduced in Liquibase sets 3–10 |
 
 Contents
 --

@@ -19,7 +19,7 @@ Open DID TA Admin Console Guide
 ==
 
 - Date: 2026-10-29
-- Version: v2.1.0
+- Version: v3.0.0
 
 개정 이력
 ==
@@ -35,7 +35,7 @@ Open DID TA Admin Console Guide
 |        |            | `3.1.18. Wallet List` 장 추가          |
 | v2.0.0 | 2025-05-30 | `3.16. Credential Schema List`에서 Credential Schema 장 추가 |
 |        |            | `3.16. Credential Definition List`에서 Credential Definition 장 추가  |
-| v2.1.0 | 2026-10-29 | 현재 Admin Console 화면 반영, 신규 관리 메뉴 및 비밀번호 정책 추가, 화면 캡처 갱신 |
+| v3.0.0 | 2026-10-29 | 현재 Admin Console 화면 반영, 신규 관리 메뉴 및 비밀번호 정책 추가, 화면 캡처 갱신 |
 
 
 
