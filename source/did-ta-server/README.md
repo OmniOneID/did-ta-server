@@ -55,12 +55,11 @@ Libraries used in this project are organized into two main categories:
 2. **Third-Party Libraries**: These libraries are open-source dependencies managed via the [build.gradle](build.gradle) file. For a detailed list of third-party libraries and their licenses, please refer to the [dependencies-license.md](../../dependencies-license.md) file.
 
 
-## Documenttation
+## Documentation
 
 Refer to the following documents for more detailed information:
 
-- [API Reference](../../docs/api/TAS_API_ko.md)  
-  Detailed reference for the TAS Server's API endpoints.
+- [API Reference](../../docs/api/TAS_API.md): Detailed reference for the TAS Server's API endpoints.
 
 - [OpenDID TA Server Installation and Operation Guide](../../docs/installation/OpenDID_TAServer_Installation_Guide.md)  
   Installation and configuration instructions.

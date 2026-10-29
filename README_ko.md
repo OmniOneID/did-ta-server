@@ -82,7 +82,7 @@ did-ta-server
 ## 설치 및 운영 가이드
 
 TA 서버의 설치에 대한 자세한 지침은 아래 가이드를 참조하십시오:
-- [OpenDID TA 서버 설치 가이드](docs/installation/OpenDID_TAServer_Installation_Guide.md)  
+- [OpenDID TA 서버 설치 가이드](docs/installation/OpenDID_TAServer_Installation_Guide_ko.md)
 
 TA Admin Console의 운영에 대한 자세한 지침은 아래 가이드를 참조하십시오:
 - [OpenDID TA Admin Console 운영 가이드](docs/admin/OpenDID_TAAdmin_Operation_Guide_ko.md)  

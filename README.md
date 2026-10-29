@@ -85,12 +85,12 @@ For detailed instructions on installing the TA Server, please refer to the guide
 - [OpenDID TA Server Installation Guide](docs/installation/OpenDID_TAServer_Installation_Guide.md)  
 
 For detailed instructions on operating the TA Admin Console, please refer to the guide below:  
-- [OpenDID TA Admin Console Operation Guide](docs/admin/OpenDID_TAAdmin_Operation_Guide_ko.md)
+- [OpenDID TA Admin Console Operation Guide](docs/admin/OpenDID_TAAdmin_Operation_Guide.md)
 
 ## API Reference
 
 - **TA API**: Detailed reference for the TA Server's API endpoints and usage.
-  - [TA API Reference](docs/api/TAS_API_ko.md)
+  - [TA API Reference](docs/api/TAS_API.md)
 
 ## Change Log
 
