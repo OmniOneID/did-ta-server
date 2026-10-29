@@ -18,8 +18,8 @@ puppeteer:
 Open DID TA Admin Console Guide
 ==
 
-- Date: 2025-05-30
-- Version: v2.0.0
+- Date: 2026-10-29
+- Version: v2.1.0
 
 Revision History
 ==
@@ -33,6 +33,8 @@ Revision History
 |         |            | Added `3.1.16. User List` section                     |
 |         |            | Added `3.1.17. App List` section                      |
 |         |            | Added `3.1.18. Wallet List` section                   |
+| v2.0.0  | 2025-05-30 | Added Credential Schema and Credential Definition sections. |
+| v2.1.0  | 2026-10-29 | Updated console menus, password policy, and current screen captures. |
 
 Table of Contents
 ==
@@ -96,6 +98,11 @@ Table of Contents
   - [3.21. Admin Management](#321-admin-management)
     - [3.21.1. Admin List Inquiry](#3211-admin-list-inquiry)
     - [3.21.2. Admin Registration](#3212-admin-registration)
+  - [3.22. Certification VC Management](#322-certification-vc-management)
+  - [3.23. OID4VCI Credential Issuers](#323-oid4vci-credential-issuers)
+  - [3.24. mDoc Trusted Issuers](#324-mdoc-trusted-issuers)
+  - [3.25. Server Configuration](#325-server-configuration)
+  - [3.26. Password Policy Settings](#326-password-policy-settings)
 
 # 1. Introduction
 
@@ -147,21 +154,22 @@ To access the Admin Console, follow these steps:
    ```
 
 2. Enter the administrator account email and password on the login screen.
-   - Default administrator account: <admin@opendid.omnione.net>
-   - Initial password: password (change required upon first login)
+   - Use an administrator account issued for the deployment. Check the deployment settings for initial credentials and change the password after first login.
 
 3. Click the 'Login' button.
 
-> **Note**:  
-> For security reasons, password change is required upon first login.
+<img src="./images/live-sign-in.jpg" width="600"/>
+
+> **Note**:
+> Do not include initial account credentials or passwords in operational documentation.
 
 <br/>
 
 ## 2.2. Main Screen Configuration
 
-The main screen displayed after login consists of the following elements:
+A typical console screen consists of the following elements:
 
-<img src="./images/2-1.main-screen.png" width="600"/>
+<img src="./images/live-password-policy.jpg" width="600"/>
 
 | No. | Area              | Description                                                                                                            |
 | --- | ----------------- | ---------------------------------------------------------------------------------------------------------------------- |
@@ -180,7 +188,7 @@ The sidebar menu of the TA Admin Console **differs in screen configuration depen
 
 ### 2.3.1. TA Unregistered State
 
-In the initial state where the TA server has not yet been registered,  
+In the initial state where the TA server has not yet been registered,
 only the `TA Registration` item is displayed in the menu.
 
 <img src="./images/2-2.side-menu-before-registration.png" width="200"/>
@@ -189,7 +197,7 @@ only the `TA Registration` item is displayed in the menu.
 
 Once TA registration is complete, all management functions are activated, and the sidebar menu is configured as follows:
 
-<img src="./images/2-3.side-menu-after-registration.png" height="500"/>
+<img src="./images/live-menu.jpg" width="300"/>
 
 | No. | Menu Name                          | Depth | Description                                                                            |
 | --- | ---------------------------------- | ----- | -------------------------------------------------------------------------------------- |
@@ -197,594 +205,31 @@ Once TA registration is complete, all management functions are activated, and th
 | 2   | **Entity Management**              | 1     | Menu for registering and managing Entity servers such as Issuer, Verifier, etc.       |
 | 3   | **KYC Settings**                   | 1     | Menu for managing KYC-related settings.                                               |
 | 4   | **API Settings**                   | 1     | Parent menu for setting API operation policies.                                       |
-| 5   | **Sender**                   | Sender email address.                                                         |
-| 6   | **Enable STARTTLS**          | Whether to use STARTTLS secure transmission.                                 |
-| 7   | **Enable SSL**               | Whether to use SSL secure transmission.                                      |
-| 8   | **Connection Timeout (sec)** | Time limit for connection attempts.                                          |
-| 9   | **Read Timeout (sec)**       | Maximum time to wait for response.                                           |
-| 10  | **Write Timeout (sec)**      | Time limit for request transmission.                                         |
-| 11  | **Turn Off SSL Check**       | Can disable SSL verification for testing purposes. (Not recommended for production) |
-| 12  | **REGISTER Button**          | Save entered email configuration information.                                |
-| 13  | **RESET Button**             | Initialize all input fields.                                                 |
-| 14  | **TEST Button**              | Only works when all settings are properly entered. <br/>When clicked, `Send Test Email` popup appears, allowing you to directly enter email address to receive test mail. <br/>Test mail includes simple confirmation message. |
-
----
-> **Note:**  
-> `Enable STARTTLS` and `Enable SSL` **cannot be activated simultaneously.**      
-> Both are methods for secure connection during email transmission, but **STARTTLS upgrades existing connection to encryption**,  
-> while **SSL uses encrypted connection from the beginning**, so only one should be selected according to email server settings to avoid conflicts.
----
-
-<br/>
-
-## 3.9. Email Template Settings
-
-`Email Template Settings` is a menu where you can register and modify email templates sent from TA server in HTML format.  
-Each template can be managed individually by separating tabs according to sending purpose.
-
-TA sends emails to users in the following two cases:
-
-- When issuing VC, sending VC issuance request email to users
-- During DID recovery, sending DID recovery request email to users
-
-Email templates are in a format that includes **keywords** that can be dynamically replaced in fixed email content.   
-When external systems deliver values corresponding to each keyword along with template type,   
-TA replaces those values with keywords to generate and send final emails.
-
-This approach was introduced to reduce server load and   
-enable more efficient email sending processing when email content is long or   
-contains a lot of dynamically changing information.
-
-<img src="./images/3-11.email-template-settings.png" width="600"/>
-
-| No. | Item            | Description                                                                    |
-| --- | --------------- | ------------------------------------------------------------------------------ |
-| 1   | **Tab Selection** | Manage templates separately according to sending scenarios like VC issuance, DID recovery, etc. |
-| 2   | **Keyword**     | Select keywords to add within template.                                        |
-| 3   | **Add Button**  | Add keyword to where keyboard pointer is located in Content.                   |
-| 4   | **Content**     | Area to enter HTML content of email body.                                     |
-| 5   | **UPDATE Button** | Save template.                                                               |
-| 6   | **RESET Button** | Return changed content to initial state.                                     |
-
-<br/>
-
-🔸 Available Keyword List
-
-Below is a table organizing keywords available in each template and the meaning of each keyword.  
-At sending time, keywords are automatically replaced with values delivered from external sources and inserted into email body.
-
-| Keyword           | Description                                       | Usage Scenario    |
-| ----------------- | ------------------------------------------------- | ----------------- |
-| `{issuerName}`    | Name of Issuer issuing VC.                       | VC Issuance       |
-| `{qrImg}`         | QR code image that user needs to scan.           | VC Issuance, DID Recovery |
-| `{vcSchemaName}`  | Name or schema name of VC being issued.          | VC Issuance       |
-| `{qrExpiredDate}` | Date and time when QR code expires.              | VC Issuance       |
-
----
-> **Note:** All **keywords** available in each scenario must be included in template body for saving to be possible.  
-> For example, in VC issuance scenario, all of `{issuerName}`, `{qrImg}`, `{vcSchemaName}`, `{qrExpiredDate}` must be included.
----
-
-<br/>
-
-## 3.10. Push Server Settings
-
-`Push Server Settings` is a menu for registering FCM server configuration files for mobile app push notifications.  
-In this menu, you can upload **Google Firebase Cloud Messaging (FCM)** configuration file (JSON) to  
-configure integration with push server.
-
-Notifications sent through Push server are used **when requesting VC issuance to users**.
-
-<img src="./images/3-12.push-server-settings.png" width="600"/>
-
-| No. | Item                 | Description                                                                                                                                                       |
-| --- | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | **Warning Message**  | When configuration is not complete, warning message is displayed in **red box**. <br/>When configuration is complete, message indicating completion is displayed in **green box**. |
-| 2   | **SELECT FILE Button** | Upload configuration JSON file issued from Firebase.                                                                                                             |
-| 3   | **REGISTER Button**  | Save push server information based on uploaded configuration file.                                                                                               |
-| 4   | **RESET Button**     | Initialize entered content.                                                                                                                                      |
-
-<br/>
-
-## 3.11. List Provider Settings
-
-In the Open DID system, the TA server also performs the role of List Provider.  
-List Provider provides list information necessary for each Entity participating in Open DID to perform their roles.  
-For example, schema lists for VC issuance, trusted CA lists, VC issuance plans, etc. correspond to this.
-
-`List Provider Settings` is a menu for managing these lists,  
-where you can register and modify allowed CA lists, VC schema lists, VC issuance plans, etc.
-
-Sub-menus are as follows:
-
-- [3.12. Allowed CA Management](#312-allowed-ca-management)
-- [3.13. VC Schema Management](#313-vc-schema-management)
-- [3.14. VC Plan Management](#314-vc-plan-management)
-
-<br/>
-
-## 3.12. Allowed CA Management
-
-Allowed CA Management is a function for managing the list of CAs allowed for use by specific Wallets.  
-Wallets are restricted to use VCs only from CAs included in this list.  
-That is, the allowed CA list is used as a criterion for determining **trust in CAs that issued VCs**.
-
-TA can register and modify allowed CA lists by Wallet Identifier, and these lists are used by Wallet SDK.
-
-<br/>
-
-### 3.12.1. Allowed CA List Inquiry
-
-When entering the `Allowed CA Management` menu, the allowed CA list by Wallet Identifier is displayed in table format.  
-You can manage the list of CAs that each Wallet can trust through register, modify, and delete functions.
-
-<img src="./images/3-13.allowed-ca-management-main.png" width="800"/>
-
-| No. | Item                       | Description                                                                 |
-| --- | -------------------------- | --------------------------------------------------------------------------- |
-| 1   | **REGISTER Button**        | Register new Wallet Identifier and allowed CA list.                        |
-| 2   | **UPDATE Button**          | Modify allowed CA list of selected Wallet Identifier.                      |
-| 3   | **DELETE Button**          | Delete selected Wallet Identifier item.                                    |
-| 4   | **Wallet Identifier**      | Identifier of target Wallet where CA allow list will be applied.           |
-| 5   | **Allowed CA List**        | List of CA DIDs that the Wallet can trust.                                 |
-| 6   | **Registered At**          | Registration time.                                                          |
-| 7   | **Updated At**             | Last modification time.                                                     |
-
----
-> **Note:** Default Wallet SDK and CA identifiers provided by Open DID are  
-> automatically registered as follows during initial installation:   
-> - **Wallet Identifier**: `org.omnione.did.sdk.wallet`  
-> - **CA**: `org.omnione.did.ca`
----
-
-<br/>
-
-### 3.12.2. Allowed CA Registration
-
-When you click the **REGISTER** button on the `Allowed CA Management` screen, you move to the registration screen below
-
-<img src="./images/3-14.allowed-ca-registration.png" width="600"/>
-
-| No. | Item                   | Description                                                           |
-| --- | ---------------------- | --------------------------------------------------------------------- |
-| 1   | **Wallet Identifier**  | Target Wallet identifier.                                             |
-| 2   | **Check Availability** | Check for duplicate Wallet Identifier.                               |
-| 3   | **ADD CA Button**      | When clicked, new input row is added to CA list table below.         |
-| 4   | **Delete Icon**        | Displayed on right side of each CA input row, can delete that row.   |
-| 5   | **REGISTER Button**    | Register entered content.                                             |
-| 6   | **RESET Button**       | Initialize entered content.                                           |
-| 7   | **CANCEL Button**      | Cancel registration and return to previous page.                     |
-
-<br/>
-
-### 3.12.3. Allowed CA Details
-
-When you click Wallet Identifier in the `Allowed CA Management` list, you move to the detail screen below.
-
-<img src="./images/3-15.allowed-ca-detail.png" width="600"/>
-
-| No. | Item                  | Description                                                 |
-| --- | --------------------- | ----------------------------------------------------------- |
-| 1   | **Wallet Identifier** | Identifier of Wallet currently viewing detailed information. |
-| 2   | **Allowed CA List**   | List of CAs allowed for that Wallet.                       |
-| 3   | **BACK Button**       | Return to list screen.                                      |
-| 4   | **GO TO EDIT Button** | Move to edit screen where you can modify that item.        |
-
-<br/>
-
-### 3.12.4. Allowed CA Modification
-
-When you **click GO TO EDIT button on detail page of `Allowed CA Management`** or  
-**click UPDATE button on list page**, you move to the modification screen below.  
-
-<img src="./images/3-16.allowed-ca-update.png" width="600"/>
-
-| No. | Item                   | Description                                             |
-| --- | ---------------------- | ------------------------------------------------------- |
-| 1   | **Wallet Identifier**  | Identifier of target Wallet to modify.                 |
-| 2   | **Check Availability** | Re-check for duplicate Wallet Identifier.              |
-| 3   | **ADD CA Button**      | Add CA identifier to allow.                             |
-| 4   | **Delete Icon**        | Delete CA item in that row.                             |
-| 5   | **UPDATE Button**      | Save modified content.                                  |
-| 6   | **RESET Button**       | Initialize entered content.                             |
-| 7   | **CANCEL Button**      | Cancel modification and return to previous page.       |
-
-<br/>
-
-## 3.13. VC Schema Management
-
-When entering the `VC Schema Management` menu, the list of VC (Verifiable Credential) schemas available for issuance in the Open DID system is displayed in table format.  
-
-VC schemas define the structure and content of each Credential,  
-and are referenced when user's Wallet verifies the validity of issued VCs.
-
-After VC Schema is created on Issuer Admin page,  
-it is sent to TA Admin server for final registration.
-
-VC Schema is registered on TA server, and administrators can view this list or check detailed content.
-
-<br/>
-
-### 3.13.1 VC Schema List Inquiry
-
-When entering `List Provider Settings > VC Schema Management` menu, the list of registered VC schemas is displayed in table format.
-
-<img src="./images/3-17.vc-schema-management-main.png" width="800"/>
-
-| No. | Item              | Description                                                          |
-| --- | ----------------- | -------------------------------------------------------------------- |
-| 1   | **Title**         | VC schema title. Click to go to detail information page.            |
-| 2   | **Description**   | Brief description of VC schema.                                      |
-| 3   | **Issuer Name**   | Name of Issuer that issues this schema.                             |
-| 4   | **Registered At** | Date and time when VC schema was first registered.                  |
-| 5   | **Updated At**    | Date and time when VC schema was last modified.                     |
-
-<br/>
-
-### 3.13.2 VC Schema Details
-
-When you click VC schema title in `VC Schema list`, you move to screen where you can check detailed information as below.
-
-<img src="./images/3-18.vc-schema-detail.png" width="600"/>
-
-| No. | Item                        | Description                                                                   |
-| --- | --------------------------- | ----------------------------------------------------------------------------- |
-| 1   | **Title**                   | VC schema title.                                                              |
-| 2   | **Description**             | Description of this schema.                                                   |
-| 3   | **Issuer Name**             | Name of Issuer that registered this VC schema.                               |
-| 4   | **Registered At**           | Date and time when VC schema was first registered.                           |
-| 5   | **VIEW VC SCHEMA Button**   | Button to check actual JSON structure of this VC schema. Displayed in popup. |
-| 6   | **BACK Button**             | Return to list screen.                                                        |
-
-<br/>
-
-## 3.14. VC Plan Management
-
-In the `VC Plan Management` menu, you can check the list of VC Plans available for issuance in the Open DID system.
-
-VC Plan is a configuration that defines policies for how VCs will actually be issued for VC schemas created by Issuer.  
-For example, policies such as whether issuance can be started directly from app (`allowUserInit`), whether Issuer can start issuance through QR code or push message (`allowIssuerInit`) are included.
-
-VC Plan is created on Issuer Admin server, and created Plan is sent to TA Admin server for registration.  
-Externally, knowing only `vcPlanId` allows checking what VC is issued in what way.
-
----
-> **Note:** VC Plan is utilized in the following ways:
->
-> - When user requests VC issuance from Issuer's existing issuance system (e.g., website),  
->   that site can deliver `vcPlanId` to TA server to query related issuance policies and start issuance procedure based on this.
->
-> - User app queries VC Plan list from TA server,  
->   and when user selects desired VC, issuance procedure starts according to that Plan.
----
-
-<br/>
-
-### 3.14.1 VC Plan List Inquiry
-
-When entering `VC Plan Management` menu, the list of registered VC Plans is displayed as below.  
-Clicking each VC Plan ID moves to screen where you can check detailed information.
-
-<img src="./images/3-19.vc-plan-managemnet.png" width="800"/>
-
-| No. | Item              | Description                                                                 |
-| --- | ----------------- | ----------------------------------------------------------------------- |
-| 1   | **ID**            | VC Plan unique identifier. Click to go to detail information screen.   |
-| 2   | **Name**          | VC Plan name.                                                           |
-| 3   | **Description**   | Description of VC Plan.                                                 |
-| 4   | **Issuer Name**   | Name of Issuer that created this VC Plan.                              |
-| 5   | **Registered At** | Initial registration time.                                              |
-| 6   | **Updated At**    | Last modification time.                                                 |
-
-<br/>
-
-### 3.14.2 VC Plan Details
-
-When you click ID in VC Plan list, you move to detail information screen of that VC Plan.
-
-<img src="./images/3-20.vc-plan-detail.png" width="600"/>
-
-| No. | Item                  | Description                                                  |
-| --- | --------------------- | ------------------------------------------------------------ |
-| 1   | **ID**                | VC Plan unique identifier.                                   |
-| 2   | **VIEW VC PLAN Button** | Check VC Plan JSON original text in popup format.         |
-| 3   | **Name**              | VC Plan display name.                                        |
-| 4   | **Description**       | Brief description of VC Plan.                                |
-| 5   | **Issuer Name**       | Name of Issuer that created this Plan.                       |
-| 6   | **Registered At**     | Registration date and time.                                  |
-| 7   | **BACK Button**       | Return to previous screen.                                   |
-
-<br/>
-
-## 3.15. Credential Schema Management
-
-In the `Credential Schema Management` menu, you can check the list of Credential Schemas available for issuance in the Open DID system.  
-Credential Schema is a structure that defines claim names, attributes, etc. for issuing VCs using ZKP method,  
-and is connected 1:1 with each Credential Definition.
-
-After Credential Schema is created on Issuer Admin page,  
-it is sent to TA Admin server for final registration.
-
-Credential Schema is registered on TA server, and administrators can view this list or check detailed content.
-
-<br/>
-
-### 3.15.1 Credential Schema List Inquiry
-
-When entering `List Provider Settings > Credential Schema Management` menu, the list of registered Credential Schemas is displayed in table format.
-
-<img src="./images/3-29.credential-schema-management.png" width="800"/>
-
-| No. | Item              | Description                                                        |
-| --- | ----------------- | ------------------------------------------------------------------ |
-| 1   | **Name**          | Credential Schema name. Click to go to detail information.        |
-| 2   | **Issuer Name**   | Name of Issuer that registered this schema.                       |
-| 3   | **Registered At** | Initial registration time.                                         |
-| 4   | **Updated At**    | Last modification time. (Empty if none)                           |
-
-<br/>
-
-### 3.15.2 Credential Schema Details
-
-When you click name (Name) in Credential Schema list, you move to detail information screen.
-
-<img src="./images/3-30.credemtial-schema-detail.png" width="600"/>
-
-| No. | Item                            | Description                                                                          |
-| --- | ------------------------------- | ------------------------------------------------------------------------------------ |
-| 1   | **Name**                        | Credential Schema name.                                                              |
-| 2   | **Credential Schema ID**        | Unique identifier (DID format) of this schema.                                      |
-| 3   | **Issuer Name**                 | Name of Issuer that registered this Credential Schema.                              |
-| 4   | **Registered At**               | Date and time when Credential Schema was first registered.                          |
-| 5   | **VIEW CREDENTIAL SCHEMA Button** | Check Credential Schema JSON original text in popup format.                       |
-| 6   | **BACK Button**                 | Return to list screen.                                                               |
-
----
-
-## 3.16. Credential Definition Management
-
-In the `Credential Definition Management` menu, you can check the list of registered Credential Definitions.
-
-Credential Definition is a definition for actually issuing VCs using ZKP method based on Credential Schema.  
-Credential Definition has 1:1 relationship with each Credential Schema and includes metadata necessary for Issuer to create VCs.
-
-<br/>
-
-### 3.16.1 Credential Definition List Inquiry
-
-When entering `List Provider Settings > Credential Definition Management` menu, Credential Definition list is displayed.
-
-<img src="./images/3-31.credential-definition.management.png" width="800"/>
-
-| No. | Item                          | Description                                                                 |
-| --- | ----------------------------- | --------------------------------------------------------------------------- |
-| 1   | **Credential Definition ID**  | DID identifier of this Credential Definition. Click to go to detail view.  |
-| 2   | **Credential Schema ID**      | DID identifier of connected Credential Schema.                             |
-| 3   | **Credential Definition Tag** | Tag value assigned to Definition.                                           |
-| 4   | **Issuer Name**               | Name of Issuer that registered this Credential Definition.                 |
-| 5   | **Registered At**             | Time when Credential Definition was first registered.                       |
-| 6   | **Updated At**                | Last modification time. (Empty if none)                                    |
-
-<br/>
-
-### 3.16.2 Credential Definition Details
-
-When you click ID in Credential Definition list, you move to detail information screen.
-
-<img src="./images/3-32.credential-definition-detail.png" width="600"/>
-
-| No. | Item                           | Description                                                                 |
-| --- | ------------------------------ | --------------------------------------------------------------------------- |
-| 1   | **Credential Definition ID**   | DID format identifier of Credential Definition.                            |
-| 2   | **Credential Schema ID**       | DID identifier of connected Credential Schema.                             |
-| 3   | **Credential Definition Tag**  | Tag value assigned when creating Definition.                                |
-| 4   | **Issuer Name**                | Name of Issuer that registered this Definition.                            |
-| 5   | **Registered At**              | Time when Credential Definition was first registered.                       |
-| 6   | **VIEW DEFINITION Button**     | Check Credential Definition original text (JSON) in popup.                 |
-| 7   | **BACK Button**                | Return to list screen.                                                      |
-
-<br/>
-
-## 3.17. User Management
-
-In the `User Management` menu, you can view information of users registered in the Open DID system.   
-
-Users are registered based on DID, and related information is managed separately in the following three categories:
-
-- User: User identification information (DID, PII, etc.)
-- App: User device (App) unique identification information (App ID, Push Token, etc.)
-- Wallet: User wallet information (Wallet DID, Wallet ID, etc.)
-  
-Each item can be viewed individually in separate menus, and sub-menus are as follows:
-
-- [3.18. User List](#318-user-list)
-- [3.19. App List](#319-app-list)
-- [3.20. Wallet List](#320-wallet-list)
-
-<br/>
-
-## 3.18. User List
-
-`User List` is a menu where you can check DID and PII information of users registered in the Open DID system.
-
-### 3.18.1. User List Inquiry
-
-When entering `User List` menu, the list of registered users is displayed in table format.  
-You can search user information by DID or PII criteria through search function.
-
-<img src="./images/3-23.user-list.png" width="800"/>
-
-| No. | Item              | Description                                                            |
-| --- | ----------------- | ---------------------------------------------------------------------- |
-| 1   | **DID**           | User's unique DID identifier. Click to go to detail screen.           |
-| 2   | **PII**           | User's PII (Personal Identifiable Info) value.                        |
-| 3   | **Registered At** | Date and time when user was first registered.                         |
-| 4   | **Updated At**    | Date when user information was last modified.                         |
-
-<br/>
-
-### 3.18.2. User Details Information
-
-When you click DID in User list, you move to detail information screen of that User.
-
-<img src="./images/3-24.user-detail.png" width="600"/>
-
-| No. | Item              | Description                                        |
-| --- | ----------------- | -------------------------------------------------- |
-| 1   | **DID**           | User's unique DID identifier.                      |
-| 2   | **PII**           | Identification information for user identity verification. |
-| 3   | **Status**        | User's current status. <br/>Status types are as follows:<br/>- `ACTIVATED`: Active state<br/>- `DEACTIVATED`: Inactive state<br/>- `REVOKED`: User's DID has been revoked |
-| 4   | **Registered At** | Date and time when user was first registered.     |
-| 5   | **Updated At**    | Date when user information was last modified.     |
-| 6   | **BACK Button**   | Return to list screen.                             |
-
-<br/>
-
-## 3.19. App List
-
-`App List` is a menu where you can check Push Token and status of Apps registered in the Open DID system.
-
-### 3.19.1. App List Inquiry
-
-When entering `App List` menu, the list of Apps registered in Open DID system is displayed in table format.  
-
-<img src="./images/3-25.app-list.png" width="800"/>
-
-| No. | Item              | Description                                                                                                                                    |
-| --- | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | **App ID**        | App's unique ID. Click to go to detail screen.                                                                                                |
-| 2   | **Push Token**    | Push token registered by this App.                                                                                                            |
-| 3   | **Status**        | App's registration status.<br/>Status types are as follows:<br/>- `ASSIGNED`: Assigned to user<br/>- `CANCELLED`: Registration cancelled    |
-| 4   | **Registered At** | Date and time when App was first registered.                                                                                                  |
-| 5   | **Updated At**    | Time when App information was last modified.                                                                                                  |
-
-<br/>
-
-### 3.19.2. App Details Information
-
-When you click App ID in App list, you move to detail information screen of that App.
-
-<img src="./images/3-26.app-detail.png" width="600"/>
-
-| No. | Item              | Description                                                                                                                                    |
-| --- | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | **DID**           | App's unique DID.                                                                                                                              |
-| 2   | **Push Token**    | Push token registered by App.                                                                                                                  |
-| 3   | **Status**        | App's registration status.<br/>Status types are as follows:<br/>- `ASSIGNED`: Assigned to user<br/>- `CANCELLED`: Registration cancelled    |
-| 4   | **Registered At** | Date and time when App was first registered.                                                                                                  |
-| 5   | **Updated At**    | Time when App information was last modified.                                                                                                  |
-| 6   | **BACK Button**   | Return to list screen.                                                                                                                         |
-
-<br/>
-
-## 3.20. Wallet List
-
-`Wallet List` is a menu for viewing Wallet information (DID, Wallet ID, etc.) registered in the Open DID system.
-
-### 3.20.1. Wallet List Inquiry
-
-When entering `Wallet List` menu, the list of registered Wallets is displayed in table format.
-
-<img src="./images/3-27.wallet-list.png" width="800"/>
-
-| No. | Item              | Description                                                                                                                                                        |
-| --- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 1   | **DID**           | Wallet's unique DID identifier.                                                                                                                                    |
-| 2   | **Wallet ID**     | Wallet identifier.                                                                                                                                                 |
-| 3   | **Status**        | Wallet's registration status.<br/>Status types are as follows:<br/>- `CREATED`: Created<br/>- `ASSIGNED`: Assigned to user<br/>- `CANCELLED`: Registration cancelled |
-| 4   | **Registered At** | Time when Wallet was first registered.                                                                                                                            |
-| 5   | **Cancelled At**  | Time when Wallet was cancelled if applicable.                                                                                                                     |
-
-<br/>
-
-### 3.20.2. Wallet Details Information
-
-When you click DID in Wallet list, you move to detail information screen of that Wallet.
-
-<img src="./images/3-28.wallet-detail.png" width="600"/>
-
-| No. | Item              | Description                                                                                                                                                        |
-| --- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 1   | **DID**           | Wallet's unique DID identifier.                                                                                                                                    |
-| 2   | **ID**            | Wallet identifier.                                                                                                                                                 |
-| 3   | **Status**        | Wallet's registration status.<br/>Status types are as follows:<br/>- `CREATED`: Created<br/>- `ASSIGNED`: Assigned to user<br/>- `CANCELLED`: Registration cancelled |
-| 4   | **Registered At** | Time when Wallet was first registered.                                                                                                                            |
-| 5   | **BACK Button**   | Return to list screen.                                                                                                                                             |
-
-<br/>
-
-## 3.21. Admin Management
-
-The `Admin Management` menu is a function for managing administrator accounts that can access the TA Admin Console.  
-
-When TA server is installed, the `admin@opendid.omnione.net` account is automatically created with ROOT privileges by default.  
-This account is the only ROOT account in the system and cannot be deleted.
-
-Administrator accounts are divided into two privilege types: **ROOT** and **Normal Admin**.  
-ROOT account can perform all functions in the `Admin Management` menu, while Normal Admin can only perform general inquiry functions.
-
----
-> **Note:** Currently, the privilege difference between ROOT account and Normal Admin account is  
-> only the difference in buttons displayed in the `Admin Management` menu (only Root can REGISTER / DELETE / CHANGE PASSWORD).  
-> Access privileges or functional restrictions to other system menus are not yet applied.
----
-
-<br/>
-
-### 3.21.1. Admin List Inquiry
-
-When entering the `Admin Management` menu, the list of registered administrator accounts is displayed in table format.
-
-<img src="./images/3-21.admin-management.png" width="800"/>
-
-| No. | Item                        | Description                                                             |
-| --- | --------------------------- | ----------------------------------------------------------------------- |
-| 1   | **REGISTER Button**         | Move to registration page where you can register new administrator account. |
-| 2   | **DELETE Button**           | Delete selected administrator account. (Only ROOT administrator can)    |
-| 3   | **CHANGE PASSWORD Button**  | Change password of selected administrator account.                      |
-| 4   | **ID**                      | Email ID of registered administrator account.                           |
-| 5   | **Role**                    | Role of administrator account. (e.g., ROOT, Normal Admin, etc.)         |
-| 6   | **Registered At**           | Time when account was first registered.                                 |
-| 7   | **Updated At**              | Last modification time.                                                 |
-
-<br/>
-
-### 3.21.2. Admin Registration
-
-When you click **REGISTER** button on `Admin Management` screen, you move to registration screen as below.
-
-<img src="./images/3-22.admin-registration.png" width="600"/>
-
-| No. | Item                        | Description                                                                |
-| --- | --------------------------- | -------------------------------------------------------------------------- |
-| 1   | **ID**                      | ID of administrator account to register. Must use email format.           |
-| 2   | **Check Availability Button** | Check if entered ID is not duplicated.                                   |
-| 3   | **Role**                    | Select privilege of administrator account to register. (e.g., Normal Admin) |
-| 4   | **Password**                | Enter password to use for login.                                           |
-| 5   | **Re-enter Password**       | Enter password again to check consistency.                                 |
-| 6   | **REGISTER Button**         | Register administrator account based on entered information.               |
-| 7   | **RESET Button**            | Initialize all input values.                                               |
-| 8   | **CANCEL Button**           | Cancel registration and return to previous screen.                        |
-
-[Open DID Installation Guide]: https://github.com/OmniOneID/did-release/blob/develop/release-V2.0.0.0/OpenDID_Installation_Guide-V2.0.0.0_ko.md └ Expiration Settings              | 2     | Set the validity time (expiration time) for API requests.                             |
-| 6   | └ Key Exchange Policy              | 2     | Set policies for key exchange.                                                         |
-| 7   | **Notification Provider Settings** | 1     | Parent menu for configuring Notification Provider settings.                           |
-| 8   | └ Email Server Settings            | 2     | Menu for configuring outgoing email server information.                               |
-| 9   | └ Email Template Settings          | 2     | Menu for configuring email templates to be sent.                                      |
-| 10  | └ Push Server Settings             | 2     | Menu for configuring push notification server information.                            |
-| 11  | **List Provider Settings**         | 1     | Parent menu for configuring List Provider settings.                                   |
-| 12  | └ Allowed CA Management            | 2     | Menu for configuring the list of allowed Certificate Authorities (CA).               |
-| 13  | └ VC Schema Management             | 2     | Menu for managing VC schemas used for VC issuance.                                    |
-| 14  | └ VC Plan Management               | 2     | Menu for configuring VC issuance plans.                                               |
-| 15  | **User Management**                | 1     | Menu for managing user information.                                                    |
-| 16  | └ User List                        | 2     | Menu for viewing the list of users registered in Open DID.                           |
-| 17  | └ App List                         | 2     | Menu for viewing App information of users registered in Open DID.                     |
-| 18  | └ Wallet List                      | 2     | Menu for viewing wallet information of users registered in Open DID.                 |
-| 19  | **Admin Management**               | 1     | Menu for managing administrator accounts and permissions.                              |
-
-> **Note**:  
-> Detailed usage instructions for each function in the above menu configuration  
-> are explained in order in [Chapter 3. Feature-Specific Detailed Manual](#3-feature-specific-detailed-manual).
+| 5   | └ Expiration Settings             | 2 | Configure token and transaction timeouts. |
+| 6   | └ Key Exchange Policy             | 2 | Configure the ECDH cipher and padding. |
+| 7   | **Notification Provider Settings** | 1 | Email and push configuration. |
+| 8   | └ Email Server Settings           | 2 | Configure SMTP settings. |
+| 9   | └ Email Template Settings         | 2 | Edit VC issuance and DID recovery templates. |
+| 10  | └ Push Server Settings            | 2 | Upload the push service configuration file. |
+| 11  | **List Provider Settings**        | 1 | Manage trust and credential lists. |
+| 12  | └ Allowed CA Management           | 2 | Manage allowed CAs by wallet. |
+| 13  | └ VC Schema Management            | 2 | View VC schemas. |
+| 14  | └ VC Plan Management              | 2 | View VC plans. |
+| 15  | └ Credential Schema Management    | 2 | View credential schemas. |
+| 16  | └ Credential Definition Management | 2 | View credential definitions. |
+| 17  | └ Certification VC Management     | 2 | View entity certificate VCs. |
+| 18  | └ OID4VCI Credential Issuers      | 2 | View and update OID4VCI issuers. |
+| 19  | └ mDoc Trusted Issuers            | 2 | Register and manage trusted mDoc issuers. |
+| 20  | **User Management**               | 1 | View user, app, and wallet records. |
+| 21  | └ User List                       | 2 | View users. |
+| 22  | └ App List                        | 2 | View apps. |
+| 23  | └ Wallet List                     | 2 | View wallets. |
+| 24  | **Server Configuration**          | 1 | Configure external service API keys. |
+| 25  | **Admin Management**              | 1 | Manage administrator accounts. |
+| 26  | └ Admin Management                | 2 | View and register administrators. |
+| 27  | └ Password Policy Settings        | 2 | Set administrator password policy. |
+
+> Detailed instructions for the new menu items appear in sections 3.22–3.26.
 
 <br/>
 
@@ -800,7 +245,7 @@ User password change can be performed through the following steps:
    - Confirm new password
 4. Click the 'Save' button to apply changes.
 
-> **Note**: Password must be 8-64 characters long and include uppercase/lowercase letters, numbers, and special characters.
+> **Note**: Check the active minimum length, expiration period, and composition rules in [Password Policy Settings](#326-password-policy-settings).
 
 <br/>
 
@@ -1078,7 +523,7 @@ and since the CA server also serves as a KYC server, CA server information must 
 | 4   | **REGISTER Button**      | Save entered KYC information.                                                     |
 | 5   | **RESET Button**         | Initialize all entered content.                                                   |
 
-<img src="./images/3-7.kyc-settings.png" width="600"/>
+<img src="./images/live-kyc.jpg" width="600"/>
 
 <br/>
 
@@ -1094,7 +539,7 @@ Actual configuration is done in sub-items [3.5. Expiration Settings](#35-expirat
 In the `Expiration Settings` menu, you can configure expiration time-related settings used by the TA server.  
 Set **token expiration time** and **transaction expiration time**, which play important roles in TA protocol operations.
 
-<img src="./images/3-8.expiration-settings.png" width="600"/>
+<img src="./images/live-expiration.jpg" width="600"/>
 
 | No. | Item                          | Description                                                                                                                                                                                                                                                                 |
 | --- | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -1118,7 +563,7 @@ This setting becomes the foundation for performing **session-level encrypted com
 Most protocols include key exchange APIs, where both sides exchange information to generate encryption keys using ECDH method.  
 Through this menu, you can specify **encryption algorithms and padding methods** to be used during key exchange.
 
-<img src="./images/3-9.key-exchange-policy.png" width="600"/>
+<img src="./images/live-exchange.jpg" width="600"/>
 
 | No. | Item             | Description                                                                                                             |
 | --- | ---------------- | ----------------------------------------------------------------------------------------------------------------------- |
@@ -1157,7 +602,7 @@ You can configure the email sending environment by entering SMTP server informat
 
 Once configuration is complete, you can send test emails to verify that the configured values work properly.  
 
-<img src="./images/3-10.email-server-settings.png" width="600"/>
+<img src="./images/live-email-server.jpg" width="600"/>
 
 | No. | Item                         | Description                                                                   |
 | --- | ---------------------------- | ----------------------------------------------------------------------------- |
@@ -1241,7 +686,7 @@ configure integration with push server.
 
 Notifications sent through Push server are used **when requesting VC issuance to users**.
 
-<img src="./images/3-12.push-server-settings.png" width="600"/>
+<img src="./images/live-push.jpg" width="600"/>
 
 | No. | Item                 | Description                                                                                                                                                       |
 | --- | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -1284,7 +729,7 @@ TA can register and modify allowed CA lists by Wallet Identifier, and these list
 When entering the `Allowed CA Management` menu, the allowed CA list by Wallet Identifier is displayed in table format.  
 You can manage the list of CAs that each Wallet can trust through register, modify, and delete functions.
 
-<img src="./images/3-13.allowed-ca-management-main.png" width="800"/>
+<img src="./images/live-allowed-ca.jpg" width="800"/>
 
 | No. | Item                       | Description                                                                 |
 | --- | -------------------------- | --------------------------------------------------------------------------- |
@@ -1701,7 +1146,7 @@ ROOT account can perform all functions in the `Admin Management` menu, while Nor
 
 When entering the `Admin Management` menu, the list of registered administrator accounts is displayed in table format.
 
-<img src="./images/3-21.admin-management.png" width="800"/>
+<img src="./images/live-admin-management.jpg" width="800"/>
 
 | No. | Item                        | Description                                                             |
 | --- | --------------------------- | ----------------------------------------------------------------------- |
@@ -1731,6 +1176,41 @@ When you click **REGISTER** button on `Admin Management` screen, you move to reg
 | 6   | **REGISTER Button**         | Register administrator account based on entered information.               |
 | 7   | **RESET Button**            | Initialize all input values.                                               |
 | 8   | **CANCEL Button**           | Cancel registration and return to previous screen.                        |
+
+
+<br/>
+
+## 3.22. Certification VC Management
+
+Open `List Provider Settings > Certification VC Management` to view certificate VCs issued to entities. Search by name; the list shows the name, DID, publication time, expiration time, and registration time. Certificate VCs are issued during entity enrollment and are not registered from this screen.
+
+## 3.23. OID4VCI Credential Issuers
+
+Open `List Provider Settings > OID4VCI Credential Issuers` to review OID4VCI issuer registrations. Filter by status or Credential Issuer. The list shows the issuer identifier, Issuer Metadata URI, User Initiation URI, status, request time, and update time. Select a row and use `UPDATE` to change its status.
+
+> **Example**: Use an illustrative URI such as `https://issuer.example.org/.well-known/openid-credential-issuer` in documentation. The `did:example:issuer-123` and internal test URI shown in the local instance are not production configuration values.
+
+## 3.24. mDoc Trusted Issuers
+
+Open `List Provider Settings > mDoc Trusted Issuers` to search, register, and update trusted mDoc issuers. The list shows Issuer, DID, permitted `docTypes`, status, and registration time.
+
+<img src="./images/live-mdoc-issuers.jpg" width="800"/>
+
+Select `REGISTER`, choose an enrolled Issuer, confirm its metadata URL, and select `Load docTypes` to load the document types declared in the issuer metadata. An active or suspended issuer cannot be registered again; a revoked issuer can be registered again.
+
+<img src="./images/live-mdoc-register.jpg" width="800"/>
+
+> **Example**: Use `https://issuer.example.org/.well-known/openid-credential-issuer` and `org.example.mdl` as illustrative values. Confirm the real issuer URL and document types in that issuer's metadata.
+
+## 3.25. Server Configuration
+
+Use `Server Configuration` to set API keys for external service connections. The current screen provides an `LSS API Key` field for the Ledger Service Server and `UPDATE` and `RESET` actions. Enter the issued key and select `UPDATE` to save it. `RESET` clears unsaved input. Do not put API key values in screenshots, guides, or sample configuration.
+
+## 3.26. Password Policy Settings
+
+Open `Admin Management > Password Policy Settings` to manage administrator password rules. `Minimum Length` accepts 6–20 characters; `Password Expiration Period` accepts 30–365 days. Enable uppercase letters, numbers, or special characters as required, then select `UPDATE`. `RESET` restores the form. The inspected installation currently shows an eight-character minimum, 365-day expiration, and all composition switches off. Confirm the effective policy in each deployment.
+
+<img src="./images/live-password-policy.jpg" width="800"/>
 
 [Open DID Installation Guide]: https://github.com/OmniOneID/did-release/blob/main/release-V2.0.0.0/OpenDID_Installation_Guide-V2.0.0.0.md
 

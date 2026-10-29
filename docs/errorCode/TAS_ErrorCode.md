@@ -19,13 +19,14 @@ puppeteer:
 TAS Server Error Code
 ==
 
-- Date: 2025-05-29
-- Version: v2.0.0
+- Date: 2026-10-29
+- Version: v2.1.0
 
 | Version | Date       | Changes         |
 | ------- | ---------- | --------------- |
 | v1.0.0  | 2024-08-20 | Initial version |
 | v2.0.0  | 2025-05-29 | update error    |
+| v2.1.0  | 2026-10-29 | Added server configuration and issuer list error codes |
 
 <div style="page-break-after: always;"></div>
 
@@ -382,6 +383,29 @@ public class ErrorResponse {
 | SSRVTRA21000 | Failed to find admin: admin is not registered.         | -           | Confirm admin registration.         |
 | SSRVTRA21001 | Failed to register admin: admin is already registered. | -           | Avoid duplicate admin registration. |
 
+
+### 1-20–1-22. Additional Error Codes (current ErrorCode.java)
+
+| Error Code | Symbol | HTTP | Error Message |
+| --- | --- | --- | --- |
+| `SSRVTRA21501` | `SERVER_CONFIG_KEY_NOT_FOUND` | 400 | Server configuration key not found. |
+| `SSRVTRA22000` | `VCI_ISSUER_NOT_FOUND` | 404 | Credential Issuer registration was not found. |
+| `SSRVTRA22001` | `VCI_ISSUER_ALREADY_EXISTS` | 409 | Credential Issuer is already registered. |
+| `SSRVTRA22002` | `VCI_ISSUER_INVALID_URI` | 400 | Credential Issuer URI is invalid. |
+| `SSRVTRA22003` | `VCI_METADATA_URI_INVALID` | 400 | Credential Issuer Metadata URI is invalid. |
+| `SSRVTRA22004` | `VCI_USER_INITIATION_URI_INVALID` | 400 | User Initiation URI is invalid. |
+| `SSRVTRA22005` | `VCI_STATUS_TRANSITION_INVALID` | 400 | Credential Issuer status transition is not allowed. |
+| `SSRVTRA22006` | `VCI_STATUS_REASON_REQUIRED` | 400 | A reason is required for this status transition. |
+| `SSRVTRA22500` | `MDOC_ISSUER_NOT_FOUND` | 404 | mDoc Issuer registration was not found. |
+| `SSRVTRA22501` | `MDOC_ISSUER_ALREADY_EXISTS` | 409 | Entity is already registered as an mDoc Issuer. |
+| `SSRVTRA22502` | `MDOC_ISSUER_ENTITY_NOT_ELIGIBLE` | 400 | Entity must be an enrolled Issuer (role ISSUER, status COMPLETED). |
+| `SSRVTRA22503` | `MDOC_ISSUER_DOCTYPE_INVALID` | 400 | docTypes must contain at least one valid docType. |
+| `SSRVTRA22504` | `MDOC_ISSUER_STATUS_TRANSITION_INVALID` | 400 | mDoc Issuer status transition is not allowed. |
+| `SSRVTRA22505` | `MDOC_ISSUER_STATUS_REASON_REQUIRED` | 400 | A reason is required for this status transition. |
+| `SSRVTRA22507` | `MDOC_ISSUER_METADATA_URI_INVALID` | 400 | Issuer metadata URL must be a valid HTTP or HTTPS URL. |
+| `SSRVTRA22508` | `MDOC_ISSUER_METADATA_UNAVAILABLE` | 400 | Failed to retrieve issuer metadata from the URL. |
+| `SSRVTRA22509` | `MDOC_ISSUER_METADATA_NO_MDOC` | 400 | Issuer metadata declares no mso_mdoc docType. |
+| `SSRVTRA22510` | `MDOC_ISSUER_DOCTYPE_NOT_DECLARED` | 400 | docTypes must be declared as mso_mdoc in the issuer metadata. |
 
 ### 1-99. Other Errors (90000 ~ 99999)
 

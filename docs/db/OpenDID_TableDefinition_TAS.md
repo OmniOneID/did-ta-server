@@ -2,13 +2,14 @@
 Open DID TAS Database Table Definition
 ==
 
-- Date: 2025-05-29
-- Version: v2.0.0
+- Date: 2026-10-29
+- Version: v2.1.0
 
 | Version | Date       | Changes         |
 | ------- | ---------- | --------------- |
 | v1.0.1 | 2024-03-31 | Initial version |
 | v2.0.0  | 2025-05-29 | update Table    |
+| v2.1.0  | 2026-10-29 | Added tables introduced in Liquibase sets 3–10 |
 
 Contents
 --
@@ -398,3 +399,18 @@ This table stores DID Documents associated with entities.
 |     | updated_at   | TIMESTAMP |        | YES      | N/A     | updated date                |
 |     | entity_id    | BIGINT    |        | NO       | N/A     | related entity table key    |
 
+
+### 2.24–2.31. Additional Tables (current Liquibase changelog)
+
+| Table | Main columns | Purpose |
+| --- | --- | --- |
+| `server_config` | `id`, `config_key`, `config_value`, `description`, `created_at`, `updated_at` | External service configuration |
+| `admin_password_policy` | `id`, `min_length`, `require_uppercase`, `require_number`, `require_special`, `password_expiry_days`, `created_at`, `updated_at` | Administrator password policy |
+| `list_certificate_vc` | `id`, `did`, `name`, `certificate_vc`, `published_url`, `published_at`, `expired_at`, `created_at`, `updated_at` | Entity certificate VCs |
+| `list_oid4vci_issuer` | `id`, `credential_issuer`, `credential_issuer_metadata_uri`, `user_initiation_uri`, `status`, `created_at`, `updated_at` | OID4VCI issuers |
+| `list_oid4vci_issuer_status_history` | `id`, `issuer_id`, `previous_status`, `new_status`, `reason`, `changed_by`, `changed_at` | OID4VCI status history |
+| `list_mdoc_issuer` | `id`, `entity_id`, `status`, `metadata_uri`, `created_at`, `updated_at` | Trusted mDoc issuers |
+| `list_mdoc_issuer_doc_type` | `id`, `mdoc_issuer_id`, `doc_type`, `created_at` | Allowed docTypes per issuer |
+| `list_mdoc_issuer_status_history` | `id`, `mdoc_issuer_id`, `previous_status`, `new_status`, `reason`, `changed_by`, `changed_at` | mDoc status history |
+
+The `admin` table also adds `last_password_changed_at` and `password_reset_reason`. The `entity` and `tas` tables add certificate VC publication URL columns; the KYC server URL is now optional. Consult the Liquibase changesets under `source/did-ta-server/src/main/resources/db/changelog/changeset/` for exact types and constraints.

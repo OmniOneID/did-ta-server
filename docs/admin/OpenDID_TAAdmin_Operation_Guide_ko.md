@@ -18,8 +18,8 @@ puppeteer:
 Open DID TA Admin Console Guide
 ==
 
-- Date: 2025-05-30
-- Version: v2.0.0
+- Date: 2026-10-29
+- Version: v2.1.0
 
 개정 이력
 ==
@@ -35,6 +35,7 @@ Open DID TA Admin Console Guide
 |        |            | `3.1.18. Wallet List` 장 추가          |
 | v2.0.0 | 2025-05-30 | `3.16. Credential Schema List`에서 Credential Schema 장 추가 |
 |        |            | `3.16. Credential Definition List`에서 Credential Definition 장 추가  |
+| v2.1.0 | 2026-10-29 | 현재 Admin Console 화면 반영, 신규 관리 메뉴 및 비밀번호 정책 추가, 화면 캡처 갱신 |
 
 
 
@@ -102,6 +103,11 @@ Open DID TA Admin Console Guide
   - [3.21. Admin Management](#321-admin-management)
     - [3.21.1. Admin 목록 조회](#3211-admin-목록-조회)
     - [3.21.2. Admin 등록](#3212-admin-등록)
+  - [3.22. Certification VC Management](#322-certification-vc-management)
+  - [3.23. OID4VCI Credential Issuers](#323-oid4vci-credential-issuers)
+  - [3.24. mDoc Trusted Issuers](#324-mdoc-trusted-issuers)
+  - [3.25. Server Configuration](#325-server-configuration)
+  - [3.26. Password Policy Settings](#326-password-policy-settings)
 
 # 1. 소개
 
@@ -152,22 +158,22 @@ Admin Console에 접속하려면 다음 단계를 따르세요:
    http://<ta_domain>:<port>
    ```
 
-2. 로그인 화면에서 관리자 계정의 이메일과 비밀번호를 입력합니다.
-   - 기본 관리자 계정: <admin@opendid.omnione.net>
-   - 초기 비밀번호: password (최초 로그인 시 변경 필요)
+2. 로그인 화면에서 운영자가 발급받은 관리자 계정의 이메일과 비밀번호를 입력합니다. 초기 설치 계정을 사용하는 경우, 배포 시 설정한 자격 증명을 확인하고 첫 로그인 후 비밀번호를 변경하세요.
 
 3. '로그인' 버튼을 클릭합니다.
 
+<img src="./images/live-sign-in.jpg" width="600"/>
+
 > **참고**:  
-> 보안상의 이유로 최초 로그인 시에는 비밀번호 변경이 필요합니다.
+> 초기 계정 정보나 비밀번호를 운영 문서에 기록하지 마세요.
 
 <br/>
 
 ## 2.2. 메인 화면 구성
 
-로그인 후 표시되는 메인 화면은 다음과 같은 요소들로 구성되어 있습니다:
+콘솔의 일반적인 화면은 다음과 같은 요소들로 구성되어 있습니다:
 
-<img src="./images/2-1.main-screen.png" width="600"/>
+<img src="./images/live-password-policy.jpg" width="600"/>
 
 | 번호 | 영역             | 설명                                                                                                                                |
 | ---- | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
@@ -196,29 +202,37 @@ TA 서버가 아직 등록되지 않은 초기 상태에서는
 
 TA 등록이 완료되면 전체 관리 기능이 활성화되며, 사이드바 메뉴는 다음과 같이 구성됩니다:
 
-<img src="./images/2-3.side-menu-after-registration.png" height="500"/>
+<img src="./images/live-menu.jpg" width="300"/>
 
-| 번호 | 메뉴 명칭                          | Depth | 설명                                                             |
-| ---- | ---------------------------------- | ----- | ---------------------------------------------------------------- |
-| 1    | **TA Management**                  | 1     | TA 서버의 기본 정보(DID, URL 등)를 확인하고 관리하는 메뉴입니다. |
-| 2    | **Entity Management**              | 1     | Issuer, Verifier 등 Entity 서버들을 등록 및 관리하는 메뉴입니다. |
-| 3    | **KYC Settings**                   | 1     | KYC 관련 설정을 관리하는 메뉴입니다.                             |
-| 4    | **API Settings**                   | 1     | API 동작 정책을 설정하는 상위 메뉴입니다.                        |
-| 5    | └ Expiration Settings              | 2     | API 요청의 유효시간(만료 시간)을 설정할 수 있습니다.             |
-| 6    | └ Key Exchange Policy              | 2     | 키 교환에 대한 정책을 설정할 수 있습니다.                        |
-| 7    | **Notification Provider Settings** | 1     | 알림 제공자(Notification Provider)를 설정하는 상위 메뉴입니다.   |
-| 8    | └ Email Server Settings            | 2     | 발신용 이메일 서버 정보를 설정하는 메뉴입니다.                   |
-| 9    | └ Email Template Settings          | 2     | 발송되는 이메일의 템플릿을 설정하는 메뉴입니다.                  |
-| 10   | └ Push Server Settings             | 2     | 푸시 알림 서버 정보를 설정하는 메뉴입니다.                       |
-| 11   | **List Provider Settings**         | 1     | 목록 제공자(List Provider)를 설정하는 상위 메뉴입니다.           |
-| 12   | └ Allowed CA Management            | 2     | 허용된 CA(Certificate Authority) 목록을 설정하는 메뉴입니다.     |
-| 13   | └ VC Schema Management             | 2     | VC 발급에 사용할 VC 스키마를 관리하는 메뉴입니다.                |
-| 14   | └ VC Plan Management               | 2     | VC 발급 플랜을 설정하는 메뉴입니다.                              |
-| 15   | **User Management**                | 1     | 사용자의 정보를 관리하는 메뉴입니다.                             |
-| 16   | └ User List                        | 2     | Open DID에 등록된 사용자의 목록을 조회하는 메뉴입니다.           |
-| 17   | └ App List                         | 2     | Open DID에 등록된 사용자의 App 정보를 조회하는 메뉴입니다.       |
-| 18   | └ Wallet List                      | 2     | Open DID에 등록된 사용자의 월렛 정보를 조회하는 메뉴입니다.      |
-| 19   | **Admin Management**               | 1     | 관리자의 계정 및 권한을 관리하는 메뉴입니다.                     |
+| 번호 | 메뉴 | Depth | 설명 |
+| --- | --- | --- | --- |
+| 1 | TA Management | 1 | TA 기본 정보와 등록 상태 조회 |
+| 2 | Entity Management | 1 | Entity 등록 및 조회 |
+| 3 | KYC Settings | 1 | KYC 연동 설정 |
+| 4 | API Settings | 1 | API 정책 상위 메뉴 |
+| 5 | └ Expiration Settings | 2 | 토큰과 트랜잭션 만료 시간 설정 |
+| 6 | └ Key Exchange Policy | 2 | ECDH 암호화 정책 설정 |
+| 7 | Notification Provider Settings | 1 | 이메일·푸시 설정 상위 메뉴 |
+| 8 | └ Email Server Settings | 2 | SMTP 서버 설정 |
+| 9 | └ Email Template Settings | 2 | 이메일 템플릿 설정 |
+| 10 | └ Push Server Settings | 2 | 푸시 서비스 설정 |
+| 11 | List Provider Settings | 1 | 신뢰 목록 상위 메뉴 |
+| 12 | └ Allowed CA Management | 2 | 허용 CA 목록 관리 |
+| 13 | └ VC Schema Management | 2 | VC 스키마 조회 |
+| 14 | └ VC Plan Management | 2 | VC 플랜 조회 |
+| 15 | └ Credential Schema Management | 2 | Credential Schema 조회 |
+| 16 | └ Credential Definition Management | 2 | Credential Definition 조회 |
+| 17 | └ Certification VC Management | 2 | Entity 인증 VC 조회 |
+| 18 | └ OID4VCI Credential Issuers | 2 | OID4VCI 발급자 조회·상태 변경 |
+| 19 | └ mDoc Trusted Issuers | 2 | mDoc 신뢰 발급자 등록·관리 |
+| 20 | User Management | 1 | 사용자 관련 목록 상위 메뉴 |
+| 21 | └ User List | 2 | 사용자 조회 |
+| 22 | └ App List | 2 | 앱 조회 |
+| 23 | └ Wallet List | 2 | 월렛 조회 |
+| 24 | Server Configuration | 1 | 외부 서버 API 키 설정 |
+| 25 | Admin Management | 1 | 관리자 설정 상위 메뉴 |
+| 26 | └ Admin Management | 2 | 관리자 계정 관리 |
+| 27 | └ Password Policy Settings | 2 | 관리자 비밀번호 정책 설정 |
 
 > **참고**:  
 > 위 메뉴 구성에 대한 각 기능의 상세 사용법은  
@@ -238,7 +252,7 @@ TA 등록이 완료되면 전체 관리 기능이 활성화되며, 사이드바 
    - 새 비밀번호 확인 입력
 4. '저장' 버튼을 클릭하여 변경 사항을 적용합니다.
 
-> **참고**: 비밀번호는 8자 이상, 64자 이하의 알파벳 대/소문자, 숫자, 특수문자를 포함해야 합니다.
+> **참고**: 적용되는 최소 길이, 만료 기간, 문자 구성 규칙은 [비밀번호 정책 설정](#326-password-policy-settings)에서 확인합니다.
 
 <br/>
 
@@ -520,7 +534,7 @@ CA 서버가 KYC 서버의 역할을 겸임하고 있으므로, 이 설정에서
 | 4    | **REGISTER 버튼**        | 입력한 KYC 정보를 저장합니다.                                              |
 | 5    | **RESET 버튼**           | 입력한 모든 내용을 초기화합니다.                                           |
 
-<img src="./images/3-7.kyc-settings.png" width="600"/>
+<img src="./images/live-kyc.jpg" width="600"/>
 
 <br/>
 
@@ -536,7 +550,7 @@ CA 서버가 KYC 서버의 역할을 겸임하고 있으므로, 이 설정에서
 `Expiration Settings` 메뉴에서는 TA 서버에서 사용하는 만료 시간 관련 설정을 구성할 수 있습니다.  
 **토큰 만료 시간**과 **트랜잭션 만료 시간**을 설정하며, 이는 TA의 프로토콜 동작에 중요한 역할을 합니다.
 
-<img src="./images/3-8.expiration-settings.png" width="600"/>
+<img src="./images/live-expiration.jpg" width="600"/>
 
 | 번호 | 항목                          | 설명                                                                                                                                                                                                                                                                                    |
 | ---- | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -561,7 +575,7 @@ CA 서버가 KYC 서버의 역할을 겸임하고 있으므로, 이 설정에서
 대부분의 프로토콜에는 키 교환 API가 포함되어 있으며, 해당 API에서는 양측이 ECDH 방식으로 암호 키를 생성하기 위한 정보를 주고받습니다.  
 이 메뉴를 통해 키교환시 사용할 **암호화 알고리즘과 패딩 방식**을 지정할 수 있습니다.
 
-<img src="./images/3-9.key-exchange-policy.png" width="600"/>
+<img src="./images/live-exchange.jpg" width="600"/>
 
 | 번호 | 항목             | 설명                                                                                                                             |
 | ---- | ---------------- | -------------------------------------------------------------------------------------------------------------------------------- |
@@ -600,7 +614,7 @@ SMTP 서버 정보, 인증 정보, SSL 설정, 타임아웃 옵션 등을 입력
 
 설정이 완료되면 테스트 이메일을 발송하여 설정 값이 정상적으로 작동하는지 확인할 수 있습니다.  
 
-<img src="./images/3-10.email-server-settings.png" width="600"/>
+<img src="./images/live-email-server.jpg" width="600"/>
 
 | 번호 | 항목                         | 설명                                                                  |
 | ---- | ---------------------------- | --------------------------------------------------------------------- |
@@ -692,7 +706,7 @@ TA는 해당 값을 키워드에 치환하여 최종 이메일을 생성하고 �
 
 Push 서버를 통해 발송되는 알림은 **사용자에게 VC 발급 요청 시** 사용됩니다.
 
-<img src="./images/3-12.push-server-settings.png" width="600"/>
+<img src="./images/live-push.jpg" width="600"/>
 
 | 번호 | 항목                 | 설명                                                                                                                                                       |
 | ---- | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -735,7 +749,7 @@ TA는 Wallet Identifier별로 허용된 CA 목록을 등록 및 수정할 수 �
 `Allowed CA Management` 메뉴에 진입하면, Wallet Identifier별로 허용된 CA 목록이 테이블 형태로 표시됩니다.  
 등록, 수정, 삭제 기능을 통해 각 Wallet이 신뢰할 수 있는 CA 목록을 관리할 수 있습니다.
 
-<img src="./images/3-13.allowed-ca-management-main.png" width="800"/>
+<img src="./images/live-allowed-ca.jpg" width="800"/>
 
 | 번호 | 항목                       | 설명                                                                 |
 | ---- | -------------------------- | -------------------------------------------------------------------- |
@@ -1159,7 +1173,7 @@ ROOT 계정은 `Admin Management` 메뉴에서 모든 기능을 수행할 수 �
 
 `Admin Management` 메뉴에 진입하면 등록된 관리자 계정들의 목록이 테이블 형태로 표시됩니다.
 
-<img src="./images/3-21.admin-management.png" width="800"/>
+<img src="./images/live-admin-management.jpg" width="800"/>
 
 | 번호 | 항목                    | 설명                                                             |
 | ---- | ----------------------- | ---------------------------------------------------------------- |
@@ -1190,6 +1204,41 @@ ROOT 계정은 `Admin Management` 메뉴에서 모든 기능을 수행할 수 �
 | 7    | **RESET 버튼**              | 모든 입력값을 초기화합니다.                                         |
 | 8    | **CANCEL 버튼**             | 등록을 취소하고 이전 화면으로 돌아갑니다.                           |
 
+
+
+<br/>
+
+## 3.22. Certification VC Management
+
+`List Provider Settings > Certification VC Management`에서 Entity 인증 VC 발행 목록을 조회합니다. 이름으로 검색할 수 있으며, 목록에는 이름, DID, 발행 일시, 만료 일시, 등록 일시가 표시됩니다. 인증 VC는 Entity 등록 절차에서 발행되므로 이 화면에서 새 VC를 등록하지 않습니다.
+
+## 3.23. OID4VCI Credential Issuers
+
+`List Provider Settings > OID4VCI Credential Issuers`에서 OID4VCI 발급자의 등록 상태를 조회합니다. 상태와 Credential Issuer 값으로 검색할 수 있고, 목록에는 발급자 식별자, Issuer Metadata URI, User Initiation URI, 상태, 요청 및 수정 일시가 표시됩니다. 항목을 선택한 뒤 `UPDATE`로 상태를 변경할 수 있습니다.
+
+> **예시**: 문서에 URI를 기재해야 할 때는 `https://issuer.example.org/.well-known/openid-credential-issuer`처럼 예시 도메인을 사용하세요. 현재 화면의 `did:example:issuer-123`과 내부 시험용 URI는 운영 설정값으로 사용하지 않습니다.
+
+## 3.24. mDoc Trusted Issuers
+
+`List Provider Settings > mDoc Trusted Issuers`에서 신뢰할 수 있는 mDoc 발급자를 검색, 등록 및 수정합니다. 목록에는 Issuer, DID, 허용된 `docTypes`, 상태, 등록 일시가 표시됩니다.
+
+<img src="./images/live-mdoc-issuers.jpg" width="800"/>
+
+`REGISTER`를 누르면 등록 화면으로 이동합니다. 등록할 Issuer를 선택하고 Issuer metadata URL을 확인한 뒤 `Load docTypes`를 눌러 메타데이터에 선언된 문서 유형을 불러옵니다. 등록할 수 있는 Issuer는 등록이 완료된 Entity이며, 이미 활성화 또는 중지 상태인 발급자는 중복 등록할 수 없습니다. 취소된 발급자는 다시 등록할 수 있습니다.
+
+<img src="./images/live-mdoc-register.jpg" width="800"/>
+
+> **예시**: 설명에는 `https://issuer.example.org/.well-known/openid-credential-issuer`와 `org.example.mdl` 같은 예시 값을 사용하세요. 실제 발급자 URL과 `docType`은 해당 Issuer의 메타데이터에서 확인해야 합니다.
+
+## 3.25. Server Configuration
+
+`Server Configuration`에서 외부 서버 연동용 API 키를 설정합니다. 현재 화면에는 Ledger Service Server의 `LSS API Key` 입력란과 `UPDATE`, `RESET` 버튼이 있습니다. 발급받은 키를 입력하고 `UPDATE`를 눌러 저장합니다. `RESET`은 저장 전 입력값을 초기화할 때 사용합니다. API 키 값은 화면 캡처, 문서, 예시 설정에 포함하지 마세요.
+
+## 3.26. Password Policy Settings
+
+`Admin Management > Password Policy Settings`에서 관리자 계정 비밀번호 정책을 관리합니다. `Minimum Length`는 6~20자, `Password Expiration Period`는 30~365일 범위에서 설정합니다. 필요에 따라 대문자, 숫자, 특수문자 사용 규칙을 켜고 `UPDATE`로 저장합니다. `RESET`은 변경 전 입력 상태로 되돌립니다. 현재 설치 화면의 값은 최소 8자, 만료 기간 365일이며 구성 규칙은 모두 꺼져 있습니다. 실제 적용 정책은 운영 환경 설정을 확인하세요.
+
+<img src="./images/live-password-policy.jpg" width="800"/>
 
 [Open DID Installation Guide]: https://github.com/OmniOneID/did-release/blob/main/release-V2.0.0.0/OpenDID_Installation_Guide-V2.0.0.0_ko.md
 

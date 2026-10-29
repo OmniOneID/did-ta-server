@@ -54,7 +54,7 @@ Table of Contents
     - [5.1.5. Server Configuration](#515-server-configuration)
   - [5.2. application-auth.yml](#52-application-authyml)
     - [5.2.1. Token Usage Configuration](#521-token-usage-configuration)
-  - [5.3. database.yml](#53-databaseyml)
+  - [5.3. application-databases.yml](#53-application-databasesyml)
     - [5.3.1. Spring Liquibase Settings](#531-spring-liquibase-settings)
     - [5.3.2. Datasource Configuration](#532-datasource-configuration)
     - [5.3.3. JPA Configuration](#533-jpa-configuration)
@@ -565,7 +565,10 @@ This section defines the port number on which the application will receive incom
 
 <br/>
 
-## 5.3. database.yml
+## 5.3. application-databases.yml
+
+The current repository uses `application-databases.yml` for the `dev` profile and `application-databases-sample.yml` for the `sample` profile. Set real database passwords and API keys in the deployment environment; do not put them in sample documentation.
+
 
 - Purpose: This file defines how the server connects to and manages the database, including connection details, Liquibase migration settings, and JPA behavior.
 
@@ -585,7 +588,7 @@ It ensures database consistency across development and production environments.
     - For the `sample` profile, it must be set to `false` because it doesn't use a real database.  
     - Example: `true` [dev], `false` [sample]
 
-* `spring.liquibase.fall-on-error`: 🔒  
+* `spring.liquibase.fail-on-error`: 🔒
     - Controls the behavior when an error occurs during migration. Only used in the `sample` profile.  
     - Example: `false` [sample]
 
@@ -610,13 +613,13 @@ This includes the database driver, URL, username, and password.
 
 * `spring.datasource.password`:  
     - The password for accessing the database.  
-    - Example: `omn`
+    - Example: `<DB_PASSWORD>`
 
 ---
-> If the database is installed via Orchestrator, the default connection information is as follows:  
+> If the database is installed via Orchestrator, obtain its actual connection details from the installation output. The following values are illustrative:
 > - `url`: `jdbc:postgresql://localhost:5432/tas`  
 > - `username`: `omn`  
-> - `password`: `omn`
+> - `password`: `<DB_PASSWORD>`
 ---
 
 <br/>
@@ -759,8 +762,8 @@ logging:
     - Example: `your_secure_wallet_password`
 
 ---
-> If the wallet file is created using the Orchestrator, the default password is as follows:  
-> - `password`: `omnioneopendid12!@`
+> If the wallet file is created using the Orchestrator, obtain its actual password from the installation output. The following is a placeholder:
+> - `password`: `<WALLET_PASSWORD>`
 ---
 
 <br/>
@@ -916,7 +919,7 @@ evm.network.url=http://host.docker.internal:8545
 > **host.docker.internal** is a special address that points to the host machine from within a Docker container.  
 > Since localhost inside a container refers to the container itself, you must use host.docker.internal to access services (PostgreSQL, blockchain) running on the host.
 
-#### 4. Modify application-database.yml file
+#### 4. Modify application-databases.yml file
 ```yml
 spring:
  ... (omitted)
@@ -924,7 +927,7 @@ spring:
    driver-class-name: org.postgresql.Driver
    url: jdbc:postgresql://host.docker.internal:5430/tas
    username: omn
-   password: omn
+   password: <DB_PASSWORD>
  ... (omitted)
 ```
 

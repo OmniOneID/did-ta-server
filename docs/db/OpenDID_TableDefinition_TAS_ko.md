@@ -1,13 +1,14 @@
 Open DID TAS Database Table Definition
 ==
 
-- Date: 2025-05-29
-- Version: v2.0.0
+- Date: 2026-10-29
+- Version: v2.1.0
 
 | Version | Date       | Changes         |
 | ------- | ---------- | --------------- |
 | v1.0.1 | 2024-03-31 | Initial version |
 | v2.0.0  | 2025-05-29 | update Table    |
+| v2.1.0  | 2026-10-29 | Added tables introduced in Liquibase sets 3–10 |
 
 목차
 --
@@ -384,3 +385,17 @@ Open DID TAS Database Table Definition
 |     | create_at    | TIMESTAMP |        | NO       | now()   | created date                |
 |     | updated_at   | TIMESTAMP |        | YES      | N/A     | updated date                |
 |     | entity_id    | BIGINT    |        | NO       | N/A     | related entity table key    |
+### 2.24~2.31. 추가 테이블 (현재 Liquibase 변경 로그 기준)
+
+| 테이블 | 주요 컬럼 | 용도 |
+| --- | --- | --- |
+| `server_config` | `id`, `config_key`, `config_value`, `description`, `created_at`, `updated_at` | 외부 서버 연동 설정 |
+| `admin_password_policy` | `id`, `min_length`, `require_uppercase`, `require_number`, `require_special`, `password_expiry_days`, `created_at`, `updated_at` | 관리자 비밀번호 정책 |
+| `list_certificate_vc` | `id`, `did`, `name`, `certificate_vc`, `published_url`, `published_at`, `expired_at`, `created_at`, `updated_at` | Entity 인증 VC 목록 |
+| `list_oid4vci_issuer` | `id`, `credential_issuer`, `credential_issuer_metadata_uri`, `user_initiation_uri`, `status`, `created_at`, `updated_at` | OID4VCI 발급자 목록 |
+| `list_oid4vci_issuer_status_history` | `id`, `issuer_id`, `previous_status`, `new_status`, `reason`, `changed_by`, `changed_at` | OID4VCI 상태 변경 이력 |
+| `list_mdoc_issuer` | `id`, `entity_id`, `status`, `metadata_uri`, `created_at`, `updated_at` | mDoc 신뢰 발급자 목록 |
+| `list_mdoc_issuer_doc_type` | `id`, `mdoc_issuer_id`, `doc_type`, `created_at` | 발급자별 허용 docType |
+| `list_mdoc_issuer_status_history` | `id`, `mdoc_issuer_id`, `previous_status`, `new_status`, `reason`, `changed_by`, `changed_at` | mDoc 상태 변경 이력 |
+
+`admin`에는 `last_password_changed_at`, `password_reset_reason` 컬럼이 추가되었습니다. `entity`와 `tas`에는 인증 VC 게시 URL 컬럼이 추가되었고, KYC 서버 URL은 선택값으로 변경되었습니다. 정확한 자료형과 제약 조건은 `source/did-ta-server/src/main/resources/db/changelog/changeset/`의 Liquibase 변경 로그를 기준으로 확인하세요.

@@ -18,8 +18,8 @@ puppeteer:
 TAS API
 ==
 
-- 일자: 2025-05-30
-- 버전: v2.0.0 
+- 일자: 2026-10-29
+- 버전: v2.1.0
 
 
 ## 개정 이력
@@ -30,6 +30,7 @@ TAS API
 | 1.0.1 (dev) | 2024-03-31 | [12.4 Send Email] 요청 데이터에서 senderAddress 옵션 처리 |
 | 1.0.1 (dev) | 2024-03-31 | [12.8 Get Vc Schema] 요청 파라미터에 name -> id로 변경    |
 | 2.0.0       | 2025-05-30 | [12.11 Get Vc Schema List] 요청 추가, [12.12 Get Credential Schema] 요청 추가   |
+| 2.1.0       | 2026-10-29 | OID4VCI 발급자 목록·상세·등록 API 추가 |
 
 <!-- TOC tocDepth:2..3 chapterDepth:2..6 -->
 
@@ -101,6 +102,7 @@ TAS API
   - [12.11. Get VC Schema List](#1211-get-vc-schema-list)
   - [12.12. Get Credential Schema ](#1212-get-credential-schema)
   - [12.13. Get mDoc Issuer List](#1213-get-mdoc-issuer-list)
+  - [12.14. OID4VCI Credential Issuers](#1214-oid4vci-credential-issuers)
 - [A. Non-standard Object Definitions](#a-non-standard-object-definitions)
   - [A.1. Constant](#a1-constant)
   - [A.2. EmailTemplate Object](#a2-emailtemplate-object)
@@ -237,6 +239,7 @@ TAS API
 | `get-vcplan`                | /list/api/v1/vcplan/id            | VC Plan 조회               | Y       |
 | `get-allowed-ca-list`       | /list/api/v1/allowed-ca/list      | 월렛에 허용된 CA 목록 조회 | Y       |
 | `get-mdoc-issuer-list`      | /list/api/v1/mdoc/issuers         | mDoc 신뢰 발급자 목록 조회 | N       |
+| `oid4vci-issuers`          | /list/api/v1/oid4vci/issuers  | OID4VCI 발급자 목록·등록 | N |
 | `get-certificate-vc`        | /api/v1/certificate-vc            | 가입증명서 조회            | N       |
 | `get-vcschema`              | /api/v1/vc-schema                  | VC 스키마 조회             | N       |
 | `update-diddoc-deactivated` | /api/v1/update-diddoc-deactivated | DIDDoc 비활성화            | N       |
@@ -5845,6 +5848,7 @@ TAS가 제공하는 단일 호출 API 목록은 아래 표와 같다.
 | `get-vcplan`                | /list/api/v1/vcplan               | Id로 VC Plan 조회          | Y       |
 | `get-allowed-ca-list`       | /list/api/v1/allowed-ca/list      | 월렛에 허용된 CA 목록 조회 | Y       |
 | `get-mdoc-issuer-list`      | /list/api/v1/mdoc/issuers         | mDoc 신뢰 발급자 목록 조회 | N       |
+| `oid4vci-issuers`          | /list/api/v1/oid4vci/issuers  | OID4VCI 발급자 목록·등록 | N |
 | `send-email`                | /noti/api/v1/send-email           | 이메일 발송                | N       |
 | `send-push`                 | /noti/api/v1/send-push            | Push 전송                  | N       |
 | `update-push-token`         | /api/v1/update-push-token         | Push 토큰 업데이트         | N       |
@@ -7286,6 +7290,28 @@ Content-Type: application/json;charset=utf-8
 ```
 
 <div style="page-break-after: always; margin-top: 40px;"></div>
+
+### 12.14. OID4VCI Credential Issuers
+
+- 기본 경로: `/list/api/v1/oid4vci/issuers`
+
+| 메서드 | 경로 | 설명 |
+| --- | --- | --- |
+| `GET` | `/list/api/v1/oid4vci/issuers` | 활성 발급자 목록을 반환합니다. 응답은 `count`와 `items`로 구성됩니다. |
+| `GET` | `/list/api/v1/oid4vci/issuers/detail?credentialIssuer={URI}` | 지정한 활성 발급자 상세 정보를 반환합니다. |
+| `POST` | `/list/api/v1/oid4vci/issuers` | 발급자 정보를 등록합니다. |
+
+`items`의 각 항목은 `credentialIssuer`, `credentialIssuerMetadataUri`, `userInitiationUri`를 포함합니다. 등록 요청 본문에도 이 세 필드를 사용하며, 등록 응답에는 `id`와 `status`가 반환됩니다.
+
+```json
+{
+  "credentialIssuer": "https://issuer.example.org",
+  "credentialIssuerMetadataUri": "https://issuer.example.org/.well-known/openid-credential-issuer",
+  "userInitiationUri": "https://issuer.example.org/issue/start"
+}
+```
+
+위 URI는 문서용 예시입니다. 운영 환경에서는 실제 발급자의 메타데이터와 시작 URI를 사용하세요.
 
 ## A. Non-standard Object Definitions
 

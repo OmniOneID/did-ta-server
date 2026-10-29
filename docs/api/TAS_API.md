@@ -17,8 +17,8 @@ puppeteer:
 
 # TAS API
 
-- Date: 2025-05-30  
-- Version: v2.0.0
+- Date: 2026-10-29
+- Version: v2.1.0
 
 ## Revision History
 
@@ -28,6 +28,7 @@ puppeteer:
 | 1.0.1 (dev) | 2024-03-31 | [12.4 Send Email] Optional handling of senderAddress in request data |
 | 1.0.1 (dev) | 2024-03-31 | [12.8 Get Vc Schema] Changed request parameter from name -> id |
 | 2.0.0       | 2025-05-30 | [12.11 Get Vc Schema List] Request Add, [12.12 Get Credential Schema] Request Add  |
+| 2.1.0       | 2026-10-29 | Added OID4VCI issuer list, detail, and registration APIs |
 
 <!-- TOC tocDepth:2..3 chapterDepth:2..6 -->
 
@@ -99,6 +100,7 @@ Table of Contents
   - [12.11. Get VC Schema List](#1211-get-vc-schema-list)
   - [12.12. Get Credential Schema ](#1212-get-credential-schema)
   - [12.13. Get mDoc Issuer List](#1213-get-mdoc-issuer-list)
+  - [12.14. OID4VCI Credential Issuers](#1214-oid4vci-credential-issuers)
 - [A. Non-standard Object Definitions](#a-non-standard-object-definitions)
   - [A.1. Constant](#a1-constant)
   - [A.2. EmailTemplate Object](#a2-emailtemplate-object)
@@ -235,6 +237,7 @@ This document defines the APIs provided by Trust Agent (TA or TAS).
 | `get-vcplan`                | /list/api/v1/vcplan/id            | Retrieve VC Plan                   | Y            |
 | `get-allowed-ca-list`       | /list/api/v1/allowed-ca/list      | Retrieve CA list allowed for wallet| Y            |
 | `get-mdoc-issuer-list`      | /list/api/v1/mdoc/issuers         | Retrieve mDoc trusted issuer list | N            |
+| `oid4vci-issuers`          | /list/api/v1/oid4vci/issuers  | OID4VCI issuer list and registration | N |
 | `get-certificate-vc`        | /api/v1/certificate-vc            | Retrieve enrollment certificate    | N            |
 | `get-vcschema`              | /api/v1/vc-schema                 | Retrieve VC schema                 | N            |
 | `update-diddoc-deactivated` | /api/v1/update-diddoc-deactivated | DIDDoc deactivation                | N            |
@@ -5487,6 +5490,7 @@ The list of single call APIs provided by TAS is shown in the table below.
 | `get-vcplan`                | /list/api/v1/vcplan               | Retrieve VC Plan by Id             | Y            |
 | `get-allowed-ca-list`       | /list/api/v1/allowed-ca/list      | Retrieve CA list allowed for wallet| Y            |
 | `get-mdoc-issuer-list`      | /list/api/v1/mdoc/issuers         | Retrieve mDoc trusted issuer list | N            |
+| `oid4vci-issuers`          | /list/api/v1/oid4vci/issuers  | OID4VCI issuer list and registration | N |
 | `send-email`                | /noti/api/v1/send-email           | Email sending                      | N            |
 | `send-push`                 | /noti/api/v1/send-push            | Push transmission                  | N            |
 | `update-push-token`         | /api/v1/update-push-token         | Push token update                  | N            |
@@ -6941,6 +6945,28 @@ Content-Type: application/json;charset=utf-8
 ```
 
 <div style="page-break-after: always; margin-top: 40px;"></div>
+
+### 12.14. OID4VCI Credential Issuers
+
+- Base path: `/list/api/v1/oid4vci/issuers`
+
+| Method | Path | Description |
+| --- | --- | --- |
+| `GET` | `/list/api/v1/oid4vci/issuers` | Returns the active issuers in a `count` and `items` response. |
+| `GET` | `/list/api/v1/oid4vci/issuers/detail?credentialIssuer={URI}` | Returns one active issuer. |
+| `POST` | `/list/api/v1/oid4vci/issuers` | Registers an issuer. |
+
+Each `items` entry contains `credentialIssuer`, `credentialIssuerMetadataUri`, and `userInitiationUri`. The registration request uses the same three fields; its response contains `id` and `status`.
+
+```json
+{
+  "credentialIssuer": "https://issuer.example.org",
+  "credentialIssuerMetadataUri": "https://issuer.example.org/.well-known/openid-credential-issuer",
+  "userInitiationUri": "https://issuer.example.org/issue/start"
+}
+```
+
+These URIs are documentation examples. Use the actual issuer metadata and initiation URI in a deployment.
 
 ## A. Non-standard Object Definitions
 

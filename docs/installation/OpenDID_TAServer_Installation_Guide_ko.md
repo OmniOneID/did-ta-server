@@ -18,8 +18,8 @@ puppeteer:
 Open DID TA Server Installation Guide
 ==
 
-- Date: 2025-05-29
-- Version: v2.0.0
+- Date: 2026-10-29
+- Version: v2.1.0
 
 목차
 ==
@@ -54,7 +54,7 @@ Open DID TA Server Installation Guide
     - [5.1.5. 서버 설정](#515-서버-설정)
   - [5.2. application-auth.yml](#52-application-authyml)
     - [5.2.1. 토큰 사용 여부 설정](#521-토큰-사용-여부-설정)
-  - [5.3. database.yml](#53-databaseyml)
+  - [5.3. application-databases.yml](#53-application-databasesyml)
     - [5.3.1. Spring Liquibase 설정](#531-spring-liquibase-설정)
     - [5.3.2. 데이터소스 설정](#532-데이터소스-설정)
     - [5.3.3. JPA 설정](#533-jpa-설정)
@@ -523,13 +523,16 @@ Spring Boot Actuator는 애플리케이션의 상태를 모니터링하고 관�
 
 <br/>
 
-## 5.3. database.yml
+## 5.3. application-databases.yml
+
+현재 저장소의 `dev` 프로파일은 `application-databases.yml`, `sample` 프로파일은 `application-databases-sample.yml`을 사용합니다. 실제 DB 비밀번호와 API 키는 배포 환경에서 별도로 설정하고 예시 문서에 기록하지 마세요.
+
 - 역할: 데이터베이스의 연결 정보부터 Liquibase를 사용한 마이그레이션 설정, JPA 설정까지, 서버에서 데이터베이스를 어떻게 관리하고 운영할지를 정의합니다
 
 - 위치: `src/main/resources/config`
   
 ### 5.3.1. Spring Liquibase 설정 
-iquibase는 데이터베이스 마이그레이션을 관리하는 도구로, 데이터베이스 스키마의 변경 사항을 추적하고 자동으로 적용할 수 있도록 도와줍니다. 이를 통해 개발 및 운영 환경에서 데이터베이스 일관성을 유지할 수 있습니다.
+Liquibase는 데이터베이스 마이그레이션을 관리하는 도구로, 데이터베이스 스키마의 변경 사항을 추적하고 자동으로 적용할 수 있도록 도와줍니다. 이를 통해 개발 및 운영 환경에서 데이터베이스 일관성을 유지할 수 있습니다.
 
 * `spring.liquibase.change-log`: 🔒 
     - 데이터베이스 변경 로그 파일의 위치를 지정합니다. Liquibase가 데이터베이스 스키마 변경을 추적하고 적용하는 데 사용하는 로그 파일의 위치입니다.
@@ -539,7 +542,7 @@ iquibase는 데이터베이스 마이그레이션을 관리하는 도구로, 데
     - Liquibase 활성화 여부를 설정합니다. true로 설정 시 애플리케이션 시작 시 Liquibase가 실행되어 데이터베이스 마이그레이션을 수행합니다. `sample` 프로파일은 데이터베이스 연동을 하지 않으므로 false로 설정해야 합니다.
     - 예시: `true` [dev], `false` [sample]
 
-* `spring.liquibase.fall-on-error`: 🔒
+* `spring.liquibase.fail-on-error`: 🔒
     - Liquibase가 데이터베이스 마이그레이션을 수행하는 동안 오류가 발생했을 때의 동작을 제어합니다. `sample` 프로파일에서만 설정합니다.
     - 예시: `false` [sample]
 
@@ -562,13 +565,13 @@ iquibase는 데이터베이스 마이그레이션을 관리하는 도구로, 데
 
 * `spring.datasource.password`:  
     - 데이터베이스 접속 비밀번호입니다.
-    - 예시: `omn`
+    - 예시: `<DB_PASSWORD>`
 
 ---
-> Orchestrator를 통해 Database를 설치한 경우, 기본 접속 정보는 다음과 같이 설정됩니다.  
+> Orchestrator로 데이터베이스를 설치한 경우 실제 접속 정보는 설치 결과에서 확인합니다. 다음은 문서용 예시입니다.
 > - `url`: `jdbc:postgresql://localhost:5432/tas`  
 > - `username`: `omn`  
-> - `password`: `omn`
+> - `password`: `<DB_PASSWORD>`
 ---
 
 <br/>
@@ -702,8 +705,8 @@ logging:
     - 예시: `your_secure_wallet_password`
 
 ---
-> Orchestrator를 통해 월렛 파일을 생성하는 경우, 기본 비밀번호는 다음과 같이 설정됩니다.
-> - `password`: `omnioneopendid12!@`
+> Orchestrator를 통해 월렛 파일을 생성하는 경우, 실제 비밀번호는 설치 결과에서 확인합니다. 다음은 문서용 자리표시자입니다.
+> - `password`: `<WALLET_PASSWORD>`
 ---
 
 <br/>
@@ -851,7 +854,7 @@ evm.network.url=http://host.docker.internal:8545
 > **host.docker.internal**은 Docker 컨테이너에서 호스트 머신을 가리키는 특별한 주소입니다.  
 > 컨테이너 내부에서 localhost는 컨테이너 자신을 의미하므로, 호스트에서 실행 중인 서비스(PostgreSQL, 블록체인)에 접근하려면 host.docker.internal을 사용해야 합니다.
 
-#### 4. application-database.yml 파일 수정
+#### 4. application-databases.yml 파일 수정
 ```yml
 spring:
   ... 생략
@@ -859,7 +862,7 @@ spring:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://host.docker.internal:5430/tas
     username: omn
-    password: omn
+    password: <DB_PASSWORD>
   ... 생략
 ```
 
