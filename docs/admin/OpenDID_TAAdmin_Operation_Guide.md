@@ -18,8 +18,8 @@ puppeteer:
 Open DID TA Admin Console Guide
 ==
 
-- Date: 2026-10-29
-- Version: v3.0.0
+- Date: 2026-10-30
+- Version: v3.0.1
 
 Revision History
 ==
@@ -35,6 +35,7 @@ Revision History
 |         |            | Added `3.1.18. Wallet List` section                   |
 | v2.0.0  | 2025-05-30 | Added Credential Schema and Credential Definition sections. |
 | v3.0.0  | 2026-10-29 | Updated console menus, password policy, and current screen captures. |
+| v3.0.1  | 2026-10-30 | Added API Log and Audit API Log guidance. |
 
 Table of Contents
 ==
@@ -103,6 +104,9 @@ Table of Contents
   - [3.24. mDoc Trusted Issuers](#324-mdoc-trusted-issuers)
   - [3.25. Server Configuration](#325-server-configuration)
   - [3.26. Password Policy Settings](#326-password-policy-settings)
+  - [3.27. Log Management](#327-log-management)
+    - [3.27.1. API Log](#3271-api-log)
+    - [3.27.2. Audit API Log](#3272-audit-api-log)
 
 # 1. Introduction
 
@@ -136,6 +140,8 @@ The main items that can be configured in the TA Admin Console are as follows:
   - VC plan list management
   - Credential Schema list management
   - Credential Definition list management
+- Log Management
+  - View Agent API calls and administrator API activity
 
 <br/>
 
@@ -169,7 +175,9 @@ To access the Admin Console, follow these steps:
 
 A typical console screen consists of the following elements:
 
-<img src="./images/live-password-policy.jpg" width="600"/>
+<img src="./images/api-log-api-example.png" width="800"/>
+
+> Screen rendered with example data.
 
 | No. | Area              | Description                                                                                                            |
 | --- | ----------------- | ---------------------------------------------------------------------------------------------------------------------- |
@@ -197,8 +205,6 @@ only the `TA Registration` item is displayed in the menu.
 
 Once TA registration is complete, all management functions are activated, and the sidebar menu is configured as follows:
 
-<img src="./images/live-menu.jpg" width="300"/>
-
 | No. | Menu Name                          | Depth | Description                                                                            |
 | --- | ---------------------------------- | ----- | -------------------------------------------------------------------------------------- |
 | 1   | **TA Management**                  | 1     | Menu for checking and managing basic TA server information (DID, URL, etc.).          |
@@ -224,10 +230,13 @@ Once TA registration is complete, all management functions are activated, and th
 | 21  | └ User List                       | 2 | View users. |
 | 22  | └ App List                        | 2 | View apps. |
 | 23  | └ Wallet List                     | 2 | View wallets. |
-| 24  | **Server Configuration**          | 1 | Configure external service API keys. |
-| 25  | **Admin Management**              | 1 | Manage administrator accounts. |
-| 26  | └ Admin Management                | 2 | View and register administrators. |
-| 27  | └ Password Policy Settings        | 2 | Set administrator password policy. |
+| 24  | **Log Management**                | 1 | View API calls and administrator activity. |
+| 25  | └ API Log                         | 2 | View Agent API calls. |
+| 26  | └ Audit API Log                   | 2 | View administrator API activity. |
+| 27  | **Server Configuration**          | 1 | Configure external service API keys. |
+| 28  | **Admin Management**              | 1 | Manage administrator accounts. |
+| 29  | └ Admin Management                | 2 | View and register administrators. |
+| 30  | └ Password Policy Settings        | 2 | Set administrator password policy. |
 
 > Detailed instructions for the new menu items appear in sections 3.22–3.26.
 
@@ -250,6 +259,8 @@ User password change can be performed through the following steps:
 <br/>
 
 # 3. Feature-Specific Detailed Manual
+
+> Management screens after registration show the current sidebar with example data. Actual data varies by environment.
 
 This chapter provides detailed usage instructions for the main functions of the TA Admin Console.
 
@@ -1211,6 +1222,36 @@ Use `Server Configuration` to set API keys for external service connections. The
 Open `Admin Management > Password Policy Settings` to manage administrator password rules. `Minimum Length` accepts 6–20 characters; `Password Expiration Period` accepts 30–365 days. Enable uppercase letters, numbers, or special characters as required, then select `UPDATE`. `RESET` restores the form. The inspected installation currently shows an eight-character minimum, 365-day expiration, and all composition switches off. Confirm the effective policy in each deployment.
 
 <img src="./images/live-password-policy.jpg" width="800"/>
+
+## 3.27. Log Management
+
+After TA registration, open `Log Management` in the sidebar to inspect API calls. Both screens show paginated records, with the newest first. Select a search field, enter a value, and search; use refresh to reload the list. Click `Called At` to open a record's detail dialog. Logs are read only.
+
+### 3.27.1. API Log
+
+<img src="./images/api-log-api-example.png" width="800"/>
+
+> List screen rendered with example data. Actual logs and accounts depend on the environment.
+
+`Log Management > API Log` shows annotated Agent API calls for TA and Notification. The list displays call time (`Called At`), HTTP method, URI, status code, result (`SUCCESS` or `FAIL`), and requester ID. Search by `URI` or `Result`. The detail dialog also shows duration, client IP, user agent, and error message when recorded. The page path is `/logs/api`.
+
+<img src="./images/api-log-api-detail-example.png" width="800"/>
+
+> Example detail dialog opened by selecting the call time.
+
+### 3.27.2. Audit API Log
+
+<img src="./images/api-log-audit-example.png" width="800"/>
+
+> List screen rendered with example data. Actual logs and accounts depend on the environment.
+
+`Log Management > Audit API Log` shows administrator actions through Admin APIs. The list displays call time, requester ID, action type, target type and ID, and result. Search by `Action Type`, `Target Type`, `Result`, or `Requester ID`. Action types include `CREATE`, `UPDATE`, `DELETE`, `LOGIN`, and `LOGOUT`. The detail dialog also shows the action description, client IP, user agent, and error message when recorded. The page path is `/logs/audit`.
+
+<img src="./images/api-log-audit-detail-example.png" width="800"/>
+
+> Example detail dialog opened by selecting the call time.
+
+> Records are created for API calls annotated with `@ArticleLog` on the server. For a `FAIL` result, inspect the API Log status code and the available detail message.
 
 [Open DID Installation Guide]: https://github.com/OmniOneID/did-release/blob/main/release-V2.0.0.0/OpenDID_Installation_Guide-V2.0.0.0.md
 

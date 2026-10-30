@@ -15,6 +15,9 @@
  */
 
 package org.omnione.did.tas.v1.agent.controller;
+import org.omnione.did.base.annotation.ArticleLog;
+import org.omnione.did.base.constants.ActionType;
+import org.omnione.did.base.constants.ApiType;
 import org.omnione.did.base.constants.UrlConstant;
 import org.omnione.did.tas.v1.agent.service.UserService;
 import org.omnione.did.tas.v1.common.dto.EmptyResDto;
@@ -69,6 +72,8 @@ public class UserController {
      */
     @RequestMapping(value = "/propose-register-user", method = RequestMethod.POST)
     @ResponseBody
+    @ArticleLog(name = "[User] Propose Register User", apiType = ApiType.AGENT,
+            targetType = "USER", actionType = ActionType.CREATE)
     public ProposeRegisterUserResDto proposeRegisterUser(@Valid @RequestBody ProposeRegisterUserReqDto proposeRegisterUserReqDto) {
         return userService.proposeRegisterUser(proposeRegisterUserReqDto);
     }
@@ -81,6 +86,8 @@ public class UserController {
      */
     @RequestMapping(value = "/retrieve-kyc", method = RequestMethod.POST)
     @ResponseBody
+    @ArticleLog(name = "[User] Retrieve KYC", apiType = ApiType.AGENT,
+            targetType = "USER", actionType = ActionType.CREATE)
     public RetrieveKycResDto retrieveKyc(@Valid @RequestBody RetrieveKycReqDto retrieveKycReqDto) {
         return userService.retrieveKyc(retrieveKycReqDto);
     }
@@ -93,6 +100,8 @@ public class UserController {
      */
     @RequestMapping(value = "/request-register-user", method = RequestMethod.POST)
     @ResponseBody
+    @ArticleLog(name = "[User] Request Register User", apiType = ApiType.AGENT,
+            targetType = "USER", actionType = ActionType.CREATE)
     public RequestRegisterUserResDto requestRegisterUser(@Valid @RequestBody RequestRegisterUserReqDto requestRegisterUserReqDto) {
         return userService.requestRegisterUser(requestRegisterUserReqDto);
     }
@@ -105,6 +114,8 @@ public class UserController {
      */
     @RequestMapping(value = "/confirm-register-user", method = RequestMethod.POST)
     @ResponseBody
+    @ArticleLog(name = "[User] Confirm Register User", apiType = ApiType.AGENT,
+            targetType = "USER", actionType = ActionType.CREATE)
     public ConfirmRegisterUserResDto confirmRegisterDidDoc(@Valid @RequestBody ConfirmRegisterUserReqDto confirmRegisterUserReqDto) {
         return userService.confirmRegisterUser(confirmRegisterUserReqDto);
     }
@@ -117,6 +128,8 @@ public class UserController {
      */
     @RequestMapping(value = "/propose-update-diddoc", method = RequestMethod.POST)
     @ResponseBody
+    @ArticleLog(name = "[User] Propose Update DID Document", apiType = ApiType.AGENT,
+            targetType = "USER", actionType = ActionType.CREATE)
     public ProposeUpdateDidDocResDto proposeUpdateDidDoc(@Valid @RequestBody ProposeUpdateDidDocReqDto proposeUpdateDidDocReqDto) {
         return userService.proposeUpdateDidDoc(proposeUpdateDidDocReqDto);
     }
@@ -129,6 +142,8 @@ public class UserController {
      */
     @RequestMapping(value = "/request-update-diddoc", method = RequestMethod.POST)
     @ResponseBody
+    @ArticleLog(name = "[User] Request Update DID Document", apiType = ApiType.AGENT,
+            targetType = "USER", actionType = ActionType.CREATE)
     public RequestUpdateDidDocResDto requestUpdateDidDoc(@Valid @RequestBody RequestUpdateDidDocReqDto requestUpdateDidDocReqDto) {
         return userService.requestUpdateDidDoc(requestUpdateDidDocReqDto);
     }
@@ -141,6 +156,8 @@ public class UserController {
      */
     @RequestMapping(value = "/confirm-update-diddoc", method = RequestMethod.POST)
     @ResponseBody
+    @ArticleLog(name = "[User] Confirm Update DID Document", apiType = ApiType.AGENT,
+            targetType = "USER", actionType = ActionType.CREATE)
     public ConfirmUpdateDidDocResDto confirmUpdateDidDoc(@Valid @RequestBody ConfirmUpdateDidDocReqDto confirmUpdateDidDocReqDto) {
         return userService.confirmUpdateDidDoc(confirmUpdateDidDocReqDto);
     }
@@ -153,6 +170,8 @@ public class UserController {
      */
     @RequestMapping(value = "/update-user-status", method = RequestMethod.POST)
     @ResponseBody
+    @ArticleLog(name = "[User] Update User Status", apiType = ApiType.AGENT,
+            targetType = "USER", actionType = ActionType.CREATE)
     public UpdateUserStatusResDto updateUserStatus(@Valid @RequestBody UpdateUserStatusReqDto updateUserStatusReqDto) {
         return userService.updateUserStatus(updateUserStatusReqDto);
     }
@@ -164,6 +183,8 @@ public class UserController {
      * @return EmptyResDto An empty response DTO
      */
     @RequestMapping(value = "/update-diddoc-deactivated", method = RequestMethod.POST)
+    @ArticleLog(name = "[User] Update DID Document to Deactivated", apiType = ApiType.AGENT,
+            targetType = "USER", actionType = ActionType.CREATE)
     public EmptyResDto updateDidDocDeactivated(@Valid @RequestBody UpdateDidDocDeactivatedReqDto updateDidDocDeactivatedReqDto) {
         return userService.updateDidDocDeactivated(updateDidDocDeactivatedReqDto);
     }
@@ -175,6 +196,8 @@ public class UserController {
      * @return EmptyResDto An empty response DTO
      */
     @RequestMapping(value = "/update-diddoc-revoked", method = RequestMethod.POST)
+    @ArticleLog(name = "[User] Revoked DID Document", apiType = ApiType.AGENT,
+            targetType = "USER", actionType = ActionType.CREATE)
     public EmptyResDto updateDidDocRevoked(@Valid @RequestBody UpdateDidDocRevokedReqDto updateDidDocRevokedReqDto) {
         return userService.updateDidDocRevoked(updateDidDocRevokedReqDto);
     }
@@ -186,6 +209,8 @@ public class UserController {
      * @return OfferRestoreDidPushResDto The response DTO for the push-based restoration offer
      */
     @RequestMapping(value = "/offer-restore-did/push", method = RequestMethod.POST)
+    @ArticleLog(name = "[User] Offer Restore DID - Push", apiType = ApiType.AGENT,
+            targetType = "USER", actionType = ActionType.CREATE)
     public OfferRestoreDidPushResDto offerRestoreDidPush(@Valid @RequestBody OfferRestoreDidPushReqDto offerRestoreDidPushReqDto) {
         return userService.offerRestoreDidPush(offerRestoreDidPushReqDto);
     }
@@ -197,6 +222,8 @@ public class UserController {
      * @return OfferRestoreDidEmailResDto The response DTO for the email-based restoration offer
      */
     @RequestMapping(value = "/offer-restore-did/email", method = RequestMethod.POST)
+    @ArticleLog(name = "[User] Offer Restore DID - Email", apiType = ApiType.AGENT,
+            targetType = "USER", actionType = ActionType.CREATE)
     public OfferRestoreDidEmailResDto offerRestoreDidEmail(@Valid @RequestBody OfferRestoreDidEmailReqDto offerRestoreDidEmailReqDto) {
         return userService.offerRestoreDidEmail(offerRestoreDidEmailReqDto);
     }
@@ -230,6 +257,8 @@ public class UserController {
      * @return ConfirmRestoreDidDocResDto The response DTO for the restoration confirmation
      */
     @RequestMapping(value = "/confirm-restore-diddoc", method = RequestMethod.POST)
+    @ArticleLog(name = "[User] Confirm Restore DID Document", apiType = ApiType.AGENT,
+            targetType = "USER", actionType = ActionType.CREATE)
     public ConfirmRestoreDidDocResDto confirmRestoreDidDoc(@Valid @RequestBody ConfirmRestoreDidDocReqDto confirmRestoreDidDocReqDto) {
         return userService.confirmRestoreDidDoc(confirmRestoreDidDocReqDto);
     }

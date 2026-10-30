@@ -16,6 +16,8 @@
 
 package org.omnione.did.tas.v1.admin.controller;
 
+import org.omnione.did.base.annotation.ArticleLog;
+import org.omnione.did.base.constants.ActionType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.constants.UrlConstant;
@@ -61,6 +63,8 @@ public class EntityManagementController {
     }
 
     @RequestMapping(value = "/entities", method = RequestMethod.POST)
+    @ArticleLog(name = "[Entity Manage] Register Entity", description = "Register Entity.",
+            targetType = "TAS_ADMIN", targetId = "#name", actionType = ActionType.CREATE)
     public EmptyResDto registerEntity(@RequestParam("didDoc") MultipartFile didDoc,
                                       @RequestParam("role") String role,
                                       @RequestParam("serverUrl") String serverUrl,
@@ -76,11 +80,15 @@ public class EntityManagementController {
     }
 
     @RequestMapping(value = "/entities/register-simple", method = RequestMethod.POST)
+    @ArticleLog(name = "[Entity Manage] Register Entity Simple", description = "Register Entity Simple.",
+            targetType = "TAS_ADMIN", actionType = ActionType.CREATE)
     public EmptyResDto registerEntitiesSimple() {
         return entityManagementService.registerEntitiesSimple();
     }
 
     @PostMapping(value = "/entities/register-did/public")
+    @ArticleLog(name = "[Entity Manage] Register DID From Entity", description = "Register DID From entity.",
+            targetType = "TAS_ADMIN", targetId = "#registerDidFromEntityReqDto.name", actionType = ActionType.CREATE)
     public EmptyResDto registerDidFromEntity(@RequestBody RegisterDidFromEntityReqDto registerDidFromEntityReqDto) {
         return entityManagementService.registerDidFromEntity(registerDidFromEntityReqDto);
     }
@@ -101,6 +109,8 @@ public class EntityManagementController {
     }
 
     @DeleteMapping(value = "/entities")
+    @ArticleLog(name = "[Entity Manage] Delete Entity", description = "Delete Entity.",
+            targetType = "TAS_ADMIN", targetId = "#id", actionType = ActionType.DELETE)
     public EmptyResDto deleteEntity(@RequestParam("id") Long id) {
         return entityManagementService.deleteEntity(id);
     }

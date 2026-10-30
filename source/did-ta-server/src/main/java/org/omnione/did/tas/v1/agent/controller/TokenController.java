@@ -16,6 +16,9 @@
 
 package org.omnione.did.tas.v1.agent.controller;
 
+import org.omnione.did.base.annotation.ArticleLog;
+import org.omnione.did.base.constants.ActionType;
+import org.omnione.did.base.constants.ApiType;
 import org.omnione.did.base.constants.UrlConstant;
 import org.omnione.did.tas.v1.agent.dto.user.RequestCreateTokenReqDto;
 import org.omnione.did.tas.v1.agent.dto.user.RequestCreateTokenResDto;
@@ -43,6 +46,8 @@ public class TokenController {
      */
     @RequestMapping(value = "/request-create-token", method = RequestMethod.POST)
     @ResponseBody
+    @ArticleLog(name = "[Token] Request Create Token", apiType = ApiType.AGENT,
+            targetType = "TOKEN", actionType = ActionType.DELETE)
     public RequestCreateTokenResDto requestCreateToken(@Valid @RequestBody RequestCreateTokenReqDto requestCreateTokenReqDto) {
         return tokenService.requestCreateToken(requestCreateTokenReqDto);
     }

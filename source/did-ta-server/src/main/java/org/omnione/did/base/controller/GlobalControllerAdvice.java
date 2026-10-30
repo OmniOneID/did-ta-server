@@ -26,6 +26,8 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import jakarta.servlet.http.HttpServletRequest;
+import org.omnione.did.base.constants.LogAttrs;
 
 import java.util.stream.Collectors;
 
@@ -37,6 +39,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @RestControllerAdvice(basePackages = {"org.omnione.did"})
 public class GlobalControllerAdvice {
+    private void mark(HttpServletRequest req, String code, Exception ex) {
+        req.setAttribute(LogAttrs.ERROR_CODE, code);
+        req.setAttribute(LogAttrs.ERROR_CLASS, ex.getClass().getName());
+        req.setAttribute(LogAttrs.ERROR_MSG, ex.getMessage());
+    }
+
 
     /**
      * Handles OpenDidException that occurs during the execution of controller methods.
@@ -47,7 +55,8 @@ public class GlobalControllerAdvice {
      * @return a ResponseEntity containing the error response and the HTTP status code
      */
     @ExceptionHandler(OpenDidException.class)
-    public ResponseEntity<ErrorResponse> handleTasException(OpenDidException ex) {
+    public ResponseEntity<ErrorResponse> handleTasException(OpenDidException ex, HttpServletRequest req) {
+        mark(req, ex.getErrorCode() != null ? ex.getErrorCode().getCode() : "UNKNOWN", ex);
         if (ex.getErrorResponse() != null) {
             return new ResponseEntity<>(ex.getErrorResponse(), HttpStatus.valueOf(400));
         }
@@ -66,7 +75,8 @@ public class GlobalControllerAdvice {
      * @return a ResponseEntity containing the error response and a 500 HTTP status code
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException ex, HttpServletRequest req) {
+        mark(req, "9999", ex);
         int httpStatus = 500;
 
         String errorMessages = ex.getBindingResult()
@@ -88,7 +98,8 @@ public class GlobalControllerAdvice {
      * @return a ResponseEntity containing the error response and a 500 HTTP status code
      */
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ErrorResponse> handleValidationException(HttpMessageNotReadableException ex) {
+    public ResponseEntity<ErrorResponse> handleValidationException(HttpMessageNotReadableException ex, HttpServletRequest req) {
+        mark(req, ErrorCode.REQUEST_BODY_INVALID.getCode(), ex);
         ErrorResponse errorResponse = new ErrorResponse(ErrorCode.REQUEST_BODY_INVALID);
         return new ResponseEntity<>(errorResponse, HttpStatus.valueOf(500));
     }

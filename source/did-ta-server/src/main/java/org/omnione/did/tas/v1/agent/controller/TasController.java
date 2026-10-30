@@ -16,6 +16,9 @@
 
 package org.omnione.did.tas.v1.agent.controller;
 
+import org.omnione.did.base.annotation.ArticleLog;
+import org.omnione.did.base.constants.ActionType;
+import org.omnione.did.base.constants.ApiType;
 import org.omnione.did.base.constants.UrlConstant;
 import org.omnione.did.tas.v1.common.service.TasService;
 import jakarta.validation.Valid;
@@ -43,6 +46,8 @@ public class TasController {
      */
     @RequestMapping(value = "/request-enroll-tas", method = RequestMethod.POST)
     @ResponseBody
+    @ArticleLog(name = "[Enroll] Request Enroll TAS", apiType = ApiType.AGENT,
+            targetType = "ENTITY", actionType = ActionType.CREATE)
     public RequestEnrollTasResDto requestEnrollTas(@Valid @RequestBody RequestEnrollTasReqDto requestEnrollTas) {
         return tasService.requestEnrollTas(requestEnrollTas);
     }

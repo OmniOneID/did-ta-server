@@ -15,6 +15,8 @@
  */
 package org.omnione.did.list.v1.admin.controller;
 
+import org.omnione.did.base.annotation.ArticleLog;
+import org.omnione.did.base.constants.ActionType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.constants.UrlConstant;
@@ -49,6 +51,8 @@ public class ListVcPlanManagementController {
     }
 
     @PostMapping(value = "/vc-plans/public")
+    @ArticleLog(name = "[List Admin] Register VC Plan From Issuer", description = "Register VC Plan From Issuer.",
+            targetType = "LIST_ISSUER", targetId = "#registerVcPlanFromIssuerReqDto.issuerDid", actionType = ActionType.CREATE)
     public EmptyResDto registerVcPlanFromIssuer(@RequestBody RegisterVcPlanFromIssuerReqDto registerVcPlanFromIssuerReqDto) {
         return listVcPlanManagementService.registerVcPlanFromIssuer(registerVcPlanFromIssuerReqDto);
     }

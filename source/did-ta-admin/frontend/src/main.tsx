@@ -45,6 +45,8 @@ import CredentialDefinitionDetailPage from './pages/list-provider/credential-def
 import CredentialDefinitionManagementPage from './pages/list-provider/credential-definition/CredentialDefinitionManagementPage';
 import CertificateVcManagementPage from './pages/list-provider/certificate-vc/CertificateVcManagementPage';
 import CertificateVcDetailPage from './pages/list-provider/certificate-vc/CertificateVcDetailPage';
+import ApiLogManagementPage from './pages/log/ApiLogManagementPage';
+import AuditApiLogManagementPage from './pages/log/AuditApiLogManagementPage';
 import ServerConfigurationPage from './pages/server-configuration/ServerConfigurationPage';
 import Oid4vciIssuerManagementPage from './pages/list-provider/oid4vci-issuer/Oid4vciIssuerManagementPage';
 import Oid4vciIssuerDetailPage from './pages/list-provider/oid4vci-issuer/Oid4vciIssuerDetailPage';
@@ -216,6 +218,14 @@ const router = createBrowserRouter([
           {
             path: 'admins/admin-management/:id',
             Component: AdminDetailPage,
+          },
+          {
+            path: '/logs/api',
+            Component: ApiLogManagementPage,
+          },
+          {
+            path: '/logs/audit',
+            Component: AuditApiLogManagementPage,
           },
           {
             path: 'server-configuration',

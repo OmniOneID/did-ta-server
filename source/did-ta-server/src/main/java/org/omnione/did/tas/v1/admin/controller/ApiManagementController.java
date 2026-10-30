@@ -15,6 +15,8 @@
  */
 package org.omnione.did.tas.v1.admin.controller;
 
+import org.omnione.did.base.annotation.ArticleLog;
+import org.omnione.did.base.constants.ActionType;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,6 +47,8 @@ public class ApiManagementController {
 
     @PostMapping(value = "/apis/expiration")
     @ResponseBody
+    @ArticleLog(name = "[API Manage] Register Expiration Info", description = "Register Expiration Info.",
+            targetType = "TAS_ADMIN", actionType = ActionType.CREATE)
     public ExpirationInfoDto registerExpirationInfo(@Valid @RequestBody RegisterExpirationInfoReqDto registerExpirationInfoReqDto) {
         return apiManagementService.registerExpirationInfo(registerExpirationInfoReqDto);
     }
@@ -56,6 +60,8 @@ public class ApiManagementController {
 
     @PostMapping(value = "/apis/key-exchange-policy")
     @ResponseBody
+    @ArticleLog(name = "[API Manage] Register Key Exchange Policy", description = "Register key exchange policy.",
+            targetType = "TAS_ADMIN", actionType = ActionType.CREATE)
     public KeyExchangePolicyInfoDto registerKeyExchangePolicy(@Valid @RequestBody RegisterKeyExchangePolicyInfoReqDto registerKeyExchangePolicyInfoReqDto) {
         return apiManagementService.registerKeyExchangePolicy(registerKeyExchangePolicyInfoReqDto);
     }

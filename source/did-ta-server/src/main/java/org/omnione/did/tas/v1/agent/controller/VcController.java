@@ -16,6 +16,9 @@
 
 package org.omnione.did.tas.v1.agent.controller;
 
+import org.omnione.did.base.annotation.ArticleLog;
+import org.omnione.did.base.constants.ActionType;
+import org.omnione.did.base.constants.ApiType;
 import com.google.gson.GsonBuilder;
 import org.omnione.did.base.constants.UrlConstant;
 import org.omnione.did.tas.v1.agent.service.VcService;
@@ -65,6 +68,8 @@ public class VcController {
      * @return the response of issue vc
      */
     @RequestMapping(value = "/offer-issue-vc/qr", method = RequestMethod.POST)
+    @ArticleLog(name = "[VC] Offer Issue VC - QR", apiType = ApiType.AGENT,
+            targetType = "VC", actionType = ActionType.CREATE)
     public OfferIssueVcResDto offerIssueVcQr(@Valid @RequestBody OfferIssueVcQrReqDto request) {
         return vcService.offerIssueVcQr(request);
     }
@@ -76,6 +81,8 @@ public class VcController {
      * @return the response of issue vc
      */
     @RequestMapping(value = "/offer-issue-vc/push", method = RequestMethod.POST)
+    @ArticleLog(name = "[VC] Offer Issue VC - Push", apiType = ApiType.AGENT,
+            targetType = "VC", actionType = ActionType.CREATE)
     public OfferIssueVcNotiResDto offerIssueVcPush(@Valid @RequestBody OfferIssueVcPushReqDto request) {
         return vcService.offerIssueVcPush(request);
     }
@@ -87,6 +94,8 @@ public class VcController {
      * @return the response of issue vc
      */
     @RequestMapping(value = "/offer-issue-vc/email", method = RequestMethod.POST)
+    @ArticleLog(name = "[VC] Offer Issue VC - Email", apiType = ApiType.AGENT,
+            targetType = "VC", actionType = ActionType.CREATE)
     public OfferIssueVcNotiResDto offerIssueVcEmail(@Valid @RequestBody OfferIssueVcEmailReqDto request) {
         return vcService.offerIssueVcEmail(request);
     }
@@ -99,6 +108,8 @@ public class VcController {
      */
     @RequestMapping(value = "/propose-issue-vc", method = RequestMethod.POST)
     @ResponseBody
+    @ArticleLog(name = "[VC] Propose Issue VC", apiType = ApiType.AGENT,
+            targetType = "VC", actionType = ActionType.CREATE)
     public ProposeIssueVcResDto proposeIssueVc(@Valid @RequestBody ProposeIssueVcReqDto proposeIssueVcReqDto) {
         return vcService.proposeIssueVc(proposeIssueVcReqDto);
     }
@@ -111,6 +122,8 @@ public class VcController {
      */
     @RequestMapping(value = "/request-issue-profile", method = RequestMethod.POST)
     @ResponseBody
+    @ArticleLog(name = "[VC] Request Issue Profile", apiType = ApiType.AGENT,
+            targetType = "VC", actionType = ActionType.CREATE)
     public ResponseEntity<String> requestIssueProfile(@Valid @RequestBody RequestIssueProfileReqDto requestIssueProfileReqDto) {
         String jsonResponse = new GsonBuilder().create().toJson(vcService.requestIssueProfile(requestIssueProfileReqDto));
         return ResponseEntity.ok()
@@ -126,6 +139,8 @@ public class VcController {
      */
     @RequestMapping(value = "/request-issue-vc", method = RequestMethod.POST)
     @ResponseBody
+    @ArticleLog(name = "[VC] Request Issue VC", apiType = ApiType.AGENT,
+            targetType = "VC", actionType = ActionType.CREATE)
     public RequestIssueVcResDto requestIssueVc(@Valid @RequestBody RequestIssueVcReqDto requestIssueVcReqDto) {
         return vcService.requestIssueVc(requestIssueVcReqDto);
     }
@@ -138,6 +153,8 @@ public class VcController {
      */
     @RequestMapping(value = "/confirm-issue-vc", method = RequestMethod.POST)
     @ResponseBody
+    @ArticleLog(name = "[VC] Confirm Issue VC", apiType = ApiType.AGENT,
+            targetType = "VC", actionType = ActionType.CREATE)
     public ConfirmIssueVcResDto confirmIssueVc(@Valid @RequestBody ConfirmIssueVcReqDto confirmIssueVcReqDto) {
         return vcService.confirmIssueVc(confirmIssueVcReqDto);
     }
@@ -171,6 +188,8 @@ public class VcController {
      */
     @RequestMapping(value = "/propose-revoke-vc", method = RequestMethod.POST)
     @ResponseBody
+    @ArticleLog(name = "[VC] Propose Revoke VC", apiType = ApiType.AGENT,
+            targetType = "REVOKE_VC", actionType = ActionType.CREATE)
     public ProposeRevokeVcResDto proposeRevokeVc(@Valid @RequestBody ProposeRevokeVcReqDto proposeRevokeVcReqDto) {
         return vcService.proposeRevokeVc(proposeRevokeVcReqDto);
     }
@@ -183,6 +202,8 @@ public class VcController {
      */
     @RequestMapping(value = "/request-revoke-vc", method = RequestMethod.POST)
     @ResponseBody
+    @ArticleLog(name = "[VC] Request Revoke VC", apiType = ApiType.AGENT,
+            targetType = "REVOKE_VC", actionType = ActionType.CREATE)
     public RequestRevokeVcResDto requestRevokeVc(@Valid @RequestBody RequestRevokeVcReqDto requestRevokeVcReqDto) {
         return vcService.requestRevokeVc(requestRevokeVcReqDto);
     }
@@ -195,6 +216,8 @@ public class VcController {
      */
     @RequestMapping(value = "/confirm-revoke-vc", method = RequestMethod.POST)
     @ResponseBody
+    @ArticleLog(name = "[VC] Confirm Revoke VC", apiType = ApiType.AGENT,
+            targetType = "REVOKE_VC", actionType = ActionType.CREATE)
     public ConfirmRevokeVcResDto confirmRevokeVc(@Valid @RequestBody ConfirmRevokeVcReqDto confirmRevokeVcReqDto) {
         return vcService.confirmRevokeVc(confirmRevokeVcReqDto);
     }

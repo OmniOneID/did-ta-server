@@ -15,6 +15,8 @@
  */
 package org.omnione.did.tas.v1.admin.controller;
 
+import org.omnione.did.base.annotation.ArticleLog;
+import org.omnione.did.base.constants.ActionType;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,6 +46,8 @@ public class KycManagementController {
 
     @PostMapping(value = "/kycs")
     @ResponseBody
+    @ArticleLog(name = "[KYC Manage] Register KYC", description = "register KYC.",
+            targetType = "TAS_ADMIN", targetId = "#registerKycReqDto.name",actionType = ActionType.CREATE)
     public KycInfoDto registerKyc(@Valid @RequestBody RegisterKycReqDto registerKycReqDto) {
         return kycManagementService.registerKyc(registerKycReqDto);
     }

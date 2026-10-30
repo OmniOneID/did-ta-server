@@ -18,6 +18,10 @@ package org.omnione.did.base.config;
 
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Configuration;
+import lombok.RequiredArgsConstructor;
+import org.omnione.did.base.aop.ApiLogInterceptor;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * The WebConfig class provides configuration for web settings in the application.
@@ -25,6 +29,10 @@ import org.springframework.context.annotation.Configuration;
  * It can be extended to include additional web-related configurations as needed.
  */
 @Configuration
+@RequiredArgsConstructor
 @ConfigurationPropertiesScan("org.omnione.did.base.property")
-public class WebConfig {
+public class WebConfig implements WebMvcConfigurer {
+    private final ApiLogInterceptor apiLogInterceptor;
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) { registry.addInterceptor(apiLogInterceptor); }
 }

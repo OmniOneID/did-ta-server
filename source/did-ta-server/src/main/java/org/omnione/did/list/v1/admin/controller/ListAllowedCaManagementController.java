@@ -15,6 +15,8 @@
  */
 package org.omnione.did.list.v1.admin.controller;
 
+import org.omnione.did.base.annotation.ArticleLog;
+import org.omnione.did.base.constants.ActionType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.constants.UrlConstant;
@@ -53,11 +55,15 @@ public class ListAllowedCaManagementController {
     }
 
     @PostMapping(value = "/allowed-cas")
+    @ArticleLog(name = "[List Admin] Register Allowed CAS", description = "Register the Allowed CAS.",
+            targetType = "LIST", targetId = "#registerAllowedCaReqDto.caList", actionType = ActionType.CREATE)
     public EmptyResDto registerAllowedCa(@RequestBody RegisterAllowedCaReqDto registerAllowedCaReqDto){
         return listAllowedCaManagementService.registerAllowedCa(registerAllowedCaReqDto);
     }
 
     @PutMapping(value = "/allowed-cas")
+    @ArticleLog(name = "[List Admin] Update Allowed CAS", description = "Update the Allowed CAS.",
+            targetType = "LIST", targetId = "#updateAllowedCaReqDto.caList", actionType = ActionType.UPDATE)
     public EmptyResDto updateAllowedCa(@RequestBody UpdateAllowedCaReqDto updateAllowedCaReqDto){
         return listAllowedCaManagementService.updateAllowedCa(updateAllowedCaReqDto);
     }
@@ -68,6 +74,8 @@ public class ListAllowedCaManagementController {
     }
 
     @RequestMapping(value = "/allowed-cas", method = RequestMethod.DELETE)
+    @ArticleLog(name = "[List Admin] Delete Allowed CAS", description = "Delete the Allowed CAS.",
+            targetType = "LIST", targetId = "#id", actionType = ActionType.DELETE)
     public EmptyResDto deleteAllowedCa(@RequestParam Long id){
         return listAllowedCaManagementService.deleteAllowedCa(id);
     }

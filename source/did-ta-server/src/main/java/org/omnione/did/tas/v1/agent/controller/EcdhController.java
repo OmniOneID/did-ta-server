@@ -16,6 +16,9 @@
 
 package org.omnione.did.tas.v1.agent.controller;
 
+import org.omnione.did.base.annotation.ArticleLog;
+import org.omnione.did.base.constants.ActionType;
+import org.omnione.did.base.constants.ApiType;
 import org.omnione.did.base.constants.UrlConstant;
 import org.omnione.did.tas.v1.agent.dto.entity.RequestECDHReqDto;
 import org.omnione.did.tas.v1.agent.dto.entity.RequestECDHResDto;
@@ -43,6 +46,8 @@ public class EcdhController {
      */
     @RequestMapping(value = "/request-ecdh", method = RequestMethod.POST)
     @ResponseBody
+    @ArticleLog(name = "[ECDH] ECDH", apiType = ApiType.AGENT,
+            targetType = "ECDH", actionType = ActionType.ECDH)
     public RequestECDHResDto requestECDH(@Valid @RequestBody RequestECDHReqDto requestECDHReqDto) {
         return ecdhService.requestECDH(requestECDHReqDto);
     }

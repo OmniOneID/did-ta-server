@@ -16,6 +16,9 @@
 
 package org.omnione.did.tas.v1.agent.controller;
 
+import org.omnione.did.base.annotation.ArticleLog;
+import org.omnione.did.base.constants.ActionType;
+import org.omnione.did.base.constants.ApiType;
 import org.omnione.did.base.constants.UrlConstant;
 import org.omnione.did.tas.v1.common.service.SetupService;
 import org.omnione.did.tas.v1.common.dto.EmptyResDto;
@@ -48,12 +51,16 @@ public class SetupController {
      * @return EmptyResDto A response DTO representing an empty object.
      */
     @RequestMapping(value = "/blockchain/index", method = RequestMethod.DELETE)
+    @ArticleLog(name = "[Blockchain] Remove Blockchain Index", apiType = ApiType.AGENT,
+            targetType = "BLOCKCHAIN", actionType = ActionType.DELETE)
     public EmptyResDto removeBlockchainIndex(@RequestBody RemoveBlockChainIndexReqDto removeBlockChainIndexReqDto) {
         return setupService.removeBlockchainIndex(removeBlockChainIndexReqDto);
     }
 
 
     @RequestMapping(value = "/blockchain/all", method = RequestMethod.DELETE)
+    @ArticleLog(name = "[Blockchain] Remove Blockchain All Index", apiType = ApiType.AGENT,
+            targetType = "BLOCKCHAIN", actionType = ActionType.DELETE)
     public EmptyResDto removeBlockchainAll() {
         return setupService.removeBlockchainAll();
     }

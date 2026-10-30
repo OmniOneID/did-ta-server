@@ -18,8 +18,8 @@ puppeteer:
 Open DID TA Admin Console Guide
 ==
 
-- Date: 2026-10-29
-- Version: v3.0.0
+- Date: 2026-10-30
+- Version: v3.0.1
 
 개정 이력
 ==
@@ -36,6 +36,7 @@ Open DID TA Admin Console Guide
 | v2.0.0 | 2025-05-30 | `3.16. Credential Schema List`에서 Credential Schema 장 추가 |
 |        |            | `3.16. Credential Definition List`에서 Credential Definition 장 추가  |
 | v3.0.0 | 2026-10-29 | 현재 Admin Console 화면 반영, 신규 관리 메뉴 및 비밀번호 정책 추가, 화면 캡처 갱신 |
+| v3.0.1 | 2026-10-30 | API Log 및 Audit API Log 메뉴와 조회 방법 추가 |
 
 
 
@@ -108,6 +109,9 @@ Open DID TA Admin Console Guide
   - [3.24. mDoc Trusted Issuers](#324-mdoc-trusted-issuers)
   - [3.25. Server Configuration](#325-server-configuration)
   - [3.26. Password Policy Settings](#326-password-policy-settings)
+  - [3.27. Log Management](#327-log-management)
+    - [3.27.1. API Log](#3271-api-log)
+    - [3.27.2. Audit API Log](#3272-audit-api-log)
 
 # 1. 소개
 
@@ -141,6 +145,8 @@ TA Admin Console에서 설정할 수 있는 주요 항목은 다음과 같습니
   - VC plan 목록 관리
   - Credential Schema 목록 관리
   - Credential Definition 목록 관리
+- Log Management
+  - Agent API 호출 및 관리자 API 작업 기록 조회
 
 <br/>
 
@@ -173,7 +179,9 @@ Admin Console에 접속하려면 다음 단계를 따르세요:
 
 콘솔의 일반적인 화면은 다음과 같은 요소들로 구성되어 있습니다:
 
-<img src="./images/live-password-policy.jpg" width="600"/>
+<img src="./images/api-log-api-example.png" width="800"/>
+
+> 예시 데이터로 렌더링한 화면입니다.
 
 | 번호 | 영역             | 설명                                                                                                                                |
 | ---- | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
@@ -202,8 +210,6 @@ TA 서버가 아직 등록되지 않은 초기 상태에서는
 
 TA 등록이 완료되면 전체 관리 기능이 활성화되며, 사이드바 메뉴는 다음과 같이 구성됩니다:
 
-<img src="./images/live-menu.jpg" width="300"/>
-
 | 번호 | 메뉴 | Depth | 설명 |
 | --- | --- | --- | --- |
 | 1 | TA Management | 1 | TA 기본 정보와 등록 상태 조회 |
@@ -229,10 +235,13 @@ TA 등록이 완료되면 전체 관리 기능이 활성화되며, 사이드바 
 | 21 | └ User List | 2 | 사용자 조회 |
 | 22 | └ App List | 2 | 앱 조회 |
 | 23 | └ Wallet List | 2 | 월렛 조회 |
-| 24 | Server Configuration | 1 | 외부 서버 API 키 설정 |
-| 25 | Admin Management | 1 | 관리자 설정 상위 메뉴 |
-| 26 | └ Admin Management | 2 | 관리자 계정 관리 |
-| 27 | └ Password Policy Settings | 2 | 관리자 비밀번호 정책 설정 |
+| 24 | Log Management | 1 | API 호출 및 관리자 작업 로그 조회 |
+| 25 | └ API Log | 2 | Agent API 호출 기록 조회 |
+| 26 | └ Audit API Log | 2 | 관리자 API 작업 기록 조회 |
+| 27 | Server Configuration | 1 | 외부 서버 API 키 설정 |
+| 28 | Admin Management | 1 | 관리자 설정 상위 메뉴 |
+| 29 | └ Admin Management | 2 | 관리자 계정 관리 |
+| 30 | └ Password Policy Settings | 2 | 관리자 비밀번호 정책 설정 |
 
 > **참고**:  
 > 위 메뉴 구성에 대한 각 기능의 상세 사용법은  
@@ -257,6 +266,8 @@ TA 등록이 완료되면 전체 관리 기능이 활성화되며, 사이드바 
 <br/>
 
 # 3. 기능별 상세 메뉴얼
+
+> 등록 완료 후 관리 화면은 현재 사이드 메뉴와 예시 데이터로 캡처했습니다. 실제 데이터는 환경에 따라 달라집니다.
 
 이 장에서는 TA Admin Console의 주요 기능에 대한 상세 사용 방법을 안내합니다.
 
@@ -1239,6 +1250,36 @@ ROOT 계정은 `Admin Management` 메뉴에서 모든 기능을 수행할 수 �
 `Admin Management > Password Policy Settings`에서 관리자 계정 비밀번호 정책을 관리합니다. `Minimum Length`는 6~20자, `Password Expiration Period`는 30~365일 범위에서 설정합니다. 필요에 따라 대문자, 숫자, 특수문자 사용 규칙을 켜고 `UPDATE`로 저장합니다. `RESET`은 변경 전 입력 상태로 되돌립니다. 현재 설치 화면의 값은 최소 8자, 만료 기간 365일이며 구성 규칙은 모두 꺼져 있습니다. 실제 적용 정책은 운영 환경 설정을 확인하세요.
 
 <img src="./images/live-password-policy.jpg" width="800"/>
+
+## 3.27. Log Management
+
+TA 등록이 완료되면 사이드바의 `Log Management`에서 API 호출 기록을 조회할 수 있습니다. 두 화면 모두 최신 기록부터 페이지별로 표시되며, 검색 조건을 선택하고 값을 입력한 뒤 검색할 수 있습니다. 새로고침으로 목록을 다시 불러오고, `Called At`을 클릭하면 상세 창이 열립니다. 로그는 조회 전용입니다.
+
+### 3.27.1. API Log
+
+<img src="./images/api-log-api-example.png" width="800"/>
+
+> 예시 데이터로 렌더링한 목록 화면입니다. 실제 로그와 계정 정보는 환경에 따라 다릅니다.
+
+`Log Management > API Log`는 `@ArticleLog`가 적용된 TA 및 Notification Agent API 호출 기록을 보여줍니다. 목록에는 호출 시각(`Called At`), HTTP 메서드, URI, 상태 코드, 결과(`SUCCESS` 또는 `FAIL`), 요청자 ID가 표시됩니다. `URI` 또는 `Result`로 검색할 수 있습니다. 상세 창에서는 처리 시간, 클라이언트 IP, User Agent, 오류 메시지가 기록된 경우 함께 확인할 수 있습니다. 화면 경로는 `/logs/api`입니다.
+
+<img src="./images/api-log-api-detail-example.png" width="800"/>
+
+> 호출 시각을 선택했을 때 표시되는 상세 창의 예시입니다.
+
+### 3.27.2. Audit API Log
+
+<img src="./images/api-log-audit-example.png" width="800"/>
+
+> 예시 데이터로 렌더링한 목록 화면입니다. 실제 로그와 계정 정보는 환경에 따라 다릅니다.
+
+`Log Management > Audit API Log`는 Admin API의 관리자 작업 기록을 보여줍니다. 목록에는 호출 시각, 요청자 ID, 작업 유형(`Action Type`), 대상 유형과 ID, 결과가 표시됩니다. `Action Type`, `Target Type`, `Result`, `Requester ID`로 검색할 수 있습니다. `Action Type`에는 `CREATE`, `UPDATE`, `DELETE`, `LOGIN`, `LOGOUT` 등의 값이 사용됩니다. 상세 창에서는 작업 설명, 클라이언트 IP, User Agent, 오류 메시지가 기록된 경우 함께 확인할 수 있습니다. 화면 경로는 `/logs/audit`입니다.
+
+<img src="./images/api-log-audit-detail-example.png" width="800"/>
+
+> 호출 시각을 선택했을 때 표시되는 상세 창의 예시입니다.
+
+> 로그는 서버의 `@ArticleLog`가 적용된 API 호출에서 생성됩니다. 결과가 `FAIL`이면 API Log의 상태 코드와 해당 로그의 상세 메시지를 확인하세요.
 
 [Open DID Installation Guide]: https://github.com/OmniOneID/did-release/blob/main/release-V2.0.0.0/OpenDID_Installation_Guide-V2.0.0.0_ko.md
 

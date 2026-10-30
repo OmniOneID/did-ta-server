@@ -16,6 +16,9 @@
 
 package org.omnione.did.noti.v1.agent.controller;
 
+import org.omnione.did.base.annotation.ArticleLog;
+import org.omnione.did.base.constants.ActionType;
+import org.omnione.did.base.constants.ApiType;
 import org.omnione.did.base.constants.UrlConstant;
 import org.omnione.did.noti.v1.agent.dto.push.RequestSendPushReqDto;
 import org.omnione.did.noti.v1.agent.dto.push.RequestSendPushResDto;
@@ -49,6 +52,8 @@ public class NotiPushController {
      */
     @RequestMapping(value = "/send-push", method = RequestMethod.POST)
     @ResponseBody
+    @ArticleLog(name = "[Noti] Send Push", description = "Send to Push.",
+            targetType = "NOTI", actionType = ActionType.NONE, apiType = ApiType.AGENT)
     public RequestSendPushResDto requestSendPush(@Valid @RequestBody RequestSendPushReqDto requestSendPushReqDto){
         return notiPushService.requestSendPush(requestSendPushReqDto);
     }

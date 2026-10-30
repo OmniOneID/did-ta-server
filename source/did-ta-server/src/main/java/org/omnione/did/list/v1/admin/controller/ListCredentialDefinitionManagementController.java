@@ -15,6 +15,8 @@
  */
 package org.omnione.did.list.v1.admin.controller;
 
+import org.omnione.did.base.annotation.ArticleLog;
+import org.omnione.did.base.constants.ActionType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.constants.UrlConstant;
@@ -45,6 +47,8 @@ public class ListCredentialDefinitionManagementController {
     }
 
     @PostMapping(value = "/credential-definitions/public")
+    @ArticleLog(name = "[List Admin] Register Credential Definition From Issuer", description = "Register Credential Definition From Issuer.",
+            targetType = "LIST_ISSUER", targetId = "#registerCredentialDefinitionFromIssuerReqDto.issuerDid", actionType = ActionType.CREATE)
     public EmptyResDto registerCredentialDefinitionFromIssuer(@RequestBody RegisterCredentialDefinitionFromIssuerReqDto registerCredentialDefinitionFromIssuerReqDto) {
         return listCredentialDefinitionManagementService.registerCredentialDefinitionFromIssuer(registerCredentialDefinitionFromIssuerReqDto);
     }

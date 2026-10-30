@@ -16,6 +16,9 @@
 
 package org.omnione.did.tas.v1.agent.controller;
 
+import org.omnione.did.base.annotation.ArticleLog;
+import org.omnione.did.base.constants.ActionType;
+import org.omnione.did.base.constants.ApiType;
 import org.omnione.did.base.constants.UrlConstant;
 import org.omnione.did.tas.v1.agent.dto.wallet.RegisterWalletReqDto;
 import org.omnione.did.tas.v1.agent.dto.wallet.RegisterWalletResDto;
@@ -43,6 +46,8 @@ public class WalletController {
      */
     @RequestMapping(value = "/request-register-wallet", method = RequestMethod.POST)
     @ResponseBody
+    @ArticleLog(name = "[Wallet] Request Register Wallet", apiType = ApiType.AGENT,
+            targetType = "WALLET", actionType = ActionType.CREATE)
     public RegisterWalletResDto RequestRegisterWallet(@RequestBody RegisterWalletReqDto registerWalletReqDto) {
         return walletService.RequestRegisterWallet(registerWalletReqDto);
     }

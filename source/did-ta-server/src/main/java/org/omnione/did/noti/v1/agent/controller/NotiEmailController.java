@@ -16,6 +16,9 @@
 
 package org.omnione.did.noti.v1.agent.controller;
 
+import org.omnione.did.base.annotation.ArticleLog;
+import org.omnione.did.base.constants.ActionType;
+import org.omnione.did.base.constants.ApiType;
 import org.omnione.did.base.constants.UrlConstant;
 import org.omnione.did.noti.v1.agent.service.NotiEmailService;
 import org.omnione.did.noti.v1.agent.dto.email.RequestSendEmailReqDto;
@@ -53,6 +56,8 @@ public class NotiEmailController {
      */
     @RequestMapping(value = "/send-email", method = RequestMethod.POST)
     @ResponseBody
+    @ArticleLog(name = "[Noti] Send Email", description = "Send to Email.",
+            targetType = "NOTI", actionType = ActionType.NONE, apiType = ApiType.AGENT)
     public EmptyResDto requestSendEmail(@Valid @RequestBody RequestSendEmailReqDto requestSendEmailReqDto){
         return notiEmailService.requestSendEmail(requestSendEmailReqDto);
     }

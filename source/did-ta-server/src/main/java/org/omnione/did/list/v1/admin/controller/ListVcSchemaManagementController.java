@@ -15,6 +15,8 @@
  */
 package org.omnione.did.list.v1.admin.controller;
 
+import org.omnione.did.base.annotation.ArticleLog;
+import org.omnione.did.base.constants.ActionType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.constants.UrlConstant;
@@ -50,6 +52,8 @@ public class ListVcSchemaManagementController {
     }
 
     @PostMapping(value = "/vc-schemas/public")
+    @ArticleLog(name = "[List Admin] Register VC Schema From Issuer", description = "Register VC Schema From Issuer.",
+            targetType = "LIST_ISSUER", targetId = "#registerVcSchemaFromIssuerReqDto.issuerDid", actionType = ActionType.CREATE)
     public EmptyResDto registerVcSchemaFromIssuer(@RequestBody RegisterVcSchemaFromIssuerReqDto registerVcSchemaFromIssuerReqDto) {
         return listVcSchemaManagementService.registerVcSchemaFromIssuer(registerVcSchemaFromIssuerReqDto);
     }

@@ -16,6 +16,9 @@
 
 package org.omnione.did.tas.v1.agent.controller;
 
+import org.omnione.did.base.annotation.ArticleLog;
+import org.omnione.did.base.constants.ActionType;
+import org.omnione.did.base.constants.ApiType;
 import org.omnione.did.base.constants.UrlConstant;
 import org.omnione.did.tas.v1.common.dto.EmptyResDto;
 import org.omnione.did.tas.v1.agent.dto.push.UpdatePushTokenReqDto;
@@ -47,6 +50,8 @@ public class PushController {
      */
     @RequestMapping(value = "/update-push-token", method = RequestMethod.POST)
     @ResponseBody
+    @ArticleLog(name = "[Push] Update Push Token", apiType = ApiType.AGENT,
+            targetType = "PUSH", actionType = ActionType.ETC)
     public EmptyResDto updatePushToken(@Valid @RequestBody UpdatePushTokenReqDto updatePushTokenReqDto) {
         return pushService.updatePushToken(updatePushTokenReqDto);
     }

@@ -15,6 +15,8 @@
  */
 package org.omnione.did.list.v1.admin.controller;
 
+import org.omnione.did.base.annotation.ArticleLog;
+import org.omnione.did.base.constants.ActionType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.constants.UrlConstant;
@@ -47,6 +49,8 @@ public class ListCredentialSchemaManagementController {
     }
 
     @PostMapping(value = "/credential-schemas/public")
+    @ArticleLog(name = "[List Admin] Register Credential Schema From Issuer", description = "Register Credential Schema From Issuer.",
+            targetType = "LIST_ISSUER", targetId = "#registerCredentialSchemaFromIssuerReqDto.issuerDid", actionType = ActionType.CREATE)
     public EmptyResDto registerCredentialSchemaFromIssuer(@RequestBody RegisterCredentialSchemaFromIssuerReqDto registerCredentialSchemaFromIssuerReqDto) {
         return listCredentialSchemaManagementService.registerCredentialSchemaFromIssuer(registerCredentialSchemaFromIssuerReqDto);
     }

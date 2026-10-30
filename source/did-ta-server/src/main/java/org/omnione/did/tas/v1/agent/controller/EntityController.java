@@ -16,6 +16,9 @@
 
 package org.omnione.did.tas.v1.agent.controller;
 
+import org.omnione.did.base.annotation.ArticleLog;
+import org.omnione.did.base.constants.ActionType;
+import org.omnione.did.base.constants.ApiType;
 import org.omnione.did.base.constants.UrlConstant;
 import org.omnione.did.tas.v1.agent.dto.entity.ConfirmEnrollEntityReqDto;
 import org.omnione.did.tas.v1.agent.dto.entity.ProposeEnrollEntityReqDto;
@@ -47,6 +50,8 @@ public class EntityController {
      */
     @RequestMapping(value = "/propose-enroll-entity", method = RequestMethod.POST)
     @ResponseBody
+    @ArticleLog(name = "[Enroll] Propose Enroll Entity", apiType = ApiType.AGENT,
+            targetType = "ENTITY", actionType = ActionType.ENTITY)
     public ProposeEnrollEntityResDto proposeEnrollEntity(@Valid @RequestBody ProposeEnrollEntityReqDto proposeEnrollEntityReqDto) {
         return entityService.proposeEnrollEntity(proposeEnrollEntityReqDto);
     }
@@ -59,6 +64,8 @@ public class EntityController {
      */
     @RequestMapping(value = "/request-enroll-entity", method = RequestMethod.POST)
     @ResponseBody
+    @ArticleLog(name = "[Enroll] Request Enroll Entity", apiType = ApiType.AGENT,
+            targetType = "ENTITY", actionType = ActionType.ENTITY)
     public RequestEnrollEntityResDto requestEnrollEntity(@RequestBody RequestEnrollEntityReqDto requestEnrollEntityReqDto) {
         return entityService.requestEnrollEntity(requestEnrollEntityReqDto);
     }
@@ -71,5 +78,7 @@ public class EntityController {
      */
     @RequestMapping(value = "/confirm-enroll-entity", method = RequestMethod.POST)
     @ResponseBody
+    @ArticleLog(name = "[Enroll] Confirm Enroll Entity", apiType = ApiType.AGENT,
+            targetType = "ENTITY", actionType = ActionType.ENTITY)
     public ConfirmEnrollEntityResDto confirmEnrollEntity(@RequestBody ConfirmEnrollEntityReqDto confirmEnrollEntityReqDto) { return entityService.confirmEnrollEntity(confirmEnrollEntityReqDto); }
 }

@@ -15,6 +15,8 @@
  */
 package org.omnione.did.noti.v1.admin.controller;
 
+import org.omnione.did.base.annotation.ArticleLog;
+import org.omnione.did.base.constants.ActionType;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +44,8 @@ public class NotificationManagementController {
 
     @PostMapping(value = "/servers/email")
     @ResponseBody
+    @ArticleLog(name = "[Noti Admin] Register Email Configuration", description = "Register Email Configuration.",
+            targetType = "NOTI", targetId = "#registerEmailConfigurationReqDto.sender", actionType = ActionType.CREATE)
     public EmailConfigurationDto registerEmailConfiguration(@Valid @RequestBody RegisterEmailConfigurationReqDto registerEmailConfigurationReqDto) {
         return notificationManagementService.registerEmailConfiguration(registerEmailConfigurationReqDto);
     }
@@ -59,6 +63,8 @@ public class NotificationManagementController {
 
     @PostMapping(value = "/templates")
     @ResponseBody
+    @ArticleLog(name = "[Noti Admin] Register Email Template", description = "Register Email Template.",
+            targetType = "NOTI", targetId = "#registerNotificationTemplateReqDto.templateType", actionType = ActionType.CREATE)
     public NotificationTemplateInfoDto registerNotificationTemplate(@Valid @RequestBody RegisterNotificationTemplateReqDto registerNotificationTemplateReqDto) {
         return notificationManagementService.registerNotificationTemplate(registerNotificationTemplateReqDto);
     }
@@ -70,6 +76,8 @@ public class NotificationManagementController {
 
     @PostMapping(value = "/servers/push")
     @ResponseBody
+    @ArticleLog(name = "[Noti Admin] Register Push Configuration", description = "Register Push Configuration.",
+            targetType = "NOTI", actionType = ActionType.CREATE)
     public void registerPushConfiguration(@RequestParam("push") MultipartFile push) {
         notificationManagementService.registerPushConfiguration(push);
     }

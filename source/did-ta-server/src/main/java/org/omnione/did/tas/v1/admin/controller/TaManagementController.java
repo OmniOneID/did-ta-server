@@ -15,6 +15,8 @@
  */
 package org.omnione.did.tas.v1.admin.controller;
 
+import org.omnione.did.base.annotation.ArticleLog;
+import org.omnione.did.base.constants.ActionType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.constants.UrlConstant.Tas;
@@ -58,31 +60,43 @@ public class TaManagementController {
      * @return TA information
      */
     @RequestMapping(value = "/ta/register-simple", method = RequestMethod.POST)
+    @ArticleLog(name = "[TA Admin] Register Simple TA", description = "Register Simple TA.",
+            targetType = "TA_ADMIN", actionType = ActionType.CREATE)
     public TasInfoResDto registerTaSimple(@RequestBody RequestTasInfoReqDto requestTasInfoReqDto) {
         return taManagementService.registerTaSimple(requestTasInfoReqDto);
     }
 
     @RequestMapping(value = "/ta/validate-ta-secret", method = RequestMethod.POST)
+    @ArticleLog(name = "[TA Admin] Validate TA Secret", description = "Validate TA Secret.",
+            targetType = "TA_ADMIN", actionType = ActionType.CREATE)
     public EmptyResDto validateTaSecret(@RequestBody ValidateTaSecretReqDto validateTaSecretReqDto) {
         return taManagementService.validateTaSecret(validateTaSecretReqDto);
     }
 
     @RequestMapping(value = "/ta/register-ta-info", method = RequestMethod.POST)
+    @ArticleLog(name = "[TA Admin] Register TA Info", description = "Register TA Info.",
+            targetType = "TA_ADMIN", actionType = ActionType.CREATE)
     public TasInfoResDto registerTaInfo(@RequestBody RegisterTaInfoReqDto registerTaInfoReqDto) {
         return taManagementService.registerTaInfo(registerTaInfoReqDto);
     }
 
     @RequestMapping(value = "/ta/generate-did-auto", method = RequestMethod.POST)
+    @ArticleLog(name = "[TA Admin] Generate DID Auto", description = "Generate DID info.",
+            targetType = "TA_ADMIN", actionType = ActionType.CREATE)
     public Map<String, Object> generateTaDidDocumentAuto() {
         return taManagementService.registerTaDidDocumentAuto();
     }
 
     @RequestMapping(value = "/ta/register-ta-did", method = RequestMethod.POST)
+    @ArticleLog(name = "[TA Admin] Register TA DID Document", description = "Register TA DID Document.",
+            targetType = "TA_ADMIN", actionType = ActionType.CREATE)
     public EmptyResDto registerTaDidDocument(@RequestBody RegisterTaDidDocumentReqDto registerTaDidDocumentReqDto) {
         return taManagementService.registerTaDidDocument(registerTaDidDocumentReqDto);
     }
 
     @RequestMapping(value = "/ta/generate-certificate", method = RequestMethod.POST)
+    @ArticleLog(name = "[TA Admin] Generate TA Certificate", description = "Generate TA Certificate.",
+            targetType = "TA_ADMIN", actionType = ActionType.CREATE)
     public Map<String, Object> generateTaCertificate(@RequestBody GenerateTaCertificateReqDto generateTaCertificateReqDto) {
         return taManagementService.generateTaCertificate(generateTaCertificateReqDto);
     }
@@ -93,6 +107,8 @@ public class TaManagementController {
     }
 
     @RequestMapping(value = "/ta/certificate", method = RequestMethod.POST)
+    @ArticleLog(name = "[TA Admin] Register Certificate for Entity", description = "Register Certificate for Entity.",
+            targetType = "TA_ADMIN", actionType = ActionType.CREATE)
     public EmptyResDto registerCertificate(@RequestBody RegisterTaCertificateReqDto registerTaCertificateReqDto) {
         return taManagementService.registerTaCertificate(registerTaCertificateReqDto);
     }

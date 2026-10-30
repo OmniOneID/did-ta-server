@@ -48,4 +48,5 @@
   <include file="set.10/create-table_list_mdoc_issuer_status_history.xml" relativeToChangelogFile="true"/>
   <include file="set.10/add-column_list_mdoc_issuer_metadata_uri.xml" relativeToChangelogFile="true"/>
 
+  <include file="set.11/create-table_api_log.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
