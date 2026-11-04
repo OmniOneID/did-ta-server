@@ -34,8 +34,10 @@ import org.omnione.did.base.db.domain.SubTransaction;
 import org.omnione.did.base.db.domain.Tas;
 import org.omnione.did.base.db.domain.Transaction;
 import org.omnione.did.base.db.repository.EcdhRepository;
+import org.omnione.did.base.exception.CommonSdkErrorMapper;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
+import org.omnione.did.base.util.MultibaseDecoder;
 import org.omnione.did.common.util.did.BaseCoreDidUtil;
 import org.omnione.did.common.util.crypto.BaseCryptoUtil;
 import org.omnione.did.common.util.digest.BaseDigestUtil;
@@ -111,6 +113,9 @@ public class EcdhServiceImpl implements EcdhService {
         } catch (OpenDidException e) {
             log.error("OpenDidException occurred during requestECDH: {}", e.getErrorCode().getMessage());
             throw e;
+        } catch (CommonSdkException e) {
+            log.error("CommonSdkException occurred during requestECDH: {}", e.getMessage(), e);
+            throw CommonSdkErrorMapper.toOpenDidException(e, ErrorCode.FAIL_TO_REQUEST_ECDH);
         } catch (Exception e) {
             log.error("Exception occurred during requestECDH: {}", e.getMessage(), e);
             throw new OpenDidException(ErrorCode.FAIL_TO_REQUEST_ECDH);
@@ -252,6 +257,7 @@ public class EcdhServiceImpl implements EcdhService {
      */
     //@TODO: 공통함수로 빼야 함
     private void verifySignature(String encodedPublicKey, String signature, byte[] signatureMassage, ProofType proofType) {
+        MultibaseDecoder.decode(signature);
         try {
             BaseCryptoUtil.verifySignature(encodedPublicKey, signature, signatureMassage, proofType.toEccCurveType().toCommonSdkEccCurveType());
         } catch (OpenDidException e) {
@@ -310,7 +316,7 @@ public class EcdhServiceImpl implements EcdhService {
     }
 
     private void validateClientNonce(String encodedClientNonce) {
-        byte[] clientNonce = BaseMultibaseUtil.decode(encodedClientNonce);
+        byte[] clientNonce = MultibaseDecoder.decode(encodedClientNonce);
         if (clientNonce.length != 16) {
             throw new OpenDidException(ErrorCode.INVALID_CLIENT_NONCE);
         }
@@ -326,7 +332,7 @@ public class EcdhServiceImpl implements EcdhService {
      */
     private byte[] mergeNonces(String encodedClientNonce, byte[] serverNonce) {
         try {
-            byte[] clientNonce = BaseMultibaseUtil.decode(encodedClientNonce);
+            byte[] clientNonce = MultibaseDecoder.decode(encodedClientNonce);
             byte[] combinedNonce = new byte[serverNonce.length + clientNonce.length];
             System.arraycopy(clientNonce, 0, combinedNonce, 0, clientNonce.length);
             System.arraycopy(serverNonce, 0, combinedNonce, clientNonce.length, serverNonce.length);
@@ -351,18 +357,18 @@ public class EcdhServiceImpl implements EcdhService {
         Tas existedTas = tasQueryService.findTas();
 
         // Get client public key.
-        byte[] clientPublicKey = BaseMultibaseUtil.decode(requestECDHReqDto.getReqEcdh().getPublicKey());
+        byte[] clientPublicKey = MultibaseDecoder.decode(requestECDHReqDto.getReqEcdh().getPublicKey());
 
         // Generate server key pair.
         KeyPairInterface keyPairInterface = BaseCryptoUtil.generateKeyPair(requestECDHReqDto.getReqEcdh().getCurve().toCommonSdkEccCurveType());
         byte[] serverPublicKey = ((ECPublicKey) keyPairInterface.getPublicKey()).getEncoded();
         byte[] serverPrivateKey = ((ECPrivateKey) keyPairInterface.getPrivateKey()).getEncoded();
-        byte[] compressPublicKey = BaseCryptoUtil.compressPublicKey(serverPublicKey, requestECDHReqDto.getReqEcdh().getCurve().toCommonSdkEccCurveType());
+        byte[] compressPublicKey = compressPublicKey(serverPublicKey, requestECDHReqDto.getReqEcdh().getCurve());
 
         String encodedServerPublicKey = BaseMultibaseUtil.encode(compressPublicKey);
 
         // Generate serverNonce.
-        byte[] serverNonce = BaseCryptoUtil.generateNonce(16);
+        byte[] serverNonce = generateServerNonce();
         String encodedServerNonce = BaseMultibaseUtil.encode(serverNonce);
 
         // Merge clientNonce and serverNonce.
@@ -438,7 +444,30 @@ public class EcdhServiceImpl implements EcdhService {
      */
     private byte[] generateSessionKey(byte[] compressedClientPublicKey, byte[] serverPrivateKey, byte[] mergedNonce, SymmetricCipherType symmetricCipherType, EccCurveType eccCurveType) {
         byte[] sharedSecret = BaseCryptoUtil.generateSharedSecret(compressedClientPublicKey, serverPrivateKey, eccCurveType.toCommonSdkEccCurveType());
-        return BaseCryptoUtil.mergeSharedSecretAndNonce(sharedSecret, mergedNonce, symmetricCipherType.toCommonSdkSymmetricCipherType());
+        try {
+            return BaseCryptoUtil.mergeSharedSecretAndNonce(sharedSecret, mergedNonce, symmetricCipherType.toCommonSdkSymmetricCipherType());
+        } catch (CommonSdkException e) {
+            log.error("Failed to merge nonce and shared secret: {}", e.getMessage());
+            throw new OpenDidException(ErrorCode.NONCE_AND_SHARED_SECRET_MERGE_FAILED);
+        }
+    }
+
+    private byte[] compressPublicKey(byte[] publicKey, EccCurveType eccCurveType) {
+        try {
+            return BaseCryptoUtil.compressPublicKey(publicKey, eccCurveType.toCommonSdkEccCurveType());
+        } catch (CommonSdkException e) {
+            log.error("Failed to compress public key: {}", e.getMessage());
+            throw new OpenDidException(ErrorCode.PUBLIC_KEY_COMPRESS_FAILED);
+        }
+    }
+
+    private byte[] generateServerNonce() {
+        try {
+            return BaseCryptoUtil.generateNonce(16);
+        } catch (CommonSdkException e) {
+            log.error("Failed to generate server nonce: {}", e.getMessage());
+            throw new OpenDidException(ErrorCode.NONCE_GENERATION_FAILED);
+        }
     }
 
     /**

@@ -24,7 +24,7 @@ import org.omnione.did.base.db.domain.ListVcPlan;
 import org.omnione.did.base.db.repository.ListVcPlanRepository;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
-import org.omnione.did.common.util.multibase.BaseMultibaseUtil;
+import org.omnione.did.base.util.MultibaseDecoder;
 import org.omnione.did.common.util.JsonUtil;
 import org.omnione.did.data.model.schema.VcSchema;
 import org.omnione.did.list.v1.admin.dto.vcplan.ListVcPlanDto;
@@ -82,7 +82,7 @@ public class ListVcPlanManagementService {
 
     private VcPlan decodeVcPlan(String encodedVcPlan) {
         log.debug("\t--> Decoding VC Plan");
-        byte[] decodedData = BaseMultibaseUtil.decode(encodedVcPlan);
+        byte[] decodedData = MultibaseDecoder.decode(encodedVcPlan);
         VcPlan vcPlan = JsonUtil.deserializeFromJson(new String(decodedData), VcPlan.class);
         log.debug("\t--> Decoded VC Plan: {}", vcPlan);
         return vcPlan;

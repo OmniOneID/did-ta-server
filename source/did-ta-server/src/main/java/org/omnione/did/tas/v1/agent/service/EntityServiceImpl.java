@@ -16,8 +16,6 @@
 
 package org.omnione.did.tas.v1.agent.service;
 
-import org.omnione.did.base.datamodel.enums.SymmetricCipherType;
-import org.omnione.did.base.datamodel.enums.SymmetricPaddingType;
 import org.omnione.did.base.db.constant.EntityStatus;
 import org.omnione.did.base.db.constant.SubTransactionStatus;
 import org.omnione.did.base.db.constant.SubTransactionType;
@@ -26,41 +24,34 @@ import org.omnione.did.base.db.constant.TransactionType;
 import org.omnione.did.base.db.domain.Ecdh;
 import org.omnione.did.base.db.domain.Entity;
 import org.omnione.did.base.db.domain.SubTransaction;
-import org.omnione.did.base.db.domain.Tas;
 import org.omnione.did.base.db.domain.Transaction;
 import org.omnione.did.base.db.repository.EntityRepository;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
-import org.omnione.did.common.util.vc.BaseCoreVcUtil;
-import org.omnione.did.common.util.crypto.BaseCryptoUtil;
-import org.omnione.did.common.util.multibase.BaseMultibaseUtil;
-import org.omnione.did.base.util.BaseTasUtil;
+import org.omnione.did.base.exception.TaSdkErrorMapper;
+import org.omnione.did.tas.exception.TaSdkException;
+import org.omnione.did.tas.model.request.protocol.entity.ConfirmEnrollEntityRequest;
+import org.omnione.did.tas.model.request.protocol.entity.ProposeEnrollEntityRequest;
+import org.omnione.did.tas.model.request.protocol.entity.RequestEnrollEntityRequest;
+import org.omnione.did.tas.model.response.protocol.entity.ProposeEnrollEntityResponse;
+import org.omnione.did.tas.model.response.protocol.entity.RequestEnrollEntityResponse;
+import org.omnione.did.tas.protocol.entity.EntityEnrollmentProtocol;
 import org.omnione.did.tas.v1.agent.dto.entity.ConfirmEnrollEntityReqDto;
 import org.omnione.did.tas.v1.agent.dto.entity.ProposeEnrollEntityReqDto;
 import org.omnione.did.tas.v1.agent.dto.entity.RequestEnrollEntityReqDto;
 import org.omnione.did.tas.v1.agent.dto.entity.ConfirmEnrollEntityResDto;
 import org.omnione.did.tas.v1.agent.dto.entity.ProposeEnrollEntityResDto;
 import org.omnione.did.tas.v1.agent.dto.entity.RequestEnrollEntityResDto;
-import org.omnione.did.tas.v1.common.service.StorageService;
+import org.omnione.did.tas.v1.agent.helper.TaSdkDataConverter;
 import org.omnione.did.tas.v1.common.service.query.EcdhQueryService;
 import org.omnione.did.tas.v1.common.service.query.EntityQueryService;
 import org.omnione.did.tas.v1.common.service.query.TasQueryService;
-import org.omnione.did.tas.v1.agent.helper.PublishCertificateHelper;
 import org.omnione.did.tas.v1.agent.service.validator.DidAuthValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.common.util.DateTimeUtil;
-import org.omnione.did.common.util.IdGenerator;
-import org.omnione.did.core.data.rest.IssueVcParam;
-import org.omnione.did.core.data.rest.SignatureVcParams;
-import org.omnione.did.data.model.did.DidDocument;
-import org.omnione.did.data.model.vc.VcMeta;
-import org.omnione.did.data.model.vc.VerifiableCredential;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
-
-import java.nio.charset.StandardCharsets;
-import java.util.List;
 
 /**
  * Implementation of the EntityService interface for managing entity registration and enrollment.
@@ -76,10 +67,7 @@ public class EntityServiceImpl implements EntityService {
     private final EntityRepository entityRepository;
     private final DidAuthValidator didAuthValidator;
     private final TasQueryService tasQueryService;
-    private final StorageService storageService;
-    private final IssueVcService issueVcService;
-    private final FileWalletService fileWalletService;
-    private final PublishCertificateHelper publishCertificateHelper;
+    private final EntityEnrollmentProtocol entityEnrollmentProtocol;
 
     /**
      * Proposes the enrollment of an entity.
@@ -91,11 +79,12 @@ public class EntityServiceImpl implements EntityService {
     @Override
     public ProposeEnrollEntityResDto proposeEnrollEntity(ProposeEnrollEntityReqDto proposeEnrollEntityReqDto) {
         try {
-            // Generate transaction code.
-            String txId = IdGenerator.generateTxId();
-
-            // Generate authNonce. (16-byte)
-            String authNonce = BaseTasUtil.generateNonceWithMultibase();
+            // Generate transaction code and authNonce. (16-byte)
+            ProposeEnrollEntityResponse proposeEnrollEntityResponse = entityEnrollmentProtocol.proposeEnrollEntity(ProposeEnrollEntityRequest.builder()
+                    .id(proposeEnrollEntityReqDto.getId())
+                    .build());
+            String txId = proposeEnrollEntityResponse.getTxId();
+            String authNonce = proposeEnrollEntityResponse.getAuthNonce();
 
             // Insert transaction information.
             Transaction transaction = transactionService.insertTransaction(Transaction.builder()
@@ -120,6 +109,8 @@ public class EntityServiceImpl implements EntityService {
                     .txId(txId)
                     .authNonce(authNonce)
                     .build();
+        } catch (TaSdkException e) {
+            throw TaSdkErrorMapper.toOpenDidException(e, ErrorCode.FAIL_TO_PROPOSE_ENROLL_ENTITY);
         } catch (OpenDidException e) {
             throw e;
         } catch (Exception e) {
@@ -141,7 +132,7 @@ public class EntityServiceImpl implements EntityService {
 
             // Retrieve TAS information.
             log.debug("\t--> Retrieving TAS information");
-            Tas existedTas = tasQueryService.findTas();
+            tasQueryService.findTas();
 
             // Retrieve Transaction information.
             log.debug("\t--> Retrieving transaction information for txId: {}", requestEnrollEntityReqDto.getTxId());
@@ -164,20 +155,15 @@ public class EntityServiceImpl implements EntityService {
             log.debug("\t--> Retrieving entity information");
             Entity entity = entityQueryService.findEntityByDid(requestEnrollEntityReqDto.getDidAuth().getDid());
 
-            // Generate Entity certificate VC.
-            log.debug("\t--> Generating Entity certificate VC");
-            VerifiableCredential entityCertificateVc = generateEntityCertificateVc(entity, existedTas, requestEnrollEntityReqDto.getDn());
-
-            log.debug("\t--> Signing TAS certificate VC.");
-            signTasCertificateVc(entityCertificateVc, existedTas);
-
-            // Publish Entity certificate VC.
-            log.debug("\t--> Publishing Entity certificate VC");
-            String publishedCertificateUrl = publishCertificateHelper.publishEntityCertificateVc(entityCertificateVc);
-
-            // Register Entity certificate VC meta.
-            log.debug("\t--> Registering Entity certificate VC meta");
-            registerEntityCertificateVcMeta(entityCertificateVc, entity, existedTas);
+            // Generate, sign, publish and encrypt Entity certificate VC, and register its meta.
+            log.debug("\t--> Issuing Entity certificate VC");
+            RequestEnrollEntityResponse requestEnrollEntityResponse = entityEnrollmentProtocol.requestEnrollEntity(RequestEnrollEntityRequest.builder()
+                    .id(requestEnrollEntityReqDto.getId())
+                    .txId(requestEnrollEntityReqDto.getTxId())
+                    .didAuth(TaSdkDataConverter.toCommonDidAuth(requestEnrollEntityReqDto.getDidAuth()))
+                    .dn(blankToNull(requestEnrollEntityReqDto.getDn()))
+                    .build());
+            String publishedCertificateUrl = requestEnrollEntityResponse.getVcUrl();
 
             // Update Entity published certificate URL.
             log.debug("\t--> Updating Entity published certificate URL");
@@ -187,19 +173,9 @@ public class EntityServiceImpl implements EntityService {
             log.debug("\t--> Updating Entity DN if provided in request");
             updateEntityDnIfProvided(entity, requestEnrollEntityReqDto.getDn());
 
-            // Create IV.
-            log.debug("\t--> Creating IV");
-            byte[] iv = BaseCryptoUtil.generateNonce(16);
-            String encodedIv = BaseMultibaseUtil.encode(iv);
-
-            // Encrypt Entity certificate VC
-            log.debug("\t--> Encrypting and Encoding Entity certificate VC");
-            byte[] encryptedEntityCertificateVc = encryptEntityCertificateVc(transaction.getId(), entityCertificateVc, iv);
-            String encodedEncryptedEntityCertificateVc = BaseMultibaseUtil.encode(encryptedEntityCertificateVc);
-
             // Update Entity certificate vc ID.
             log.debug("\t--> Updating Entity certificate VC ID");
-            transactionService.updateTransactionCertificateId(transaction.getId(), entityCertificateVc.getId());
+            transactionService.updateTransactionCertificateId(transaction.getId(), requestEnrollEntityResponse.getVcId());
 
             // Insert sub-transaction information.
             log.debug("\t--> Inserting sub-transaction information");
@@ -215,10 +191,12 @@ public class EntityServiceImpl implements EntityService {
 
             return RequestEnrollEntityResDto.builder()
                     .txId(requestEnrollEntityReqDto.getTxId())
-                    .iv(encodedIv)
-                    .encVc(encodedEncryptedEntityCertificateVc)
+                    .iv(requestEnrollEntityResponse.getIv())
+                    .encVc(requestEnrollEntityResponse.getEncVc())
                     .vcUrl(publishedCertificateUrl)
                     .build();
+        } catch (TaSdkException e) {
+            throw TaSdkErrorMapper.toOpenDidException(e);
         } catch (OpenDidException e) {
             throw e;
         } catch (Exception e) {
@@ -260,94 +238,13 @@ public class EntityServiceImpl implements EntityService {
     }
 
     /**
-     * Generates an entity certificate Verifiable Credential.
+     * A blank DN means that no DN is requested. The certificate subject is then derived from the entity name.
      *
-     * @param entity The entity for which to generate the certificate
-     * @return VerifiableCredential The generated entity certificate VC
+     * @param dn The requested DN
+     * @return the DN, or null if it is blank
      */
-    private VerifiableCredential generateEntityCertificateVc(Entity entity, Tas tas, String dn) {
-        IssueVcParam issueVcParam = new IssueVcParam();
-
-        issueVcService.setCertificateVcSchema(issueVcParam);
-        issueVcService.setIssuer(issueVcParam, tas, publishCertificateHelper.getTasCertificateVcURL(tas));
-
-        if (dn != null && !dn.trim().isEmpty()) {
-            log.debug("\t--> Setting entity claim info with DN: {}", dn);
-            issueVcService.setEntityClaimInfo(issueVcParam, entity, dn);
-        } else {
-            issueVcService.setEntityClaimInfo(issueVcParam, entity);
-        }
-
-        issueVcService.setCertificateVcTypes(issueVcParam);
-        issueVcService.setCertificateEvidence(issueVcParam, tas);
-        issueVcService.setValidateUntil(issueVcParam, 1);
-
-        return issueVcService.generateEntityCertificateVc(issueVcParam, entity);
-    }
-
-    /**
-     * Signs the TAS certificate VC.
-     *
-     * @param entityCertificateVc The VC to sign
-     */
-    private void signTasCertificateVc(VerifiableCredential entityCertificateVc, Tas tas) {
-        DidDocument tasDidDoc = storageService.findDidDoc(tas.getDid());
-        List<SignatureVcParams> SignatureParamslist = extractVcSignatureMessage(tasDidDoc, entityCertificateVc);
-
-        for(SignatureVcParams signatureParam : SignatureParamslist) {
-            String originData = signatureParam.getOriginData();
-            log.debug("originData: {}", originData);
-            byte[] signatureBytes = fileWalletService.generateCompactSignature(signatureParam.getKeyId(), originData);
-            String encodedSignature = BaseMultibaseUtil.encode(signatureBytes);
-            signatureParam.setSignatureValue(encodedSignature);
-        }
-
-        BaseCoreVcUtil.setVcProof(entityCertificateVc, SignatureParamslist);
-    }
-
-    /**
-     * Extracts the signature message from the VC.
-     *
-     * @param tasDidDoc The DID document of the TAS
-     * @param verifiableCredential The VC from which to extract the signature message
-     * @return List<SignatureVcParams> The extracted signature message
-     */
-    private List<SignatureVcParams> extractVcSignatureMessage(DidDocument tasDidDoc, VerifiableCredential verifiableCredential) {
-        return BaseCoreVcUtil.extractVcSignatureMessage(tasDidDoc, verifiableCredential);
-    }
-
-    /**
-     * Registers the entity certificate VC metadata.
-     *
-     * @param verifiableCredential The VC to register
-     * @param entity The entity associated with the VC
-     */
-    private void registerEntityCertificateVcMeta(VerifiableCredential verifiableCredential, Entity entity, Tas tas) {
-        VcMeta vcMeta = BaseCoreVcUtil.generateVcMeta(verifiableCredential, publishCertificateHelper.getTasCertificateVcURL(tas));
-        storageService.registerVcMeta(vcMeta);
-    }
-    /**
-     * Encrypts the entity certificate VC.
-     *
-     * @param transactionId The ID of the associated transaction
-     * @param entityCertificateVc The VC to encrypt
-     * @param iv The initialization vector for encryption
-     * @return byte[] The encrypted VC
-     * @throws OpenDidException if encryption fails
-     */
-    private byte[] encryptEntityCertificateVc(Long transactionId, VerifiableCredential entityCertificateVc, byte[] iv) {
-        // Retrieve Ecdh information.
-        Ecdh ecdh = ecdhQueryService.findEcdhByTransactionId(transactionId);
-
-        String entityCertificateVcJson = entityCertificateVc.toJson();
-
-        // Retrieve Ecdh information.
-        SymmetricPaddingType symmetricPaddingType = SymmetricPaddingType.fromDisplayName(ecdh.getPadding());
-        SymmetricCipherType symmetricCipherType = SymmetricCipherType.fromDisplayName(ecdh.getCipher());
-        byte[] sessionKey = BaseMultibaseUtil.decode(ecdh.getSessionKey());
-
-        // Encrypt the ServerTokenData.
-        return BaseCryptoUtil.encrypt(entityCertificateVcJson.getBytes(StandardCharsets.UTF_8), sessionKey, iv, symmetricCipherType.toCommonSdkSymmetricCipherType(), symmetricPaddingType.toCommonSdkSymmetricPaddingType());
+    private String blankToNull(String dn) {
+        return dn == null || dn.trim().isEmpty() ? null : dn;
     }
 
     /**
@@ -368,6 +265,16 @@ public class EntityServiceImpl implements EntityService {
 
         // Validate Certificate vc ID.
         validateVcId(confirmEnrollEntityReqDto.getVcId(), transaction.getCertificateId());
+
+        try {
+            entityEnrollmentProtocol.confirmEnrollEntity(ConfirmEnrollEntityRequest.builder()
+                    .id(confirmEnrollEntityReqDto.getId())
+                    .txId(confirmEnrollEntityReqDto.getTxId())
+                    .vcId(confirmEnrollEntityReqDto.getVcId())
+                    .build());
+        } catch (TaSdkException e) {
+            throw TaSdkErrorMapper.toOpenDidException(e);
+        }
 
         // Retrieve Entity information.
         Ecdh ecdh = ecdhQueryService.findEcdhByTransactionId(transaction.getId());

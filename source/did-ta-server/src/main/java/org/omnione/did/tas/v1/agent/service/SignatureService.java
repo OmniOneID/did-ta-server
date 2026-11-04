@@ -26,13 +26,14 @@ import org.omnione.did.common.util.crypto.BaseCryptoUtil;
 import org.omnione.did.common.util.digest.BaseDigestUtil;
 import org.omnione.did.common.util.multibase.BaseMultibaseUtil;
 import org.omnione.did.base.util.BaseTasDidUtil;
+import org.omnione.did.base.util.MultibaseDecoder;
+import org.omnione.did.common.exception.CommonSdkException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.common.util.JsonUtil;
 import org.omnione.did.data.model.did.DidDocument;
 import org.omnione.did.data.model.did.InvokedDidDoc;
 import org.omnione.did.data.model.did.VerificationMethod;
-import org.omnione.did.tas.v1.common.service.DidDocService;
 import org.omnione.did.tas.v1.common.service.StorageService;
 import org.omnione.did.tas.v1.common.service.query.TasQueryService;
 import org.springframework.stereotype.Service;
@@ -44,7 +45,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j
 public class SignatureService {
-    private final DidDocService didDocService;
     private final FileWalletService fileWalletService;
     private final StorageService storageService;
     private final TasQueryService tasQueryService;
@@ -59,6 +59,7 @@ public class SignatureService {
      * @throws OpenDidException if signature verification fails
      */
     public void verifySignature(String encodedPublicKey, String signature, byte[] signatureMassage, ProofType proofType) {
+        MultibaseDecoder.decode(signature);
         try {
             BaseCryptoUtil.verifySignature(encodedPublicKey, signature, signatureMassage, proofType.toEccCurveType().toCommonSdkEccCurveType());
         } catch (OpenDidException e) {
@@ -75,35 +76,14 @@ public class SignatureService {
      * @param ownerDidDoc The DID document to verify
      */
     public void verifyDidDocKeyProofs(DidDocument ownerDidDoc) {
-        BaseCoreDidUtil.verifyDidDocKeyProofs(ownerDidDoc);
+        try {
+            BaseCoreDidUtil.verifyDidDocKeyProofs(ownerDidDoc);
+        } catch (CommonSdkException e) {
+            log.error("\t--> Failed to verify DID document key proofs: {}", e.getMessage());
+            throw new OpenDidException(ErrorCode.VERIFY_DIDDOC_KEY_PROOF_FAILED);
+        }
     }
 
-    /**
-     * Signs an invoked DID document.
-     *
-     * @param ownerDidDoc The owner's DID document
-     * @return InvokedDidDoc The signed invoked DID document
-     */
-    public InvokedDidDoc signInvokedDidDoc(DidDocument ownerDidDoc) {
-        // Retrieve TAS.
-        Tas existedTas = tasQueryService.findTas();
-
-        // Find TAS DID Document.
-        DidDocument tasDidDocument = didDocService.getDidDocument(existedTas.getDid());
-
-        // Generate the signature message.
-        DidDocument didDocument = removeProof(ownerDidDoc);
-        InvokedDidDoc unsignedInvokedDidDoc = generateInvokedDidDoc(tasDidDocument, didDocument);
-        String signatureMessage = generateSignatureMessage(unsignedInvokedDidDoc);
-
-        // Sing data.
-        String proofValue = signDidDoc(tasDidDocument, signatureMessage, ProofPurpose.CAPABILITY_INVOCATION);
-
-        // generate signed invoked did document.
-        InvokedDidDoc signedInvokedDidDoc = generateSignedInvokedDidDoc(unsignedInvokedDidDoc, proofValue);
-
-        return signedInvokedDidDoc;
-    }
     /**
      * Removes the proof from a DID document.
      *

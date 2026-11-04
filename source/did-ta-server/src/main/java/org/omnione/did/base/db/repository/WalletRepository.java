@@ -34,6 +34,7 @@ import java.util.Optional;
 public interface WalletRepository extends JpaRepository<Wallet, Long>, QuerydslPredicateExecutor<Wallet>, WalletRepositoryAdmin {
     Optional<Wallet> findByWalletId(String walletId);
     long countByWalletId(String walletId);
+    boolean existsByDid(String did);
     long countByWalletIdAndDidAndStatus(String walletId, String did, WalletStatus status);
     Optional<Wallet> findByWalletIdAndDidAndStatus(String walletId, String did, WalletStatus walletStatus);
     Optional<Wallet> findByWalletIdAndUserIdAndStatus(String walletId, Long userId, WalletStatus walletStatus);

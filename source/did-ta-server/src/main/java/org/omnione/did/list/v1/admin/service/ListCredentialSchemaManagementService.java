@@ -28,7 +28,7 @@ import org.omnione.did.base.db.domain.ListCredentialSchema;
 import org.omnione.did.base.db.repository.ListCredentialSchemaRepository;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
-import org.omnione.did.common.util.multibase.BaseMultibaseUtil;
+import org.omnione.did.base.util.MultibaseDecoder;
 import org.omnione.did.list.v1.admin.dto.credential.ListCredentialDefinitionDto;
 import org.omnione.did.list.v1.admin.dto.credential.ListCredentialDefinitionSimpleDto;
 import org.omnione.did.list.v1.admin.dto.credential.ListCredentialSchemaDto;
@@ -99,7 +99,7 @@ public class ListCredentialSchemaManagementService {
 
     private CredentialSchema decodeCredentialSchema(String encodedVcSchema) {
         log.debug("\t--> Decoding Credential Schema");
-        byte[] decodedData = BaseMultibaseUtil.decode(encodedVcSchema);
+        byte[] decodedData = MultibaseDecoder.decode(encodedVcSchema);
         CredentialSchema credentialSchema = GsonWrapper.getGson().fromJson(new String(decodedData), CredentialSchema.class);
         log.debug("\t--> Decoded Credential Schema: {}", credentialSchema);
         return credentialSchema;

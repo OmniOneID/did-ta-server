@@ -18,6 +18,7 @@ package org.omnione.did.tas.v1.agent.service;
 
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
+import org.omnione.did.common.exception.CommonSdkException;
 import org.omnione.did.base.property.WalletProperty;
 import org.omnione.did.common.util.wallet.BaseWalletUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -87,8 +88,49 @@ public class FileWalletService {
             return signature;
         } catch (OpenDidException e) {
             throw e;
+        } catch (CommonSdkException e) {
+            log.error("Failed to generate compact signature: {}", e.getMessage());
+            throw new OpenDidException(ErrorCode.SIGNATURE_GENERATION_FAILED);
         } catch (Exception e) {
             throw new OpenDidException(ErrorCode.WALLET_SIGNATURE_GENERATION_FAILED);
+        }
+    }
+
+    /**
+     * Generates a compact signature for the given key and hash.
+     *
+     * @param keyId Key ID.
+     * @param hash Hash to sign.
+     * @return Generated signature.
+     * @throws OpenDidException if signature generation fails.
+     */
+    public byte[] signHash(String keyId, byte[] hash) {
+        try {
+            ensureConnection();
+            byte[] signature = walletManager.generateCompactSignatureFromHash(keyId, hash);
+            log.info("Compact signature generated for keyId: {}", keyId);
+            return signature;
+        } catch (OpenDidException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to generate compact signature from hash: {}", e.getMessage());
+            throw new OpenDidException(ErrorCode.WALLET_SIGNATURE_GENERATION_FAILED);
+        }
+    }
+
+    public WalletManagerInterface getWalletManager() {
+        return walletManager;
+    }
+
+    /**
+     * Connects to the wallet if it is not connected.
+     *
+     * @throws OpenDidException if the connection fails.
+     */
+    public void ensureConnection() {
+        if (!walletManager.isConnect()) {
+            log.info("Wallet manager disConnect. Connecting to wallet...");
+            connectToWallet();
         }
     }
 

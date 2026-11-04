@@ -27,7 +27,6 @@ import org.omnione.did.base.db.repository.TasRepository;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
 //import org.omnione.did.base.property.TasProperty;
-import org.omnione.did.base.util.BaseBlockChainUtil;
 import org.omnione.did.common.util.did.BaseCoreDidUtil;
 import org.omnione.did.tas.v1.common.dto.EmptyResDto;
 import org.omnione.did.tas.v1.agent.dto.setup.RemoveBlockChainIndexReqDto;
@@ -40,6 +39,7 @@ import org.omnione.did.core.manager.DidManager;
 import org.omnione.did.data.model.did.DidDocument;
 import org.omnione.did.data.model.did.InvokedDidDoc;
 import org.omnione.did.data.model.enums.vc.RoleType;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -59,6 +59,7 @@ public class SetupService {
     private final TasRepository tasRepository;
     private final EntityQueryService entityQueryService;
     private final EntityRepository entityRepository;
+    private final ObjectProvider<BlockChainServiceImpl> blockChainServiceProvider;
 
     public EmptyResDto registerTasDidDocument(byte[] didDocBytes, String name, String serverUrl, String certificateUrl) {
         try {
@@ -275,7 +276,7 @@ public class SetupService {
     public EmptyResDto removeBlockchainIndex(RemoveBlockChainIndexReqDto removeBlockChainIndexReqDto) {
         try {
             log.debug("=== Starting removeBlockchainIndex ===");
-            BaseBlockChainUtil.removeIndex(removeBlockChainIndexReqDto.getIndex());
+            findBlockChainService().removeIndex(removeBlockChainIndexReqDto.getIndex());
             log.debug("=== Finished removeBlockchainIndex ===");
 
             return new EmptyResDto();
@@ -291,7 +292,7 @@ public class SetupService {
     public EmptyResDto removeBlockchainAll() {
         try {
             log.debug("=== Starting removeBlockchainAll ===");
-            BaseBlockChainUtil.removeIndexAll();
+            findBlockChainService().removeIndexAll();
             log.debug("=== Finished removeBlockchainAll ===");
 
             return new EmptyResDto();
@@ -302,6 +303,21 @@ public class SetupService {
             log.error("Failed to remove blockchain : {}", e.getMessage());
             throw new RuntimeException("Failed to remove blockchain");
         }
+    }
+
+    /**
+     * Blockchain indexes exist only when the blockchain is the storage. They do not exist under the LSS profile.
+     *
+     * @return the blockchain service
+     * @throws OpenDidException if the server does not use the blockchain.
+     */
+    private BlockChainServiceImpl findBlockChainService() {
+        BlockChainServiceImpl blockChainService = blockChainServiceProvider.getIfAvailable();
+        if (blockChainService == null) {
+            log.error("Blockchain storage is not available.");
+            throw new OpenDidException(ErrorCode.BLOCKCHAIN_REMOVE_INDEX_FAILED);
+        }
+        return blockChainService;
     }
 
     public EmptyResDto registerTasDidDocument(byte[] didDocBytes, String certificateUrl) {

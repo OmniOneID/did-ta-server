@@ -41,6 +41,7 @@ import org.omnione.did.base.db.domain.Transaction;
 import org.omnione.did.base.db.repository.TokenRepository;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
+import org.omnione.did.base.util.MultibaseDecoder;
 import org.omnione.did.common.util.did.BaseCoreDidUtil;
 import org.omnione.did.common.util.crypto.BaseCryptoUtil;
 import org.omnione.did.common.util.digest.BaseDigestUtil;
@@ -128,7 +129,7 @@ public class TokenServiceImpl implements TokenService {
 
             // Generate Initialization Vector.
             log.debug("\t--> Generating Initialization Vector");
-            byte[] ivBytes = BaseCryptoUtil.generateNonce(16);
+            byte[] ivBytes = generateInitialVector();
             String encodedIv = BaseMultibaseUtil.encode(ivBytes);
 
             // Encrypt server token data.
@@ -363,6 +364,7 @@ public class TokenServiceImpl implements TokenService {
      */
     //@TODO: 공통함수로 빼야 함
     private void verifySignature(String encodedPublicKey, String signature, byte[] signatureMassage, ProofType proofType) {
+        MultibaseDecoder.decode(signature);
         try {
             BaseCryptoUtil.verifySignature(encodedPublicKey, signature, signatureMassage, proofType.toEccCurveType().toCommonSdkEccCurveType());
         } catch (OpenDidException e) {
@@ -608,6 +610,15 @@ public class TokenServiceImpl implements TokenService {
             throw new OpenDidException(ErrorCode.SERVER_TOKEN_GENERATION_FAILED);
         } 
     }
+    private byte[] generateInitialVector() {
+        try {
+            return BaseCryptoUtil.generateNonce(16);
+        } catch (CommonSdkException e) {
+            log.error("\t--> Failed to generate initial vector: {}", e.getMessage());
+            throw new OpenDidException(ErrorCode.INITIAL_VECTOR_GENERATION_FAILED);
+        }
+    }
+
     /**
      * Encrypts the Server token data.
      *
@@ -618,9 +629,15 @@ public class TokenServiceImpl implements TokenService {
      * @throws OpenDidException if the Server token data encryption fails.
      */
     private byte[] encryptServerTokenData(ServerTokenData serverTokenData, Ecdh ecdh, byte[] iv) {
+        String stdJson;
         try {
-            String stdJson = JsonUtil.serializeAndSort(serverTokenData);
+            stdJson = JsonUtil.serializeAndSort(serverTokenData);
+        } catch (CommonSdkException e) {
+            log.error("\t--> Json Processing Error: {}", e.getMessage());
+            throw new OpenDidException(ErrorCode.JSON_PROCESSING_ERROR);
+        }
 
+        try {
             // Retrieve Ecdh information.
             SymmetricPaddingType symmetricPaddingType = SymmetricPaddingType.fromDisplayName(ecdh.getPadding());
             SymmetricCipherType symmetricCipherType = SymmetricCipherType.fromDisplayName(ecdh.getCipher());
@@ -628,9 +645,6 @@ public class TokenServiceImpl implements TokenService {
 
             // Encrypt the ServerTokenData.
             return BaseCryptoUtil.encrypt(stdJson.getBytes(StandardCharsets.UTF_8), sessionKey, iv, symmetricCipherType.toCommonSdkSymmetricCipherType(), symmetricPaddingType.toCommonSdkSymmetricPaddingType());
-        } catch (CommonSdkException e) {
-            log.error("\t--> Json Processing Error: {}", e.getMessage());
-            throw new OpenDidException(ErrorCode.JSON_PROCESSING_ERROR);
         } catch (Exception e) {
             log.error("\t--> Exception occurred during encryptServerTokenData: {}", e.getMessage(), e);
             throw new OpenDidException(ErrorCode.SERVER_TOKEN_ENCRYPTION_FAILED);

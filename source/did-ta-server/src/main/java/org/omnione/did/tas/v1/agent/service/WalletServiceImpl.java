@@ -16,7 +16,6 @@
 
 package org.omnione.did.tas.v1.agent.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.omnione.did.base.datamodel.data.AttestedDidDoc;
 import org.omnione.did.base.datamodel.data.Proof;
 import org.omnione.did.base.datamodel.enums.ProofPurpose;
@@ -34,14 +33,14 @@ import org.omnione.did.base.db.domain.Wallet;
 import org.omnione.did.base.db.repository.WalletRepository;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
+import org.omnione.did.base.exception.TaSdkErrorMapper;
+import org.omnione.did.base.util.MultibaseDecoder;
 import org.omnione.did.common.util.did.BaseCoreDidUtil;
 import org.omnione.did.common.util.digest.BaseDigestUtil;
-import org.omnione.did.common.util.multibase.BaseMultibaseUtil;
 import org.omnione.did.common.exception.CommonSdkException;
 import org.omnione.did.tas.v1.agent.dto.wallet.RegisterWalletReqDto;
 import org.omnione.did.tas.v1.agent.dto.wallet.RegisterWalletResDto;
 import org.omnione.did.tas.v1.common.service.DidDocService;
-import org.omnione.did.tas.v1.common.service.StorageService;
 import org.omnione.did.tas.v1.common.service.query.EntityQueryService;
 import org.omnione.did.tas.v1.common.service.query.WalletQueryService;
 import org.omnione.did.tas.v1.agent.service.validator.CertificateVcValidator;
@@ -53,8 +52,11 @@ import org.omnione.did.common.util.IdGenerator;
 import org.omnione.did.common.util.JsonUtil;
 import org.omnione.did.core.manager.DidManager;
 import org.omnione.did.data.model.did.DidDocument;
-import org.omnione.did.data.model.did.InvokedDidDoc;
-import org.omnione.did.data.model.enums.vc.RoleType;
+import org.omnione.did.tas.exception.TaSdkException;
+import org.omnione.did.tas.model.request.protocol.wallet.RegisterWalletRequest;
+import org.omnione.did.tas.model.response.protocol.wallet.RegisterWalletResponse;
+import org.omnione.did.tas.protocol.wallet.WalletRegistrationProtocol;
+import org.omnione.did.tas.v1.agent.helper.TaSdkDataConverter;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
@@ -75,9 +77,9 @@ public class WalletServiceImpl implements WalletService {
     private final TransactionService transactionService;
     private final WalletRepository walletRepository;
     private final DidDocService didDocService;
-    private final StorageService storageService;
     private final SignatureService signatureService;
     private final CertificateVcValidator certificateVcValidator;
+    private final WalletRegistrationProtocol walletRegistrationProtocol;
 
     /**
      * Handles a request to register a wallet.
@@ -111,19 +113,18 @@ public class WalletServiceImpl implements WalletService {
             log.debug("\t--> Verifying DID Document Key Proofs");
             signatureService.verifyDidDocKeyProofs(ownerDidDoc);
 
-            // Sign DID document.
-            log.debug("\t--> Signing Invoked DID Document");
-            InvokedDidDoc invokedDidDoc = signatureService.signInvokedDidDoc(ownerDidDoc);
-
-            // Upload Wallet DID document.
-            log.debug("\t--> Uploading Wallet DID Document");
-            storageService.registerDidDoc(invokedDidDoc, RoleType.WALLET);
+            // Sign and upload Wallet DID document.
+            log.debug("\t--> Registering Wallet DID Document");
+            RegisterWalletResponse registerWalletResponse = walletRegistrationProtocol.registerWallet(RegisterWalletRequest.builder()
+                    .id(registerWalletReqDto.getId())
+                    .attestedDidDoc(TaSdkDataConverter.toCommonAttestedDidDoc(registerWalletReqDto.getAttestedDidDoc()))
+                    .build());
 
             // Insert wallet information
             log.debug("\t--> Inserting Wallet Information");
             insertWallet(Wallet.builder()
                     .walletId(registerWalletReqDto.getAttestedDidDoc().getWalletId())
-                    .did(ownerDidDoc.getId())
+                    .did(registerWalletResponse.getWalletDid())
                     .status(WalletStatus.CREATED)
                     .registeredAt(Instant.now())
                     .entityId(entity.getId())
@@ -157,6 +158,9 @@ public class WalletServiceImpl implements WalletService {
             return RegisterWalletResDto.builder()
                     .txId(txId)
                     .build();
+        } catch (TaSdkException e) {
+            log.error("Error occurred while registering wallet: {}", e.getMessage());
+            throw TaSdkErrorMapper.toOpenDidException(e);
         } catch (OpenDidException e) {
             log.error("Error occurred while registering wallet: {}", e.getMessage());
             throw e;
@@ -173,7 +177,7 @@ public class WalletServiceImpl implements WalletService {
      * @return Parsed DID document.
      */
     private DidDocument parseOwnerDidDoc(String encodedDidDoc) {
-        byte[] decodedDidDoc = BaseMultibaseUtil.decode(encodedDidDoc);
+        byte[] decodedDidDoc = MultibaseDecoder.decode(encodedDidDoc);
         DidManager didManager = BaseCoreDidUtil.parseDidDoc(new String(decodedDidDoc, StandardCharsets.UTF_8));
 
         return didManager.getDocument();

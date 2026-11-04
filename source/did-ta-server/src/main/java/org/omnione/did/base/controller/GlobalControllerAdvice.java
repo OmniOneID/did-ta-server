@@ -16,10 +16,14 @@
 
 package org.omnione.did.base.controller;
 
+import org.omnione.did.base.exception.CommonSdkErrorMapper;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
+import org.omnione.did.base.exception.TaSdkErrorMapper;
 import org.omnione.did.base.response.ErrorResponse;
 import lombok.RequiredArgsConstructor;
+import org.omnione.did.common.exception.CommonSdkException;
+import org.omnione.did.tas.exception.TaSdkException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -64,6 +68,28 @@ public class GlobalControllerAdvice {
         int httpStatus = ex.getErrorCode().getHttpStatus();
         ErrorResponse errorResponse = new ErrorResponse(ex.getErrorCode().getCode(), ex.getErrorCode().getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.valueOf(httpStatus));
+    }
+
+    /**
+     * Handles a TA SDK exception that was not converted by a service.
+     *
+     * @param ex the TaSdkException that was thrown
+     * @return a ResponseEntity containing the error response and the HTTP status code
+     */
+    @ExceptionHandler(TaSdkException.class)
+    public ResponseEntity<ErrorResponse> handleTaSdkException(TaSdkException ex, HttpServletRequest req) {
+        return handleTasException(TaSdkErrorMapper.toOpenDidException(ex), req);
+    }
+
+    /**
+     * Handles a Common SDK exception that was not translated at the call site.
+     *
+     * @param ex the CommonSdkException that was thrown
+     * @return a ResponseEntity containing the error response and the HTTP status code
+     */
+    @ExceptionHandler(CommonSdkException.class)
+    public ResponseEntity<ErrorResponse> handleCommonSdkException(CommonSdkException ex, HttpServletRequest req) {
+        return handleTasException(CommonSdkErrorMapper.toOpenDidException(ex), req);
     }
 
     /**

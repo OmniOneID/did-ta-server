@@ -179,7 +179,7 @@ Open the terminal and run the following commands to copy the TA server repositor
 git clone https://github.com/OmniOneID/did-ta-server.git
 
 # Navigate to the cloned repository
-cd did-tas-server
+cd did-ta-server
 ```
 
 > **Reference Links**
@@ -222,11 +222,12 @@ did-ta-server
     └── did-ta-server
         ├── gradle
         ├── libs
-            └── did-sdk-common-2.0.0.jar
+            └── did-common-sdk-server-3.0.0.jar
+            └── did-ta-sdk-server-1.0.0.jar
             └── did-blockchain-sdk-server-2.0.0.jar
             └── did-core-sdk-server-2.0.0.jar
             └── did-crypto-sdk-server-2.0.0.jar
-            └── did-datamodel-server-2.0.0.jar
+            └── did-datamodel-sdk-server-2.0.0.jar
             └── did-wallet-sdk-server-2.0.0.jar
             └── did-zkp-sdk-server-2.0.0.jar
         ├── sample
@@ -252,7 +253,7 @@ did-ta-server
 | ┖ installation          | Installation and configuration guide                    |
 | ┖ db                    | Database ERD and table specifications                   |
 | source                  | Source code                                              |
-| ┖ did-tas-server        | TA server source code and build files                   |
+| ┖ did-ta-server         | TA server source code and build files                   |
 | ┖ gradle                | Gradle build settings and scripts                       |
 | ┖ libs                  | External libraries and dependencies                     |
 | ┖ sample                | Sample files                                             |
@@ -292,7 +293,7 @@ The Open DID project is composed of a backend (based on Spring Boot) and a front
 #### 4.1.1.2. Open the Project
 
 - Launch IntelliJ and select `File -> New -> Project from Existing Sources`.  
-- When the file selection window opens, navigate to the `source/did-tas-server` folder cloned in [3.1. Clone the Repository](#31-clone-the-repository).
+- When the file selection window opens, navigate to the `source/did-ta-server` folder cloned in [3.1. Clone the Repository](#31-clone-the-repository).
 - IntelliJ will automatically recognize the `build.gradle` file.
 - Gradle will download the required dependencies automatically. Wait until the process is completed.
 
@@ -373,7 +374,7 @@ Use `gradlew` to build the source:
 
 ```shell
 # Navigate to the source folder of the cloned repository
-cd source/did-tas-server
+cd source/did-ta-server
 
 # Grant execute permissions to the Gradle Wrapper
 chmod 755 ./gradlew
@@ -395,7 +396,7 @@ cd build/libs
 ls
 ```
 
-You should see the file: `did-tas-server-2.0.0.jar`
+You should see the file: `did-ta-server-3.0.0.jar`
 
 <br/>
 
@@ -404,7 +405,7 @@ You should see the file: `did-tas-server-2.0.0.jar`
 Run the server using the built JAR file:
 
 ```bash
-java -jar did-tas-server-2.0.0.jar
+java -jar did-ta-server-3.0.0.jar
 ```
 
 Once the server is running, open your browser and visit [http://localhost:8090/swagger-ui/index.html](http://localhost:8090/swagger-ui/index.html) to check that the Swagger UI is working properly.
@@ -860,7 +861,7 @@ This section explains how to activate a specific profile depending on how the se
 - **Set profile:** Run the following command to activate the desired profile:
 
   ```bash
-  java -jar build/libs/did-tas-server-2.0.0.jar --spring.profiles.active={profile}
+  java -jar build/libs/did-ta-server-3.0.0.jar --spring.profiles.active={profile}
   ```
 
 - **Apply settings:** The specified profile will be used during execution.

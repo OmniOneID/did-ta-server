@@ -30,9 +30,12 @@ import org.omnione.did.base.db.domain.Transaction;
 import org.omnione.did.base.db.repository.CertificateVcRepository;
 import org.omnione.did.base.db.repository.TasRepository;
 import org.omnione.did.list.v1.service.ListCertificateVcPublishService;
+import org.omnione.did.base.exception.CommonSdkErrorMapper;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
+import org.omnione.did.base.exception.TaSdkErrorMapper;
 import org.omnione.did.base.property.TaAuthProperty;
+import org.omnione.did.common.exception.CommonSdkException;
 import org.omnione.did.common.util.vc.BaseCoreVcUtil;
 import org.omnione.did.common.util.multibase.BaseMultibaseUtil;
 import org.omnione.did.tas.v1.agent.dto.tas.RequestEnrollTasReqDto;
@@ -44,6 +47,9 @@ import org.omnione.did.tas.v1.common.service.query.TasQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.common.util.IdGenerator;
+import org.omnione.did.tas.exception.TaSdkException;
+import org.omnione.did.tas.model.request.protocol.tas.EnrollTasRequest;
+import org.omnione.did.tas.protocol.tas.TasEnrollmentProtocol;
 import org.omnione.did.core.data.rest.IssueVcParam;
 import org.omnione.did.core.data.rest.SignatureVcParams;
 import org.omnione.did.data.model.did.DidDocument;
@@ -73,6 +79,7 @@ public class TasServiceImpl implements TasService {
     private final TaAuthProperty taAuthProperty;
     private final JsonParseService jsonParseService;
     private final ListCertificateVcPublishService listCertificateVcPublishService;
+    private final TasEnrollmentProtocol tasEnrollmentProtocol;
 
     /**
      * Handles the request to enroll a TAS (Trust Anchor Service).
@@ -103,20 +110,14 @@ public class TasServiceImpl implements TasService {
             log.debug("\t--> Validating TAS status.");
             verifyCertificateVcIssuance(existedTas);
 
-            // Generate TAS certificate VC.
-            log.debug("\t--> Generating TAS certificate VC.");
-            VerifiableCredential tasCertificateVc = generateTasCertificateVc(existedTas);
-
-            log.debug("\t--> Signing TAS certificate VC.");
-            signTasCertificateVc(tasCertificateVc, existedTas);
-
-            // Register TAS certificate VC meta.
-            log.debug("\t--> Registering TAS certificate VC meta.");
-            registerTasCertificateVcMeta(tasCertificateVc, existedTas);
-
-            // Publish TAS certificate VC.
-            log.debug("\t--> Publishing TAS certificate VC.");
-            publishTasCertificateVc(tasCertificateVc);
+            // Generate and sign TAS certificate VC, publish it and register its meta.
+            log.debug("\t--> Enrolling TAS certificate VC.");
+            tasEnrollmentProtocol.enrollTas(EnrollTasRequest.builder()
+                    .id(requestEnrollTasReqDto.getId())
+                    .request(EnrollTasRequest.Request.builder()
+                            .password(requestEnrollTasReqDto.getRequest().getPassword())
+                            .build())
+                    .build());
 
             // Generate transaction code.
             log.debug("\t--> Generating transaction code.");
@@ -150,9 +151,15 @@ public class TasServiceImpl implements TasService {
                     .certVcRef(existedTas.getCertificateUrl())
                     .txId(txId)
                     .build();
+        } catch (TaSdkException e) {
+            log.error("Failed to enroll TAS: {}", e.getMessage());
+            throw TaSdkErrorMapper.toOpenDidException(e, ErrorCode.FAILED_API_PROPOSE_ENROLL_TAS);
         } catch (OpenDidException e) {
             log.error("Failed to enroll TAS: {}", e.getMessage());
             throw e;
+        } catch (CommonSdkException e) {
+            log.error("Failed to enroll TAS: {}", e.getMessage());
+            throw CommonSdkErrorMapper.toOpenDidException(e, ErrorCode.FAILED_API_PROPOSE_ENROLL_TAS);
         } catch (Exception e) {
             log.error("Failed to enroll TAS: {}", e.getMessage());
             throw new OpenDidException(ErrorCode.FAILED_API_PROPOSE_ENROLL_TAS);
@@ -195,23 +202,6 @@ public class TasServiceImpl implements TasService {
         if (tas.getStatus() == TasStatus.COMPLETED) {
             throw new OpenDidException(ErrorCode.TAS_ALREADY_REGISTERED);
         }
-    }
-
-    /**
-     * Generates a TAS certificate Verifiable Credential (VC).
-     *
-     * @return VerifiableCredential The generated TAS certificate VC
-     */
-    private VerifiableCredential generateTasCertificateVc(Tas tas) {
-        IssueVcParam issueVcParam = new IssueVcParam();
-        issueVcService.setCertificateVcSchema(issueVcParam);
-        issueVcService.setIssuer(issueVcParam, tas, tas.getCertificateUrl());
-        issueVcService.setTasClaimInfo(issueVcParam, tas);
-        issueVcService.setCertificateVcTypes(issueVcParam);
-        issueVcService.setCertificateEvidence(issueVcParam, tas);
-        issueVcService.setValidateUntil(issueVcParam,1);
-
-        return issueVcService.generateTasCertificateVc(issueVcParam, tas);
     }
 
     /**
@@ -341,6 +331,9 @@ public class TasServiceImpl implements TasService {
         } catch (OpenDidException e) {
             log.error("Failed to enroll TAS: {}", e.getMessage());
             throw e;
+        } catch (CommonSdkException e) {
+            log.error("Failed to enroll TAS: {}", e.getMessage());
+            throw CommonSdkErrorMapper.toOpenDidException(e, ErrorCode.FAILED_API_PROPOSE_ENROLL_TAS);
         } catch (Exception e) {
             log.error("Failed to enroll TAS: {}", e.getMessage());
             throw new OpenDidException(ErrorCode.FAILED_API_PROPOSE_ENROLL_TAS);
@@ -414,6 +407,9 @@ public class TasServiceImpl implements TasService {
         } catch (OpenDidException e) {
             log.error("Failed to enroll TAS: {}", e.getMessage());
             throw e;
+        } catch (CommonSdkException e) {
+            log.error("Failed to enroll TAS: {}", e.getMessage());
+            throw CommonSdkErrorMapper.toOpenDidException(e, ErrorCode.FAILED_API_PROPOSE_ENROLL_TAS);
         } catch (Exception e) {
             log.error("Failed to enroll TAS: {}", e.getMessage());
             throw new OpenDidException(ErrorCode.FAILED_API_PROPOSE_ENROLL_TAS);

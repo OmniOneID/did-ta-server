@@ -168,7 +168,7 @@ public class ErrorResponse {
 | SSRVTRA14007 | Failed to process the 'request-enroll-entity' API request.                | -           | 'request-enroll-entity' API 프로세스를 확인하세요.            |
 | SSRVTRA14008 | Failed to register quick entity.                                          | -           | 빠른 엔티티 등록 프로세스를 확인하세요.                  |
 | SSRVTRA14009 | Failed to register entity: entity name is already registered.             | -           | 중복 엔티티 이름을 피하세요.                             |
-| SSRVTRA14010 | Failed to find entity DID Document: o registration request has been made. | -           | 엔티티 DID 문서 등록을 확인하세요.                   |
+| SSRVTRA14010 | Failed to find entity DID Document: no registration request has been made. | -           | 엔티티 DID 문서 등록을 확인하세요.                   |
 | SSRVTRA14011 | Failed to register DID from entity.                                       | -           | 엔티티 DID 등록 로직을 확인하세요.                     |
 | SSRVTRA14012 | Failed to approve entity DID Document.                                    | -           | 엔티티 DID 문서 승인 플로우를 확인하세요.                  |
 | SSRVTRA14013 | Failed to delete entity: entity is not deletable.                         | -           | 엔티티 삭제 가능 여부를 확인하세요.                            |

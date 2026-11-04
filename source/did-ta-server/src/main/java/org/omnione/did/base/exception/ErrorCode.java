@@ -95,7 +95,7 @@ public enum ErrorCode {
     FAIL_TO_REQUEST_ENROLL_ENTITY("SSRVTRA14007", "Failed to process the 'request-enroll-entity' API request.", 500),
     FAILED_TO_REGISTER_QUICK_ENTITY("SSRVTRA14008", "Failed to register quick entity.", 500),
     ENTITY_NAME_ALREADY_REGISTERED("SSRVTRA14009", "Failed to register entity: entity name is already registered.", 400),
-    ENTITY_DID_DOCUMENT_NOT_FOUND("SSRVTRA14010", "Failed to find entity DID Document: o registration request has been made.", 400),
+    ENTITY_DID_DOCUMENT_NOT_FOUND("SSRVTRA14010", "Failed to find entity DID Document: no registration request has been made.", 400),
     FAILED_TO_REGISTER_DID_FROM_ENTITY("SSRVTRA14011", "Failed to register DID from entity.", 500),
     FAILED_TO_APPROVE_ENTITY_DID_DOCUMENT("SSRVTRA14012", "Failed to approve entity DID Document.", 500),
     ENTITY_NOT_DELETABLE("SSRVTRA14013", "Failed to delete entity: entity is not deletable.", 400),

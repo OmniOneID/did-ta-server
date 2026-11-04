@@ -24,10 +24,10 @@ import org.omnione.did.base.datamodel.enums.ProofType;
 import org.omnione.did.base.db.domain.Transaction;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
+import org.omnione.did.base.util.MultibaseDecoder;
 import org.omnione.did.common.util.did.BaseCoreDidUtil;
 import org.omnione.did.common.util.crypto.BaseCryptoUtil;
 import org.omnione.did.common.util.digest.BaseDigestUtil;
-import org.omnione.did.common.util.multibase.BaseMultibaseUtil;
 import org.omnione.did.common.exception.CommonSdkException;
 import org.omnione.did.tas.v1.common.service.DidDocService;
 import lombok.RequiredArgsConstructor;
@@ -85,8 +85,8 @@ public class DidAuthValidator {
 
         // Compare the value of the DID Auth nonce.
         log.debug("\t--> Comparing the value of the DID Auth nonce");
-        byte[] reqAuthNonce = BaseMultibaseUtil.decode(didAuth.getAuthNonce());
-        byte[] authNonce = BaseMultibaseUtil.decode(transaction.getAuthNonce());
+        byte[] reqAuthNonce = MultibaseDecoder.decode(didAuth.getAuthNonce());
+        byte[] authNonce = MultibaseDecoder.decode(transaction.getAuthNonce());
 
         if (!Arrays.equals(reqAuthNonce, authNonce)) {
             log.error("\t--> DID Auth nonce mismatch");
@@ -169,6 +169,7 @@ public class DidAuthValidator {
      */
     //@TODO: 공통함수로 빼야 함
     private void verifySignature(String encodedPublicKey, String signature, byte[] signatureMassage, ProofType proofType) {
+        MultibaseDecoder.decode(signature);
         try {
             BaseCryptoUtil.verifySignature(encodedPublicKey, signature, signatureMassage, proofType.toEccCurveType().toCommonSdkEccCurveType());
         } catch (OpenDidException e) {

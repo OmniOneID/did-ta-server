@@ -171,6 +171,11 @@ public class CertificateVcValidator {
         DidDocument tasDidDocument = didDocService.getDidDocument(verificationMethod);
 
         // Verify VC
-        BaseCoreVcUtil.verifyVc(certificateVc, tasDidDocument, true);
+        try {
+            BaseCoreVcUtil.verifyVc(certificateVc, tasDidDocument, true);
+        } catch (CommonSdkException e) {
+            log.error("Failed to verify Certificate VC: {}", e.getMessage());
+            throw new OpenDidException(ErrorCode.VC_VERIFICATION_FAILED);
+        }
     }
 }

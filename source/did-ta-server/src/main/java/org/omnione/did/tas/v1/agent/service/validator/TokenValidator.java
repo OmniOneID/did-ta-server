@@ -20,7 +20,7 @@ import org.omnione.did.base.datamodel.enums.ServerTokenPurpose;
 import org.omnione.did.base.db.domain.Token;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
-import org.omnione.did.common.util.multibase.BaseMultibaseUtil;
+import org.omnione.did.base.util.MultibaseDecoder;
 import org.omnione.did.tas.v1.common.service.query.TokenQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,11 +49,11 @@ public class TokenValidator {
      */
     public Token validateServerToken(String requestedServerToken, long transactionId, ServerTokenPurpose... serverTokenPurposes) {
         // Decode requested server token.
-        byte[] requestServerTokenBytes = BaseMultibaseUtil.decode(requestedServerToken);
+        byte[] requestServerTokenBytes = MultibaseDecoder.decode(requestedServerToken);
 
         // Retrieve token information
         Token token = tokenQueryService.findTokenByTransactionId(transactionId);
-        byte[] savedServerTokenBytes = BaseMultibaseUtil.decode(token.getToken());
+        byte[] savedServerTokenBytes = MultibaseDecoder.decode(token.getToken());
 
         // Verify token purpose.
         boolean isValidPurpose = Arrays.stream(serverTokenPurposes)

@@ -173,7 +173,7 @@ npm --version
 git clone https://github.com/OmniOneID/did-ta-server.git
 
 # 복제한 리포지토리로 이동
-cd did-tas-server
+cd did-ta-server
 ```
 
 > **참고 링크**
@@ -215,11 +215,12 @@ did-ta-server
     └── did-ta-server
         ├── gradle
         ├── libs
-            └── did-sdk-common-2.0.0.jar
+            └── did-common-sdk-server-3.0.0.jar
+            └── did-ta-sdk-server-1.0.0.jar
             └── did-blockchain-sdk-server-2.0.0.jar
             └── did-core-sdk-server-2.0.0.jar
             └── did-crypto-sdk-server-2.0.0.jar
-            └── did-datamodel-server-2.0.0.jar
+            └── did-datamodel-sdk-server-2.0.0.jar
             └── did-wallet-sdk-server-2.0.0.jar
             └── did-zkp-sdk-server-2.0.0.jar
         ├── sample
@@ -245,7 +246,7 @@ did-ta-server
 | ┖ installation          | 설치 및 설정 가이드                      |
 | ┖ db                    | 데이터베이스 ERD, 테이블 명세서          |
 | source                  | 소스 코드                                |
-| ┖ did-tas-server        | TA 서버 소스 코드 및 빌드 파일           |
+| ┖ did-ta-server         | TA 서버 소스 코드 및 빌드 파일           |
 | ┖ gradle                | Gradle 빌드 설정 및 스크립트             |
 | ┖ libs                  | 외부 라이브러리 및 의존성                |
 | ┖ sample                | 샘플 파일                                |
@@ -282,7 +283,7 @@ Open DID 프로젝트는 백엔드(Spring Boot 기반)와 프론트엔드(React 
 > - [IntelliJ IDEA 다운로드](https://www.jetbrains.com/idea/download/)
 
 #### 4.1.1.2. 프로젝트 열기
-- IntelliJ를 실행시키고 `File -> New -> Project from Existing Sources`를 선택합니다. 파일 선택 창이 나타나면 [3.1. 소스코드 복제](#31-소스코드-복제) 에서 복제한 리포지토리에서 'source/did-tas-server' 폴더를 선택합니다.
+- IntelliJ를 실행시키고 `File -> New -> Project from Existing Sources`를 선택합니다. 파일 선택 창이 나타나면 [3.1. 소스코드 복제](#31-소스코드-복제) 에서 복제한 리포지토리에서 'source/did-ta-server' 폴더를 선택합니다.
 - 프로젝트를 열면 build.gradle 파일이 자동으로 인식됩니다.
 - Gradle이 자동으로 필요한 의존성 파일들을 다운로드하며, 이 과정이 완료될 때까지 기다립니다.
 
@@ -352,7 +353,7 @@ npm run dev
 - gradlew를 사용하여 소스를 빌드합니다.
   ```shell
     # 복제한 리포지토리로의 소스폴더로 이동
-    cd source/did-tas-server
+    cd source/did-ta-server
 
     # Gradle Wrapper 실행 권한을 부여
     chmod 755 ./gradlew
@@ -371,7 +372,7 @@ npm run dev
       cd build/libs
       ls
     ```
-- 이 명령어는 `did-tas-server-2.0.0.jar` 파일을 생성합니다.
+- 이 명령어는 `did-ta-server-3.0.0.jar` 파일을 생성합니다.
 
 <br/>
 
@@ -379,7 +380,7 @@ npm run dev
 빌드된 JAR 파일을 사용하여 서버를 구동합니다:
 
 ```bash
-java -jar did-tas-server-2.0.0.jar
+java -jar did-ta-server-3.0.0.jar
 ```
 
 - 서버가 정상적으로 구동되면, 브라우저에서 http://localhost:8090/swagger-ui/index.html 주소로 이동하여 Swagger UI를 통해 API 문서가 제대로 표시되는지 확인합니다.
@@ -796,7 +797,7 @@ TA 서버는 다양한 환경에서 실행될 수 있도록 `dev`와 `sample` �
 - **프로파일 지정:** 서버 구동 명령어에 `--spring.profiles.active={profile}` 옵션을 추가하여 원하는 프로파일을 활성화합니다.
   
   ```bash
-  java -jar build/libs/did-tas-server-2.0.0.jar --spring.profiles.active={profile}
+  java -jar build/libs/did-ta-server-3.0.0.jar --spring.profiles.active={profile}
   ```
 
 - **설정 적용:** 활성화된 프로파일에 따라 해당 설정 파일이 적용됩니다.

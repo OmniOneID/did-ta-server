@@ -16,8 +16,6 @@
 
 package org.omnione.did.tas.v1.agent.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,35 +51,44 @@ import org.omnione.did.base.db.repository.UserRepository;
 import org.omnione.did.base.db.repository.WalletRepository;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
-import org.omnione.did.base.response.ErrorResponse;
-import org.omnione.did.common.util.token.BaseAccessTokenUtil;
-import org.omnione.did.base.util.BaseBlockChainUtil;
+import org.omnione.did.base.exception.TaSdkErrorMapper;
+import org.omnione.did.base.util.MultibaseDecoder;
+import org.omnione.did.tas.exception.TaSdkException;
+import org.omnione.did.tas.model.request.protocol.user.ConfirmRegisterUserRequest;
+import org.omnione.did.tas.model.request.protocol.user.ConfirmRestoreDidDocRequest;
+import org.omnione.did.tas.model.request.protocol.user.ConfirmUpdateDidDocRequest;
+import org.omnione.did.tas.model.request.protocol.user.ProposeRegisterUserRequest;
+import org.omnione.did.tas.model.request.protocol.user.ProposeRestoreDidDocRequest;
+import org.omnione.did.tas.model.request.protocol.user.ProposeUpdateDidDocRequest;
+import org.omnione.did.tas.model.request.protocol.user.RequestRegisterUserRequest;
+import org.omnione.did.tas.model.request.protocol.user.RequestRestoreDidDocRequest;
+import org.omnione.did.tas.model.request.protocol.user.RequestUpdateDidDocRequest;
+import org.omnione.did.tas.model.request.protocol.user.RetrieveKycRequest;
+import org.omnione.did.tas.model.response.protocol.user.ProposeRestoreDidDocResponse;
+import org.omnione.did.tas.model.response.protocol.user.ProposeUpdateDidDocResponse;
+import org.omnione.did.tas.protocol.diddoc.DidDocRestoreProtocol;
+import org.omnione.did.tas.protocol.diddoc.DidDocUpdateProtocol;
+import org.omnione.did.tas.protocol.user.UserRegistrationProtocol;
+import org.omnione.did.tas.provider.KycProvider;
+import org.omnione.did.tas.v1.agent.helper.TaSdkDataConverter;
 import org.omnione.did.common.util.did.BaseCoreDidUtil;
 import org.omnione.did.common.util.digest.BaseDigestUtil;
-import org.omnione.did.common.util.multibase.BaseMultibaseUtil;
 import org.omnione.did.base.util.BaseTasDidUtil;
-import org.omnione.did.base.util.BaseTasUtil;
 import org.omnione.did.common.exception.CommonSdkException;
-import org.omnione.did.common.exception.HttpClientException;
 import org.omnione.did.common.util.DateTimeUtil;
 import org.omnione.did.common.util.DidUtil;
 import org.omnione.did.common.util.DidValidator;
-import org.omnione.did.common.util.HttpClientUtil;
 import org.omnione.did.common.util.IdGenerator;
 import org.omnione.did.common.util.JsonUtil;
 import org.omnione.did.core.manager.DidManager;
 import org.omnione.did.data.model.did.DidDocument;
-import org.omnione.did.data.model.did.InvokedDidDoc;
 import org.omnione.did.data.model.enums.did.DidDocStatus;
-import org.omnione.did.data.model.enums.vc.RoleType;
 import org.omnione.did.noti.v1.agent.dto.email.EmailTemplate;
 import org.omnione.did.noti.v1.agent.dto.email.RequestSendEmailReqDto;
 import org.omnione.did.noti.v1.agent.dto.push.FcmNotificationDto;
 import org.omnione.did.noti.v1.agent.dto.push.RequestSendPushReqDto;
 import org.omnione.did.noti.v1.agent.service.NotiEmailService;
 import org.omnione.did.noti.v1.agent.service.NotiPushService;
-import org.omnione.did.tas.v1.agent.api.dto.RetrievePiiApiReqDto;
-import org.omnione.did.tas.v1.agent.api.dto.RetrievePiiApiResDto;
 import org.omnione.did.tas.v1.agent.helper.EmailServiceHelper;
 import org.omnione.did.tas.v1.agent.helper.PushServiceHelper;
 import org.omnione.did.tas.v1.agent.service.validator.DidAuthValidator;
@@ -159,6 +166,10 @@ public class UserServiceImpl implements UserService {
     private final NotiEmailService notiEmailService;
     private final DidOfferQueryService didOfferQueryService;
     private final KycQueryService kycQueryService;
+    private final KycProvider kycProvider;
+    private final UserRegistrationProtocol userRegistrationProtocol;
+    private final DidDocUpdateProtocol didDocUpdateProtocol;
+    private final DidDocRestoreProtocol didDocRestoreProtocol;
 
     /**
      * Proposes the registration of a new user, generating a transaction ID and initializing sub-transaction.
@@ -174,7 +185,9 @@ public class UserServiceImpl implements UserService {
 
             // Generate transaction code.
             log.debug("\t--> Generating transaction ID");
-            String txId = IdGenerator.generateTxId();
+            String txId = userRegistrationProtocol.proposeRegisterUser(ProposeRegisterUserRequest.builder()
+                    .id(proposeRegisterUserReqDto.getId())
+                    .build()).getTxId();
 
             // Insert transaction information.
             log.debug("\t--> Inserting transaction information for txId: {}", txId);
@@ -201,6 +214,9 @@ public class UserServiceImpl implements UserService {
             return ProposeRegisterUserResDto.builder()
                     .txId(txId)
                     .build();
+        } catch (TaSdkException e) {
+            log.error("\t--> TaSdkException occurred during proposeRegisterUser: {}", e.getMessage());
+            throw TaSdkErrorMapper.toOpenDidException(e, ErrorCode.FAILED_API_PROPOSE_REGISTER_USER);
         } catch (OpenDidException e) {
             log.error("\t--> OpenDidException occurred during proposeRegisterUser: {}", e.getErrorCode() != null ? e.getErrorCode() : e.getErrorResponse());
             throw e;
@@ -238,7 +254,14 @@ public class UserServiceImpl implements UserService {
             // Retrieve PII information based on KYC verification type
             log.debug("\t--> Retrieving PII information");
             Kyc kyc = kycQueryService.findKyc();
-            String pii = getUserPii(kyc, retrieveKycReqDto);
+            boolean tokenVerification = kyc.getKycVerificationType() == KycVerificationType.TOKEN;
+            String pii = userRegistrationProtocol.retrieveKyc(RetrieveKycRequest.builder()
+                    .id(retrieveKycReqDto.getId())
+                    .txId(retrieveKycReqDto.getTxId())
+                    .serverToken(retrieveKycReqDto.getServerToken())
+                    .kycToken(tokenVerification ? retrieveKycReqDto.getKycToken() : null)
+                    .kycTxId(tokenVerification ? null : retrieveKycReqDto.getKycTxId())
+                    .build()).getPiiData().getPii();
 
             // Update transaction PII.
             log.debug("\t--> Updating transaction PII for transaction ID: {}", transaction.getId());
@@ -257,6 +280,9 @@ public class UserServiceImpl implements UserService {
             return RetrieveKycResDto.builder()
                     .txId(retrieveKycReqDto.getTxId())
                     .build();
+        } catch (TaSdkException e) {
+            log.error("\t--> TaSdkException occurred during retrieveKyc: {}", e.getMessage());
+            throw TaSdkErrorMapper.toOpenDidException(e, ErrorCode.FAILED_API_RETRIEVE_KYC);
         } catch (OpenDidException e) {
             log.error("\t--> OpenDidException occurred during retrieveKyc: {}", e.getErrorCode() != null ? e.getErrorCode() : e.getErrorResponse());
             throw e;
@@ -287,92 +313,6 @@ public class UserServiceImpl implements UserService {
         if (subTransaction.getType() != SubTransactionType.REQUEST_CREATE_TOKEN) {
             log.error("\t--> Invalid sub-transaction type: {} for transaction ID: {}", subTransaction.getType(), transaction.getId());
             throw new OpenDidException(ErrorCode.TRANSACTION_INVALID);
-        }
-    }
-
-    /**
-     * Retrieves PII based on the KYC verification type configured in the KYC settings.
-     *
-     * @param kyc the KYC configuration
-     * @param dto the retrieve KYC request DTO
-     * @return the PII of the user
-     */
-    private String getUserPii(Kyc kyc, RetrieveKycReqDto dto) {
-        if (kyc.getKycVerificationType() == KycVerificationType.TOKEN) {
-            log.debug("\t--> KYC type: TOKEN — extracting PII from access token");
-            return getUserPiiFromToken(dto.getKycToken(), kyc);
-        } else {
-            log.debug("\t--> KYC type: TRANSACTION — retrieving PII from CA server");
-            return requestUserPii(dto.getKycTxId());
-        }
-    }
-
-    /**
-     * Extracts PII from an OP server-issued JWT access token.
-     * If signerDid is configured, the token signer is validated against it.
-     * If signerDid is null, the signer DID is extracted from the JWT header.
-     *
-     * @param kycToken the JWT access token from the OP server
-     * @param kyc      the KYC configuration
-     * @return the extracted PII
-     */
-    private String getUserPiiFromToken(String kycToken, Kyc kyc) {
-        try {
-            org.omnione.did.data.model.did.DidDocument signerDidDocument;
-            if (kyc.getSignerDid() != null) {
-                log.debug("\t--> Using configured signer DID: {}", kyc.getSignerDid());
-                signerDidDocument = storageService.findDidDoc(kyc.getSignerDid());
-            } else {
-                log.debug("\t--> Signer DID not configured, extracting from JWT header");
-                BaseAccessTokenUtil.JwtComponents jwtComponents = BaseAccessTokenUtil.splitJwtToken(kycToken);
-                String kid = BaseAccessTokenUtil.extractKidFromHeader(jwtComponents.getHeader());
-                String signerDid = DidUtil.extractDid(kid);
-                signerDidDocument = storageService.findDidDoc(signerDid);
-            }
-            return BaseAccessTokenUtil.validateTokenAndExtractPii(kycToken, signerDidDocument);
-        } catch (OpenDidException e) {
-            throw e;
-        } catch (Exception e) {
-            log.error("Failed to extract PII from KYC token: {}", e.getMessage(), e);
-            throw new OpenDidException(ErrorCode.KYC_COMMUNICATION_ERROR);
-        }
-    }
-
-    /**
-     * requestUserPii retrieves PII information from the KYC server using the transaction ID.
-     *
-     * @param kycTxId the transaction ID of the KYC request
-     * @return the PII information of the user
-     */
-    private String requestUserPii(String kycTxId) {
-        RetrievePiiApiReqDto apiRetrievePiiReqDto = RetrievePiiApiReqDto.builder()
-                .userId(kycTxId)
-                .build();
-
-        Kyc kyc = kycQueryService.findKyc();
-
-        try {
-            String request = JsonUtil.serializeToJson(apiRetrievePiiReqDto);
-            RetrievePiiApiResDto retrievePiiApiResDto = HttpClientUtil.postData(kyc.getServerUrl() + "/api/v1/retrieve-pii", request, RetrievePiiApiResDto.class);
-
-            return retrievePiiApiResDto.getPii();
-        } catch (HttpClientException e) {
-            log.error("HttpClientException occurred while sending retrieve-pii request:: {}", e.getMessage(), e);
-            ErrorResponse errorResponse = convertExternalErrorResponse(e.getResponseBody());
-            throw new OpenDidException(errorResponse);
-        } catch (Exception e) {
-            log.error("Failed to retrieve PII information: {}", e.getMessage(), e);
-            throw new OpenDidException(ErrorCode.KYC_COMMUNICATION_ERROR);
-        }
-    }
-
-    private ErrorResponse convertExternalErrorResponse(String resBody) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            return objectMapper.readValue(resBody, ErrorResponse.class);
-        } catch (JsonProcessingException e) {
-            log.error("Failed to parse external error response: {}", resBody, e);
-            throw new OpenDidException(ErrorCode.KYC_COMMUNICATION_ERROR);
         }
     }
 
@@ -423,13 +363,14 @@ public class UserServiceImpl implements UserService {
             log.debug("\t--> Verifying DID document key signatures");
             verifyDidDocKeyProofs(ownerDidDoc);
 
-            // Sign DID document.
-            log.debug("\t--> Signing DID document");
-            InvokedDidDoc invokedDidDoc = signatureService.signInvokedDidDoc(ownerDidDoc);
-
-            // Upload User DID document.
-            log.debug("\t--> Uploading wallet DID document");
-            storageService.registerDidDoc(invokedDidDoc, RoleType.ETC);
+            // Sign and upload User DID document.
+            log.debug("\t--> Registering user DID document");
+            userRegistrationProtocol.requestRegisterUser(RequestRegisterUserRequest.builder()
+                    .id(requestRegisterUserReqDto.getId())
+                    .txId(requestRegisterUserReqDto.getTxId())
+                    .serverToken(requestRegisterUserReqDto.getServerToken())
+                    .signedDidDoc(TaSdkDataConverter.toSdkSignedDidDoc(requestRegisterUserReqDto.getSignedDidDoc()))
+                    .build());
 
             // Deactivate previous users with the same PII (non-critical).
             deactivatePreviousUsers(transaction.getPii(), userDid);
@@ -470,6 +411,9 @@ public class UserServiceImpl implements UserService {
             return RequestRegisterUserResDto.builder()
                     .txId(requestRegisterUserReqDto.getTxId())
                     .build();
+        } catch (TaSdkException e) {
+            log.error("\t--> TaSdkException occurred during requestRegisterUser: {}", e.getMessage());
+            throw TaSdkErrorMapper.toOpenDidException(e, ErrorCode.FAILED_API_REQUEST_REGISTER_USER);
         } catch (OpenDidException e) {
             log.error("\t--> OpenDidException occurred during requestRegisterUser: {}", e.getErrorCode() != null ? e.getErrorCode() : e.getErrorResponse());
             throw e;
@@ -559,7 +503,7 @@ public class UserServiceImpl implements UserService {
      */
     private DidDocument parseOwnerDidDoc(String encodedDidDoc) {
         try {
-            byte[] decodedDidDoc = BaseMultibaseUtil.decode(encodedDidDoc);
+            byte[] decodedDidDoc = MultibaseDecoder.decode(encodedDidDoc);
             String OwnerDidDoc = new String(decodedDidDoc, StandardCharsets.UTF_8);
 
             DidManager didManager = BaseCoreDidUtil.parseDidDoc(OwnerDidDoc);
@@ -681,6 +625,12 @@ public class UserServiceImpl implements UserService {
             log.debug("\t--> Validating server token");
             tokenValidator.validateServerToken(confirmRegisterUserReqDto.getServerToken(), transaction.getId(), ServerTokenPurpose.CREATE_DID, ServerTokenPurpose.CREATE_DID_AND_ISSUE_VC);
 
+            userRegistrationProtocol.confirmRegisterUser(ConfirmRegisterUserRequest.builder()
+                    .id(confirmRegisterUserReqDto.getId())
+                    .txId(confirmRegisterUserReqDto.getTxId())
+                    .serverToken(confirmRegisterUserReqDto.getServerToken())
+                    .build());
+
             // Update transaction status.
             log.debug("\t--> Updating transaction status to COMPLETED for transaction ID: {}", transaction.getId());
             transactionService.updateTransactionStatus(transaction.getId(), TransactionStatus.COMPLETED);
@@ -700,6 +650,9 @@ public class UserServiceImpl implements UserService {
             return ConfirmRegisterUserResDto.builder()
                     .txId(confirmRegisterUserReqDto.getTxId())
                     .build();
+        } catch (TaSdkException e) {
+            log.error("\t--> TaSdkException occurred during confirmRegisterUser: {}", e.getMessage());
+            throw TaSdkErrorMapper.toOpenDidException(e, ErrorCode.FAILED_API_REQUEST_CONFIRM_USER);
         } catch (OpenDidException e) {
             log.error("\t--> OpenDidException occurred during confirmRegisterUser: {}", e.getErrorCode() != null ? e.getErrorCode() : e.getErrorResponse());
             throw e;
@@ -750,13 +703,14 @@ public class UserServiceImpl implements UserService {
             log.debug("\t--> Validating user status for update");
             validateUserStatusForUpdate(proposeUpdateDidDocReqDto.getDid());
 
-            // Generate transaction code.
-            log.debug("\t--> Generating transaction ID");
-            String txId = IdGenerator.generateTxId();
-
-            // Generate authNonce. (16-byte)
-            log.debug("\t--> Generating auth nonce");
-            String authNonce = BaseTasUtil.generateNonceWithMultibase();
+            // Generate transaction code and authNonce. (16-byte)
+            log.debug("\t--> Generating transaction ID and auth nonce");
+            ProposeUpdateDidDocResponse proposeUpdateDidDocResponse = didDocUpdateProtocol.proposeUpdateDidDoc(ProposeUpdateDidDocRequest.builder()
+                    .id(proposeUpdateDidDocReqDto.getId())
+                    .did(proposeUpdateDidDocReqDto.getDid())
+                    .build());
+            String txId = proposeUpdateDidDocResponse.getTxId();
+            String authNonce = proposeUpdateDidDocResponse.getAuthNonce();
 
             // Insert transaction information.
             log.debug("\t--> Inserting transaction information for txId: {}", txId);
@@ -786,6 +740,9 @@ public class UserServiceImpl implements UserService {
                     .txId(txId)
                     .authNonce(authNonce)
                     .build();
+        } catch (TaSdkException e) {
+            log.error("\t--> TaSdkException occurred during proposeUpdateUser: {}", e.getMessage());
+            throw TaSdkErrorMapper.toOpenDidException(e);
         } catch (OpenDidException e) {
             log.error("\t--> OpenDidException occurred during proposeUpdateUser: {}", e.getErrorCode() != null ? e.getErrorCode() : e.getErrorResponse());
             throw e;
@@ -873,13 +830,15 @@ public class UserServiceImpl implements UserService {
             log.debug("\t--> Validating User Mapping Info(userDid, walletId, appID)");
             validateUserMappingInfo(user, token);
 
-            // Sign DID document.
-            log.debug("\t--> Signing DID document");
-            InvokedDidDoc invokedDidDoc = signatureService.signInvokedDidDoc(updatedUserOwnerDidDoc);
-
-            // Upload User DID document.
-            log.debug("\t--> Uploading wallet DID document");
-            storageService.registerDidDoc(invokedDidDoc, RoleType.ETC);
+            // Sign and upload User DID document.
+            log.debug("\t--> Registering updated user DID document");
+            didDocUpdateProtocol.requestUpdateDidDoc(RequestUpdateDidDocRequest.builder()
+                    .id(requestUpdateDidDocReqDto.getId())
+                    .txId(requestUpdateDidDocReqDto.getTxId())
+                    .serverToken(requestUpdateDidDocReqDto.getServerToken())
+                    .signedDidDoc(TaSdkDataConverter.toSdkSignedDidDoc(requestUpdateDidDocReqDto.getSignedDidDoc()))
+                    .didAuth(TaSdkDataConverter.toSdkDidAuth(requestUpdateDidDocReqDto.getDidAuth()))
+                    .build());
 
             // Insert sub-transaction information.
             log.debug("\t--> Inserting sub-transaction information");
@@ -896,6 +855,9 @@ public class UserServiceImpl implements UserService {
             return RequestUpdateDidDocResDto.builder()
                     .txId(requestUpdateDidDocReqDto.getTxId())
                     .build();
+        } catch (TaSdkException e) {
+            log.error("\t--> TaSdkException occurred during requestUpdateUser: {}", e.getMessage());
+            throw TaSdkErrorMapper.toOpenDidException(e, ErrorCode.FAILED_API_REQUEST_UPDATE_DIDDOC);
         } catch (OpenDidException e) {
             log.error("\t--> OpenDidException occurred during requestUpdateUser: {}", e.getErrorCode() != null ? e.getErrorCode() : e.getErrorResponse());
             throw e;
@@ -1172,6 +1134,12 @@ public class UserServiceImpl implements UserService {
             log.debug("\t--> Validating server token");
             tokenValidator.validateServerToken(confirmUpdateDidDocReqDto.getServerToken(), transaction.getId(), ServerTokenPurpose.UPDATE_DID);
 
+            didDocUpdateProtocol.confirmUpdateDidDoc(ConfirmUpdateDidDocRequest.builder()
+                    .id(confirmUpdateDidDocReqDto.getId())
+                    .txId(confirmUpdateDidDocReqDto.getTxId())
+                    .serverToken(confirmUpdateDidDocReqDto.getServerToken())
+                    .build());
+
             // Update transaction status.
             log.debug("\t--> Updating transaction status to COMPLETED for transaction ID: {}", transaction.getId());
             transactionService.updateTransactionStatus(transaction.getId(), TransactionStatus.COMPLETED);
@@ -1191,6 +1159,8 @@ public class UserServiceImpl implements UserService {
             return ConfirmUpdateDidDocResDto.builder()
                     .txId(confirmUpdateDidDocReqDto.getTxId())
                     .build();
+        } catch (TaSdkException e) {
+            throw TaSdkErrorMapper.toOpenDidException(e);
         } catch (OpenDidException e) {
             throw e;
         } catch (Exception e) {
@@ -1348,7 +1318,7 @@ public class UserServiceImpl implements UserService {
 
             // Retrieve Transaction information.
             log.debug("\t--> Retrieving PII information from KYC server");
-            String pii = requestUserPii(updateDidDocDeactivatedReqDto.getKycTxId());
+            String pii = kycProvider.retrieveKycData(updateDidDocDeactivatedReqDto.getKycTxId()).getPii();
 
             // Retrieve User information using PII
             log.debug("\t--> Retrieving user information for PII");
@@ -1369,6 +1339,9 @@ public class UserServiceImpl implements UserService {
             log.debug("*** Finished updateDidDocDeactivated ***");
 
             return new EmptyResDto();
+        } catch (TaSdkException e) {
+            log.error("\t--> TaSdkException occurred during updateDidDocDeactivated: {}", e.getMessage());
+            throw TaSdkErrorMapper.toOpenDidException(e, ErrorCode.FAILED_API_UPDATE_DIDDOC_DEACTIVATED);
         } catch (OpenDidException e) {
             log.error("\t--> OpenDidException occurred during updateDidDocDeactivated: {}", e.getErrorCode() != null ? e.getErrorCode() : e.getErrorResponse());
             throw e;
@@ -1498,7 +1471,7 @@ public class UserServiceImpl implements UserService {
 
             // Retrieve Transaction information.
             log.debug("\t--> Retrieving PII information from KYC server");
-            String pii = requestUserPii(updateDidDocRevokedReqDto.getKycTxId());
+            String pii = kycProvider.retrieveKycData(updateDidDocRevokedReqDto.getKycTxId()).getPii();
 
             // Retrieve User information using PII
             log.debug("\t--> Retrieving user information for PII");
@@ -1519,6 +1492,9 @@ public class UserServiceImpl implements UserService {
             log.debug("*** Finished updateDidDocRevoked ***");
 
             return new EmptyResDto();
+        } catch (TaSdkException e) {
+            log.error("\t--> TaSdkException occurred during updateDidDocRevoked: {}", e.getMessage());
+            throw TaSdkErrorMapper.toOpenDidException(e, ErrorCode.FAILED_API_UPDATE_DIDDOC_REVOKED);
         } catch (OpenDidException e) {
             log.error("\t--> OpenDidException occurred during updateDidDocDeactivated: {}", e.getErrorCode() != null ? e.getErrorCode() : e.getErrorResponse());
             throw e;
@@ -1534,7 +1510,7 @@ public class UserServiceImpl implements UserService {
      */
     private void updateDidDocRevoked(DidDocument userDidDoc) {
         String didWithVersion = BaseTasDidUtil.getDidWithVersion(userDidDoc);
-        BaseBlockChainUtil.updateDidDocStatus(didWithVersion, org.omnione.did.data.model.enums.did.DidDocStatus.REVOKED);
+        storageService.updateDidDocStatus(didWithVersion, org.omnione.did.data.model.enums.did.DidDocStatus.REVOKED);
     }
 
     /**
@@ -1689,10 +1665,6 @@ public class UserServiceImpl implements UserService {
         try {
             log.debug("=== Starting proposeRestoreDidDoc ===");
 
-            // Generate transaction code.
-            log.debug("\t--> Generating transaction code.");
-            String txId = IdGenerator.generateTxId();
-
             // Retrieve DID offer information.
             log.debug("\t--> Retrieving DID offer information for offer ID: {}", proposeRestoreDidDocReqDto.getOfferId());
             DidOffer didOffer = didOfferQueryService.findByOfferId(proposeRestoreDidDocReqDto.getOfferId());
@@ -1709,8 +1681,15 @@ public class UserServiceImpl implements UserService {
             log.debug("\t--> Validating user status for restore");
             validateUserStatusForRestore(user);
 
-            // Generate authNonce. (16-byte)
-            String authNonce = BaseTasUtil.generateNonceWithMultibase();
+            // Generate transaction code and authNonce. (16-byte)
+            log.debug("\t--> Generating transaction code and auth nonce");
+            ProposeRestoreDidDocResponse proposeRestoreDidDocResponse = didDocRestoreProtocol.proposeRestoreDidDoc(ProposeRestoreDidDocRequest.builder()
+                    .id(proposeRestoreDidDocReqDto.getId())
+                    .offerId(proposeRestoreDidDocReqDto.getOfferId())
+                    .did(proposeRestoreDidDocReqDto.getDid())
+                    .build());
+            String txId = proposeRestoreDidDocResponse.getTxId();
+            String authNonce = proposeRestoreDidDocResponse.getAuthNonce();
 
             // Insert transaction information.
             log.debug("\t--> Inserting transaction information for txId: {}", txId);
@@ -1743,6 +1722,9 @@ public class UserServiceImpl implements UserService {
                     .txId(txId)
                     .authNonce(authNonce)
                     .build();
+        } catch (TaSdkException e) {
+            log.error("\t--> TaSdkException occurred during proposeRestoreDidDoc: {}", e.getMessage());
+            throw TaSdkErrorMapper.toOpenDidException(e, ErrorCode.FAILED_API_PROPOSE_RESTORE_DIDDOC);
         } catch (OpenDidException e) {
             log.error("\t--> OpenDidException occurred during proposeRestoreDidDoc: {}", e.getErrorCode() != null ? e.getErrorCode() : e.getErrorResponse());
             throw e;
@@ -1811,13 +1793,14 @@ public class UserServiceImpl implements UserService {
             log.debug("\t--> Validating User Mapping Info(userDid, walletId, appID)");
             validateUserMappingInfo(user, token);
 
-            // Retrieve current DID document.
-            log.debug("\t--> Retrieving current DID document");
-            DidDocument userDidDoc = storageService.findDidDoc(transaction.getDid());
-
             // Update DID document status.
             log.debug("\t--> Updating DID document status to ACTIVATED (Blockchain)");
-            updateDidDocActivated(userDidDoc);
+            didDocRestoreProtocol.requestRestoreDidDoc(RequestRestoreDidDocRequest.builder()
+                    .id(requestRestoreDidDocReqDto.getId())
+                    .txId(requestRestoreDidDocReqDto.getTxId())
+                    .serverToken(requestRestoreDidDocReqDto.getServerToken())
+                    .didAuth(TaSdkDataConverter.toSdkDidAuth(requestRestoreDidDocReqDto.getDidAuth()))
+                    .build());
 
             // Update User status.
             log.debug("\t--> Updating user status to ACTIVATED (DB)");
@@ -1838,6 +1821,9 @@ public class UserServiceImpl implements UserService {
             return RequestRestoreDidDocResDto.builder()
                     .txId(requestRestoreDidDocReqDto.getTxId())
                     .build();
+        } catch (TaSdkException e) {
+            log.error("\t--> TaSdkException occurred during requestRestoreDidDoc: {}", e.getMessage());
+            throw TaSdkErrorMapper.toOpenDidException(e, ErrorCode.FAILED_API_REQUEST_RESTORE_DIDDOC);
         } catch (OpenDidException e) {
             log.error("\t--> OpenDidException occurred during proposeRestoreDidDoc: {}", e.getErrorCode() != null ? e.getErrorCode() : e.getErrorResponse());
             throw e;
@@ -1883,15 +1869,6 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * Updates the status of a DID document to ACTIVATED in the blockchain.
-     * @param userDidDoc The DID document to update
-     */
-    private void updateDidDocActivated(DidDocument userDidDoc) {
-        String didWithVersion = BaseTasDidUtil.getDidWithVersion(userDidDoc);
-        BaseBlockChainUtil.updateDidDocStatus(didWithVersion, org.omnione.did.data.model.enums.did.DidDocStatus.ACTIVATED);
-    }
-
-    /**
      * Handles the process of confirming DID restoration.
      *
      * @param confirmRestoreDidDocReqDto The DTO containing the request details for confirming DID restoration
@@ -1916,6 +1893,12 @@ public class UserServiceImpl implements UserService {
             log.debug("\t--> Validating server token");
             tokenValidator.validateServerToken(confirmRestoreDidDocReqDto.getServerToken(), transaction.getId(), ServerTokenPurpose.RESTORE_DID);
 
+            didDocRestoreProtocol.confirmRestoreDidDoc(ConfirmRestoreDidDocRequest.builder()
+                    .id(confirmRestoreDidDocReqDto.getId())
+                    .txId(confirmRestoreDidDocReqDto.getTxId())
+                    .serverToken(confirmRestoreDidDocReqDto.getServerToken())
+                    .build());
+
             // Update transaction status.
             log.debug("\t--> Updating transaction status to COMPLETED for transaction ID: {}", transaction.getId());
             transactionService.updateTransactionStatus(transaction.getId(), TransactionStatus.COMPLETED);
@@ -1935,6 +1918,9 @@ public class UserServiceImpl implements UserService {
             return ConfirmRestoreDidDocResDto.builder()
                     .txId(confirmRestoreDidDocReqDto.getTxId())
                     .build();
+        } catch (TaSdkException e) {
+            log.error("\t--> TaSdkException occurred during confirmRestoreDidDoc: {}", e.getMessage());
+            throw TaSdkErrorMapper.toOpenDidException(e);
         } catch (OpenDidException e) {
             log.error("\t--> OpenDidException occurred during confirmRestoreDidDoc: {}", e.getErrorCode() != null ? e.getErrorCode() : e.getErrorResponse());
             throw e;

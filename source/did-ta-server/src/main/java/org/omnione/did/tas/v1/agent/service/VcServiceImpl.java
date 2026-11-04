@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.constants.UrlConstant.Issuer;
+import org.omnione.did.base.datamodel.data.zkp.ZkpIssueProfile;
 import org.omnione.did.base.datamodel.enums.EmailTemplateType;
 import org.omnione.did.base.datamodel.enums.PayloadType;
 import org.omnione.did.base.datamodel.enums.QrType;
@@ -32,23 +33,37 @@ import org.omnione.did.base.db.constant.SubTransactionType;
 import org.omnione.did.base.db.constant.TransactionStatus;
 import org.omnione.did.base.db.constant.TransactionType;
 import org.omnione.did.base.db.domain.CertificateVc;
-import org.omnione.did.base.db.domain.Ecdh;
 import org.omnione.did.base.db.domain.Entity;
 import org.omnione.did.base.db.domain.ListVcSchema;
 import org.omnione.did.base.db.domain.SubTransaction;
 import org.omnione.did.base.db.domain.Tas;
 import org.omnione.did.base.db.domain.Transaction;
-import org.omnione.did.base.db.domain.User;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
+import org.omnione.did.base.exception.TaSdkErrorMapper;
+import org.omnione.did.tas.exception.TaSdkException;
+import org.omnione.did.tas.model.request.protocol.vc.ConfirmIssueVcRequest;
+import org.omnione.did.tas.model.request.protocol.vc.ConfirmRevokeVcRequest;
+import org.omnione.did.tas.model.request.protocol.vc.ProposeIssueVcRequest;
+import org.omnione.did.tas.model.request.protocol.vc.ProposeRevokeVcRequest;
+import org.omnione.did.tas.model.request.protocol.vc.RequestIssueProfileRequest;
+import org.omnione.did.tas.model.request.protocol.vc.RequestIssueVcRequest;
+import org.omnione.did.tas.model.request.protocol.vc.RequestRevokeVcRequest;
+import org.omnione.did.tas.model.response.protocol.vc.ProposeIssueVcResult;
+import org.omnione.did.tas.model.response.protocol.vc.ProposeRevokeVcResult;
+import org.omnione.did.tas.model.response.protocol.vc.RequestIssueProfileResult;
+import org.omnione.did.tas.model.response.protocol.vc.RequestIssueVcResult;
+import org.omnione.did.tas.protocol.vc.VcIssuanceProtocol;
+import org.omnione.did.tas.protocol.vc.VcRevocationProtocol;
+import org.omnione.did.tas.provider.VcIssuanceDataProvider;
+import org.omnione.did.tas.v1.agent.client.IssuerHttpApiClientImpl;
+import org.omnione.did.tas.v1.agent.helper.TaSdkDataConverter;
+import org.omnione.did.tas.v1.config.provider.VcRevocationDataProviderImpl;
 import org.omnione.did.base.response.ErrorResponse;
-import org.omnione.did.common.util.multibase.BaseMultibaseUtil;
 import org.omnione.did.common.exception.HttpClientException;
 import org.omnione.did.common.util.DateTimeUtil;
 import org.omnione.did.common.util.HttpClientUtil;
-import org.omnione.did.common.util.IdGenerator;
 import org.omnione.did.common.util.JsonUtil;
-import org.omnione.did.common.util.NonceGenerator;
 import org.omnione.did.data.model.enums.vc.VcStatus;
 import org.omnione.did.data.model.schema.VcSchema;
 import org.omnione.did.data.model.vc.VcMeta;
@@ -60,23 +75,9 @@ import org.omnione.did.noti.v1.agent.dto.push.FcmNotificationDto;
 import org.omnione.did.noti.v1.agent.dto.push.RequestSendPushReqDto;
 import org.omnione.did.noti.v1.agent.service.NotiEmailService;
 import org.omnione.did.noti.v1.agent.service.NotiPushService;
-import org.omnione.did.tas.v1.agent.api.dto.ApiHolder;
-import org.omnione.did.tas.v1.agent.api.dto.CompleteRevokeApiReqDto;
-import org.omnione.did.tas.v1.agent.api.dto.CompleteRevokeApiResDto;
-import org.omnione.did.tas.v1.agent.api.dto.CompleteVcApiReqDto;
-import org.omnione.did.tas.v1.agent.api.dto.CompleteVcApiResDto;
-import org.omnione.did.tas.v1.agent.api.dto.GenerateIssueProfileApiReqDto;
-import org.omnione.did.tas.v1.agent.api.dto.GenerateIssueProfileApiResDto;
-import org.omnione.did.tas.v1.agent.api.dto.InspectIssueProposeApiReqDto;
-import org.omnione.did.tas.v1.agent.api.dto.InspectIssueProposeApiResDto;
-import org.omnione.did.tas.v1.agent.api.dto.InspectProposeRevokeApiReqDto;
 import org.omnione.did.tas.v1.agent.api.dto.InspectProposeRevokeApiResDto;
-import org.omnione.did.tas.v1.agent.api.dto.IssueVcApiReqDto;
-import org.omnione.did.tas.v1.agent.api.dto.IssueVcApiResDto;
 import org.omnione.did.tas.v1.agent.api.dto.OfferIssueVcApiReqDto;
 import org.omnione.did.tas.v1.agent.api.dto.OfferIssueVcApiResDto;
-import org.omnione.did.tas.v1.agent.api.dto.RevokeVcApiReqDto;
-import org.omnione.did.tas.v1.agent.api.dto.RevokeVcApiResDto;
 import org.omnione.did.tas.v1.agent.dto.vc.ConfirmIssueVcReqDto;
 import org.omnione.did.tas.v1.agent.dto.vc.ConfirmIssueVcResDto;
 import org.omnione.did.tas.v1.agent.dto.vc.ConfirmRevokeVcReqDto;
@@ -104,7 +105,6 @@ import org.omnione.did.tas.v1.common.service.query.CertificateVcQueryService;
 import org.omnione.did.tas.v1.common.service.query.EcdhQueryService;
 import org.omnione.did.tas.v1.common.service.query.EntityQueryService;
 import org.omnione.did.tas.v1.common.service.query.TasQueryService;
-import org.omnione.did.tas.v1.common.service.query.UserQueryService;
 import org.omnione.did.tas.v1.agent.service.validator.DidAuthValidator;
 import org.omnione.did.tas.v1.agent.service.validator.TokenValidator;
 import org.springframework.context.annotation.Profile;
@@ -129,13 +129,15 @@ public class VcServiceImpl implements VcService {
     private final TokenValidator tokenValidator;
     private final NotiPushService notiPushService;
     private final NotiEmailService notiEmailService;
-    private final UserQueryService userQueryService;
     private final CertificateVcQueryService certificateVcQueryService;
     private final PushServiceHelper pushServiceHelper;
     private final EmailServiceHelper emailServiceHelper;
     private final StorageService storageService;
     private final ListVcSchemaQueryService listVcSchemaQueryService;
     private final TasQueryService tasQueryService;
+    private final VcIssuanceProtocol vcIssuanceProtocol;
+    private final VcRevocationProtocol vcRevocationProtocol;
+    private final VcIssuanceDataProvider vcIssuanceDataProvider;
 
     /**
      * Propose to issue a VC.
@@ -157,16 +159,24 @@ public class VcServiceImpl implements VcService {
 
             // Send inspect-propose to Issuer
             log.debug("\t--> Sending inspect-propose to Issuer");
-            InspectIssueProposeApiResDto inspectIssueProposeApiResDto = sendInspectPropose(entity, proposeIssueVcReqDto);
+            ProposeIssueVcResult proposeIssueVcResult = vcIssuanceProtocol.proposeIssueVc(
+                    ProposeIssueVcRequest.builder()
+                            .id(proposeIssueVcReqDto.getId())
+                            .vcPlanId(proposeIssueVcReqDto.getVcPlanId())
+                            .issuer(proposeIssueVcReqDto.getIssuer())
+                            .offerId(proposeIssueVcReqDto.getOfferId())
+                            .build(),
+                    new IssuerHttpApiClientImpl(entity.getServerUrl()),
+                    vcIssuanceDataProvider);
 
             // Insert transaction information.
-            String txId = IdGenerator.generateTxId();
+            String txId = proposeIssueVcResult.getTxId();
             log.debug("\t--> Inserting transaction information");
             Transaction transaction = transactionService.insertTransaction(Transaction.builder()
                     .txId(txId)
                     .type(TransactionType.ISSUE_VC)
                     .status(TransactionStatus.PENDING)
-                    .externalTxId(inspectIssueProposeApiResDto.getTxId())
+                    .externalTxId(proposeIssueVcResult.getExternalTxId())
                     .externalDid(entity.getDid())
                     .expiredAt(transactionService.retrieveTransactionExpiredTime())
                     .build()
@@ -186,8 +196,11 @@ public class VcServiceImpl implements VcService {
 
             return ProposeIssueVcResDto.builder()
                     .txId(txId)
-                    .refId(inspectIssueProposeApiResDto.getRefId())
+                    .refId(proposeIssueVcResult.getRefId())
                     .build();
+        } catch (TaSdkException e) {
+            log.error("A TaSdkException occurred while sending proposeIssueVc request", e);
+            throw TaSdkErrorMapper.toOpenDidException(e, ErrorCode.FAIL_TO_PROPOSE_ISSUE_VC);
         } catch (OpenDidException e) {
             log.error("An OpenDidException occurred while sending proposeIssueVc request", e);
             throw e;
@@ -224,37 +237,6 @@ public class VcServiceImpl implements VcService {
         return entity;
     }
 
-
-    /**
-     * Sends an inspect-propose request to the Issuer.
-     *
-     * @param entity Entity
-     * @param proposeIssueVcReqDto ProposeIssueVcReqDto
-     * @return InspectIssueProposeApiResDto
-     * @throws OpenDidException if an error occurs while sending the inspect-propose request.
-     */
-    private InspectIssueProposeApiResDto sendInspectPropose(Entity entity, ProposeIssueVcReqDto proposeIssueVcReqDto) {
-        String url = entity.getServerUrl() + Issuer.V1 + Issuer.INSPECT_PROPOSE_ISSUE;
-
-        InspectIssueProposeApiReqDto inspectIssueProposeApiReqDto = InspectIssueProposeApiReqDto.builder()
-                .id(proposeIssueVcReqDto.getId())
-                .vcPlanId(proposeIssueVcReqDto.getVcPlanId())
-                .issuer(proposeIssueVcReqDto.getIssuer())
-                .offerId(proposeIssueVcReqDto.getOfferId())
-                .build();
-
-        try {
-            String request = JsonUtil.serializeToJson(inspectIssueProposeApiReqDto);
-            return HttpClientUtil.postData(url, request, InspectIssueProposeApiResDto.class);
-        } catch (HttpClientException e) {
-            log.error("HttpClientException occurred while sending inspect-propose request: {}", e.getResponseBody(), e);
-            ErrorResponse errorResponse = convertExternalErrorResponse(e.getResponseBody());
-            throw new OpenDidException(errorResponse);
-        } catch (Exception e) {
-            log.error("An unknown error occurred while sending inspect-propose request", e);
-            throw new OpenDidException(ErrorCode.ISSUER_COMMUNICATION_ERROR);
-        }
-    }
 
     /**
      * Converts an external error response string to an ErrorResponse object.
@@ -308,15 +290,19 @@ public class VcServiceImpl implements VcService {
 
             // Retrieve Ecdh information.
             log.debug("\t--> Retrieving Ecdh information");
-            Ecdh ecdh = ecdhQueryService.findEcdhByTransactionId(transaction.getId());
+            ecdhQueryService.findEcdhByTransactionId(transaction.getId());
 
-            // Send issuer-propose to Issuer
+            // Send issuer-propose to Issuer and generate auth nonce.
             log.debug("\t--> Sending issuer-propose to Issuer");
-            GenerateIssueProfileApiResDto generateIssueProfileApiResDto = sendGenerateProfiler(entity, transaction, ecdh, requestIssueProfileReqDto);
-
-            // Generate auth nonce.
-            log.debug("\t--> Generating auth nonce");
-            String authNonce = generateNonceWithMultibase();
+            RequestIssueProfileResult requestIssueProfileResult = vcIssuanceProtocol.requestIssueProfile(
+                    RequestIssueProfileRequest.builder()
+                            .id(requestIssueProfileReqDto.getId())
+                            .txId(requestIssueProfileReqDto.getTxId())
+                            .serverToken(requestIssueProfileReqDto.getServerToken())
+                            .build(),
+                    new IssuerHttpApiClientImpl(entity.getServerUrl()),
+                    vcIssuanceDataProvider);
+            String authNonce = requestIssueProfileResult.getAuthNonce();
 
             // Update auth nonce.
             log.debug("\t--> Updating transactioin authNonce");
@@ -337,8 +323,10 @@ public class VcServiceImpl implements VcService {
             return RequestIssueProfileResDto.builder()
                     .txId(transaction.getTxId())
                     .authNonce(authNonce)
-                    .profile(generateIssueProfileApiResDto.getProfile())
+                    .profile((ZkpIssueProfile) requestIssueProfileResult.getProfile())
                     .build();
+        } catch (TaSdkException e) {
+            throw TaSdkErrorMapper.toOpenDidException(e, ErrorCode.FAIL_TO_REQUEST_ISSUE_PROFILE);
         } catch (OpenDidException e) {
             throw e;
         } catch (Exception e) {
@@ -367,55 +355,6 @@ public class VcServiceImpl implements VcService {
         if (subTransaction.getType() != SubTransactionType.REQUEST_CREATE_TOKEN) {
             throw new OpenDidException(ErrorCode.TRANSACTION_INVALID);
         }
-    }
-
-    /**
-     * Sends a generate-profile request to the Issuer.
-     * This method constructs the request DTO and sends it to the Issuer's server.
-     *
-     * @param entity The Issuer entity
-     * @param transaction The transaction information
-     * @param ecdh The ECDH information
-     * @param requestIssueProfileReqDto The request DTO
-     * @return The response DTO from the Issuer
-     * @throws OpenDidException if an error occurs while sending the request
-     */
-    private GenerateIssueProfileApiResDto sendGenerateProfiler(Entity entity, Transaction transaction, Ecdh ecdh, RequestIssueProfileReqDto requestIssueProfileReqDto) {
-        String url = entity.getServerUrl() + Issuer.V1 + Issuer.GENERATE_ISSUE_PROFILE;
-
-        // Retrieve User information.
-        User user = userQueryService.findByDid(ecdh.getClientDid());
-
-        GenerateIssueProfileApiReqDto generateIssueProfileApiReqDto = GenerateIssueProfileApiReqDto.builder()
-                .id(requestIssueProfileReqDto.getId())
-                .txId(transaction.getExternalTxId())
-                .holder(ApiHolder.builder()
-                        .did(user.getDid())
-                        .pii(user.getPii())
-                        .build())
-                .build();
-
-        try {
-            String request = JsonUtil.serializeToJson(generateIssueProfileApiReqDto);
-            return HttpClientUtil.postData(url, request, GenerateIssueProfileApiResDto.class);
-        } catch (HttpClientException e) {
-            log.error("HttpClientException occurred while sending generate-profile request: {}", e.getResponseBody(), e);
-            ErrorResponse errorResponse = convertExternalErrorResponse(e.getResponseBody());
-            throw new OpenDidException(errorResponse);
-        } catch (Exception e) {
-            log.error("An unknown error occurred while sending generate-profile request", e);
-            throw new OpenDidException(ErrorCode.ISSUER_COMMUNICATION_ERROR);
-        }
-    }
-
-    /**
-     * Generates a nonce using multibase encoding.
-     *
-     * @return The generated nonce
-     */
-    private String generateNonceWithMultibase() {
-        byte[] nonce = NonceGenerator.generate16ByteNonce();
-        return BaseMultibaseUtil.encode(nonce);
     }
 
     /**
@@ -455,7 +394,17 @@ public class VcServiceImpl implements VcService {
 
             // Send issuer-propose to Issuer
             log.debug("\t--> Sending issue-vc to Issuer");
-            IssueVcApiResDto issueVcApiResDto = sendIssueVc(entity, transaction, requestIssueVcReqDto);
+            RequestIssueVcResult requestIssueVcResult = vcIssuanceProtocol.requestIssueVc(
+                    RequestIssueVcRequest.builder()
+                            .id(requestIssueVcReqDto.getId())
+                            .txId(requestIssueVcReqDto.getTxId())
+                            .serverToken(requestIssueVcReqDto.getServerToken())
+                            .didAuth(TaSdkDataConverter.toSdkDidAuth(requestIssueVcReqDto.getDidAuth()))
+                            .accE2e(TaSdkDataConverter.toSdkAccE2e(requestIssueVcReqDto.getAccE2e()))
+                            .encReqVc(requestIssueVcReqDto.getEncReqVc())
+                            .build(),
+                    new IssuerHttpApiClientImpl(entity.getServerUrl()),
+                    vcIssuanceDataProvider);
 
             // Insert sub-transaction information.
             log.debug("\t--> Inserting sub-transaction information");
@@ -471,8 +420,11 @@ public class VcServiceImpl implements VcService {
 
             return RequestIssueVcResDto.builder()
                     .txId(transaction.getTxId())
-                    .e2e(issueVcApiResDto.getE2e())
+                    .e2e(TaSdkDataConverter.toServerE2e(requestIssueVcResult.getE2e()))
                     .build();
+        } catch (TaSdkException e) {
+            log.error("A TaSdkException occurred while sending requestIssueVc request", e);
+            throw TaSdkErrorMapper.toOpenDidException(e, ErrorCode.FAIL_TO_REQUEST_ISSUE_VC);
         } catch (OpenDidException e) {
             log.error("An OpenDidException occurred while sending requestIssueVc request", e);
             throw e;
@@ -509,39 +461,6 @@ public class VcServiceImpl implements VcService {
     }
 
     /**
-     * Sends an issue-vc request to the Issuer.
-     * This method constructs the request DTO and sends it to the Issuer's server.
-     *
-     * @param entity The Issuer entity
-     * @param transaction The transaction information
-     * @param requestIssueVcReqDto The request DTO
-     * @return The response DTO from the Issuer
-     * @throws OpenDidException if Failed to communicate with issuer: unknown error occurred
-     */
-    private IssueVcApiResDto sendIssueVc(Entity entity, Transaction transaction, RequestIssueVcReqDto requestIssueVcReqDto) {
-        String url = entity.getServerUrl() + Issuer.V1 + Issuer.ISSUE_VC;
-
-        IssueVcApiReqDto issueVcApiReqDto = IssueVcApiReqDto.builder()
-                .id(requestIssueVcReqDto.getId())
-                .txId(transaction.getExternalTxId())
-                .accE2e(requestIssueVcReqDto.getAccE2e())
-                .encReqVc(requestIssueVcReqDto.getEncReqVc())
-                .build();
-
-        try {
-            String request = JsonUtil.serializeToJson(issueVcApiReqDto);
-            return HttpClientUtil.postData(url, request, IssueVcApiResDto.class);
-        } catch (HttpClientException e) {
-            log.error("HttpClientException occurred while sending issue-vc request: {}", e.getResponseBody(), e);
-            ErrorResponse errorResponse = convertExternalErrorResponse(e.getResponseBody());
-            throw new OpenDidException(errorResponse);
-        } catch (Exception e) {
-            log.error("An unknown error occurred while sending issue-vc request", e);
-            throw new OpenDidException(ErrorCode.ISSUER_COMMUNICATION_ERROR);
-        }
-    }
-
-    /**
      * Processes a request to offer a VC issuance request via QR code.
      * This method handles the entire process of VC issuance request, including
      * transaction validation, issuer verification, DID authentication, and communication with the Issuer.
@@ -573,7 +492,15 @@ public class VcServiceImpl implements VcService {
             tokenValidator.validateServerToken(confirmIssueVcReqDto.getServerToken(), transaction.getId(), ServerTokenPurpose.ISSUE_VC);
 
             // Send complete-vc to Issuer
-            CompleteVcApiResDto completeVcApiResDto = sendCompleteVc(entity, transaction, confirmIssueVcReqDto);
+            vcIssuanceProtocol.confirmIssueVc(
+                    ConfirmIssueVcRequest.builder()
+                            .id(confirmIssueVcReqDto.getId())
+                            .txId(confirmIssueVcReqDto.getTxId())
+                            .serverToken(confirmIssueVcReqDto.getServerToken())
+                            .vcId(confirmIssueVcReqDto.getVcId())
+                            .build(),
+                    new IssuerHttpApiClientImpl(entity.getServerUrl()),
+                    vcIssuanceDataProvider);
 
             // Update transaction status.
             log.debug("\t--> Updating transaction status for transaction ID: {} to {}", transaction.getId(), TransactionStatus.COMPLETED);
@@ -595,6 +522,9 @@ public class VcServiceImpl implements VcService {
                     .txId(confirmIssueVcReqDto.getTxId())
                     .build();
 
+        } catch (TaSdkException e) {
+            log.error("A TaSdkException occurred while sending confirmIssueVc request", e);
+            throw TaSdkErrorMapper.toOpenDidException(e, ErrorCode.FAIL_TO_CONFIRM_ISSUE_VC);
         } catch (OpenDidException e) {
             log.error("An OpenDidException occurred while sending confirmIssueVc request", e);
             throw e;
@@ -627,38 +557,6 @@ public class VcServiceImpl implements VcService {
         if (subTransaction.getType() != SubTransactionType.REQUEST_ISSUE_VC) {
             log.error("\t--> Invalid sub-transaction type: {}", subTransaction.getType());
             throw new OpenDidException(ErrorCode.TRANSACTION_INVALID);
-        }
-    }
-
-    /**
-     * Sends a complete-vc request to the Issuer.
-     * This method constructs the request DTO and sends it to the Issuer's server.
-     *
-     * @param entity The Issuer entity
-     * @param transaction The transaction information
-     * @param confirmIssueVcReqDto The request DTO
-     * @return The response DTO from the Issuer
-     * @throws OpenDidException if Failed to communicate with issuer: unknown error occurred
-     */
-    private CompleteVcApiResDto sendCompleteVc(Entity entity, Transaction transaction, ConfirmIssueVcReqDto confirmIssueVcReqDto) {
-        String url = entity.getServerUrl() + Issuer.V1 + Issuer.COMPLETE_VC;
-
-        CompleteVcApiReqDto completeVcApiReqDto = CompleteVcApiReqDto.builder()
-                .id(confirmIssueVcReqDto.getId())
-                .txId(transaction.getExternalTxId())
-                .vcId(confirmIssueVcReqDto.getVcId())
-                .build();
-
-        try {
-            String request = JsonUtil.serializeToJson(completeVcApiReqDto);
-            return HttpClientUtil.postData(url, request, CompleteVcApiResDto.class);
-        } catch (HttpClientException e) {
-            log.error("HttpClientException occurred while sending complete-vc request: {}", e.getResponseBody(), e);
-            ErrorResponse errorResponse = convertExternalErrorResponse(e.getResponseBody());
-            throw new OpenDidException(errorResponse);
-        } catch (Exception e) {
-            log.error("An unknown error occurred while sending complete-vc request", e);
-            throw new OpenDidException(ErrorCode.ISSUER_COMMUNICATION_ERROR);
         }
     }
 
@@ -962,11 +860,19 @@ public class VcServiceImpl implements VcService {
 
             // Send inspect-propose to Issuer
             log.debug("\t--> Sending inspect-propose to Issuer");
-            InspectProposeRevokeApiResDto inspectProposeRevokeApiResDto = sendInspectPropose(entity, proposeRevokeVcReqDto);
+            IssuerHttpApiClientImpl issuerClient = new IssuerHttpApiClientImpl(entity.getServerUrl());
+            ProposeRevokeVcResult proposeRevokeVcResult = vcRevocationProtocol.proposeRevokeVc(
+                    ProposeRevokeVcRequest.builder()
+                            .id(proposeRevokeVcReqDto.getId())
+                            .vcId(proposeRevokeVcReqDto.getVcId())
+                            .build(),
+                    issuerClient,
+                    VcRevocationDataProviderImpl.forPropose(vcMeta));
+            InspectProposeRevokeApiResDto inspectProposeRevokeApiResDto = issuerClient.getInspectProposeRevokeResponse();
 
             // Insert transaction information.
             log.debug("\t--> Inserting transaction information");
-            String txId = IdGenerator.generateTxId();
+            String txId = proposeRevokeVcResult.getTxId();
             Transaction transaction = transactionService.insertTransaction(Transaction.builder()
                     .txId(txId)
                     .type(TransactionType.REVOKE_VC)
@@ -991,10 +897,13 @@ public class VcServiceImpl implements VcService {
 
             return ProposeRevokeVcResDto.builder()
                     .txId(txId)
-                    .issuerNonce(inspectProposeRevokeApiResDto.getIssuerNonce())
+                    .issuerNonce(proposeRevokeVcResult.getIssuerNonce())
                     .authType(inspectProposeRevokeApiResDto.getAuthType())
                     .build();
 
+        } catch (TaSdkException e) {
+            log.error("A TaSdkException occurred while sending proposeRevokeVc request", e);
+            throw TaSdkErrorMapper.toOpenDidException(e, ErrorCode.FAIL_TO_PROPOSE_REVOKE_VC);
         } catch (OpenDidException e) {
             log.error("An OpenDidException occurred while sending proposeRevokeVc request", e);
             throw e;
@@ -1015,35 +924,6 @@ public class VcServiceImpl implements VcService {
         if (VcStatus.REVOKED == VcStatus.fromString(vcMeta.getStatus())) {
             log.error("\t--> VC is already revoked");
             throw new OpenDidException(ErrorCode.VC_ALREADY_REVOKED);
-        }
-    }
-
-    /**
-     * Sends an inspect-propose request to the Issuer.
-     * This method constructs the request DTO and sends it to the Issuer's server.
-     *
-     * @param entity The Issuer entity
-     * @param proposeRevokeVcReqDto The request DTO
-     * @return InspectProposeRevokeApiResDto containing the response from the Issuer
-     * @throws OpenDidException if there's an error in communication with the issuer
-     */
-    private InspectProposeRevokeApiResDto sendInspectPropose(Entity entity, ProposeRevokeVcReqDto proposeRevokeVcReqDto) {
-        String url = entity.getServerUrl() + Issuer.V1 + Issuer.INSPECT_PROPOSE_REVOKE;
-
-        InspectProposeRevokeApiReqDto inspectProposeRevokeApiReqDto = InspectProposeRevokeApiReqDto.builder()
-                .id(proposeRevokeVcReqDto.getId())
-                .vcId(proposeRevokeVcReqDto.getVcId())
-                .build();
-        try {
-            String request = JsonUtil.serializeToJson(inspectProposeRevokeApiReqDto);
-            return HttpClientUtil.postData(url, request, InspectProposeRevokeApiResDto.class);
-        } catch (HttpClientException e) {
-            log.error("HttpClientException occurred while sending inspect-propose request: {}", e.getResponseBody(), e);
-            ErrorResponse errorResponse = convertExternalErrorResponse(e.getResponseBody());
-            throw new OpenDidException(errorResponse);
-        } catch (Exception e) {
-            log.error("An unknown error occurred while sending inspect-propose request", e);
-            throw new OpenDidException(ErrorCode.ISSUER_COMMUNICATION_ERROR);
         }
     }
 
@@ -1080,7 +960,15 @@ public class VcServiceImpl implements VcService {
 
             // Send revoke-vc to Issuer
             log.debug("\t--> Sending revoke-vc to Issuer");
-            RevokeVcApiResDto revokeVcApiResDto = sendRevokeVc(entity, transaction, requestRevokeVcReqDto);
+            vcRevocationProtocol.requestRevokeVc(
+                    RequestRevokeVcRequest.builder()
+                            .id(requestRevokeVcReqDto.getId())
+                            .txId(requestRevokeVcReqDto.getTxId())
+                            .serverToken(requestRevokeVcReqDto.getServerToken())
+                            .request(TaSdkDataConverter.toSdkReqRevokeVc(requestRevokeVcReqDto.getRequest()))
+                            .build(),
+                    new IssuerHttpApiClientImpl(entity.getServerUrl(), transaction.getExternalTxId()),
+                    VcRevocationDataProviderImpl.forRequest(requestRevokeVcReqDto.getRequest()));
 
             // Insert sub-transaction information.
             log.debug("\t--> Inserting sub-transaction information");
@@ -1097,6 +985,9 @@ public class VcServiceImpl implements VcService {
             return RequestRevokeVcResDto.builder()
                     .txId(requestRevokeVcReqDto.getTxId())
                     .build();
+        } catch (TaSdkException e) {
+            log.error("A TaSdkException occurred while sending requestRevokeVc request", e);
+            throw TaSdkErrorMapper.toOpenDidException(e, ErrorCode.FAIL_TO_REQUEST_REVOKE_VC);
         } catch (OpenDidException e) {
             log.error("An OpenDidException occurred while sending requestRevokeVc request", e);
             throw e;
@@ -1126,38 +1017,6 @@ public class VcServiceImpl implements VcService {
 
         if (subTransaction.getType() != SubTransactionType.REQUEST_CREATE_TOKEN) {
             throw new OpenDidException(ErrorCode.TRANSACTION_INVALID);
-        }
-    }
-
-    /**
-     * Sends a revoke-vc request to the Issuer.
-     * This method constructs the request DTO and sends it to the Issuer's server.
-     *
-     * @param entity The Issuer entity
-     * @param transaction The transaction information
-     * @param requestRevokeVcReqDto The request DTO
-     * @return RevokeVcApiResDto containing the response from the Issuer
-     * @throws OpenDidException if there's an error in communication with the issuer
-     */
-    private RevokeVcApiResDto sendRevokeVc(Entity entity, Transaction transaction, RequestRevokeVcReqDto requestRevokeVcReqDto) {
-        String url = entity.getServerUrl() + Issuer.V1 + Issuer.REVOKE_VC;
-
-        RevokeVcApiReqDto revokeVcApiReqDto = RevokeVcApiReqDto.builder()
-                .id(requestRevokeVcReqDto.getId())
-                .txId(transaction.getExternalTxId())
-                .request(requestRevokeVcReqDto.getRequest())
-                .build();
-
-        try {
-            String request = JsonUtil.serializeToJson(revokeVcApiReqDto);
-            return HttpClientUtil.postData(url, request, RevokeVcApiResDto.class);
-        } catch (HttpClientException e) {
-            log.error("HttpClientException occurred while sending request-vc request: {}", e.getResponseBody(), e);
-            ErrorResponse errorResponse = convertExternalErrorResponse(e.getResponseBody());
-            throw new OpenDidException(errorResponse);
-        } catch (Exception e) {
-            log.error("An unknown error occurred while sending request-vc request", e);
-            throw new OpenDidException(ErrorCode.ISSUER_COMMUNICATION_ERROR);
         }
     }
 
@@ -1194,7 +1053,14 @@ public class VcServiceImpl implements VcService {
 
             // Send complete-revoke to Issuer
             log.debug("\t--> Sending complete-revoke to Issuer");
-            CompleteRevokeApiResDto completeRevokeApiResDto = sendConfirmRevokeVc(entity, transaction, confirmRevokeVcReqDto);
+            vcRevocationProtocol.confirmRevokeVc(
+                    ConfirmRevokeVcRequest.builder()
+                            .id(confirmRevokeVcReqDto.getId())
+                            .txId(confirmRevokeVcReqDto.getTxId())
+                            .serverToken(confirmRevokeVcReqDto.getServerToken())
+                            .build(),
+                    new IssuerHttpApiClientImpl(entity.getServerUrl(), transaction.getExternalTxId()),
+                    VcRevocationDataProviderImpl.forConfirm());
 
             // Update transaction status.
             log.debug("\t--> Updating transaction status for transaction ID: {} to {}", transaction.getId(), TransactionStatus.COMPLETED);
@@ -1216,6 +1082,9 @@ public class VcServiceImpl implements VcService {
                     .txId(confirmRevokeVcReqDto.getTxId())
                     .build();
 
+        } catch (TaSdkException e) {
+            log.error("A TaSdkException occurred while sending confirmRevokeVc request", e);
+            throw TaSdkErrorMapper.toOpenDidException(e, ErrorCode.FAIL_TO_CONFIRM_REVOKE_VC);
         } catch (OpenDidException e) {
             log.error("An OpenDidException occurred while sending confirmRevokeVc request", e);
             throw e;
@@ -1245,35 +1114,6 @@ public class VcServiceImpl implements VcService {
 
         if (subTransaction.getType() != SubTransactionType.REQUEST_REVOKE_VC) {
             throw new OpenDidException(ErrorCode.TRANSACTION_INVALID);
-        }
-    }
-    /**
-     * Sends a confirmation to complete the revocation of a Verifiable Credential (VC) to the issuer's server
-     *
-     *  @param entity The entity representing the issuer
-     *  @param transaction The transaction associated with the revocation
-     *  @param confirmRevokeVcReqDto The DTO containing confirmation details
-     *  @return CompleteRevokeApiResDto containing the API response
-     *  @throws OpenDidException if there's an error in communication with the issuer
-     */
-    private CompleteRevokeApiResDto sendConfirmRevokeVc(Entity entity, Transaction transaction, ConfirmRevokeVcReqDto confirmRevokeVcReqDto) {
-        String url = entity.getServerUrl() + Issuer.V1 + Issuer.COMPLETE_REVOKE;
-
-        CompleteRevokeApiReqDto completeRevokeApiReqDto = CompleteRevokeApiReqDto.builder()
-                .id(confirmRevokeVcReqDto.getId())
-                .txId(transaction.getExternalTxId())
-                .build();
-
-        try {
-            String request = JsonUtil.serializeToJson(completeRevokeApiReqDto);
-            return HttpClientUtil.postData(url, request, CompleteRevokeApiResDto.class);
-        } catch (HttpClientException e) {
-            log.error("HttpClientException occurred while sending complete-revoke request: {}", e.getResponseBody(), e);
-            ErrorResponse errorResponse = convertExternalErrorResponse(e.getResponseBody());
-            throw new OpenDidException(errorResponse);
-        } catch (Exception e) {
-            log.error("An unknown error occurred while sending complete-revoke request", e);
-            throw new OpenDidException(ErrorCode.ISSUER_COMMUNICATION_ERROR);
         }
     }
 }

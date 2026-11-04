@@ -171,7 +171,7 @@ public class ErrorResponse {
 | SSRVTRA14007 | Failed to process the 'request-enroll-entity' API request.                | -           | Check the 'request-enroll-entity' API process.            |
 | SSRVTRA14008 | Failed to register quick entity.                                          | -           | Check quick entity registration process.                  |
 | SSRVTRA14009 | Failed to register entity: entity name is already registered.             | -           | Avoid duplicate entity names.                             |
-| SSRVTRA14010 | Failed to find entity DID Document: o registration request has been made. | -           | Check entity DID Document registration.                   |
+| SSRVTRA14010 | Failed to find entity DID Document: no registration request has been made. | -           | Check entity DID Document registration.                   |
 | SSRVTRA14011 | Failed to register DID from entity.                                       | -           | Verify entity DID registration logic.                     |
 | SSRVTRA14012 | Failed to approve entity DID Document.                                    | -           | Check entity DID Document approval flow.                  |
 | SSRVTRA14013 | Failed to delete entity: entity is not deletable.                         | -           | Confirm entity can be deleted.                            |

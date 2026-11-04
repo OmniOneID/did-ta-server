@@ -23,7 +23,7 @@ import org.omnione.did.base.db.domain.ListCredentialDefinition;
 import org.omnione.did.base.db.repository.ListCredentialDefinitionRepository;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
-import org.omnione.did.common.util.multibase.BaseMultibaseUtil;
+import org.omnione.did.base.util.MultibaseDecoder;
 import org.omnione.did.list.v1.admin.dto.credential.ListCredentialDefinitionDto;
 import org.omnione.did.list.v1.admin.dto.credential.RegisterCredentialDefinitionFromIssuerReqDto;
 import org.omnione.did.list.v1.admin.dto.credential.RegisterCredentialSchemaFromIssuerReqDto;
@@ -88,7 +88,7 @@ public class ListCredentialDefinitionManagementService {
 
     private CredentialDefinition decodeCredentialDefinition(String encodedCredentialDefinition) {
         log.debug("\t--> Decoding Credential Definition");
-        byte[] decodedData = BaseMultibaseUtil.decode(encodedCredentialDefinition);
+        byte[] decodedData = MultibaseDecoder.decode(encodedCredentialDefinition);
         CredentialDefinition credentialDefinition = GsonWrapper.getGson().fromJson(new String(decodedData), CredentialDefinition.class);
         log.debug("\t--> Decoded Credential Definition: {}", credentialDefinition);
         return credentialDefinition;

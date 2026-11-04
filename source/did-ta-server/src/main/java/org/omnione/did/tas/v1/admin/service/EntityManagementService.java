@@ -30,6 +30,7 @@ import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.base.property.SetupProperty;
 import org.omnione.did.common.util.vc.BaseCoreVcUtil;
 import org.omnione.did.common.util.multibase.BaseMultibaseUtil;
+import org.omnione.did.base.util.MultibaseDecoder;
 import org.omnione.did.common.exception.HttpClientException;
 import org.omnione.did.common.util.HttpClientUtil;
 import org.omnione.did.common.util.JsonUtil;
@@ -490,7 +491,7 @@ public class EntityManagementService {
 
     private DidDocument decodeDidDoc(String encodedDidDoc) {
         log.debug("\t--> Decoding DID Document");
-        byte[] decodedData = BaseMultibaseUtil.decode(encodedDidDoc);
+        byte[] decodedData = MultibaseDecoder.decode(encodedDidDoc);
         DidDocument didDocument = new DidDocument();
         didDocument.fromJson(new String(decodedData));
         log.debug("\t--> Decoded DID Document: {}", didDocument);
