@@ -37,6 +37,7 @@ Open DID TA Admin Console Guide
 |        |            | `3.16. Credential Definition List`에서 Credential Definition 장 추가  |
 | v3.0.0 | 2026-10-29 | 현재 Admin Console 화면 반영, 신규 관리 메뉴 및 비밀번호 정책 추가, 화면 캡처 갱신 |
 | v3.0.1 | 2026-10-30 | API Log 및 Audit API Log 메뉴와 조회 방법 추가 |
+| v3.0.2 | 2026-11-04 | `3.2. Entity Management`의 등록 안내와 `QUICK REGISTER` 사전 준비·동작 설명 수정 |
 
 
 
@@ -423,8 +424,8 @@ TA 등록이 완료되면 `TA Management` 메뉴가 활성화되며,
 `Entity Management` 메뉴에서는 Issuer, Verifier, CA, Wallet 등  
 Open DID 시스템에 참여하는 Entity 서버들을 등록하고 관리할 수 있습니다.
 
-> 현재 Open DID 시스템에서는 정식 Entity 등록 기능이 완전히 구현되지 않았습니다.  
-> 따라서 대부분의 경우, `QUICK REGISTER` 기능을 사용해 서버를 등록하는 것을 권장합니다.  
+> Entity 서버는 아래 `3.2.1. Entity 목록 조회`의 절차대로 서버별로 등록합니다.  
+> 테스트 환경에서 여러 서버를 한 번에 등록할 때는 사전 준비를 마친 뒤 `QUICK REGISTER` 기능을 사용할 수 있습니다.  
 
 메뉴에 진입하면 등록된 Entity 목록을 테이블 형태로 확인할 수 있으며,  
 신규 등록 또는 일괄 등록 기능을 통해 서버 정보를 추가할 수 있습니다.
@@ -448,7 +449,7 @@ Entity 서버의 등록은 일반적으로 다음과 같은 절차를 따릅니�
 > **참고:**  
 > TA Admin에서는 `QUICK REGISTER` 기능을 통해 위 과정을 자동화할 수 있습니다.   
 > 해당 기능은 TA Admin에서 모든 Entity의 DID Document를 자동 등록하고, Certificate VC를 발급 및 전달합니다.  
-> 단, 모든 서버가 Orchestrator를 통해 실행 중일 때에만 정상 동작합니다.
+> 단, 아래 `QUICK REGISTER` 버튼 설명의 사전 준비가 되어 있어야 합니다.
 ---
 
 Entity 목록은 테이블 형태로 제공되며, 등록된 서버들의 주요 정보를 한눈에 확인할 수 있습니다.
@@ -478,16 +479,31 @@ Entity의 정보를 삭제합니다.
 🔸 `QUICK REGISTER` 버튼
 
 `QUICK REGISTER` 기능은 테스트 편의성을 위한 임시 기능입니다.  
-해당 버튼을 클릭하면 Orchestrator에서 설치된 모든 Entity 서버에 대해 다음 작업이 자동으로 수행됩니다:
+해당 버튼을 클릭하면 Issuer, Verifier, CA, Wallet 서버에 대해 다음 작업이 자동으로 수행됩니다:
 
 - 각 Entity 서버의 DID Document 등록  
 - 가입 증명서(VC) 발급  
 - 발급된 가입증명서를 해당 서버에 전달
 
-TA가 가입증명서를 해당 Entity 서버에 전달하기 위해서는, 각 서버가 **사전에 실행된 상태**여야 합니다.   
+**사전 준비**
 
-만약 서버를 구동하지 않은 상태에서 등록이 진행되었다면,   
-이후 서버를 실행한 뒤 `QUICK REGISTER`를 다시 실행하면 TA가 **가입 증명서 전달만** 수행합니다.
+Orchestrator로 설치했다면 `Generate All`과 Orchestrator의 설정 주입으로 준비됩니다. 직접 설치했다면 아래 항목을 준비합니다.
+
+| 항목 | 내용 |
+| ---- | ---- |
+| TA 서버 설정 | `setup.base-url`(예: `http://192.168.0.10`)과 `setup.path`(DID Document 파일의 기준 경로)를 지정합니다. |
+| DID Document 파일 | `setup.path` 아래에 `Issuer/issuer.did`, `Verifier/verifier.did`, `CA/cas.did`, `Wallet/wallet.did`를 둡니다. |
+| Entity 서버 지갑 | 각 서버의 `wallet.file-path`가 위 DID Document를 만든 지갑을 가리켜야 합니다. |
+| Entity 서버 실행 | Issuer `8091`, Verifier `8092`, CA `8094`, Wallet `8095` 포트로 실행합니다. 등록되는 URL은 `{setup.base-url}:{포트}/{issuer, verifier, cas, wallet}` 형식입니다. |
+
+**서버 상태별 동작**
+
+| 서버 상태 | 동작 |
+| --------- | ---- |
+| 아직 등록되지 않음 | 파일의 DID Document를 등록하고 가입증명서를 발급해 전달합니다. 파일이 없으면 오류가 발생하고 등록이 중단됩니다. |
+| 이미 등록됨 (개별 등록 포함) | DID Document는 그대로 두고 가입증명서를 다시 발급해 전달합니다. |
+
+가입증명서 전달에 실패해도 등록은 중단되지 않습니다. 서버가 실행되지 않아 전달하지 못했다면, 서버를 실행한 뒤 `QUICK REGISTER`를 다시 실행합니다.
 
 아래 그림은 `QUICK REGISTER` 기능을 실행 이후의 화면입니다.  
 등록된 Issuer, Verifier, CA, Wallet 서버가 테이블에 자동으로 추가된 것을 확인할 수 있습니다.

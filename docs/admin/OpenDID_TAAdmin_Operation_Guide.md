@@ -36,6 +36,7 @@ Revision History
 | v2.0.0  | 2025-05-30 | Added Credential Schema and Credential Definition sections. |
 | v3.0.0  | 2026-10-29 | Updated console menus, password policy, and current screen captures. |
 | v3.0.1  | 2026-10-30 | Added API Log and Audit API Log guidance. |
+| v3.0.2  | 2026-11-04 | Corrected the registration guidance and the `QUICK REGISTER` prerequisites and behavior in `3.2. Entity Management`. |
 
 Table of Contents
 ==
@@ -414,8 +415,8 @@ and you can check the registered TA's DID information, status, URL, etc.
 In the `Entity Management` menu, you can register and manage Entity servers such as Issuer, Verifier, CA, Wallet  
 that participate in the Open DID system.
 
-> The formal Entity registration function is not fully implemented in the current Open DID system.  
-> Therefore, in most cases, it is recommended to use the `QUICK REGISTER` function to register servers.  
+> Register Entity servers one by one, following the procedure in `3.2.1. Entity List Inquiry` below.  
+> In a test environment, you can register several servers at once with `QUICK REGISTER` after completing its prerequisites.  
 
 When entering the menu, you can check the list of registered Entities in table format,  
 and add server information through new registration or batch registration functions.
@@ -439,7 +440,7 @@ Entity server registration generally follows these procedures:
 > **Note:**  
 > TA Admin can automate the above process through the `QUICK REGISTER` function.   
 > This function automatically registers all Entity DID Documents from TA Admin and issues and delivers Certificate VCs.  
-> However, it only works normally when all servers are running through the Orchestrator.
+> However, the prerequisites in the `QUICK REGISTER` button description below must be in place.
 ---
 
 The Entity list is provided in table format, allowing you to check the main information of registered servers at a glance.
@@ -468,16 +469,31 @@ However, Entity can only be deleted when its DID Document has not yet been regis
 🔸 `QUICK REGISTER` Button
 
 The `QUICK REGISTER` function is a temporary feature for testing convenience.  
-When this button is clicked, the following tasks are automatically performed for all Entity servers installed in the Orchestrator:
+When this button is clicked, the following tasks are automatically performed for the Issuer, Verifier, CA, and Wallet servers:
 
 - Register each Entity server's DID Document  
 - Issue membership certificates (VC)  
 - Deliver issued membership certificates to the corresponding server
 
-For TA to deliver membership certificates to corresponding Entity servers, each server must be **pre-executed**.   
+**Prerequisites**
 
-If registration proceeded while servers were not running,   
-after running servers later, executing `QUICK REGISTER` again will make TA perform **only certificate delivery**.
+If you installed with the Orchestrator, `Generate All` and the Orchestrator's configuration injection prepare these items. If you installed manually, prepare the following.
+
+| Item | Description |
+| ---- | ----------- |
+| TA server settings | Set `setup.base-url` (for example, `http://192.168.0.10`) and `setup.path` (the base path of the DID Document files). |
+| DID Document files | Place `Issuer/issuer.did`, `Verifier/verifier.did`, `CA/cas.did`, and `Wallet/wallet.did` under `setup.path`. |
+| Entity server wallets | Each server's `wallet.file-path` must point to the wallet that created the DID Document above. |
+| Entity server ports | Run Issuer on `8091`, Verifier on `8092`, CA on `8094`, and Wallet on `8095`. The registered URL has the form `{setup.base-url}:{port}/{issuer, verifier, cas, wallet}`. |
+
+**Behavior by server state**
+
+| Server state | Behavior |
+| ------------ | -------- |
+| Not registered yet | Registers the DID Document from the file, then issues and delivers the membership certificate. If the file is missing, an error occurs and registration stops. |
+| Already registered (including individual registration) | Keeps the DID Document and issues and delivers a new membership certificate. |
+
+A failed certificate delivery does not stop registration. If delivery failed because a server was not running, start the server and run `QUICK REGISTER` again.
 
 The figure below shows the screen after executing the `QUICK REGISTER` function.  
 You can see that registered Issuer, Verifier, CA, Wallet servers have been automatically added to the table.
