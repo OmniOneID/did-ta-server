@@ -22,6 +22,8 @@ import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.common.util.DateTimeUtil;
+import org.omnione.did.common.util.did.BaseCoreDidUtil;
+import org.omnione.did.common.util.multibase.BaseMultibaseUtil;
 import org.omnione.did.crypto.exception.CryptoException;
 import org.omnione.did.crypto.util.CryptoUtils;
 import org.omnione.did.data.model.did.DidDocument;

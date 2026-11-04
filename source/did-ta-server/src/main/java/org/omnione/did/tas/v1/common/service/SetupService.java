@@ -28,7 +28,7 @@ import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
 //import org.omnione.did.base.property.TasProperty;
 import org.omnione.did.base.util.BaseBlockChainUtil;
-import org.omnione.did.base.util.BaseCoreDidUtil;
+import org.omnione.did.common.util.did.BaseCoreDidUtil;
 import org.omnione.did.tas.v1.common.dto.EmptyResDto;
 import org.omnione.did.tas.v1.agent.dto.setup.RemoveBlockChainIndexReqDto;
 import org.omnione.did.tas.v1.agent.service.SignatureService;

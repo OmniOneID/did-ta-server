@@ -19,7 +19,7 @@ package org.omnione.did.tas.v1.agent.service;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.base.property.WalletProperty;
-import org.omnione.did.base.util.BaseWalletUtil;
+import org.omnione.did.common.util.wallet.BaseWalletUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.wallet.exception.WalletException;
 import org.omnione.did.wallet.key.WalletManagerInterface;

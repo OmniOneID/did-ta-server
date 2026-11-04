@@ -23,7 +23,7 @@ import org.omnione.did.base.db.domain.ListVcSchema;
 import org.omnione.did.base.db.repository.ListVcSchemaRepository;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
-import org.omnione.did.base.util.BaseMultibaseUtil;
+import org.omnione.did.common.util.multibase.BaseMultibaseUtil;
 import org.omnione.did.data.model.schema.VcSchema;
 import org.omnione.did.list.v1.admin.dto.vcschema.ListVcSchemaDto;
 import org.omnione.did.list.v1.admin.dto.vcschema.RegisterVcSchemaFromIssuerReqDto;

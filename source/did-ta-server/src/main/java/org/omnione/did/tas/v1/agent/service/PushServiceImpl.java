@@ -27,9 +27,9 @@ import org.omnione.did.base.db.domain.User;
 import org.omnione.did.base.db.repository.AppRepository;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
-import org.omnione.did.base.util.BaseCoreDidUtil;
-import org.omnione.did.base.util.BaseCryptoUtil;
-import org.omnione.did.base.util.BaseDigestUtil;
+import org.omnione.did.common.util.did.BaseCoreDidUtil;
+import org.omnione.did.common.util.crypto.BaseCryptoUtil;
+import org.omnione.did.common.util.digest.BaseDigestUtil;
 import org.omnione.did.common.exception.CommonSdkException;
 import org.omnione.did.tas.v1.common.dto.EmptyResDto;
 import org.omnione.did.tas.v1.agent.dto.push.UpdatePushTokenReqDto;
@@ -212,7 +212,7 @@ public class PushServiceImpl implements PushService {
      */
     //@TODO: 공통함수로 빼야 함
     private void verifySignature(String encodedPublicKey, String signature, byte[] signatureMassage, ProofType proofType) {
-        BaseCryptoUtil.verifySignature(encodedPublicKey, signature, signatureMassage, proofType.toEccCurveType());
+        BaseCryptoUtil.verifySignature(encodedPublicKey, signature, signatureMassage, proofType.toEccCurveType().toCommonSdkEccCurveType());
     }
     /**
      * Updates the push token for an application.

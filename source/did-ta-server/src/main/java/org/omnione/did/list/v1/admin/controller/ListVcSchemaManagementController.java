@@ -20,7 +20,7 @@ import org.omnione.did.base.constants.ActionType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.constants.UrlConstant;
-import org.omnione.did.base.util.BaseMultibaseUtil;
+import org.omnione.did.common.util.multibase.BaseMultibaseUtil;
 import org.omnione.did.data.model.schema.VcSchema;
 import org.omnione.did.list.v1.admin.dto.vcschema.ListVcSchemaDto;
 import org.omnione.did.list.v1.admin.dto.vcschema.RegisterVcSchemaFromIssuerReqDto;

@@ -17,6 +17,7 @@
 package org.omnione.did.base.util;
 
 import org.omnione.did.common.util.NonceGenerator;
+import org.omnione.did.common.util.multibase.BaseMultibaseUtil;
 
 /**
  * Utility class for TAS (Trusted Agent) operations.

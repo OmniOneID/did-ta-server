@@ -27,7 +27,7 @@ import lombok.Setter;
 import org.omnione.did.base.db.domain.ListCredentialSchema;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
-import org.omnione.did.base.util.GsonSerializationUtil;
+import org.omnione.did.common.util.GsonSerializationUtil;
 import org.omnione.did.data.model.schema.VcSchema;
 import org.omnione.did.zkp.datamodel.schema.AttributeDef;
 import org.omnione.did.zkp.datamodel.schema.AttributeDef.ATTR_TYPE;

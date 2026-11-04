@@ -60,4 +60,11 @@ public enum SymmetricPaddingType {
                 throw new OpenDidException(ErrorCode.INVALID_SYMMETRIC_PADDING_TYPE);
         }
     }
+
+    public org.omnione.did.common.datamodel.enums.crypto.SymmetricPaddingType toCommonSdkSymmetricPaddingType() {
+        return switch (this) {
+            case NOPAD -> org.omnione.did.common.datamodel.enums.crypto.SymmetricPaddingType.NOPAD;
+            case PKCS5 -> org.omnione.did.common.datamodel.enums.crypto.SymmetricPaddingType.PKCS5;
+        };
+    }
 }

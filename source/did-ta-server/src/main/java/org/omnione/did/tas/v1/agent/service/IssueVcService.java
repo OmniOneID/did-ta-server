@@ -21,7 +21,7 @@ import org.omnione.did.base.db.domain.Tas;
 import org.omnione.did.base.db.domain.VcSchema;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
-import org.omnione.did.base.util.BaseCoreVcUtil;
+import org.omnione.did.common.util.vc.BaseCoreVcUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.common.util.DateTimeUtil;

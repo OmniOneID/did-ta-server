@@ -42,7 +42,7 @@ import org.omnione.did.base.db.domain.User;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.base.response.ErrorResponse;
-import org.omnione.did.base.util.BaseMultibaseUtil;
+import org.omnione.did.common.util.multibase.BaseMultibaseUtil;
 import org.omnione.did.common.exception.HttpClientException;
 import org.omnione.did.common.util.DateTimeUtil;
 import org.omnione.did.common.util.HttpClientUtil;

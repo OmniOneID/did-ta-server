@@ -36,10 +36,10 @@ import org.omnione.did.base.db.domain.Transaction;
 import org.omnione.did.base.db.repository.EcdhRepository;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
-import org.omnione.did.base.util.BaseCoreDidUtil;
-import org.omnione.did.base.util.BaseCryptoUtil;
-import org.omnione.did.base.util.BaseDigestUtil;
-import org.omnione.did.base.util.BaseMultibaseUtil;
+import org.omnione.did.common.util.did.BaseCoreDidUtil;
+import org.omnione.did.common.util.crypto.BaseCryptoUtil;
+import org.omnione.did.common.util.digest.BaseDigestUtil;
+import org.omnione.did.common.util.multibase.BaseMultibaseUtil;
 import org.omnione.did.common.exception.CommonSdkException;
 import org.omnione.did.tas.v1.agent.dto.entity.RequestECDHReqDto;
 import org.omnione.did.tas.v1.agent.dto.entity.RequestECDHResDto;
@@ -253,7 +253,7 @@ public class EcdhServiceImpl implements EcdhService {
     //@TODO: 공통함수로 빼야 함
     private void verifySignature(String encodedPublicKey, String signature, byte[] signatureMassage, ProofType proofType) {
         try {
-            BaseCryptoUtil.verifySignature(encodedPublicKey, signature, signatureMassage, proofType.toEccCurveType());
+            BaseCryptoUtil.verifySignature(encodedPublicKey, signature, signatureMassage, proofType.toEccCurveType().toCommonSdkEccCurveType());
         } catch (OpenDidException e) {
             throw e;
         } catch (Exception e) {
@@ -354,10 +354,10 @@ public class EcdhServiceImpl implements EcdhService {
         byte[] clientPublicKey = BaseMultibaseUtil.decode(requestECDHReqDto.getReqEcdh().getPublicKey());
 
         // Generate server key pair.
-        KeyPairInterface keyPairInterface = BaseCryptoUtil.generateKeyPair(requestECDHReqDto.getReqEcdh().getCurve());
+        KeyPairInterface keyPairInterface = BaseCryptoUtil.generateKeyPair(requestECDHReqDto.getReqEcdh().getCurve().toCommonSdkEccCurveType());
         byte[] serverPublicKey = ((ECPublicKey) keyPairInterface.getPublicKey()).getEncoded();
         byte[] serverPrivateKey = ((ECPrivateKey) keyPairInterface.getPrivateKey()).getEncoded();
-        byte[] compressPublicKey = BaseCryptoUtil.compressPublicKey(serverPublicKey, requestECDHReqDto.getReqEcdh().getCurve());
+        byte[] compressPublicKey = BaseCryptoUtil.compressPublicKey(serverPublicKey, requestECDHReqDto.getReqEcdh().getCurve().toCommonSdkEccCurveType());
 
         String encodedServerPublicKey = BaseMultibaseUtil.encode(compressPublicKey);
 
@@ -437,8 +437,8 @@ public class EcdhServiceImpl implements EcdhService {
      * @return byte[] The generated session key
      */
     private byte[] generateSessionKey(byte[] compressedClientPublicKey, byte[] serverPrivateKey, byte[] mergedNonce, SymmetricCipherType symmetricCipherType, EccCurveType eccCurveType) {
-        byte[] sharedSecret = BaseCryptoUtil.generateSharedSecret(compressedClientPublicKey, serverPrivateKey, eccCurveType);
-        return BaseCryptoUtil.mergeSharedSecretAndNonce(sharedSecret, mergedNonce, symmetricCipherType);
+        byte[] sharedSecret = BaseCryptoUtil.generateSharedSecret(compressedClientPublicKey, serverPrivateKey, eccCurveType.toCommonSdkEccCurveType());
+        return BaseCryptoUtil.mergeSharedSecretAndNonce(sharedSecret, mergedNonce, symmetricCipherType.toCommonSdkSymmetricCipherType());
     }
 
     /**

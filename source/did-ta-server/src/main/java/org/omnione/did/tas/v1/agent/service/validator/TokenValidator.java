@@ -20,7 +20,7 @@ import org.omnione.did.base.datamodel.enums.ServerTokenPurpose;
 import org.omnione.did.base.db.domain.Token;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
-import org.omnione.did.base.util.BaseMultibaseUtil;
+import org.omnione.did.common.util.multibase.BaseMultibaseUtil;
 import org.omnione.did.tas.v1.common.service.query.TokenQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

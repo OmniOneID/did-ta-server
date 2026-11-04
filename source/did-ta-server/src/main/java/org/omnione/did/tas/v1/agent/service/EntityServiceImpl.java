@@ -31,9 +31,9 @@ import org.omnione.did.base.db.domain.Transaction;
 import org.omnione.did.base.db.repository.EntityRepository;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
-import org.omnione.did.base.util.BaseCoreVcUtil;
-import org.omnione.did.base.util.BaseCryptoUtil;
-import org.omnione.did.base.util.BaseMultibaseUtil;
+import org.omnione.did.common.util.vc.BaseCoreVcUtil;
+import org.omnione.did.common.util.crypto.BaseCryptoUtil;
+import org.omnione.did.common.util.multibase.BaseMultibaseUtil;
 import org.omnione.did.base.util.BaseTasUtil;
 import org.omnione.did.tas.v1.agent.dto.entity.ConfirmEnrollEntityReqDto;
 import org.omnione.did.tas.v1.agent.dto.entity.ProposeEnrollEntityReqDto;
@@ -347,7 +347,7 @@ public class EntityServiceImpl implements EntityService {
         byte[] sessionKey = BaseMultibaseUtil.decode(ecdh.getSessionKey());
 
         // Encrypt the ServerTokenData.
-        return BaseCryptoUtil.encrypt(entityCertificateVcJson.getBytes(StandardCharsets.UTF_8), sessionKey, iv, symmetricCipherType, symmetricPaddingType);
+        return BaseCryptoUtil.encrypt(entityCertificateVcJson.getBytes(StandardCharsets.UTF_8), sessionKey, iv, symmetricCipherType.toCommonSdkSymmetricCipherType(), symmetricPaddingType.toCommonSdkSymmetricPaddingType());
     }
 
     /**

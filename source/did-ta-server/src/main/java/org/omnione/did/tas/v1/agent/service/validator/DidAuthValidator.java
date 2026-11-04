@@ -24,10 +24,10 @@ import org.omnione.did.base.datamodel.enums.ProofType;
 import org.omnione.did.base.db.domain.Transaction;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
-import org.omnione.did.base.util.BaseCoreDidUtil;
-import org.omnione.did.base.util.BaseCryptoUtil;
-import org.omnione.did.base.util.BaseDigestUtil;
-import org.omnione.did.base.util.BaseMultibaseUtil;
+import org.omnione.did.common.util.did.BaseCoreDidUtil;
+import org.omnione.did.common.util.crypto.BaseCryptoUtil;
+import org.omnione.did.common.util.digest.BaseDigestUtil;
+import org.omnione.did.common.util.multibase.BaseMultibaseUtil;
 import org.omnione.did.common.exception.CommonSdkException;
 import org.omnione.did.tas.v1.common.service.DidDocService;
 import lombok.RequiredArgsConstructor;
@@ -170,7 +170,7 @@ public class DidAuthValidator {
     //@TODO: 공통함수로 빼야 함
     private void verifySignature(String encodedPublicKey, String signature, byte[] signatureMassage, ProofType proofType) {
         try {
-            BaseCryptoUtil.verifySignature(encodedPublicKey, signature, signatureMassage, proofType.toEccCurveType());
+            BaseCryptoUtil.verifySignature(encodedPublicKey, signature, signatureMassage, proofType.toEccCurveType().toCommonSdkEccCurveType());
         } catch (OpenDidException e) {
             throw e;
         } catch (Exception e) {

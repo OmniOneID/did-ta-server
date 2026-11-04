@@ -20,7 +20,7 @@ import org.omnione.did.base.datamodel.enums.ProofPurpose;
 import org.omnione.did.base.db.domain.Tas;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
-import org.omnione.did.base.util.BaseCoreVcUtil;
+import org.omnione.did.common.util.vc.BaseCoreVcUtil;
 import org.omnione.did.common.exception.CommonSdkException;
 import org.omnione.did.tas.v1.agent.service.SignatureService;
 import org.omnione.did.tas.v1.common.service.DidDocService;
