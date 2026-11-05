@@ -25,8 +25,7 @@ import java.util.Map;
 /**
  * Converts Common SDK errors to the error codes of the TA server.
  * <p>
- * Only codes with a single meaning are listed. The Common SDK uses ENCODING_FAILED for encoding, decoding and
- * encryption failures, so decoding and encryption are translated at the call site instead.
+ * Only codes with a single meaning are listed.
  */
 @Slf4j
 public final class CommonSdkErrorMapper {
@@ -36,6 +35,9 @@ public final class CommonSdkErrorMapper {
 
     static {
         MAP.put(org.omnione.did.common.exception.ErrorCode.ENCODING_FAILED, ErrorCode.ENCODING_FAILED);
+        MAP.put(org.omnione.did.common.exception.ErrorCode.DECODING_FAILED, ErrorCode.DECODING_FAILED);
+        MAP.put(org.omnione.did.common.exception.ErrorCode.ENCRYPTION_FAILED, ErrorCode.ENCRYPTION_FAILED);
+        MAP.put(org.omnione.did.common.exception.ErrorCode.DECRYPTION_FAILED, ErrorCode.DECRYPTION_FAILED);
         MAP.put(org.omnione.did.common.exception.ErrorCode.SIGNATURE_VERIFICATION_FAILED, ErrorCode.SIGNATURE_VERIFICATION_FAILED);
         MAP.put(org.omnione.did.common.exception.ErrorCode.INVALID_SIGNATURE, ErrorCode.INVALID_SIGNATURE);
         MAP.put(org.omnione.did.common.exception.ErrorCode.SIGNATURE_GENERATION_FAILED, ErrorCode.SIGNATURE_GENERATION_FAILED);
