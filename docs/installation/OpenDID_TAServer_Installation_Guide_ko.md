@@ -18,7 +18,7 @@ puppeteer:
 Open DID TA Server Installation Guide
 ==
 
-- Date: 2026-10-29
+- Date: 2026-11-06
 - Version: v3.0.0
 
 목차
@@ -54,6 +54,7 @@ Open DID TA Server Installation Guide
     - [5.1.5. 서버 설정](#515-서버-설정)
   - [5.2. application-auth.yml](#52-application-authyml)
     - [5.2.1. 토큰 사용 여부 설정](#521-토큰-사용-여부-설정)
+    - [5.2.2. TA 등록 비밀번호 설정](#522-ta-등록-비밀번호-설정)
   - [5.3. application-databases.yml](#53-application-databasesyml)
     - [5.3.1. Spring Liquibase 설정](#531-spring-liquibase-설정)
     - [5.3.2. 데이터소스 설정](#532-데이터소스-설정)
@@ -61,11 +62,12 @@ Open DID TA Server Installation Guide
   - [5.4. application-logging.yml](#54-application-loggingyml)
     - [5.4.1. Logging Configuration](#541-logging-configuration)
   - [5.5. application-spring-docs.yml](#55-application-spring-docsyml)
-  - [5.6. applicaiton-wallet.yml](#56-applicaiton-walletyml)
+  - [5.6. application-wallet.yml](#56-application-walletyml)
     - [5.6.1. Wallet 접속 정보 설정](#561-wallet-접속-정보-설정)
-  - [5.7. applicaiton-blockchain.yml](#57-applicaiton-blockchainyml)
+  - [5.7. application-blockchain.yml](#57-application-blockchainyml)
   - [5.8. blockchain.properties](#58-blockchainproperties)
     - [5.8.1. 블록체인 연동 설정](#581-블록체인-연동-설정)
+  - [5.9. application-lss.yml](#59-application-lssyml)
 - [6. 프로파일 설정 및 사용](#6-프로파일-설정-및-사용)
   - [6.1. 프로파일 개요 (`sample`, `dev`)](#61-프로파일-개요-sample-dev)
     - [6.1.1. `sample` 프로파일](#611-sample-프로파일)
@@ -517,10 +519,16 @@ Spring Boot Actuator는 애플리케이션의 상태를 모니터링하고 관�
 
 ### 5.2.1. 토큰 사용 여부 설정
 
-* `spring.servlet.multipart.enabled`: 🔒 
+* `auth.token.enable`: 🔒 
     - 토큰 사용 여부를 설정합니다.
     - 용도: 인증 토큰을 사용할지 여부를 결정합니다. true로 설정하면 토큰 인증이 활성화되고, false로 설정하면 비활성화됩니다.
     - 예시: false
+
+### 5.2.2. TA 등록 비밀번호 설정
+
+* `ta.auth.registration-password`: 🔒 
+    - TA 등록(`request-enroll-tas`)에 사용하는 사전 배포 비밀번호를 설정합니다.
+    - 용도: 관리자 콘솔의 TA 등록 과정에서 입력값을 이 값과 대조합니다. 저장소의 기본값을 그대로 쓰지 말고 운영 환경에 맞는 값으로 바꾸세요.
 
 <br/>
 
@@ -690,7 +698,7 @@ logging:
 <br/>
 
 
-## 5.6. applicaiton-wallet.yml
+## 5.6. application-wallet.yml
 - 역할: 서버에서 사용하는 월렛 파일 정보를 설정합니다.
 
 - 위치: `src/main/resources/config`
@@ -712,7 +720,7 @@ logging:
 
 <br/>
 
-## 5.7. applicaiton-blockchain.yml
+## 5.7. application-blockchain.yml
 - 역할: 블록체인 연동 정보가 설정되어 있는 파일의 경로를 설정합니다.
 
 * `blockchain.file-path`:  
@@ -759,6 +767,21 @@ logging:
 - `evm.connection.privateKey:`: 
   - API 접근 통제에 사용되는 k1 키, hardhat.config.js 내부 accounts에 정의된 키 문자열을 입력(앞에 0x 문자열은 제거)하면 Owner 권한으로 API 호출 가능(Default 설정), 상세 가이드는 [DID Besu Contract] 참조바랍니다.
   - 예시: 0x8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63
+
+<br/>
+
+## 5.9. application-lss.yml
+
+- 역할: LSS(Ledger Service Server) 연동을 설정합니다. `lss` 프로파일을 켜면 TA는 블록체인 대신 LSS를 저장소로 사용합니다.
+
+- 위치: `src/main/resources/config`
+
+- `lss.url`:
+  - LSS 서버 주소입니다.
+  - 예시: `http://127.0.0.1:8098`
+
+- LSS API Key:
+  - TA는 LSS API Key를 `X-API-Key` 헤더로 보냅니다. LSS에서 발급한 키를 관리자 콘솔의 Server Configuration에 `API_KEY_LSS`로 등록하세요.
 
 <br/>
 

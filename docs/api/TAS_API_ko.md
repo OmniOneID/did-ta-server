@@ -18,7 +18,7 @@ puppeteer:
 TAS API
 ==
 
-- 일자: 2026-10-29
+- 일자: 2026-11-06
 - 버전: v3.0.0
 
 
@@ -30,7 +30,7 @@ TAS API
 | 1.0.1 (dev) | 2024-03-31 | [12.4 Send Email] 요청 데이터에서 senderAddress 옵션 처리 |
 | 1.0.1 (dev) | 2024-03-31 | [12.8 Get Vc Schema] 요청 파라미터에 name -> id로 변경    |
 | 2.0.0       | 2025-05-30 | [12.11 Get Vc Schema List] 요청 추가, [12.12 Get Credential Schema] 요청 추가   |
-| 3.0.0       | 2026-10-29 | OID4VCI 발급자 목록·상세·등록 API 추가 |
+| 3.0.0       | 2026-11-06 | OID4VCI 발급자 목록·상세·등록 API 추가, 누락된 API·필드 추가, 경로·VC Schema 목록 응답 정정 |
 
 <!-- TOC tocDepth:2..3 chapterDepth:2..6 -->
 
@@ -103,6 +103,12 @@ TAS API
   - [12.12. Get Credential Schema ](#1212-get-credential-schema)
   - [12.13. Get mDoc Issuer List](#1213-get-mdoc-issuer-list)
   - [12.14. OID4VCI Credential Issuers](#1214-oid4vci-credential-issuers)
+  - [12.15. Get VcPlan List (Issuer Init)](#1215-get-vcplan-list-issuer-init)
+  - [12.16. Get Certificate](#1216-get-certificate)
+  - [12.17. Get TA DID](#1217-get-ta-did)
+  - [12.18. Update User Status](#1218-update-user-status)
+  - [12.19. Remove Blockchain Index](#1219-remove-blockchain-index)
+  - [12.20. Remove Blockchain All](#1220-remove-blockchain-all)
 - [A. Non-standard Object Definitions](#a-non-standard-object-definitions)
   - [A.1. Constant](#a1-constant)
   - [A.2. EmailTemplate Object](#a2-emailtemplate-object)
@@ -194,11 +200,11 @@ TAS API
 | --- | ------------------------- | ----------------------------------- | -------------------------------------- | ------- |
 | 1   | `offer-restore-did-push`  | /api/v1/offer-restore-did/push  | 사용자 DID Document Offer 요청 (Push)  | N       |
 | 1   | `offer-restore-did-email` | /api/v1/offer-restore-did/email | 사용자 DID Document Offer 요청 (Email) | N       |
-| 2   | `propose-restore-user`    | /api/v1/propose-restore-user    | 사용자 DID Document 복구 시작 요청     | Y       |
+| 2   | `propose-restore-diddoc`    | /api/v1/propose-restore-diddoc    | 사용자 DID Document 복구 시작 요청     | Y       |
 | 3   | `request-ecdh`            | /api/v1/request-ecdh            | ECDH 요청                              | Y       |
 | 4   | `request-create-token`    | /api/v1/request-create-token    | 서버토큰 생성 요청                     | Y       |
-| 5   | `request-restore-user`    | /api/v1/request-restore-user    | 사용자 DID Document 복구 요청          | Y       |
-| 6   | `confirm-restore-user`    | /api/v1/confirm-restore-user    | 사용자 DID Document 복구 완료          | Y       |
+| 5   | `request-restore-diddoc`    | /api/v1/request-restore-diddoc    | 사용자 DID Document 복구 요청          | Y       |
+| 6   | `confirm-restore-diddoc`    | /api/v1/confirm-restore-diddoc    | 사용자 DID Document 복구 완료          | Y       |
 
 <div style="page-break-after: always; margin-top: 40px;"></div>
 
@@ -235,15 +241,23 @@ TAS API
 | `send-email`                | /noti/api/v1/send-email           | 이메일 발송                | N       |
 | `send-push`                 | /noti/api/v1/send-push            | Push 전송                  | N       |
 | `update-push-token`         | /api/v1/update-push-token         | Push 토큰 업데이트         | N       |
-| `get-vcplan-list`           | /list/api/v1/vcplan/list          | 모든 VC Plan 목록 조회     | Y       |
-| `get-vcplan`                | /list/api/v1/vcplan/id            | VC Plan 조회               | Y       |
+| `get-vcplan-list`           | /list/api/v1/vcplan/list          | 사용자 시작 VC Plan 목록 조회 | Y       |
+| `get-vcplan`                | /list/api/v1/vcplan               | VC Plan 조회               | Y       |
 | `get-allowed-ca-list`       | /list/api/v1/allowed-ca/list      | 월렛에 허용된 CA 목록 조회 | Y       |
 | `get-mdoc-issuer-list`      | /list/api/v1/mdoc/issuers         | mDoc 신뢰 발급자 목록 조회 | N       |
 | `oid4vci-issuers`          | /list/api/v1/oid4vci/issuers  | OID4VCI 발급자 목록·등록 | N |
+| `get-vcplan-list-issuer`    | /list/api/v1/vcplan/list/issuer   | 발급자 시작 VC Plan 목록 조회 | N       |
+| `get-vcschema-list`         | /list/api/v1/vcschema/list        | VC Schema 목록 조회        | N       |
+| `get-credential-schema`     | /list/api/v1/credential-schema    | Credential Schema 조회     | N       |
+| `get-certificate`           | /list/api/v1/certificate          | Entity 가입증명서 조회     | N       |
+| `get-ta-did`                | /list/api/v1/ta-did               | TAS DID 조회               | N       |
 | `get-certificate-vc`        | /api/v1/certificate-vc            | 가입증명서 조회            | N       |
 | `get-vcschema`              | /api/v1/vc-schema                  | VC 스키마 조회             | N       |
 | `update-diddoc-deactivated` | /api/v1/update-diddoc-deactivated | DIDDoc 비활성화            | N       |
 | `update-diddoc-revoked`     | /api/v1/update-diddoc-revoked     | DIDDoc 폐기                | N       |
+| `update-user-status`        | /api/v1/update-user-status        | 사용자 상태 변경           | N       |
+| `remove-blockchain-index`   | /api/v1/setup/blockchain/index    | 블록체인 인덱스 삭제       | N       |
+| `remove-blockchain-all`     | /api/v1/setup/blockchain/all      | 블록체인 인덱스 전체 삭제  | N       |
 
 > **주의사항**
 > 
@@ -741,6 +755,7 @@ def object M120_RequestEnrollEntity: "Request Enroll Entity 요청문"
 
     //--- Data Part ---
     + DidAuth "didAuth": "DID Auth data"
+    - string  "dn"     : "Entity의 Distinguished Name. 값이 있으면 Entity 정보에 저장"
 }
 ```
 
@@ -779,6 +794,7 @@ def object _M120_RequestEnrollEntity: "Request Enroll Entity 응답문"
 
     //--- Data Part ---
     + multibase "encVc": "암호화된 가입증명서 VC"
+    - url       "vcUrl": "발행한 가입증명서 VC의 URL"
 }
 ```
 
@@ -1086,7 +1102,7 @@ def object _M131_RequestRegisterWallet: "Request Register Wallet 응답문"
 
 <div style="page-break-after: always; margin-top: 30px;"></div>
 
-#### 5.4.3. Example
+#### 6.1.3. Example
 
 **■ Request**
 
@@ -1104,7 +1120,7 @@ curl -v -X POST "http://${Host}:${Port}/tas/api/v1/request-register-wallet" \
       "ownerDidDoc":"ueyJAY29udGV4dCI6WyJodHRwczovL3d3dy53My5vcmcvbnMvZGlkL3YxIl0sImFzc2VydGlvbk1ldGhvZCI6WyJhc3NlcnQiXSwiYXV0aGVudGljYXRpb24iOlsiYXV0aCJdLCJjb250cm9sbGVyIjoiZGlkOm9tbjp0YXMiLCJjcmVhdGVkIjoiMjAyNC0wOS0wNVQwODoxMToxMloiLCJkZWFjdGl2YXRlZCI6ZmFsc2UsImlkIjoiZGlkOm9tbjo0R052ZUxrdmJ1R29naVdKbXRNa3ZocWV0QUQzIiwia2V5QWdyZWVtZW50IjpbImtleWFncmVlIl0sInByb29mcyI6W3siY3JlYXRlZCI6IjIwMjQtMDktMDVUMDg6MTE6MTJaIiwicHJvb2ZQdXJwb3NlIjoiYXNzZXJ0aW9uTWV0aG9kIiwicHJvb2ZWYWx1ZSI6Im1IOTA0MFdUL1Z3SHZFL1dIdXp3U1VsazJwOEwrRDlEeHJrcDEyMEllWEkrK1dpTHV1TCtvVklFeEJvMXdDaU8rZEdjZUY3T01nT1AyU0tFODVIRmpPZjQ9IiwidHlwZSI6IlNlY3AyNTZyMVNpZ25hdHVyZTIwMTgiLCJ2ZXJpZmljYXRpb25NZXRob2QiOiJkaWQ6b21uOjRHTnZlTGt2YnVHb2dpV0ptdE1rdmhxZXRBRDM_dmVyc2lvbklkPTEjYXNzZXJ0In0seyJjcmVhdGVkIjoiMjAyNC0wOS0wNVQwODoxMToxMloiLCJwcm9vZlB1cnBvc2UiOiJhdXRoZW50aWNhdGlvbiIsInByb29mVmFsdWUiOiJtSDBpWnJXaWYrdzBmVlo1eWxHcHFTMGVMZGdKRGtKNVFjRFMycFJUc0g2eGVMa3pWd1JNRlB2cktZZGsvNng4Nm5XNjFER2JValdQV0NDQ2F3b3BTcldZPSIsInR5cGUiOiJTZWNwMjU2cjFTaWduYXR1cmUyMDE4IiwidmVyaWZpY2F0aW9uTWV0aG9kIjoiZGlkOm9tbjo0R052ZUxrdmJ1R29naVdKbXRNa3ZocWV0QUQzP3ZlcnNpb25JZD0xI2F1dGgifV0sInVwZGF0ZWQiOiIyMDI0LTA5LTA1VDA4OjExOjEyWiIsInZlcmlmaWNhdGlvbk1ldGhvZCI6W3siYXV0aFR5cGUiOjEsImNvbnRyb2xsZXIiOiJkaWQ6b21uOnRhcyIsImlkIjoia2V5YWdyZWUiLCJwdWJsaWNLZXlNdWx0aWJhc2UiOiJtQTNlTnViQ2hXTnRGTkhCVDdCREVTRm15Ulc1V0hRK1gyOFZmUGdnTWVDYkQiLCJ0eXBlIjoiU2VjcDI1NnIxVmVyaWZpY2F0aW9uS2V5MjAxOCJ9LHsiYXV0aFR5cGUiOjEsImNvbnRyb2xsZXIiOiJkaWQ6b21uOnRhcyIsImlkIjoiYXV0aCIsInB1YmxpY0tleU11bHRpYmFzZSI6Im1BaTdNQWE3MEwxSGdnd0t4MER1V0NoQWVEOGpodlZkVklKSDBjemJSc0tnbSIsInR5cGUiOiJTZWNwMjU2cjFWZXJpZmljYXRpb25LZXkyMDE4In0seyJhdXRoVHlwZSI6MSwiY29udHJvbGxlciI6ImRpZDpvbW46dGFzIiwiaWQiOiJhc3NlcnQiLCJwdWJsaWNLZXlNdWx0aWJhc2UiOiJtQXFMWitISDl5S0FOSENyYU1sSGU0eFAySCtkTHpnYUpFc1pIWG54dVh4d3AiLCJ0eXBlIjoiU2VjcDI1NnIxVmVyaWZpY2F0aW9uS2V5MjAxOCJ9XSwidmVyc2lvbklkIjoiMSJ9",
       "provider":{
          "did":"did:omn:wallet",
-         "certVcRef":"http://192.168.3.130:8095/wallet/api/v1/certificate-vc"
+         "certVcRef":"https://wallet.example.org/wallet/api/v1/certificate-vc"
       },
       "nonce":"462cf788a0de320fbc289fa2e6034605",
       "proof":{
@@ -1569,7 +1585,7 @@ curl -v -X POST "http://${Host}:${Port}/tas/api/v1/request-create-token" \
          "appId":"202409G2u67yk1X8l",
          "provider":{
             "did":"did:omn:cas",
-            "certVcRef":"http://192.168.3.130:8094/cas/api/v1/certificate-vc"
+            "certVcRef":"https://cas.example.org/cas/api/v1/certificate-vc"
          },
          "nonce":"mcUm9ylVEgYk/NalyZbOjoA",
          "proof":{
@@ -1640,7 +1656,8 @@ def object RetrieveKyc: "Retrieve KYC 요청문"
 
     //--- Data Part ---
     + multibase "serverToken"       : "multibase(serverToken)"
-    + string    "kycTxId"           : "KYC 식별자"
+    - string    "kycTxId"           : "KYC 식별자. KYC 검증 방식이 TRANSACTION일 때 사용"
+    - string    "kycToken"          : "KYC 토큰. KYC 검증 방식이 TOKEN일 때 사용"
 }
 ```
 
@@ -2440,7 +2457,7 @@ curl -v -X POST "http://${Host}:${Port}/tas/api/v1/request-create-token" \
          "appId":"202409Btz6cMklY2a",
          "provider":{
             "did":"did:omn:cas",
-            "certVcRef":"http://192.168.3.130:8094/cas/api/v1/certificate-vc"
+            "certVcRef":"https://cas.example.org/cas/api/v1/certificate-vc"
          },
          "nonce":"mba89KNRDoJKr7eH6kv60mg",
          "proof":{
@@ -3478,7 +3495,7 @@ curl -v -X POST "http://${Host}:${Port}/tas/api/v1/request-create-token" \
          "appId":"202409Btz6cMklY2a",
          "provider":{
             "did":"did:omn:cas",
-            "certVcRef":"http://192.168.3.130:8094/cas/api/v1/certificate-vc"
+            "certVcRef":"https://cas.example.org/cas/api/v1/certificate-vc"
          },
          "nonce":"mr8H6sYyMnNHT3Urz6HQgaw",
          "proof":{
@@ -4085,7 +4102,7 @@ def object OfferIssueVcEmail: "Offer Issue VC Email 요청문"
 
 <div style="page-break-after: always; margin-top: 30px;"></div>
 
-#### 10.3.1. Response
+#### 10.3.2. Response
 
 **■ Process**
 1. issuer로 Entity 정보 조회
@@ -4609,7 +4626,7 @@ curl -v -X POST "http://${Host}:${Port}/tas/api/v1/request-create-token" \
          "appId":"202409Btz6cMklY2a",
          "provider":{
             "did":"did:omn:cas",
-            "certVcRef":"http://192.168.3.130:8094/cas/api/v1/certificate-vc"
+            "certVcRef":"https://cas.example.org/cas/api/v1/certificate-vc"
          },
          "nonce":"mo89FVpdpHTebEmxWTowoJg",
          "proof":{
@@ -4769,16 +4786,16 @@ Content-Type: application/json;charset=utf-8
       "profile":{
          "issuer":{
             "did":"did:omn:issuer",
-            "certVcRef":"http://192.168.3.130:8091/issuer/api/v1/certificate-vc",
+            "certVcRef":"https://issuer.example.org/issuer/api/v1/certificate-vc",
             "name":"issuer"
          },
          "credentialSchema":{
-            "id":"http://192.168.3.130:8091/issuer/api/v1/vc/vcschema?name=mdl",
+            "id":"https://issuer.example.org/issuer/api/v1/vc/vcschema?name=mdl",
             "type":"OsdSchemaCredential"
          },
          "process":{
             "endpoints":[
-               "http://192.168.3.130:8091/issuer"
+               "https://issuer.example.org/issuer"
             ],
             "reqE2e":{
                "nonce":"mgM7zQA4IgIYefiLMqkdPcQ",
@@ -5560,7 +5577,7 @@ curl -v -X POST "http://${Host}:${Port}/tas/api/v1/request-create-token" \
          "appId":"202409Btz6cMklY2a",
          "provider":{
             "did":"did:omn:cas",
-            "certVcRef":"http://192.168.3.130:8094/cas/api/v1/certificate-vc"
+            "certVcRef":"https://cas.example.org/cas/api/v1/certificate-vc"
          },
          "nonce":"mba89KNRDoJKr7eH6kv60mg",
          "proof":{
@@ -5844,11 +5861,16 @@ TAS가 제공하는 단일 호출 API 목록은 아래 표와 같다.
 
 | API                         | Path                              | Description                | 표준API |
 | --------------------------- | --------------------------------- | -------------------------- | ------- |
-| `get-vcplan-list`           | /list/api/v1/vcplan/list          | 모든 VC Plan 목록 조회     | Y       |
+| `get-vcplan-list`           | /list/api/v1/vcplan/list          | 사용자 시작 VC Plan 목록 조회 | Y       |
 | `get-vcplan`                | /list/api/v1/vcplan               | Id로 VC Plan 조회          | Y       |
 | `get-allowed-ca-list`       | /list/api/v1/allowed-ca/list      | 월렛에 허용된 CA 목록 조회 | Y       |
 | `get-mdoc-issuer-list`      | /list/api/v1/mdoc/issuers         | mDoc 신뢰 발급자 목록 조회 | N       |
 | `oid4vci-issuers`          | /list/api/v1/oid4vci/issuers  | OID4VCI 발급자 목록·등록 | N |
+| `get-vcplan-list-issuer`    | /list/api/v1/vcplan/list/issuer   | 발급자 시작 VC Plan 목록 조회 | N       |
+| `get-vcschema-list`         | /list/api/v1/vcschema/list        | VC Schema 목록 조회        | N       |
+| `get-credential-schema`     | /list/api/v1/credential-schema    | Credential Schema 조회     | N       |
+| `get-certificate`           | /list/api/v1/certificate          | Entity 가입증명서 조회     | N       |
+| `get-ta-did`                | /list/api/v1/ta-did               | TAS DID 조회               | N       |
 | `send-email`                | /noti/api/v1/send-email           | 이메일 발송                | N       |
 | `send-push`                 | /noti/api/v1/send-push            | Push 전송                  | N       |
 | `update-push-token`         | /api/v1/update-push-token         | Push 토큰 업데이트         | N       |
@@ -5856,6 +5878,9 @@ TAS가 제공하는 단일 호출 API 목록은 아래 표와 같다.
 | `get-vcschema`              | /api/v1/vc-schema                  | VC 스키마 조회             | N       |
 | `update-diddoc-deactivated` | /api/v1/update-diddoc-deactivated | DIDDoc 비활성화            | N       |
 | `update-diddoc-revoked`     | /api/v1/update-diddoc-revoked     | DIDDoc 폐기                | N       |
+| `update-user-status`        | /api/v1/update-user-status        | 사용자 상태 변경           | N       |
+| `remove-blockchain-index`   | /api/v1/setup/blockchain/index    | 블록체인 인덱스 삭제       | N       |
+| `remove-blockchain-all`     | /api/v1/setup/blockchain/all      | 블록체인 인덱스 전체 삭제  | N       |
 
 > **주의사항**
 > 
@@ -5881,7 +5906,7 @@ TAS가 제공하는 단일 호출 API 목록은 아래 표와 같다.
 
 ### 12.1. Get VcPlan List
 
-모든 VC plan 목록을 조회한다.
+사용자 시작(User Init)으로 발급할 수 있는 VC plan 목록을 조회한다.
 
 | Item          | Description                | Remarks |
 | ------------- | -------------------------- | ------- |
@@ -5916,7 +5941,8 @@ N/A
 
 **■ Process**
 
-1. 모든 VC plan 조회하여 목록 응답
+1. `initiate`가 `user_init`인 VC plan을 조회한다.
+1. `tags`가 있으면 해당 해시태그를 가진 VC plan만 남기고 목록으로 응답한다.
 
 **■ Status 200 - Success**
 
@@ -5967,7 +5993,7 @@ Content-Type: application/json;charset=utf-8
         "national"
       ],
       "credentialSchema": {
-        "id": "http://192.168.3.130:8091/issuer/api/v1/vc/vcschema?name=national_id",
+        "id": "https://issuer.example.org/issuer/api/v1/vc/vcschema?name=national_id",
         "type": "OsdSchemaCredential"
       },
       "option": {
@@ -6071,7 +6097,7 @@ Content-Type: application/json;charset=utf-8
     "national"
   ],
   "credentialSchema": {
-    "id": "http://192.168.3.130:8091/issuer/api/v1/vc/vcschema?name=national_id",
+    "id": "https://issuer.example.org/issuer/api/v1/vc/vcschema?name=national_id",
     "type": "OsdSchemaCredential"
   },
   "option": {
@@ -6188,7 +6214,7 @@ Content-Type: application/json;charset=utf-8
 | Item          | Description                | Remarks |
 | ------------- | -------------------------- | ------- |
 | Method        | `POST`                     |         |
-| Path          | `/noti/api/v1/send-email ` |         |
+| Path          | `/noti/api/v1/send-email` |         |
 | Authorization | -                          |         |
 
 #### 12.4.1. Request
@@ -6212,10 +6238,8 @@ N/A
 ```c#
 def object SendEmail: "Send Email 요청문"
 {    
-    + string                "title"             : "email 제목"
-    - string                "senderAddress"     : "발신자 이메일 주소" 
-    + string                "recipientAddress"  : "수신자 이메일 주소"
-    + EMAIL_TEMPLATE_TYPE   "email"             : "email 템플릿 데이터" // A.2. EmailTemplate Object 참고
+    - string        "senderAddress": "발신자 이메일 주소"
+    + EmailTemplate "email"        : "email 템플릿 데이터" // A.2. EmailTemplate Object 참고
 }
 ```
 
@@ -6297,7 +6321,7 @@ Push 메시지를 전송한다.
 | Item          | Description                    | Remarks |
 | ------------- | ------------------------------ | ------- |
 | Method        | `POST`                         |         |
-| Path          | `/noti/noti/api/v1/send-push ` |         |
+| Path          | `/noti/api/v1/send-push` |         |
 | Authorization | -                              |         |
 
 #### 12.5.1. Request
@@ -6437,8 +6461,14 @@ def object UpdatePushToken: "Update Push Token 요청문"
     + did           "did"       : "user DID"
     + appId         "appId"     : "user's app id"
     + string        "pushToken" : "push Token"
+    + Proof         "proof"     : "사용자 서명"
 }
 ```
+
+- `~/proof`
+    - `proofPurpose`: `assertionMethod`
+    - `verificationMethod`: `did`의 `assert` 키
+    - 서명 원문: `proofValue`를 뺀 요청문을 정렬·직렬화한 뒤 SHA-256으로 해시한 값
 
 <div style="page-break-after: always; margin-top: 30px;"></div>
 
@@ -6478,7 +6508,7 @@ def object _UpdatePushToken: "Update Push Token 응답문"
 **■ Request**
 
 ```shell
-curl -v -X POST "http://${Host}:${Port}/noti/api/v1/update-push-token" \
+curl -v -X POST "http://${Host}:${Port}/tas/api/v1/update-push-token" \
 -H "Content-Type: application/json;charset=utf-8" \
 -d @"data.json"
 ```
@@ -6490,6 +6520,13 @@ curl -v -X POST "http://${Host}:${Port}/noti/api/v1/update-push-token" \
   "did": "did:omn:2kEDLDEjCxNUCPBL4VMJ7hmDAdHc",
   "appId": "AID202409a55b4824004",
   "pushToken": "mTxLuItPeGMYEz+6qoJx8vTyhCQH596dGw7GPruaEJcM",
+  "proof": {
+    "type": "Secp256r1Signature2018",
+    "created": "2024-09-05T08:13:15Z",
+    "verificationMethod": "did:omn:2kEDLDEjCxNUCPBL4VMJ7hmDAdHc?versionId=1#assert",
+    "proofPurpose": "assertionMethod",
+    "proofValue": "mH1example0000000000000000000000000000000000000000000000000000000000000000000000000000"
+  }
 }
 ```
 
@@ -6582,7 +6619,7 @@ Content-Type: application/json;charset=utf-8
     "https://www.w3.org/ns/credentials/v2"
   ],
   "credentialSchema": {
-    "id": "http://192.168.3.130:8090/tas/api/v1/vc-schema?name=certificate",
+    "id": "https://tas.example.org/tas/api/v1/vc-schema?name=certificate",
     "type": "OsdSchemaCredential"
   },
   "credentialSubject": {
@@ -6716,7 +6753,7 @@ N/A
 **■ Request**
 
 ```shell
-curl -v -X GET "http://${Host}:${Port}/tas/api/v1/vc-schema?id=http%3A%2F%2F192.168.3.130%3A8090%2Ftas%2Fapi%2Fv1%2Fvc-schema%3Fname%3Dcertificate
+curl -v -X GET "http://${Host}:${Port}/tas/api/v1/vc-schema?id=https%3A%2F%2Ftas.example.org%2Ftas%2Fapi%2Fv1%2Fvc-schema%3Fname%3Dcertificate
 ```
 
 **■ Response**
@@ -6726,7 +6763,7 @@ HTTP/1.1 200 OK
 Content-Type: application/json;charset=utf-8
 
 {
-  "@id": "http://192.168.3.130:8090/tas/api/v1/vc-schema?name=certificate",
+  "@id": "https://tas.example.org/tas/api/v1/vc-schema?name=certificate",
   "@schema": "https://opendid.org/schema/vc.osd",
   "title": "OpenDID Certificate Verifiable Credential",
   "description": "VC-formatted OpenDID enrollment certificate.",
@@ -6964,7 +7001,7 @@ Content-Type: application/json;charset=utf-8
 | Item          | Description                | Remarks |
 | ------------- | -------------------------- | ------- |
 | Method        | `GET`                      |         |
-| Path          | `/list/api/v1/vcSchema/list` |         |
+| Path          | `/list/api/v1/vcschema/list` |         |
 | Authorization | -                     
 
 #### 12.11.1. Request
@@ -6988,15 +7025,25 @@ N/A
 
 **■ Process**
 
-1. 모든 VC Schema 조회하여 목록 응답
+1. List Provider에 등록된 VC Schema를 모두 조회하여 목록으로 응답한다.
 
 **■ Status 200 - Success**
 
 ```c#
-def object _GetVcPlanList: "Get Schema List 응답문"
+def object _GetVcSchemaList: "Get VC Schema List 응답문"
 {
-    + int             "count": "number of items"
-    + array(VcSchema) "items": "VC Schema list", emptiable(false)
+    + int                    "count"       : "number of items"
+    + array(ListVcSchemaDto) "vcSchemaList": "VC Schema list", emptiable(true)
+}
+
+def object ListVcSchemaDto: "VC Schema 목록 항목"
+{
+    + url      "schemaId"   : "VC Schema ID"
+    + did      "issuerDid"  : "issuer DID"
+    + string   "issuerName" : "issuer name"
+    + string   "title"      : "VC Schema title"
+    + string   "description": "VC Schema description"
+    + VcSchema "vcSchema"   : "VC Schema"
 }
 ```
 
@@ -7030,13 +7077,13 @@ Content-Type: application/json;charset=utf-8
   "count": 1,
   "vcSchemaList": [
     {
-      "schemaId": "http://192.168.3.130:18091/issuer/api/v1/vc/vcschema?name=vcSchemaId",
+      "schemaId": "https://issuer.example.org/issuer/api/v1/vc/vcschema?name=vcSchemaId",
       "issuerDid": "did:omn:issuer",
       "issuerName": "Issuer",
       "title": "VC Schema ID",
       "description": "Description",
       "vcSchema": {
-        "@id": "http://192.168.3.130:18091/issuer/api/v1/vc/vcschema?name=vcSchemaId",
+        "@id": "https://issuer.example.org/issuer/api/v1/vc/vcschema?name=vcSchemaId",
         "@schema": "https://opendid.org/schema/vc.osd",
         "credentialSubject": {
           "claims": [
@@ -7087,7 +7134,7 @@ Credential Schema 정보를 조회한다.
 | Item          | Description        | Remarks |
 | ------------- | ------------------ | ------- |
 | Method        | `GET`              |         |
-| Path          | `list/api/v1/credential-schema` |         |
+| Path          | `/list/api/v1/credential-schema` |         |
 | Authorization | -                  |         |
 
 #### 12.12.1. Request
@@ -7313,6 +7360,514 @@ Content-Type: application/json;charset=utf-8
 
 위 URI는 문서용 예시입니다. 운영 환경에서는 실제 발급자의 메타데이터와 시작 URI를 사용하세요.
 
+### 12.15. Get VcPlan List (Issuer Init)
+
+발급자 시작(Issuer Init)으로 발급하는 VC plan 목록을 조회한다.
+
+| Item          | Description | Remarks |
+| ------------- | ----------- | ------- |
+| Method        | `GET` |         |
+| Path          | `/list/api/v1/vcplan/list/issuer` |         |
+| Authorization | -           |         |
+
+#### 12.15.1. Request
+
+**■ HTTP Headers**
+
+| Header           | Value                            | Remarks |
+| ---------------- | -------------------------------- | ------- |
+| + `Content-Type` | `application/json;charset=utf-8` |         |
+
+**■ Path Parameters**
+
+N/A
+
+**■ Query Parameters**
+
+| Parameter | Type | Description | Remarks |
+| --------- | ---- | ----------- | ------- |
+| - `tags`  | `string[]` | 검색할 해시태그 |         |
+
+- `tags`: 검색할 해시태그를 1개 이상 지정
+    - 예시: "?tags[]=id&tags[]=student"
+
+**■ HTTP Body**
+
+N/A
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+#### 12.15.2. Response
+
+**■ Process**
+
+1. `initiate`가 `issuer_init`인 VC plan을 조회한다.
+1. `tags`가 있으면 해당 해시태그를 가진 VC plan만 남기고 목록으로 응답한다.
+
+**■ Status 200 - Success**
+
+```c#
+def object _GetVcPlanListIssuer: "Get VcPlan List (Issuer Init) 응답문"
+{
+    + int           "count": "number of items"
+    + array(VcPlan) "items": "VC plan list", emptiable(true)
+}
+```
+
+**■ Status 400 - Client error**
+
+N/A
+
+**■ Status 500 - Server error**
+
+| Code         | Description |
+| ------------ | ----------- |
+| SSRVTRA19500 | 'get-vcplan-list' API 요청 처리에 실패했습니다. |
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+#### 12.15.3. Example
+
+**■ Request**
+
+```shell
+curl -v -X GET "http://${Host}:${Port}/list/api/v1/vcplan/list/issuer"
+```
+
+**■ Response**
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=utf-8
+
+{
+  "count": 0,
+  "items": []
+}
+```
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+### 12.16. Get Certificate
+
+List Provider에 등록된 Entity의 가입증명서 VC를 DID로 조회한다.
+
+| Item          | Description | Remarks |
+| ------------- | ----------- | ------- |
+| Method        | `GET` |         |
+| Path          | `/list/api/v1/certificate` |         |
+| Authorization | -           |         |
+
+#### 12.16.1. Request
+
+**■ HTTP Headers**
+
+| Header           | Value                            | Remarks |
+| ---------------- | -------------------------------- | ------- |
+| + `Content-Type` | `application/json;charset=utf-8` |         |
+
+**■ Path Parameters**
+
+N/A
+
+**■ Query Parameters**
+
+| Parameter | Type | Description | Remarks |
+| --------- | ---- | ----------- | ------- |
+| + `did` | `did` | 조회할 Entity의 DID |         |
+
+**■ HTTP Body**
+
+N/A
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+#### 12.16.2. Response
+
+**■ Process**
+
+1. `did`로 등록된 가입증명서 VC를 조회한다.
+1. 저장된 VC 문자열을 그대로 응답한다.
+
+**■ Status 200 - Success**
+
+```c#
+def string _GetCertificate: "Get Certificate 응답문. 가입증명서 VC JSON 문자열"
+```
+
+**■ Status 400 - Client error**
+
+N/A
+
+**■ Status 500 - Server error**
+
+| Code         | Description |
+| ------------ | ----------- |
+| SSRVTRA19504 | 가입증명서 VC를 찾을 수 없습니다. |
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+#### 12.16.3. Example
+
+**■ Request**
+
+```shell
+curl -v -X GET "http://${Host}:${Port}/list/api/v1/certificate?did=did%3Aexample%3Aissuer"
+```
+
+**■ Response**
+
+```http
+HTTP/1.1 200 OK
+
+{"@context":["https://www.w3.org/ns/credentials/v2"], ...}
+```
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+### 12.17. Get TA DID
+
+Trust Agent의 DID를 조회한다.
+
+| Item          | Description | Remarks |
+| ------------- | ----------- | ------- |
+| Method        | `GET` |         |
+| Path          | `/list/api/v1/ta-did` |         |
+| Authorization | -           |         |
+
+#### 12.17.1. Request
+
+**■ HTTP Headers**
+
+| Header           | Value                            | Remarks |
+| ---------------- | -------------------------------- | ------- |
+| + `Content-Type` | `application/json;charset=utf-8` |         |
+
+**■ Path Parameters**
+
+N/A
+
+**■ Query Parameters**
+
+N/A
+
+**■ HTTP Body**
+
+N/A
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+#### 12.17.2. Response
+
+**■ Process**
+
+1. 등록된 TAS 정보에서 DID를 읽어 응답한다.
+
+**■ Status 200 - Success**
+
+```c#
+def object _GetTaDid: "Get TA DID 응답문"
+{
+    + did "did": "TAS DID"
+}
+```
+
+**■ Status 400 - Client error**
+
+N/A
+
+**■ Status 500 - Server error**
+
+| Code         | Description |
+| ------------ | ----------- |
+| SSRVTRA13001 | TAS가 등록되지 않았습니다. |
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+#### 12.17.3. Example
+
+**■ Request**
+
+```shell
+curl -v -X GET "http://${Host}:${Port}/list/api/v1/ta-did"
+```
+
+**■ Response**
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=utf-8
+
+{
+  "did": "did:example:tas"
+}
+```
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+### 12.18. Update User Status
+
+사용자의 상태와 DID Document 상태를 변경한다.
+
+> **주의**: 이 API는 요청자를 인증하지 않는다. 신뢰할 수 있는 내부 호출자만 접근하도록 제한해야 한다.
+
+| Item          | Description | Remarks |
+| ------------- | ----------- | ------- |
+| Method        | `POST` |         |
+| Path          | `/api/v1/update-user-status` |         |
+| Authorization | -           |         |
+
+#### 12.18.1. Request
+
+**■ HTTP Headers**
+
+| Header           | Value                            | Remarks |
+| ---------------- | -------------------------------- | ------- |
+| + `Content-Type` | `application/json;charset=utf-8` |         |
+
+**■ Path Parameters**
+
+N/A
+
+**■ Query Parameters**
+
+N/A
+
+**■ HTTP Body**
+
+```c#
+def object UpdateUserStatus: "Update User Status 요청문"
+{
+    + did    "did"   : "user DID"
+    + string "status": "DID Document status", enum("ACTIVATED", "DEACTIVATED", "REVOKED")
+}
+```
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+#### 12.18.2. Response
+
+**■ Process**
+
+1. `txId` = 거래코드 생성
+1. `did`로 사용자와 DID Document를 조회한다.
+1. 저장소의 DID Document 상태를 `status`로 변경한다.
+1. 사용자 상태를 같은 값으로 변경한다.
+1. 거래를 `COMPLETED`로 저장한다.
+
+**■ Status 200 - Success**
+
+```c#
+def object _UpdateUserStatus: "Update User Status 응답문"
+{
+    + uuid "txId": "transaction id"
+}
+```
+
+**■ Status 400 - Client error**
+
+| Code         | Description |
+| ------------ | ----------- |
+| SSRVTRA17002 | 사용자를 찾을 수 없습니다: 사용자가 등록되지 않았습니다. |
+
+**■ Status 500 - Server error**
+
+| Code         | Description |
+| ------------ | ----------- |
+| SSRVTRA90003 | 알 수 없는 서버 에러가 발생했습니다. |
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+#### 12.18.3. Example
+
+**■ Request**
+
+```shell
+curl -v -X POST "http://${Host}:${Port}/tas/api/v1/update-user-status" \
+-H "Content-Type: application/json;charset=utf-8" \
+-d '{"did":"did:example:user","status":"DEACTIVATED"}'
+```
+
+**■ Response**
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=utf-8
+
+{
+  "txId": "a1b2c3d4-0000-4000-8000-000000000001"
+}
+```
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+### 12.19. Remove Blockchain Index
+
+블록체인 저장소에서 지정한 인덱스를 삭제한다.
+
+> **주의**: 저장소를 정리하는 운영 API이며 요청자를 인증하지 않는다. 외부 접근을 제한해야 한다. Hyperledger Fabric 계약을 쓰는 구성에서 동작하며, `lss` 프로파일에서는 `SSRVTRA18508`을 반환한다.
+
+| Item          | Description | Remarks |
+| ------------- | ----------- | ------- |
+| Method        | `DELETE` |         |
+| Path          | `/api/v1/setup/blockchain/index` |         |
+| Authorization | -           |         |
+
+#### 12.19.1. Request
+
+**■ HTTP Headers**
+
+| Header           | Value                            | Remarks |
+| ---------------- | -------------------------------- | ------- |
+| + `Content-Type` | `application/json;charset=utf-8` |         |
+
+**■ Path Parameters**
+
+N/A
+
+**■ Query Parameters**
+
+N/A
+
+**■ HTTP Body**
+
+```c#
+def object RemoveBlockchainIndex: "Remove Blockchain Index 요청문"
+{
+    + string "index": "삭제할 인덱스"
+}
+```
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+#### 12.19.2. Response
+
+**■ Process**
+
+1. 블록체인 저장소를 쓰는 구성인지 확인한다.
+1. `index`를 삭제한다.
+
+**■ Status 200 - Success**
+
+```c#
+def object _RemoveBlockchainIndex: "Remove Blockchain Index 응답문"
+{
+}
+```
+
+**■ Status 400 - Client error**
+
+N/A
+
+**■ Status 500 - Server error**
+
+| Code         | Description |
+| ------------ | ----------- |
+| SSRVTRA18508 | 블록체인 인덱스 삭제에 실패했습니다. |
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+#### 12.19.3. Example
+
+**■ Request**
+
+```shell
+curl -v -X DELETE "http://${Host}:${Port}/tas/api/v1/setup/blockchain/index" \
+-H "Content-Type: application/json;charset=utf-8" \
+-d '{"index":"example-index"}'
+```
+
+**■ Response**
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=utf-8
+
+{}
+```
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+### 12.20. Remove Blockchain All
+
+블록체인 저장소의 모든 인덱스를 삭제한다.
+
+> **주의**: 저장소의 인덱스를 모두 지우는 운영 API이며 요청자를 인증하지 않는다. 외부 접근을 제한해야 한다. Hyperledger Fabric 계약을 쓰는 구성에서 동작하며, `lss` 프로파일에서는 `SSRVTRA18508`을 반환한다.
+
+| Item          | Description | Remarks |
+| ------------- | ----------- | ------- |
+| Method        | `DELETE` |         |
+| Path          | `/api/v1/setup/blockchain/all` |         |
+| Authorization | -           |         |
+
+#### 12.20.1. Request
+
+**■ HTTP Headers**
+
+| Header           | Value                            | Remarks |
+| ---------------- | -------------------------------- | ------- |
+| + `Content-Type` | `application/json;charset=utf-8` |         |
+
+**■ Path Parameters**
+
+N/A
+
+**■ Query Parameters**
+
+N/A
+
+**■ HTTP Body**
+
+N/A
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+#### 12.20.2. Response
+
+**■ Process**
+
+1. 블록체인 저장소를 쓰는 구성인지 확인한다.
+1. 모든 인덱스를 삭제한다.
+
+**■ Status 200 - Success**
+
+```c#
+def object _RemoveBlockchainAll: "Remove Blockchain All 응답문"
+{
+}
+```
+
+**■ Status 400 - Client error**
+
+N/A
+
+**■ Status 500 - Server error**
+
+| Code         | Description |
+| ------------ | ----------- |
+| SSRVTRA18508 | 블록체인 인덱스 삭제에 실패했습니다. |
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+#### 12.20.3. Example
+
+**■ Request**
+
+```shell
+curl -v -X DELETE "http://${Host}:${Port}/tas/api/v1/setup/blockchain/all"
+```
+
+**■ Response**
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=utf-8
+
+{}
+```
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
 ## A. Non-standard Object Definitions
 
 비표준 API는 구현체에 따라 다르게 정의될 수 있으므로, 사용하는 객체들은 본 문서의 데이터 명세서에 포함되지 않고 이 장에서 따로 정의한다. 
@@ -7330,6 +7885,8 @@ def enum EMAIL_TEMPLATE_TYPE: "character encoding"
 ```c#
 def object EmailTemplate: "email 템플릿 정보"
 {
+    + string                            "title"             : "email 제목"
+    + string                            "recipientAddress"  : "수신자 이메일 주소"
     + EMAIL_TEMPLATE_TYPE               "templateType"      : "이메일 템플릿 타입"
     + map(contentKey, contentValue)     "contentData"       : "이메일 동적 변환 데이터"
 }

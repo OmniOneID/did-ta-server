@@ -20,6 +20,7 @@
 - Upgraded Node.js to 22.23.4 for the admin console build
 - DID status changes go through the storage service, so they work with the `lss` profile
 - Fixed the 'no registration' wording of SSRVTRA14010
+- Aligned the API, error code, table definition, installation, and admin guide documents with the code and screens
 
 ## [Released] (v2.0.0)
 

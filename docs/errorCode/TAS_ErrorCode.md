@@ -19,14 +19,14 @@ puppeteer:
 TAS Server Error Code
 ==
 
-- Date: 2026-10-29
+- Date: 2026-11-06
 - Version: v3.0.0
 
 | Version | Date       | Changes         |
 | ------- | ---------- | --------------- |
 | v1.0.0  | 2024-08-20 | Initial version |
 | v2.0.0  | 2025-05-29 | update error    |
-| v3.0.0  | 2026-10-29 | Added server configuration and issuer list error codes |
+| v3.0.0  | 2026-11-06 | Added server configuration and issuer list error codes, and aligned the table with ErrorCode.java |
 
 <div style="page-break-after: always;"></div>
 
@@ -123,7 +123,7 @@ public class ErrorResponse {
 | SSRVTRA12009 | Invalid DID Document version.                          | -           | Confirm the DID document version is correct.        |
 | SSRVTRA12010 | Failed to authenticate: password is incorrect.         | -           | Check the provided password for accuracy.           |
 | SSRVTRA12011 | The requested DID does not match the DID in the Offer. | -           | Check the DID in the request matches the Offer.     |
-| SSRVTRA12012 | Failed to find allowed CA list.                        | -           | Check the CA list is configured correctly.          |
+| SSRVTRA12012 | Failed to find allowed CA list                         | -           | Check the CA list is configured correctly.          |
 
 
 ### 1-4. TAS (13000 ~ 13499)
@@ -257,10 +257,6 @@ public class ErrorResponse {
 | SSRVTRA17017  | Failed to process the 'confirm-restore-diddoc' API request.    | -           | Check the 'confirm-restore-diddoc' API process.            |
 | SSRVTRA17018  | Failed to process the 'retrieve-kyc' API request.              | -           | Check the 'retrieve-kyc' API process.                      |
 | SSRVTRA17019  | Failed to process the 'offer-restore-did-push' API request.    | -           | Check the 'offer-restore-did-push' API process.            |
-| SSRVTRA17020  | Failed to process the 'offer-restore-did-email' API request.   | -           | Check the 'offer-restore-did-email' API process.           |
-| SSRVTRA17021  | Failed to process the 'update-push-token' API request.         | -           | Check the 'update-push-token' API process.                 |
-| SSRVTRA17022  | Failed to process the 'update-diddoc-deactivated' API request. | -           | Check the 'update-diddoc-deactivated' API process.         |
-| SSRVTRA117023 | Failed to process the 'update-diddoc-revoked' API request.     | -           | Check the 'update-diddoc-revoked' API process.             |
 
 ### 1-12. Wallet (17500 ~ 17999)
 | Error Code   | Error Message                                                | Description | Action Required                                            |
@@ -274,7 +270,7 @@ public class ErrorResponse {
 | SSRVTRA17506 | Failed to generate wallet signature.                         | -           | Check the wallet signature generation process.             |
 | SSRVTRA17507 | Failed to establish wallet connection.                       | -           | Ensure proper wallet connection setup.                     |
 | SSRVTRA17508 | Failed to authenticate wallet: wallet ID does not match.     | -           | Verify the wallet ID used for authentication.              |
-| SSRVTRA17509 | Failed to get File wallet manager.                           | -           | Check the retrieval process for the File wallet manager.   |
+| SSRVTRA17509 | Failed to get File wallet manager                            | -           | Check the retrieval process for the File wallet manager.   |
 | SSRVTRA17510 | Failed to process the 'request-register-wallet' API request. | -           | Check the 'request-register-wallet' API request.           |
 | SSRVTRA17511 | Failed to create wallet: wallet already exists.              | -           | Avoid duplicate wallet creation.                           |
 | SSRVTRA17512 | Failed to create wallet: invalid wallet file path.           | -           | Check wallet file path format.                             |
@@ -346,6 +342,8 @@ public class ErrorResponse {
 | SSRVTRA18535 | Failed to process certificate VC: invalid JSON format.     | -           | Verify JSON structure of certificate VC.                          |
 | SSRVTRA18536 | Failed to retrieve Credential Schema.                      | -           | Check Credential Schema retrieval logic.                          |
 | SSRVTRA18536 | Failed to retrieve Credential Definition.                  | -           | Check Credential Definition retrieval logic.                      |
+| SSRVTRA18537 | Failed to register VC schema. | -           | Check the VC schema registration process. |
+| SSRVTRA18538 | Failed to find VC schema | -           | Check that the VC schema exists. |
 
 ### 1-15. Token (19000 ~ 19499)
 | Error Code   | Error Message                                             | Description | Action Required                                       |
@@ -364,12 +362,24 @@ public class ErrorResponse {
 | SSRVTRA19500 | Failed to process the 'get-vcplan-list' API request.     | -           | Check the 'get-vcplan-list' API request processing.  |
 | SSRVTRA19501 | Failed to process the 'get-vcplan' API request.          | -           | Check the 'get-vcplan' API request processing.       |
 | SSRVTRA19502 | Failed to process the 'get-allowed-ca-list' API request. | -           | Check the 'get-allowed-ca-list' API request process. |
+| SSRVTRA19503 | Failed to find allowed CA: allowed CA list not found. | -           | Check that the allowed CA list is registered. |
+| SSRVTRA19504 | Failed to find certificate VC: certificate VC not found. | -           | Check that the certificate VC is registered in the list. |
+| SSRVTRA19505 | Failed to register certificate VC to list. | -           | Check the process for registering certificate VCs in the list. |
+| SSRVTRA19506 | Invalid certificate VC. | -           | Check the certificate VC format. |
 
 ### 1-17. Notification Provider (20000 ~ 20499)
 | Error Code   | Error Message                                   | Description | Action Required                                |
 | ------------ | ----------------------------------------------- | ----------- | ---------------------------------------------- |
 | SSRVTRA20000 | Failed to process the 'send-email' API request. | -           | Check the 'send-email' API request processing. |
 | SSRVTRA20001 | Failed to process the 'send-push' API request.  | -           | Check the 'send-push' API request processing.  |
+| SSRVTRA20002 | Failed to find notification template: requested template not found. | -           | Check that the notification template is registered. |
+| SSRVTRA20003 | Failed to register push configuration. | -           | Check the push configuration registration process. |
+| SSRVTRA20004 | Failed to register email configuration. | -           | Check the email configuration registration process. |
+| SSRVTRA20005 | Failed to find email configuration | -           | Check that the email configuration is registered. |
+| SSRVTRA20020 | Failed to process the 'offer-restore-did-email' API request.   | -           | Check the 'offer-restore-did-email' API process.           |
+| SSRVTRA20021 | Failed to process the 'update-push-token' API request.         | -           | Check the 'update-push-token' API process.                 |
+| SSRVTRA20022 | Failed to process the 'update-diddoc-deactivated' API request. | -           | Check the 'update-diddoc-deactivated' API process.         |
+| SSRVTRA20023 | Failed to process the 'update-diddoc-revoked' API request.     | -           | Check the 'update-diddoc-revoked' API process.             |
 
 ### 1-18. KYC (20500 ~ 20999)
 | Error Code   | Error Message                              | Description | Action Required                 |
@@ -411,7 +421,7 @@ public class ErrorResponse {
 
 | Error Code   | Error Message                                  | Description | Action Required                     |
 | ------------ | ---------------------------------------------- | ----------- | ----------------------------------- |
-| SSRVTRA90000 | Failed to find file: requested file not found. | -           | Check file existence.               |
+| SSRVTRA0000  | Failed to find file: requested file not found. | -           | Check file existence.               |
 | SSRVTRA90001 | Temporary error code: to be replaced.          | -           | Replace with a specific error code. |
 | SSRVTRA90002 | Failed to process file: I/O error occurred.    | -           | Check file I/O process.             |
 | SSRVTRA90003 | An unknown server error has occurred.          | -           | Investigate unknown server errors.  |

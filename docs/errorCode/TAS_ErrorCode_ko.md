@@ -19,14 +19,14 @@ puppeteer:
 TAS Server Error Code
 ==
 
-- Date: 2026-10-29
+- Date: 2026-11-06
 - Version: v3.0.0
 
 | Version | Date       | Changes         |
 | ------- | ---------- | --------------- |
 | v1.0.0  | 2024-08-20 | Initial version |
 | v2.0.0  | 2025-05-29 | update error    |
-| v3.0.0  | 2026-10-29 | Added server configuration and issuer list error codes |
+| v3.0.0  | 2026-11-06 | Added server configuration and issuer list error codes, and aligned the table with ErrorCode.java |
 
 <div style="page-break-after: always;"></div>
 
@@ -121,7 +121,7 @@ public class ErrorResponse {
 | SSRVTRA12009 | Invalid DID Document version.                          | -           | DID 문서 버전이 올바른지 확인하세요.            |
 | SSRVTRA12010 | Failed to authenticate: password is incorrect.         | -           | 제공된 비밀번호의 정확성을 확인하세요.           |
 | SSRVTRA12011 | The requested DID does not match the DID in the Offer. | -           | 요청의 DID가 Offer와 일치하는지 확인하세요.     |
-| SSRVTRA12012 | Failed to find allowed CA list.                        | -           | CA 목록이 올바르게 구성되었는지 확인하세요.     |
+| SSRVTRA12012 | Failed to find allowed CA list                         | -           | CA 목록이 올바르게 구성되었는지 확인하세요.     |
 
 ### 1-4. TAS (13000 ~ 13499)
 | Error Code   | Error Message                                                        | Description | Action Required                                     |
@@ -253,10 +253,6 @@ public class ErrorResponse {
 | SSRVTRA17017  | Failed to process the 'confirm-restore-diddoc' API request.    | -           | 'confirm-restore-diddoc' API 프로세스를 확인하세요.            |
 | SSRVTRA17018  | Failed to process the 'retrieve-kyc' API request.              | -           | 'retrieve-kyc' API 프로세스를 확인하세요.                      |
 | SSRVTRA17019  | Failed to process the 'offer-restore-did-push' API request.    | -           | 'offer-restore-did-push' API 프로세스를 확인하세요.            |
-| SSRVTRA17020  | Failed to process the 'offer-restore-did-email' API request.   | -           | 'offer-restore-did-email' API 프로세스를 확인하세요.           |
-| SSRVTRA17021  | Failed to process the 'update-push-token' API request.         | -           | 'update-push-token' API 프로세스를 확인하세요.                 |
-| SSRVTRA17022  | Failed to process the 'update-diddoc-deactivated' API request. | -           | 'update-diddoc-deactivated' API 프로세스를 확인하세요.         |
-| SSRVTRA117023 | Failed to process the 'update-diddoc-revoked' API request.     | -           | 'update-diddoc-revoked' API 프로세스를 확인하세요.             |
 
 ### 1-12. Wallet (17500 ~ 17999)
 | Error Code   | Error Message                                                | Description | Action Required                                            |
@@ -270,7 +266,7 @@ public class ErrorResponse {
 | SSRVTRA17506 | Failed to generate wallet signature.                         | -           | 지갑 서명 생성 프로세스를 확인하세요.             |
 | SSRVTRA17507 | Failed to establish wallet connection.                       | -           | 적절한 지갑 연결 설정을 확인하세요.                     |
 | SSRVTRA17508 | Failed to authenticate wallet: wallet ID does not match.     | -           | 인증에 사용된 지갑 ID를 확인하세요.              |
-| SSRVTRA17509 | Failed to get File wallet manager.                           | -           | 파일 지갑 관리자의 검색 프로세스를 확인하세요.   |
+| SSRVTRA17509 | Failed to get File wallet manager                            | -           | 파일 지갑 관리자의 검색 프로세스를 확인하세요.   |
 | SSRVTRA17510 | Failed to process the 'request-register-wallet' API request. | -           | 'request-register-wallet' API 요청을 확인하세요.           |
 | SSRVTRA17511 | Failed to create wallet: wallet already exists.              | -           | 중복 지갑 생성을 피하세요.                           |
 | SSRVTRA17512 | Failed to create wallet: invalid wallet file path.           | -           | 지갑 파일 경로 형식을 확인하세요.                             |
@@ -341,6 +337,8 @@ public class ErrorResponse {
 | SSRVTRA18535 | Failed to process certificate VC: invalid JSON format.     | -           | 인증서 VC의 JSON 구조를 확인하세요.                          |
 | SSRVTRA18536 | Failed to retrieve Credential Schema.                      | -           | 자격 증명 스키마 검색 로직을 확인하세요.                          |
 | SSRVTRA18536 | Failed to retrieve Credential Definition.                  | -           | 자격 증명 정의 검색 로직을 확인하세요.                      |
+| SSRVTRA18537 | Failed to register VC schema. | -           | VC 스키마 등록 프로세스를 확인하세요. |
+| SSRVTRA18538 | Failed to find VC schema | -           | VC 스키마 존재 여부를 확인하세요. |
 
 ### 1-15. Token (19000 ~ 19499)
 | Error Code   | Error Message                                             | Description | Action Required                                       |
@@ -358,12 +356,24 @@ public class ErrorResponse {
 | SSRVTRA19500 | Failed to process the 'get-vcplan-list' API request.     | -           | 'get-vcplan-list' API 요청 처리를 확인하세요.  |
 | SSRVTRA19501 | Failed to process the 'get-vcplan' API request.          | -           | 'get-vcplan' API 요청 처리를 확인하세요.       |
 | SSRVTRA19502 | Failed to process the 'get-allowed-ca-list' API request. | -           | 'get-allowed-ca-list' API 요청 프로세스를 확인하세요. |
+| SSRVTRA19503 | Failed to find allowed CA: allowed CA list not found. | -           | 허용 CA 목록 등록 여부를 확인하세요. |
+| SSRVTRA19504 | Failed to find certificate VC: certificate VC not found. | -           | 가입증명서 VC가 목록에 등록되었는지 확인하세요. |
+| SSRVTRA19505 | Failed to register certificate VC to list. | -           | 가입증명서 VC 목록 등록 프로세스를 확인하세요. |
+| SSRVTRA19506 | Invalid certificate VC. | -           | 가입증명서 VC 형식을 확인하세요. |
 
 ### 1-17. Notification Provider (20000 ~ 20499)
 | Error Code   | Error Message                                   | Description | Action Required                                |
 | ------------ | ----------------------------------------------- | ----------- | ---------------------------------------------- |
 | SSRVTRA20000 | Failed to process the 'send-email' API request. | -           | 'send-email' API 요청 처리를 확인하세요. |
 | SSRVTRA20001 | Failed to process the 'send-push' API request.  | -           | 'send-push' API 요청 처리를 확인하세요.  |
+| SSRVTRA20002 | Failed to find notification template: requested template not found. | -           | 알림 템플릿 등록 여부를 확인하세요. |
+| SSRVTRA20003 | Failed to register push configuration. | -           | Push 설정 등록 프로세스를 확인하세요. |
+| SSRVTRA20004 | Failed to register email configuration. | -           | 이메일 설정 등록 프로세스를 확인하세요. |
+| SSRVTRA20005 | Failed to find email configuration | -           | 이메일 설정 등록 여부를 확인하세요. |
+| SSRVTRA20020 | Failed to process the 'offer-restore-did-email' API request.   | -           | 'offer-restore-did-email' API 프로세스를 확인하세요.           |
+| SSRVTRA20021 | Failed to process the 'update-push-token' API request.         | -           | 'update-push-token' API 프로세스를 확인하세요.                 |
+| SSRVTRA20022 | Failed to process the 'update-diddoc-deactivated' API request. | -           | 'update-diddoc-deactivated' API 프로세스를 확인하세요.         |
+| SSRVTRA20023 | Failed to process the 'update-diddoc-revoked' API request.     | -           | 'update-diddoc-revoked' API 프로세스를 확인하세요.             |
 
 ### 1-18. KYC (20500 ~ 20999)
 | Error Code   | Error Message                              | Description | Action Required                 |
@@ -403,7 +413,7 @@ public class ErrorResponse {
 
 | Error Code   | Error Message                                  | Description | Action Required                     |
 | ------------ | ---------------------------------------------- | ----------- | ----------------------------------- |
-| SSRVTRA90000 | Failed to find file: requested file not found. | -           | 파일 존재 여부를 확인하세요.               |
+| SSRVTRA0000  | Failed to find file: requested file not found. | -           | 파일 존재 여부를 확인하세요.               |
 | SSRVTRA90001 | Temporary error code: to be replaced.          | -           | 특정 에러 코드로 교체하세요. |
 | SSRVTRA90002 | Failed to process file: I/O error occurred.    | -           | 파일 I/O 프로세스를 확인하세요.             |
 | SSRVTRA90003 | An unknown server error has occurred.          | -           | 알 수 없는 서버 에러를 조사하세요.  |

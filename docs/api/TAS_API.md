@@ -17,7 +17,7 @@ puppeteer:
 
 # TAS API
 
-- Date: 2026-10-29
+- Date: 2026-11-06
 - Version: v3.0.0
 
 ## Revision History
@@ -28,7 +28,7 @@ puppeteer:
 | 1.0.1 (dev) | 2024-03-31 | [12.4 Send Email] Optional handling of senderAddress in request data |
 | 1.0.1 (dev) | 2024-03-31 | [12.8 Get Vc Schema] Changed request parameter from name -> id |
 | 2.0.0       | 2025-05-30 | [12.11 Get Vc Schema List] Request Add, [12.12 Get Credential Schema] Request Add  |
-| 3.0.0       | 2026-10-29 | Added OID4VCI issuer list, detail, and registration APIs |
+| 3.0.0       | 2026-11-06 | Added OID4VCI issuer list, detail, and registration APIs; added missing APIs and fields; corrected paths and the VC Schema list response |
 
 <!-- TOC tocDepth:2..3 chapterDepth:2..6 -->
 
@@ -101,6 +101,12 @@ Table of Contents
   - [12.12. Get Credential Schema ](#1212-get-credential-schema)
   - [12.13. Get mDoc Issuer List](#1213-get-mdoc-issuer-list)
   - [12.14. OID4VCI Credential Issuers](#1214-oid4vci-credential-issuers)
+  - [12.15. Get VcPlan List (Issuer Init)](#1215-get-vcplan-list-issuer-init)
+  - [12.16. Get Certificate](#1216-get-certificate)
+  - [12.17. Get TA DID](#1217-get-ta-did)
+  - [12.18. Update User Status](#1218-update-user-status)
+  - [12.19. Remove Blockchain Index](#1219-remove-blockchain-index)
+  - [12.20. Remove Blockchain All](#1220-remove-blockchain-all)
 - [A. Non-standard Object Definitions](#a-non-standard-object-definitions)
   - [A.1. Constant](#a1-constant)
   - [A.2. EmailTemplate Object](#a2-emailtemplate-object)
@@ -192,11 +198,11 @@ This document defines the APIs provided by Trust Agent (TA or TAS).
 | --- | ------------------------- | ----------------------------------- | ------------------------------------------ | ------------ |
 | 1   | `offer-restore-did-push`  | /api/v1/offer-restore-did/push      | User DID Document Offer request (Push)     | N            |
 | 1   | `offer-restore-did-email` | /api/v1/offer-restore-did/email     | User DID Document Offer request (Email)    | N            |
-| 2   | `propose-restore-user`    | /api/v1/propose-restore-user        | User DID Document recovery request         | Y            |
+| 2   | `propose-restore-diddoc`    | /api/v1/propose-restore-diddoc        | User DID Document recovery request         | Y            |
 | 3   | `request-ecdh`            | /api/v1/request-ecdh                | ECDH request                               | Y            |
 | 4   | `request-create-token`    | /api/v1/request-create-token        | Server token creation request              | Y            |
-| 5   | `request-restore-user`    | /api/v1/request-restore-user        | User DID Document recovery request         | Y            |
-| 6   | `confirm-restore-user`    | /api/v1/confirm-restore-user        | User DID Document recovery completion      | Y            |
+| 5   | `request-restore-diddoc`    | /api/v1/request-restore-diddoc        | User DID Document recovery request         | Y            |
+| 6   | `confirm-restore-diddoc`    | /api/v1/confirm-restore-diddoc        | User DID Document recovery completion      | Y            |
 
 <div style="page-break-after: always; margin-top: 40px;"></div>
 
@@ -233,15 +239,23 @@ This document defines the APIs provided by Trust Agent (TA or TAS).
 | `send-email`                | /noti/api/v1/send-email           | Email sending                      | N            |
 | `send-push`                 | /noti/api/v1/send-push            | Push transmission                  | N            |
 | `update-push-token`         | /api/v1/update-push-token         | Push token update                  | N            |
-| `get-vcplan-list`           | /list/api/v1/vcplan/list          | Retrieve all VC Plan list          | Y            |
-| `get-vcplan`                | /list/api/v1/vcplan/id            | Retrieve VC Plan                   | Y            |
+| `get-vcplan-list`           | /list/api/v1/vcplan/list          | Retrieve User Init VC Plan list    | Y            |
+| `get-vcplan`                | /list/api/v1/vcplan               | Retrieve VC Plan                   | Y            |
 | `get-allowed-ca-list`       | /list/api/v1/allowed-ca/list      | Retrieve CA list allowed for wallet| Y            |
 | `get-mdoc-issuer-list`      | /list/api/v1/mdoc/issuers         | Retrieve mDoc trusted issuer list | N            |
 | `oid4vci-issuers`          | /list/api/v1/oid4vci/issuers  | OID4VCI issuer list and registration | N |
+| `get-vcplan-list-issuer`    | /list/api/v1/vcplan/list/issuer   | Retrieve Issuer Init VC Plan list  | N          |
+| `get-vcschema-list`         | /list/api/v1/vcschema/list        | Retrieve VC Schema list            | N          |
+| `get-credential-schema`     | /list/api/v1/credential-schema    | Retrieve Credential Schema         | N          |
+| `get-certificate`           | /list/api/v1/certificate          | Retrieve Entity certificate VC     | N          |
+| `get-ta-did`                | /list/api/v1/ta-did               | Retrieve TAS DID                   | N          |
 | `get-certificate-vc`        | /api/v1/certificate-vc            | Retrieve enrollment certificate    | N            |
 | `get-vcschema`              | /api/v1/vc-schema                 | Retrieve VC schema                 | N            |
 | `update-diddoc-deactivated` | /api/v1/update-diddoc-deactivated | DIDDoc deactivation                | N            |
 | `update-diddoc-revoked`     | /api/v1/update-diddoc-revoked     | DIDDoc revocation                  | N            |
+| `update-user-status`        | /api/v1/update-user-status        | Change user status                 | N          |
+| `remove-blockchain-index`   | /api/v1/setup/blockchain/index    | Remove a blockchain index          | N          |
+| `remove-blockchain-all`     | /api/v1/setup/blockchain/all      | Remove all blockchain indexes      | N          |
 
 > **Note**
 > 
@@ -726,6 +740,7 @@ def object M120_RequestEnrollEntity: "Request Enroll Entity request message"
 
     //--- Data Part ---
     + DidAuth "didAuth": "DID Auth data"
+    - string  "dn"     : "Entity Distinguished Name. Stored in the Entity information when provided"
 }
 ```
 
@@ -761,6 +776,7 @@ def object _M120_RequestEnrollEntity: "Request Enroll Entity response message"
 
     //--- Data Part ---
     + multibase "encVc": "encrypted enrollment certificate VC"
+    - url       "vcUrl": "URL of the published certificate VC"
 }
 ```
 
@@ -1070,7 +1086,7 @@ curl -v -X POST "http://${Host}:${Port}/tas/api/v1/request-register-wallet" \
       "ownerDidDoc":"ueyJAY29udGV4dCI6WyJodHRwczovL3d3dy53My5vcmcvbnMvZGlkL3YxIl0sImFzc2VydGlvbk1ldGhvZCI6WyJhc3NlcnQiXSwiYXV0aGVudGljYXRpb24iOlsiYXV0aCJdLCJjb250cm9sbGVyIjoiZGlkOm9tbjp0YXMiLCJjcmVhdGVkIjoiMjAyNC0wOS0wNVQwODoxMToxMloiLCJkZWFjdGl2YXRlZCI6ZmFsc2UsImlkIjoiZGlkOm9tbjo0R052ZUxrdmJ1R29naVdKbXRNa3ZocWV0QUQzIiwia2V5QWdyZWVtZW50IjpbImtleWFncmVlIl0sInByb29mcyI6W3siY3JlYXRlZCI6IjIwMjQtMDktMDVUMDg6MTE6MTJaIiwicHJvb2ZQdXJwb3NlIjoiYXNzZXJ0aW9uTWV0aG9kIiwicHJvb2ZWYWx1ZSI6Im1IOTA0MFdUL1Z3SHZFL1dIdXp3U1VsazJwOEwrRDlEeHJrcDEyMEllWEkrK1dpTHV1TCtvVklFeEJvMXdDaU8rZEdjZUY3T01nT1AyU0tFODVIRmpPZjQ9IiwidHlwZSI6IlNlY3AyNTZyMVNpZ25hdHVyZTIwMTgiLCJ2ZXJpZmljYXRpb25NZXRob2QiOiJkaWQ6b21uOjRHTnZlTGt2YnVHb2dpV0ptdE1rdmhxZXRBRDM_dmVyc2lvbklkPTEjYXNzZXJ0In0seyJjcmVhdGVkIjoiMjAyNC0wOS0wNVQwODoxMToxMloiLCJwcm9vZlB1cnBvc2UiOiJhdXRoZW50aWNhdGlvbiIsInByb29mVmFsdWUiOiJtSDBpWnJXaWYrdzBmVlo1eWxHcHFTMGVMZGdKRGtKNVFjRFMycFJUc0g2eGVMa3pWd1JNRlB2cktZZGsvNng4Nm5XNjFER2JValdQV0NDQ2F3b3BTcldZPSIsInR5cGUiOiJTZWNwMjU2cjFTaWduYXR1cmUyMDE4IiwidmVyaWZpY2F0aW9uTWV0aG9kIjoiZGlkOm9tbjo0R052ZUxrdmJ1R29naVdKbXRNa3ZocWV0QUQzP3ZlcnNpb25JZD0xI2F1dGgifV0sInVwZGF0ZWQiOiIyMDI0LTA5LTA1VDA4OjExOjEyWiIsInZlcmlmaWNhdGlvbk1ldGhvZCI6W3siYXV0aFR5cGUiOjEsImNvbnRyb2xsZXIiOiJkaWQ6b21uOnRhcyIsImlkIjoia2V5YWdyZWUiLCJwdWJsaWNLZXlNdWx0aWJhc2UiOiJtQTNlTnViQ2hXTnRGTkhCVDdCREVTRm15Ulc1V0hRK1gyOFZmUGdnTWVDYkQiLCJ0eXBlIjoiU2VjcDI1NnIxVmVyaWZpY2F0aW9uS2V5MjAxOCJ9LHsiYXV0aFR5cGUiOjEsImNvbnRyb2xsZXIiOiJkaWQ6b21uOnRhcyIsImlkIjoiYXV0aCIsInB1YmxpY0tleU11bHRpYmFzZSI6Im1BaTdNQWE3MEwxSGdnd0t4MER1V0NoQWVEOGpodlZkVklKSDBjemJSc0tnbSIsInR5cGUiOiJTZWNwMjU2cjFWZXJpZmljYXRpb25LZXkyMDE4In0seyJhdXRoVHlwZSI6MSwiY29udHJvbGxlciI6ImRpZDpvbW46dGFzIiwiaWQiOiJhc3NlcnQiLCJwdWJsaWNLZXlNdWx0aWJhc2UiOiJtQXFMWitISDl5S0FOSENyYU1sSGU0eFAySCtkTHpnYUpFc1pIWG54dVh4d3AiLCJ0eXBlIjoiU2VjcDI1NnIxVmVyaWZpY2F0aW9uS2V5MjAxOCJ9XSwidmVyc2lvbklkIjoiMSJ9",
       "provider":{
          "did":"did:omn:wallet",
-         "certVcRef":"http://192.168.3.130:8095/wallet/api/v1/certificate-vc"
+         "certVcRef":"https://wallet.example.org/wallet/api/v1/certificate-vc"
       },
       "nonce":"462cf788a0de320fbc289fa2e6034605",
       "proof":{
@@ -1520,7 +1536,7 @@ curl -v -X POST "http://${Host}:${Port}/tas/api/v1/request-create-token" \
          "appId":"202409Btz6cMklY2a",
          "provider":{
             "did":"did:omn:cas",
-            "certVcRef":"http://192.168.3.130:8094/cas/api/v1/certificate-vc"
+            "certVcRef":"https://cas.example.org/cas/api/v1/certificate-vc"
          },
          "nonce":"mba89KNRDoJKr7eH6kv60mg",
          "proof":{
@@ -1588,7 +1604,8 @@ def object RetrieveKyc: "Retrieve KYC request message"
 
     //--- Data Part ---
     + multibase "serverToken"       : "multibase(serverToken)"
-    + string    "kycTxId"           : "KYC identifier"
+    - string    "kycTxId"           : "KYC identifier. Used when the KYC verification type is TRANSACTION"
+    - string    "kycToken"          : "KYC token. Used when the KYC verification type is TOKEN"
 }
 ```
 
@@ -2361,7 +2378,7 @@ curl -v -X POST "http://${Host}:${Port}/tas/api/v1/request-create-token" \
          "appId":"202409Btz6cMklY2a",
          "provider":{
             "did":"did:omn:cas",
-            "certVcRef":"http://192.168.3.130:8094/cas/api/v1/certificate-vc"
+            "certVcRef":"https://cas.example.org/cas/api/v1/certificate-vc"
          },
          "nonce":"mba89KNRDoJKr7eH6kv60mg",
          "proof":{
@@ -3208,7 +3225,7 @@ Content-Type: application/json;charset=utf-8
 
 ### 9.5. Request Create Token
 
-CA app requests TAS to create server token.
+The authorization app requests TAS to create a server token.
 
 | Item          | Description                    | Remarks |
 | ------------- | ------------------------------ | ------- |
@@ -3216,6 +3233,179 @@ CA app requests TAS to create server token.
 | Path          | `/api/v1/request-create-token` |         |
 | Authorization | -                              |         |
 
+#### 9.5.1. Request
+
+To create a server token, the following token seed must be provided.
+
+- `(ServerTokenSeed)seed`
+    - `purpose`: "RestoreDid"
+    - `walletInfo`: Signed wallet information (obtained by calling wallet SDK)
+    - `caAppInfo`: Signed authorization app information (obtained by calling authorization app provider API)
+
+For detailed information, refer to [DATA-SPEC].
+
+**■ Headers**
+
+| Header           | Value                            | Remarks |
+| ---------------- | -------------------------------- | ------- |
+| + `Content-Type` | `application/json;charset=utf-8` |         |
+
+**■ Path Parameters**
+
+N/A
+
+**■ Query Parameters**
+
+N/A
+
+**■ Body**
+
+```c#
+def object M142_RequestCreateToken: "Request Create Token request message"
+{
+    //--- Common Part ---
+    + messageId "id"  : "message id"
+    + uuid      "txId": "transaction id"
+
+    //--- Data Part ---
+    + ServerTokenSeed "seed": "server token seed"
+}
+```
+
+- `~/seed`
+    - `purpose`: Token usage purpose
+    - `walletInfo`: Signed wallet information
+    - `caAppInfo`: Signed authorization app information
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+#### 9.5.2. Response
+
+After verifying signatures within the seed provided by the client, generates server token data and responds.
+Response data is encrypted with session key.
+
+**■ Process**
+
+1. Verify transaction code
+1. Validate purpose validity
+1. Verify proof signatures within `~/seed`
+    - Verify `walletInfo.proof` wallet signature
+    - Verify `caAppInfo.proof` wallet provider signature
+1. Prepare data
+    - Set token expiration date/time
+    - Generate other random numbers, etc.
+1. Sign the above data to create `(ServerTokenData)std`
+1. Create and store server token
+    - `serverToken` = sha256(std)
+1. Prepare response data
+    - `encStd` = multibase(enc(std, sesKey, iv, padding))
+
+**■ Status 200 - Success**
+
+```c#
+def object _M142_RequestCreateToken: "Request Create Token response message"
+{    
+    //--- Common Part ---
+    + uuid      "txId": "transaction id"
+    + multibase "iv"  : "Session key encryption/decryption IV"
+    
+    //--- Data Part ---
+    + multibase "encStd": "multibase(enc((ServerTokenData)std))"
+}
+```
+
+- `~/encStd`: Encrypted server token data
+
+**■ Status 400 - Client error**
+
+|     Code     | Description                                               |
+| :----------: | --------------------------------------------------------- |
+| SSRVTRA16000 | Transaction not found: Transaction does not exist.       |
+| SSRVTRA16001 | Transaction processing failed: Transaction is invalid.   |
+| SSRVTRA16002 | Transaction processing failed: Transaction has expired.  |
+| SSRVTRA12005 | Unsupported 'token purpose'.                             |
+| SSRVTRA17502 | Cannot find Wallet: Wallet is not registered.           |
+| SSRVTRA16510 | Signature verification failed: Signature is invalid.     |
+| SSRVTRA16511 | Signature verification failed.                            |
+| SSRVTRA18510 | Cannot find registration certificate VC.                 |
+| SSRVTRA12007 | Provider DID does not match.                             |
+| SSRVTRA18511 | Invalid registration certificate VC Issuer.              |
+| SSRVTRA18519 | VC verification failed.                                   |
+
+**■ Status 500 - Server error**
+
+|     Code     | Description                                          |
+| :----------: | ---------------------------------------------------- |
+| SSRVTRA19000 | Failed to create server token.                      |
+| SSRVTRA19001 | Failed to encrypt server token data.                |
+| SSRVTRA19005 | Failed to process 'request-create-token' API request. |
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+#### 9.5.3. Example
+
+**■ Request**
+
+```shell
+curl -v -X POST "http://${Host}:${Port}/tas/api/v1/request-create-token" \
+-H "Content-Type: application/json;charset=utf-8" \
+-d @"data.json"
+```
+
+```json
+//data.json
+{
+   "id":"202409061024378200004A6EE7C2",
+   "txId":"cad7a1e8-0e27-47f3-b9dd-b6590a349852",
+   "seed":{
+      "purpose":7,
+      "walletInfo":{
+         "wallet":{
+            "id":"WID202409HFaOFhPdgvY",
+            "did":"did:omn:3yybwkGEF46BXaqhXSJDhWE7ptN8"
+         },
+         "nonce":"zLJoyk4d9cKHK5gcqrYxsvm",
+         "proof":{
+            "type":"Secp256r1Signature2018",
+            "created":"2024-09-06T01:24:37Z",
+            "verificationMethod":"did:omn:3yybwkGEF46BXaqhXSJDhWE7ptN8?versionId=1#assert",
+            "proofPurpose":"assertionMethod",
+            "proofValue":"z3phZ31Z8jSYeRGZrwdggBz8L6sr69mQgu4k89HegX36AxqJLxqK6dYizFwCu5apUy3e958Rxha3MKwdhK1CtMihRR"
+         }
+      },
+      "caAppInfo":{
+         "appId":"202409Btz6cMklY2a",
+         "provider":{
+            "did":"did:omn:cas",
+            "certVcRef":"https://cas.example.org/cas/api/v1/certificate-vc"
+         },
+         "nonce":"mr8H6sYyMnNHT3Urz6HQgaw",
+         "proof":{
+            "type":"Secp256r1Signature2018",
+            "created":"2024-09-06T10:24:37.604775Z",
+            "verificationMethod":"did:omn:cas?versionId=1#assert",
+            "proofPurpose":"assertionMethod",
+            "proofValue":"mIMrVCiyWS8Tp2rHUaaw0JfQfgfaIKB7n7mUTzFPRbqgsRQ/VtcfXq672G7pBLqctJEyaaZarvbOAiibJqdUFXLM"
+         }
+      }
+   }
+}
+```
+
+**■ Response**
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=utf-8
+
+{
+   "txId":"cad7a1e8-0e27-47f3-b9dd-b6590a349852",
+   "iv":"z75M7MfQsC4p2rTxeKxYh2M",
+   "encStd":"zHri4iJ8q2mcv4GKmrb3GgnsyY6hT93rbvQir1eAmnqvMrfRcRUTfs16NQvrReuV9hx76X5qSpQ19NVm78ca4jnRuDoqbDwAqmtGPLwUvVaLUFMh6oEXZzfQQ5ds6JHMDvcYpeKCHtmyfUb2W7DbhZNEg9D4Au5TqQomey9A2vWG9FrN91PUg9nfyt9NCfqX6s38JHvedKCjqixBiv4Gs5hk2HNN3aCuS5Y53ACGeADA3cKFHwpJZNYBubHN7QAraBFu5zjWRv4RgK46MnTmfyxXzPLucjeRg9qAUabCJWmb6RwWT1SoUFzk8CMoQtppfn8GDHfcUrhGHEFcU2PYu3kKr97NLGbrpdftha2wVprd4ZKD4YS78pLSeXKGGEsnWU5CatFN7ayZqTU5ZspwZ567SUohWfJZn3XXp9y938rDr5WW1RtWD6UsxFxSY14h7C694DUkNsZKJejcnBxLqdqxbeqRn8AMvx"
+}
+```
+
+<div style="page-break-after: always; margin-top: 40px;"></div>
 
 ### 9.6. Request Restore DidDoc
 
@@ -4272,7 +4462,7 @@ curl -v -X POST "http://${Host}:${Port}/tas/api/v1/request-create-token" \
          "appId":"202409Btz6cMklY2a",
          "provider":{
             "did":"did:omn:cas",
-            "certVcRef":"http://192.168.3.130:8094/cas/api/v1/certificate-vc"
+            "certVcRef":"https://cas.example.org/cas/api/v1/certificate-vc"
          },
          "nonce":"mo89FVpdpHTebEmxWTowoJg",
          "proof":{
@@ -4427,16 +4617,16 @@ Content-Type: application/json;charset=utf-8
       "profile":{
          "issuer":{
             "did":"did:omn:issuer",
-            "certVcRef":"http://192.168.3.130:8091/issuer/api/v1/certificate-vc",
+            "certVcRef":"https://issuer.example.org/issuer/api/v1/certificate-vc",
             "name":"issuer"
          },
          "credentialSchema":{
-            "id":"http://192.168.3.130:8091/issuer/api/v1/vc/vcschema?name=mdl",
+            "id":"https://issuer.example.org/issuer/api/v1/vc/vcschema?name=mdl",
             "type":"OsdSchemaCredential"
          },
          "process":{
             "endpoints":[
-               "http://192.168.3.130:8091/issuer"
+               "https://issuer.example.org/issuer"
             ],
             "reqE2e":{
                "nonce":"mgM7zQA4IgIYefiLMqkdPcQ",
@@ -5214,7 +5404,7 @@ curl -v -X POST "http://${Host}:${Port}/tas/api/v1/request-create-token" \
          "appId":"202409Btz6cMklY2a",
          "provider":{
             "did":"did:omn:cas",
-            "certVcRef":"http://192.168.3.130:8094/cas/api/v1/certificate-vc"
+            "certVcRef":"https://cas.example.org/cas/api/v1/certificate-vc"
          },
          "nonce":"mba89KNRDoJKr7eH6kv60mg",
          "proof":{
@@ -5486,11 +5676,16 @@ The list of single call APIs provided by TAS is shown in the table below.
 
 | API                         | Path                              | Description                        | Standard API |
 | --------------------------- | --------------------------------- | ---------------------------------- | ------------ |
-| `get-vcplan-list`           | /list/api/v1/vcplan/list          | Retrieve all VC Plan list          | Y            |
+| `get-vcplan-list`           | /list/api/v1/vcplan/list          | Retrieve User Init VC Plan list    | Y            |
 | `get-vcplan`                | /list/api/v1/vcplan               | Retrieve VC Plan by Id             | Y            |
 | `get-allowed-ca-list`       | /list/api/v1/allowed-ca/list      | Retrieve CA list allowed for wallet| Y            |
 | `get-mdoc-issuer-list`      | /list/api/v1/mdoc/issuers         | Retrieve mDoc trusted issuer list | N            |
 | `oid4vci-issuers`          | /list/api/v1/oid4vci/issuers  | OID4VCI issuer list and registration | N |
+| `get-vcplan-list-issuer`    | /list/api/v1/vcplan/list/issuer   | Retrieve Issuer Init VC Plan list  | N          |
+| `get-vcschema-list`         | /list/api/v1/vcschema/list        | Retrieve VC Schema list            | N          |
+| `get-credential-schema`     | /list/api/v1/credential-schema    | Retrieve Credential Schema         | N          |
+| `get-certificate`           | /list/api/v1/certificate          | Retrieve Entity certificate VC     | N          |
+| `get-ta-did`                | /list/api/v1/ta-did               | Retrieve TAS DID                   | N          |
 | `send-email`                | /noti/api/v1/send-email           | Email sending                      | N            |
 | `send-push`                 | /noti/api/v1/send-push            | Push transmission                  | N            |
 | `update-push-token`         | /api/v1/update-push-token         | Push token update                  | N            |
@@ -5498,6 +5693,9 @@ The list of single call APIs provided by TAS is shown in the table below.
 | `get-vcschema`              | /api/v1/vc-schema                 | Retrieve VC schema                 | N            |
 | `update-diddoc-deactivated` | /api/v1/update-diddoc-deactivated | DIDDoc deactivation                | N            |
 | `update-diddoc-revoked`     | /api/v1/update-diddoc-revoked     | DIDDoc revocation                  | N            |
+| `update-user-status`        | /api/v1/update-user-status        | Change user status                 | N          |
+| `remove-blockchain-index`   | /api/v1/setup/blockchain/index    | Remove a blockchain index          | N          |
+| `remove-blockchain-all`     | /api/v1/setup/blockchain/all      | Remove all blockchain indexes      | N          |
 
 > **Note**
 > 
@@ -5520,7 +5718,7 @@ The single call APIs in the above list do not define authorization, but the foll
 
 ### 12.1. Get VcPlan List
 
-Retrieves list of all VC plans.
+Retrieves the list of VC plans that can be issued through user initiation (User Init).
 
 | Item          | Description                | Remarks |
 | ------------- | -------------------------- | ------- |
@@ -5553,7 +5751,8 @@ N/A
 
 **■ Process**
 
-1. Retrieve all VC plans and respond with list
+1. Retrieve the VC plans whose `initiate` is `user_init`.
+1. If `tags` is given, keep only the VC plans with those hashtags and respond with the list.
 
 **■ Status 200 - Success**
 
@@ -5602,7 +5801,7 @@ Content-Type: application/json;charset=utf-8
         "national"
       ],
       "credentialSchema": {
-        "id": "http://192.168.3.130:8091/issuer/api/v1/vc/vcschema?name=national_id",
+        "id": "https://issuer.example.org/issuer/api/v1/vc/vcschema?name=national_id",
         "type": "OsdSchemaCredential"
       },
       "option": {
@@ -5707,7 +5906,7 @@ Content-Type: application/json;charset=utf-8
     "national"
   ],
   "credentialSchema": {
-    "id": "http://192.168.3.130:8091/issuer/api/v1/vc/vcschema?name=national_id",
+    "id": "https://issuer.example.org/issuer/api/v1/vc/vcschema?name=national_id",
     "type": "OsdSchemaCredential"
   },
   "option": {
@@ -5824,7 +6023,7 @@ Sends an email.
 | Item          | Description                | Remarks |
 | ------------- | -------------------------- | ------- |
 | Method        | `POST`                     |         |
-| Path          | `/noti/api/v1/send-email ` |         |
+| Path          | `/noti/api/v1/send-email` |         |
 | Authorization | -                          |         |
 
 #### 12.4.1. Request
@@ -5848,10 +6047,8 @@ N/A
 ```c#
 def object SendEmail: "Send Email request message"
 {    
-    + string                "title"             : "email title"
-    - string                "senderAddress"     : "sender email address" 
-    + string                "recipientAddress"  : "recipient email address"
-    + EMAIL_TEMPLATE_TYPE   "email"             : "email template data" // Refer to A.2. EmailTemplate Object
+    - string        "senderAddress": "sender email address"
+    + EmailTemplate "email"        : "email template data" // Refer to A.2. EmailTemplate Object
 }
 ```
 
@@ -5953,7 +6150,7 @@ Sends a push message.
 | Item          | Description                    | Remarks |
 | ------------- | ------------------------------ | ------- |
 | Method        | `POST`                         |         |
-| Path          | `/noti/noti/api/v1/send-push ` |         |
+| Path          | `/noti/api/v1/send-push` |         |
 | Authorization | -                              |         |
 
 #### 12.5.1. Request
@@ -6093,8 +6290,14 @@ def object UpdatePushToken: "Update Push Token request message"
     + did           "did"       : "user DID"
     + appId         "appId"     : "user's app id"
     + string        "pushToken" : "push token"
+    + Proof         "proof"     : "user signature"
 }
 ```
+
+- `~/proof`
+    - `proofPurpose`: `assertionMethod`
+    - `verificationMethod`: `assert` key of `did`
+    - Signed message: SHA-256 hash of the request message without `proofValue`, sorted and serialized
 
 <div style="page-break-after: always; margin-top: 30px;"></div>
 
@@ -6134,7 +6337,7 @@ def object _UpdatePushToken: "Update Push Token response message"
 **■ Request**
 
 ```shell
-curl -v -X POST "http://${Host}:${Port}/noti/api/v1/update-push-token" \
+curl -v -X POST "http://${Host}:${Port}/tas/api/v1/update-push-token" \
 -H "Content-Type: application/json;charset=utf-8" \
 -d @"data.json"
 ```
@@ -6146,6 +6349,13 @@ curl -v -X POST "http://${Host}:${Port}/noti/api/v1/update-push-token" \
   "did": "did:omn:2kEDLDEjCxNUCPBL4VMJ7hmDAdHc",
   "appId": "AID202409a55b4824004",
   "pushToken": "mTxLuItPeGMYEz+6qoJx8vTyhCQH596dGw7GPruaEJcM",
+  "proof": {
+    "type": "Secp256r1Signature2018",
+    "created": "2024-09-05T08:13:15Z",
+    "verificationMethod": "did:omn:2kEDLDEjCxNUCPBL4VMJ7hmDAdHc?versionId=1#assert",
+    "proofPurpose": "assertionMethod",
+    "proofValue": "mH1example0000000000000000000000000000000000000000000000000000000000000000000000000000"
+  }
 }
 ```
 
@@ -6238,7 +6448,7 @@ Content-Type: application/json;charset=utf-8
     "https://www.w3.org/ns/credentials/v2"
   ],
   "credentialSchema": {
-    "id": "http://192.168.3.130:8090/tas/api/v1/vc-schema?name=certificate",
+    "id": "https://tas.example.org/tas/api/v1/vc-schema?name=certificate",
     "type": "OsdSchemaCredential"
   },
   "credentialSubject": {
@@ -6372,7 +6582,7 @@ N/A
 **■ Request**
 
 ```shell
-curl -v -X GET "http://${Host}:${Port}/tas/api/v1/vc-schema?id=http%3A%2F%2F192.168.3.130%3A8090%2Ftas%2Fapi%2Fv1%2Fvc-schema%3Fname%3Dcertificate
+curl -v -X GET "http://${Host}:${Port}/tas/api/v1/vc-schema?id=https%3A%2F%2Ftas.example.org%2Ftas%2Fapi%2Fv1%2Fvc-schema%3Fname%3Dcertificate
 ```
 
 **■ Response**
@@ -6382,7 +6592,7 @@ HTTP/1.1 200 OK
 Content-Type: application/json;charset=utf-8
 
 {
-  "@id": "http://192.168.3.130:8090/tas/api/v1/vc-schema?name=certificate",
+  "@id": "https://tas.example.org/tas/api/v1/vc-schema?name=certificate",
   "@schema": "https://opendid.org/schema/vc.osd",
   "title": "OpenDID Certificate Verifiable Credential",
   "description": "VC-formatted OpenDID enrollment certificate.",
@@ -6620,7 +6830,7 @@ Retrieves the list of all VC Schemas.
 | Item          | Description                  | Remarks |
 | ------------- | ---------------------------- | ------- |
 | Method        | `GET`                        |         |
-| Path          | `/list/api/v1/vcSchema/list` |         |
+| Path          | `/list/api/v1/vcschema/list` |         |
 | Authorization | -                            |         |
 
 #### 12.11.1. Request
@@ -6648,10 +6858,20 @@ N/A
 **■ Status 200 - Success**
 
 ```c#
-def object _GetVcPlanList: "Get Schema List Response"
+def object _GetVcSchemaList: "Get VC Schema List response message"
 {
-    + int             "count": "number of items"
-    + array(VcSchema) "items": "VC Schema list", emptiable(false)
+    + int                    "count"       : "number of items"
+    + array(ListVcSchemaDto) "vcSchemaList": "VC Schema list", emptiable(true)
+}
+
+def object ListVcSchemaDto: "VC Schema list item"
+{
+    + url      "schemaId"   : "VC Schema ID"
+    + did      "issuerDid"  : "issuer DID"
+    + string   "issuerName" : "issuer name"
+    + string   "title"      : "VC Schema title"
+    + string   "description": "VC Schema description"
+    + VcSchema "vcSchema"   : "VC Schema"
 }
 ```
 
@@ -6686,13 +6906,13 @@ Content-Type: application/json;charset=utf-8
   "count": 1,
   "vcSchemaList": [
     {
-      "schemaId": "http://192.168.3.130:18091/issuer/api/v1/vc/vcschema?name=vcSchemaId",
+      "schemaId": "https://issuer.example.org/issuer/api/v1/vc/vcschema?name=vcSchemaId",
       "issuerDid": "did:omn:issuer",
       "issuerName": "Issuer",
       "title": "VC Schema ID",
       "description": "Description",
       "vcSchema": {
-        "@id": "http://192.168.3.130:18091/issuer/api/v1/vc/vcschema?name=vcSchemaId",
+        "@id": "https://issuer.example.org/issuer/api/v1/vc/vcschema?name=vcSchemaId",
         "@schema": "https://opendid.org/schema/vc.osd",
         "credentialSubject": {
           "claims": [
@@ -6744,7 +6964,7 @@ Retrieves credential schema information.
 | Item          | Description                     | Remarks |
 | ------------- | ------------------------------- | ------- |
 | Method        | `GET`                           |         |
-| Path          | `list/api/v1/credential-schema` |         |
+| Path          | `/list/api/v1/credential-schema` |         |
 | Authorization | -                               |         |
 
 #### 12.12.1. Request
@@ -6968,6 +7188,514 @@ Each `items` entry contains `credentialIssuer`, `credentialIssuerMetadataUri`, a
 
 These URIs are documentation examples. Use the actual issuer metadata and initiation URI in a deployment.
 
+### 12.15. Get VcPlan List (Issuer Init)
+
+Retrieves the list of VC plans issued through issuer initiation (Issuer Init).
+
+| Item          | Description | Remarks |
+| ------------- | ----------- | ------- |
+| Method        | `GET` |         |
+| Path          | `/list/api/v1/vcplan/list/issuer` |         |
+| Authorization | -           |         |
+
+#### 12.15.1. Request
+
+**■ HTTP Headers**
+
+| Header           | Value                            | Remarks |
+| ---------------- | -------------------------------- | ------- |
+| + `Content-Type` | `application/json;charset=utf-8` |         |
+
+**■ Path Parameters**
+
+N/A
+
+**■ Query Parameters**
+
+| Parameter | Type | Description | Remarks |
+| --------- | ---- | ----------- | ------- |
+| - `tags`  | `string[]` | hashtags to search |         |
+
+- `tags`: Specify one or more hashtags to search
+    - Example: "?tags[]=id&tags[]=student"
+
+**■ HTTP Body**
+
+N/A
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+#### 12.15.2. Response
+
+**■ Process**
+
+1. Retrieve the VC plans whose `initiate` is `issuer_init`.
+1. If `tags` is given, keep only the VC plans with those hashtags and respond with the list.
+
+**■ Status 200 - Success**
+
+```c#
+def object _GetVcPlanListIssuer: "Get VcPlan List (Issuer Init) response message"
+{
+    + int           "count": "number of items"
+    + array(VcPlan) "items": "VC plan list", emptiable(true)
+}
+```
+
+**■ Status 400 - Client error**
+
+N/A
+
+**■ Status 500 - Server error**
+
+| Code         | Description |
+| ------------ | ----------- |
+| SSRVTRA19500 | Failed to process the 'get-vcplan-list' API request. |
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+#### 12.15.3. Example
+
+**■ Request**
+
+```shell
+curl -v -X GET "http://${Host}:${Port}/list/api/v1/vcplan/list/issuer"
+```
+
+**■ Response**
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=utf-8
+
+{
+  "count": 0,
+  "items": []
+}
+```
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+### 12.16. Get Certificate
+
+Retrieves the certificate VC of an Entity registered in the List Provider by DID.
+
+| Item          | Description | Remarks |
+| ------------- | ----------- | ------- |
+| Method        | `GET` |         |
+| Path          | `/list/api/v1/certificate` |         |
+| Authorization | -           |         |
+
+#### 12.16.1. Request
+
+**■ HTTP Headers**
+
+| Header           | Value                            | Remarks |
+| ---------------- | -------------------------------- | ------- |
+| + `Content-Type` | `application/json;charset=utf-8` |         |
+
+**■ Path Parameters**
+
+N/A
+
+**■ Query Parameters**
+
+| Parameter | Type | Description | Remarks |
+| --------- | ---- | ----------- | ------- |
+| + `did` | `did` | DID of the Entity to retrieve |         |
+
+**■ HTTP Body**
+
+N/A
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+#### 12.16.2. Response
+
+**■ Process**
+
+1. Retrieve the certificate VC registered for `did`.
+1. Respond with the stored VC string as is.
+
+**■ Status 200 - Success**
+
+```c#
+def string _GetCertificate: "Get Certificate response message. Certificate VC JSON string"
+```
+
+**■ Status 400 - Client error**
+
+N/A
+
+**■ Status 500 - Server error**
+
+| Code         | Description |
+| ------------ | ----------- |
+| SSRVTRA19504 | Failed to find certificate VC: certificate VC not found. |
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+#### 12.16.3. Example
+
+**■ Request**
+
+```shell
+curl -v -X GET "http://${Host}:${Port}/list/api/v1/certificate?did=did%3Aexample%3Aissuer"
+```
+
+**■ Response**
+
+```http
+HTTP/1.1 200 OK
+
+{"@context":["https://www.w3.org/ns/credentials/v2"], ...}
+```
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+### 12.17. Get TA DID
+
+Retrieves the DID of the Trust Agent.
+
+| Item          | Description | Remarks |
+| ------------- | ----------- | ------- |
+| Method        | `GET` |         |
+| Path          | `/list/api/v1/ta-did` |         |
+| Authorization | -           |         |
+
+#### 12.17.1. Request
+
+**■ HTTP Headers**
+
+| Header           | Value                            | Remarks |
+| ---------------- | -------------------------------- | ------- |
+| + `Content-Type` | `application/json;charset=utf-8` |         |
+
+**■ Path Parameters**
+
+N/A
+
+**■ Query Parameters**
+
+N/A
+
+**■ HTTP Body**
+
+N/A
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+#### 12.17.2. Response
+
+**■ Process**
+
+1. Read the DID from the registered TAS information and respond with it.
+
+**■ Status 200 - Success**
+
+```c#
+def object _GetTaDid: "Get TA DID response message"
+{
+    + did "did": "TAS DID"
+}
+```
+
+**■ Status 400 - Client error**
+
+N/A
+
+**■ Status 500 - Server error**
+
+| Code         | Description |
+| ------------ | ----------- |
+| SSRVTRA13001 | TAS is not registered. |
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+#### 12.17.3. Example
+
+**■ Request**
+
+```shell
+curl -v -X GET "http://${Host}:${Port}/list/api/v1/ta-did"
+```
+
+**■ Response**
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=utf-8
+
+{
+  "did": "did:example:tas"
+}
+```
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+### 12.18. Update User Status
+
+Changes the status of a user and of the user's DID Document.
+
+> **Caution**: This API does not authenticate the requester. Restrict access to trusted internal callers.
+
+| Item          | Description | Remarks |
+| ------------- | ----------- | ------- |
+| Method        | `POST` |         |
+| Path          | `/api/v1/update-user-status` |         |
+| Authorization | -           |         |
+
+#### 12.18.1. Request
+
+**■ HTTP Headers**
+
+| Header           | Value                            | Remarks |
+| ---------------- | -------------------------------- | ------- |
+| + `Content-Type` | `application/json;charset=utf-8` |         |
+
+**■ Path Parameters**
+
+N/A
+
+**■ Query Parameters**
+
+N/A
+
+**■ HTTP Body**
+
+```c#
+def object UpdateUserStatus: "Update User Status request message"
+{
+    + did    "did"   : "user DID"
+    + string "status": "DID Document status", enum("ACTIVATED", "DEACTIVATED", "REVOKED")
+}
+```
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+#### 12.18.2. Response
+
+**■ Process**
+
+1. `txId` = generate transaction code
+1. Retrieve the user and the DID Document by `did`.
+1. Change the status of the DID Document in storage to `status`.
+1. Change the user status to the same value.
+1. Store the transaction as `COMPLETED`.
+
+**■ Status 200 - Success**
+
+```c#
+def object _UpdateUserStatus: "Update User Status response message"
+{
+    + uuid "txId": "transaction id"
+}
+```
+
+**■ Status 400 - Client error**
+
+| Code         | Description |
+| ------------ | ----------- |
+| SSRVTRA17002 | Failed to find user: user is not registered. |
+
+**■ Status 500 - Server error**
+
+| Code         | Description |
+| ------------ | ----------- |
+| SSRVTRA90003 | An unknown server error has occurred. |
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+#### 12.18.3. Example
+
+**■ Request**
+
+```shell
+curl -v -X POST "http://${Host}:${Port}/tas/api/v1/update-user-status" \
+-H "Content-Type: application/json;charset=utf-8" \
+-d '{"did":"did:example:user","status":"DEACTIVATED"}'
+```
+
+**■ Response**
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=utf-8
+
+{
+  "txId": "a1b2c3d4-0000-4000-8000-000000000001"
+}
+```
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+### 12.19. Remove Blockchain Index
+
+Removes the specified index from the blockchain storage.
+
+> **Caution**: This is an operational API that cleans up storage, and it does not authenticate the requester. Restrict external access. It works in configurations that use a Hyperledger Fabric contract, and returns `SSRVTRA18508` under the `lss` profile.
+
+| Item          | Description | Remarks |
+| ------------- | ----------- | ------- |
+| Method        | `DELETE` |         |
+| Path          | `/api/v1/setup/blockchain/index` |         |
+| Authorization | -           |         |
+
+#### 12.19.1. Request
+
+**■ HTTP Headers**
+
+| Header           | Value                            | Remarks |
+| ---------------- | -------------------------------- | ------- |
+| + `Content-Type` | `application/json;charset=utf-8` |         |
+
+**■ Path Parameters**
+
+N/A
+
+**■ Query Parameters**
+
+N/A
+
+**■ HTTP Body**
+
+```c#
+def object RemoveBlockchainIndex: "Remove Blockchain Index request message"
+{
+    + string "index": "index to remove"
+}
+```
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+#### 12.19.2. Response
+
+**■ Process**
+
+1. Check that the blockchain is the storage.
+1. Remove `index`.
+
+**■ Status 200 - Success**
+
+```c#
+def object _RemoveBlockchainIndex: "Remove Blockchain Index response message"
+{
+}
+```
+
+**■ Status 400 - Client error**
+
+N/A
+
+**■ Status 500 - Server error**
+
+| Code         | Description |
+| ------------ | ----------- |
+| SSRVTRA18508 | Failed to remove index on the blockchain |
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+#### 12.19.3. Example
+
+**■ Request**
+
+```shell
+curl -v -X DELETE "http://${Host}:${Port}/tas/api/v1/setup/blockchain/index" \
+-H "Content-Type: application/json;charset=utf-8" \
+-d '{"index":"example-index"}'
+```
+
+**■ Response**
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=utf-8
+
+{}
+```
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+### 12.20. Remove Blockchain All
+
+Removes all indexes from the blockchain storage.
+
+> **Caution**: This is an operational API that removes every index in storage, and it does not authenticate the requester. Restrict external access. It works in configurations that use a Hyperledger Fabric contract, and returns `SSRVTRA18508` under the `lss` profile.
+
+| Item          | Description | Remarks |
+| ------------- | ----------- | ------- |
+| Method        | `DELETE` |         |
+| Path          | `/api/v1/setup/blockchain/all` |         |
+| Authorization | -           |         |
+
+#### 12.20.1. Request
+
+**■ HTTP Headers**
+
+| Header           | Value                            | Remarks |
+| ---------------- | -------------------------------- | ------- |
+| + `Content-Type` | `application/json;charset=utf-8` |         |
+
+**■ Path Parameters**
+
+N/A
+
+**■ Query Parameters**
+
+N/A
+
+**■ HTTP Body**
+
+N/A
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+#### 12.20.2. Response
+
+**■ Process**
+
+1. Check that the blockchain is the storage.
+1. Remove all indexes.
+
+**■ Status 200 - Success**
+
+```c#
+def object _RemoveBlockchainAll: "Remove Blockchain All response message"
+{
+}
+```
+
+**■ Status 400 - Client error**
+
+N/A
+
+**■ Status 500 - Server error**
+
+| Code         | Description |
+| ------------ | ----------- |
+| SSRVTRA18508 | Failed to remove index on the blockchain |
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+#### 12.20.3. Example
+
+**■ Request**
+
+```shell
+curl -v -X DELETE "http://${Host}:${Port}/tas/api/v1/setup/blockchain/all"
+```
+
+**■ Response**
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=utf-8
+
+{}
+```
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
 ## A. Non-standard Object Definitions
 
 Non-standard APIs may be defined differently according to implementations, so the objects they use are not included in the data specification document but are defined separately in this chapter.
@@ -6985,6 +7713,8 @@ def enum EMAIL_TEMPLATE_TYPE: "character encoding"
 ```c#
 def object EmailTemplate: "email template information"
 {
+    + string                            "title"             : "email title"
+    + string                            "recipientAddress"  : "recipient email address"
     + EMAIL_TEMPLATE_TYPE               "templateType"      : "email template type"
     + map(contentKey, contentValue)     "contentData"       : "email dynamic conversion data"
 }

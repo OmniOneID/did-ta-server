@@ -18,7 +18,7 @@ puppeteer:
 Open DID TA Server Installation And Operation Guide
 ==
 
-- Date: 2026-10-29
+- Date: 2026-11-06
 - Version: v3.0.0
 
 Table of Contents
@@ -54,6 +54,7 @@ Table of Contents
     - [5.1.5. Server Configuration](#515-server-configuration)
   - [5.2. application-auth.yml](#52-application-authyml)
     - [5.2.1. Token Usage Configuration](#521-token-usage-configuration)
+    - [5.2.2. TA Registration Password Configuration](#522-ta-registration-password-configuration)
   - [5.3. application-databases.yml](#53-application-databasesyml)
     - [5.3.1. Spring Liquibase Settings](#531-spring-liquibase-settings)
     - [5.3.2. Datasource Configuration](#532-datasource-configuration)
@@ -66,6 +67,7 @@ Table of Contents
   - [5.7. application-blockchain.yml](#57-application-blockchainyml)
   - [5.8. blockchain.properties](#58-blockchainproperties)
     - [5.8.1. Blockchain Integration Configuration](#581-blockchain-integration-configuration)
+  - [5.9. application-lss.yml](#59-application-lssyml)
 - [6. Profile Configuration and Usage](#6-profile-configuration-and-usage)
   - [6.1. Profile Overview (`sample`, `dev`)](#61-profile-overview-sample-dev)
     - [6.1.1. `sample` Profile](#611-sample-profile)
@@ -559,10 +561,16 @@ This section defines the port number on which the application will receive incom
 
 ### 5.2.1. Token Usage Configuration
 
-* `spring.servlet.multipart.enabled`: 🔒  
+* `auth.token.enable`: 🔒  
     - Sets whether token-based authentication should be enabled.  
     - Usage: If set to `true`, token authentication is enabled. If set to `false`, it is disabled.  
     - Example: `false`
+
+### 5.2.2. TA Registration Password Configuration
+
+* `ta.auth.registration-password`: 🔒  
+    - Sets the pre-distributed password used for TA registration (`request-enroll-tas`).  
+    - Usage: The value entered during TA registration in the admin console is compared with this value. Do not keep the default value in the repository; set one that suits your operating environment.  
 
 <br/>
 
@@ -819,6 +827,21 @@ logging:
 - `evm.connection.privateKey`: 
   - k1 key used for API access control. Enter the key string defined in accounts inside hardhat.config.js (remove the 0x string at the beginning) to enable API calls with Owner privileges (Default setting). For detailed guide, refer to [DID Besu Contract].
   - Example: 0x8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63
+<br/>
+
+## 5.9. application-lss.yml
+
+- Purpose: Configures integration with the LSS (Ledger Service Server). When the `lss` profile is active, the TA uses the LSS as its storage instead of the blockchain.
+
+- Location: `src/main/resources/config`
+
+- `lss.url`:
+  - LSS server address.
+  - Example: `http://127.0.0.1:8098`
+
+- LSS API Key:
+  - The TA sends the LSS API key in the `X-API-Key` header. Register the key issued by LSS as `API_KEY_LSS` in Server Configuration in the admin console.
+
 <br/>
 
 # 6. Profile Configuration and Usage

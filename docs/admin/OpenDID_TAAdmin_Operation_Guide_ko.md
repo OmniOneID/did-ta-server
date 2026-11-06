@@ -18,8 +18,8 @@ puppeteer:
 Open DID TA Admin Console Guide
 ==
 
-- Date: 2026-10-30
-- Version: v3.0.1
+- Date: 2026-11-06
+- Version: v3.0.2
 
 개정 이력
 ==
@@ -37,6 +37,7 @@ Open DID TA Admin Console Guide
 |        |            | `3.16. Credential Definition List`에서 Credential Definition 장 추가  |
 | v3.0.0 | 2026-10-29 | 현재 Admin Console 화면 반영, 신규 관리 메뉴 및 비밀번호 정책 추가, 화면 캡처 갱신 |
 | v3.0.1 | 2026-10-30 | API Log 및 Audit API Log 메뉴와 조회 방법 추가 |
+| v3.0.2 | 2026-11-06 | 화면 예시 재촬영, Certification VC·OID4VCI·mDoc·Server Configuration·Password Policy·Log 절을 항목 표로 보강, 앞 절 입력 제약과 항목을 화면과 일치시킴 |
 | v3.0.2 | 2026-11-04 | `3.2. Entity Management`의 등록 안내와 `QUICK REGISTER` 사전 준비·동작 설명 수정 |
 
 
@@ -71,7 +72,7 @@ Open DID TA Admin Console Guide
   - [3.5. Expiration Settings](#35-expiration-settings)
   - [3.6. Key Exchange Policy](#36-key-exchange-policy)
   - [3.7. Notification Provider Settings](#37-notification-provider-settings)
-  - [3.8. Email Server Settins](#38-email-server-settins)
+  - [3.8. Email Server Settings](#38-email-server-settings)
   - [3.9. Email Template Settings](#39-email-template-settings)
   - [3.10. Push Server Settings](#310-push-server-settings)
   - [3.11. List Provider Settings](#311-list-provider-settings)
@@ -106,8 +107,16 @@ Open DID TA Admin Console Guide
     - [3.21.1. Admin 목록 조회](#3211-admin-목록-조회)
     - [3.21.2. Admin 등록](#3212-admin-등록)
   - [3.22. Certification VC Management](#322-certification-vc-management)
+    - [3.22.1. Certification VC 목록 조회](#3221-certification-vc-목록-조회)
+    - [3.22.2. Certification VC 상세](#3222-certification-vc-상세)
   - [3.23. OID4VCI Credential Issuers](#323-oid4vci-credential-issuers)
+    - [3.23.1. 발급자 목록 조회](#3231-발급자-목록-조회)
+    - [3.23.2. 발급자 상세와 상태 변경](#3232-발급자-상세와-상태-변경)
+    - [3.23.3. 발급자 정보 수정](#3233-발급자-정보-수정)
   - [3.24. mDoc Trusted Issuers](#324-mdoc-trusted-issuers)
+    - [3.24.1. mDoc 발급자 목록 조회](#3241-mdoc-발급자-목록-조회)
+    - [3.24.2. mDoc 발급자 등록](#3242-mdoc-발급자-등록)
+    - [3.24.3. mDoc 발급자 상세와 상태 변경](#3243-mdoc-발급자-상세와-상태-변경)
   - [3.25. Server Configuration](#325-server-configuration)
   - [3.26. Password Policy Settings](#326-password-policy-settings)
   - [3.27. Log Management](#327-log-management)
@@ -299,7 +308,7 @@ TA 등록은 총 4단계의 스텝을 통해 순차적으로 진행됩니다.
 이 단계에서는 TA 등록 마지막 단계에서 사용할 **등록용 비밀번호**를 입력합니다.  
 비밀번호는 **Trust Agent 서버 설정 파일**에서 사전에 설정된 비밀번호와 동일하게 입력되어야 합니다.
 
-<img src="./images/3-1-1.ta-registration.png" width="600"/>
+<img src="./images/3-1-1.ta-registration.png" width="800"/>
 
 | 항목                 | 설명                                               |
 | -------------------- | -------------------------------------------------- |
@@ -313,12 +322,12 @@ TA 등록은 총 4단계의 스텝을 통해 순차적으로 진행됩니다.
 
 TA의 정보를 입력하는 단계입니다.
 
-<img src="./images/3-1-2.ta-registration.png" width="600"/>
+<img src="./images/3-1-2.ta-registration.png" width="800"/>
 
 | 항목                     | 설명                                                                    |
 | ------------------------ | ----------------------------------------------------------------------- |
-| **Name**                 | TA의 이름을 입력합니다. 예: `tas`                                       |
-| **TA URL**               | TA 서버의 호출 URL. 예: `http://<IP>:8090/tas` 형식으로 입력해야 합니다 |
+| **Name**                 | TA의 이름을 입력합니다. 예: `TrustAgent` |
+| **TA URL**               | TA 서버의 호출 URL입니다. 형식: `http://<IP>:8090/tas`, 화면 예시: `https://tas.example.org/tas` |
 | **Test Connection 버튼** | 입력한 URL로 서버 연결을 테스트합니다                                   |
 | **BACK 버튼**            | 이전 단계로 이동합니다                                  |
 | **NEXT 버튼**            | 다음 단계로 이동합니다                           |
@@ -334,7 +343,7 @@ TA의 정보를 입력하는 단계입니다.
 
 TA의 DID Document를 생성합니다.  
 
-<img src="./images/3-1-3.ta-registration.png" width="600"/>
+<img src="./images/3-1-3.ta-registration.png" width="800"/>
 
 | 항목         | 설명                                                  |
 | ------------ | ----------------------------------------------------- |
@@ -348,8 +357,8 @@ DID Document가 성공적으로 생성되면, **Step 3-2 영역이 화면에 자
 
 생성된 DID Document를 블록체인에 등록합니다.  
 
-<img src="./images/3-1-4.ta-registration.png" width="600"/>
-<img src="./images/3-1-5.ta-registration.png" width="600"/>
+<img src="./images/3-1-4.ta-registration.png" width="800"/>
+<img src="./images/3-1-5.ta-registration.png" width="800"/>
 
 | 항목         | 설명                                                           |
 | ------------ | ---------------------------------------------------------------- |
@@ -372,11 +381,11 @@ Certificate VC에는 TA의 고유 식별자인 **DN(Distinguished Name)**이 포
 
 DN을 입력하고 Certificate VC를 생성합니다.  
 
-<img src="./images/3-1-6.ta-registration.png" width="600"/>
+<img src="./images/3-1-6.ta-registration.png" width="800"/>
 
 | 항목             | 설명                                                                 |
 | ---------------- | -------------------------------------------------------------------- |
-| **DN**           | TA의 고유 식별자 역할을 하는 값입니다. 예: `cn=TrustAgent,dc=opendid,dc=com`  |
+| **DN**           | TA의 고유 식별자 역할을 하는 값입니다. 예: `cn=TrustAgent,dc=example,dc=org` |
 | **GENERATE 버튼**     | 입력한 DN 정보를 기반으로 Certificate VC를 생성합니다.              |
 
 Certificate VC가 생성되면 **Step 2 영역이 화면에 표시됩니다.**
@@ -387,8 +396,8 @@ Certificate VC가 생성되면 **Step 2 영역이 화면에 표시됩니다.**
 
 생성된 Certificate VC를 블록체인에 등록합니다.  
 
-<img src="./images/3-1-7.ta-registration.png" width="600"/>
-<img src="./images/3-1-8.ta-registration.png" width="600"/>
+<img src="./images/3-1-7.ta-registration.png" width="800"/>
+<img src="./images/3-1-8.ta-registration.png" width="800"/>
 
 | 항목              | 설명                                             |
 | ----------------- | ------------------------------------------------ |
@@ -404,18 +413,23 @@ Certificate VC가 생성되면 **Step 2 영역이 화면에 표시됩니다.**
 TA 등록이 완료되면 `TA Management` 메뉴가 활성화되며,  
 등록된 TA의 DID 정보, 상태, URL 등을 확인할 수 있습니다.
 
-<img src="./images/3-2.ta-management.png" width="600"/>
+<img src="./images/3-2.ta-management.png" width="800"/>
 
 | 번호 | 항목                  | 설명                                                                                                                                                   |
 | ---- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 1    | **DID**               | TA의 고유 식별자입니다. 형식은 'did:omn:tas'와 같은 형태로 표시됩니다.                                                                                 |
-| 2    | **Name**              | TA의 이름입니다.                                                                                                                                       |
-| 3    | **Status**            | TA의 현재 등록 상태를 표시합니다. <br/>Status의 종류는 다음과 같습니다:<br/>- `DID_DOCUMENT_REQUIRED`: DID Document가 아직 등록되지 않은 상태<br/>- `CERTIFICATE_VC_REQUIRED`: DID Document는 등록되었으나 가입증명서(Certificated VC)는 아직 발급되지 않은 상태<br/>- `COMPLETED`: TA 등록이 완료된 상태 |
-| 4    | **URL**               | TA 서버의 기본 URL 주소입니다.                                                                                                                         |
-| 5    | **Certificate URL**   | TA의 가입증명서를 확인할 수 있는 URL 주소입니다.                                                                                                       |
-| 6    | **Registered At**     | TA가 Open DID에 등록된 날짜와 시간을 표시합니다.                                                                                                       |
-| 7    | **VIEW DID DOCUMENT** | DID Document를 확인할 수 있는 버튼입니다. 클릭 시 팝업 형태로 블록체인에 등록된 DID 문서 정보가 표시됩니다.                                            |
-| 8    | **DID Document 내용** | VIEW DID DOCUMENT 버튼을 클릭했을 때 표시되는 DID Document의 내용입니다. JSON 형식으로 TA의 DID 정보, controller, 생성일시, 검증 방법 등이 포함됩니다. |
+| 1 | **DID**               | TA의 고유 식별자입니다. 형식은 'did:omn:tas'와 같은 형태로 표시됩니다.                                                                                 |
+| 2 | **Name**              | TA의 이름입니다.                                                                                                                                       |
+| 3 | **Status**            | TA의 현재 등록 상태를 표시합니다. <br/>Status의 종류는 다음과 같습니다:<br/>- `DID_DOCUMENT_REQUIRED`: DID Document가 아직 등록되지 않은 상태<br/>- `CERTIFICATE_VC_REQUIRED`: DID Document는 등록되었으나 가입증명서(Certificated VC)는 아직 발급되지 않은 상태<br/>- `COMPLETED`: TA 등록이 완료된 상태 |
+| 4 | **URL**               | TA 서버의 기본 URL 주소입니다.                                                                                                                         |
+| 5 | **Certificate URL**   | TA의 가입증명서를 확인할 수 있는 URL 주소입니다.                                                                                                       |
+| 6 | **VIEW 버튼** | Certificate URL 옆의 버튼입니다. 가입증명서 VC를 팝업으로 표시합니다. |
+| 7 | **Registered At**     | TA가 Open DID에 등록된 날짜와 시간을 표시합니다.                                                                                                       |
+| 8 | **VIEW DID DOCUMENT** | DID Document를 확인할 수 있는 버튼입니다. 클릭 시 팝업 형태로 블록체인에 등록된 DID 문서 정보가 표시됩니다.                                            |
+| 9 | **DID Document 내용** | VIEW DID DOCUMENT 버튼을 클릭했을 때 표시되는 DID Document의 내용입니다. JSON 형식으로 TA의 DID 정보, controller, 생성일시, 검증 방법 등이 포함됩니다. |
+
+<img src="./images/3-2.ta-management-did-document.png" width="800"/>
+
+> `VIEW DID DOCUMENT` 버튼을 눌렀을 때 표시되는 DID Document 팝업입니다.
 
 <br/>
 
@@ -456,15 +470,16 @@ Entity 목록은 테이블 형태로 제공되며, 등록된 서버들의 주요
 
 | 번호 | 항목                    | 설명                                                                |
 | ---- | ----------------------- | ------------------------------------------------------------------- |
-| 1    | **DELETE 버튼**         | Entity 정보를 삭제합니다.                                           |
-| 2    | **QUICK REGISTER 버튼** | 테스트 목적 등으로 모든 Entity를 한 번에 등록할 수 있는 기능입니다. |
-| 3    | **DID**                 | Entity의 고유 DID 식별자입니다.                                     |
-| 4    | **Name**                | Entity의 이름입니다. 클릭하면 상세 페이지로 이동합니다.             |
-| 5    | **Role**                | Entity의 역할(예: Issuer, Verifier, Wallet 등)을 표시합니다.        |
-| 6    | **Status**              | Entity의 등록 상태입니다. <br/>Status의 종류는 같습니다:<br/>- `DID_DOCUMENT_REQUIRED`: DID Document가 아직 등록되지 않은 상태<br/>- `CERTIFICATE_VC_REQUIRED`: DID Document는 등록되었으나 가입증명서(Certificate VC)는 아직 발급되지 않은 상태<br/>- `COMPLETED`: Entity 등록이 완료된 상태 |
-| 7    | **URL**                 | Entity 서버의 기본 호출 URL입니다.                                  |
-| 8    | **Registered At**       | Entity가 최초로 등록된 날짜 및 시간입니다.                          |
-| 9    | **Updated At**          | Entity 정보가 마지막으로 수정된 날짜 및 시간입니다.                 |
+| 1 | **DELETE 버튼**         | Entity 정보를 삭제합니다.                                           |
+| 2 | **QUICK REGISTER 버튼** | 테스트 목적 등으로 모든 Entity를 한 번에 등록할 수 있는 기능입니다. |
+| 3 | **검색** | Name, DID, Role, Status로 검색합니다. Role은 Issuer, Verifier, App Provider, Wallet Provider, OP Provider 중에서 선택합니다. |
+| 4 | **DID**                 | Entity의 고유 DID 식별자입니다.                                     |
+| 5 | **Name**                | Entity의 이름입니다. 클릭하면 상세 페이지로 이동합니다.             |
+| 6 | **Role**                | Entity의 역할(예: Issuer, Verifier, Wallet 등)을 표시합니다.        |
+| 7 | **Status**              | Entity의 등록 상태입니다. <br/>Status의 종류는 같습니다:<br/>- `DID_DOCUMENT_REQUIRED`: DID Document가 아직 등록되지 않은 상태<br/>- `CERTIFICATE_VC_REQUIRED`: DID Document는 등록되었으나 가입증명서(Certificate VC)는 아직 발급되지 않은 상태<br/>- `COMPLETED`: Entity 등록이 완료된 상태 |
+| 8 | **URL**                 | Entity 서버의 기본 호출 URL입니다.                                  |
+| 9 | **Registered At**       | Entity가 최초로 등록된 날짜 및 시간입니다.                          |
+| 10 | **Updated At**          | Entity 정보가 마지막으로 수정된 날짜 및 시간입니다.                 |
 
 ---
 
@@ -519,19 +534,20 @@ Orchestrator로 설치했다면 `Generate All`과 Orchestrator의 설정 주입�
 
 상세 페이지에서는 등록된 Entity의 DID, 이름, 역할, 상태, 호출 URL 등 주요 정보를 확인할 수 있습니다.
 
-<img src="./images/3-6.entity-detail-information.png" width="600"/>
+<img src="./images/3-6.entity-detail-information.png" width="800"/>
 
 | 번호 | 항목                      | 설명                                                                                                                                          |
 | ---- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1    | **DID**                   | Entity의 고유 DID 식별자입니다.                                                                                                               |
-| 2    | **Name**                  | Entity의 이름입니다. 클릭하면 상세 페이지로 이동합니다.                                                                                       |
-| 3    | **Role**                  | Entity의 역할(예: Issuer, Verifier, Wallet 등)을 표시합니다.                                                                                  |
-| 4    | **Status**              | Entity의 등록 상태입니다. <br/>Status의 종류는 같습니다:<br/>- `DID_DOCUMENT_REQUIRED`: DID Document가 아직 등록되지 않은 상태<br/>- `CERTIFICATE_VC_REQUIRED`: DID Document는 등록되었으나 가입증명서(Certificate VC)는 아직 발급되지 않은 상태<br/>- `COMPLETED`: Entity 등록이 완료된 상태 |
-| 5    | **URL**                   | Entity 서버의 기본 호출 URL입니다.                                                                                                            |
-| 6    | **Registered At**         | Entity가 최초로 등록된 날짜 및 시간입니다.                                                                                                    |
-| 7    | **Updated At**            | Entity 정보가 마지막으로 수정된 날짜 및 시간입니다.                                                                                           |
-| 8    | **BACK 버튼**             | 상세 화면을 닫고 이전 페이지로 돌아갑니다.                                                                                                    |
-| 8    | **DID DOC APPROVAL 버튼** | DID Document 등록 요청을 승인합니다. <br/> Status가 아직 블록체인에 등록되지 않는 상태(DID Document Required)인 경우에만 노출됩니다. |
+| 1 | **DID**                   | Entity의 고유 DID 식별자입니다.                                                                                                               |
+| 2 | **VIEW DID DOCUMENT 버튼** | DID Document를 팝업으로 표시합니다. |
+| 3 | **Name**                  | Entity의 이름입니다. |
+| 4 | **Role**                  | Entity의 역할(예: Issuer, Verifier, Wallet 등)을 표시합니다.                                                                                  |
+| 5 | **Status**              | Entity의 등록 상태입니다. <br/>Status의 종류는 같습니다:<br/>- `DID_DOCUMENT_REQUIRED`: DID Document가 아직 등록되지 않은 상태<br/>- `CERTIFICATE_VC_REQUIRED`: DID Document는 등록되었으나 가입증명서(Certificate VC)는 아직 발급되지 않은 상태<br/>- `COMPLETED`: Entity 등록이 완료된 상태 |
+| 6 | **Server URL** | Entity 서버의 기본 호출 URL입니다. |
+| 7 | **Registered At**         | Entity가 최초로 등록된 날짜 및 시간입니다.                                                                                                    |
+| 8 | **Updated At**            | Entity 정보가 마지막으로 수정된 날짜 및 시간입니다.                                                                                           |
+| 9 | **BACK 버튼**             | 상세 화면을 닫고 이전 페이지로 돌아갑니다.                                                                                                    |
+| 10 | **DID DOC APPROVAL 버튼** | DID Document 등록 요청을 승인합니다. <br/> Status가 아직 블록체인에 등록되지 않는 상태(DID Document Required)인 경우에만 노출됩니다. |
 
 ---
 
@@ -555,13 +571,14 @@ CA 서버가 KYC 서버의 역할을 겸임하고 있으므로, 이 설정에서
 
 | 번호 | 항목                     | 설명                                                                       |
 | ---- | ------------------------ | -------------------------------------------------------------------------- |
-| 1    | **Name**                 | KYC 서버의 이름을 입력합니다. 일반적으로 CA 서버명을 사용합니다. 예: `cas` |
-| 2    | **Server URL**           | KYC 서버로 사용할 CA 서버의 호출 URL입니다. 예: `http://<IP>:8094/cas`     |
-| 3    | **Test Connection 버튼** | 입력한 서버 URL과의 연결을 테스트합니다.                                   |
-| 4    | **REGISTER 버튼**        | 입력한 KYC 정보를 저장합니다.                                              |
-| 5    | **RESET 버튼**           | 입력한 모든 내용을 초기화합니다.                                           |
+| 1 | **Name**                 | KYC 서버의 이름을 입력합니다(3~20자). 일반적으로 CA 서버명을 사용합니다. 예: `cas` |
+| 2 | **Type** | KYC 검증 방식입니다. `Transaction-Based`로 고정되어 있으며 변경할 수 없습니다. |
+| 3 | **Server URL**           | KYC 서버로 사용할 CA 서버의 호출 URL입니다(200자 이내). 예: `https://cas.example.org/cas` |
+| 4 | **Test Connection 버튼** | 입력한 서버 URL과의 연결을 테스트합니다. 저장하려면 연결 테스트를 통과해야 합니다. |
+| 5 | **REGISTER 버튼**        | 입력한 KYC 정보를 저장합니다. 이미 등록된 경우 버튼 이름은 `UPDATE`입니다. |
+| 6 | **RESET 버튼**           | 입력한 모든 내용을 초기화합니다.                                           |
 
-<img src="./images/live-kyc.jpg" width="600"/>
+<img src="./images/live-kyc.jpg" width="800"/>
 
 <br/>
 
@@ -577,12 +594,12 @@ CA 서버가 KYC 서버의 역할을 겸임하고 있으므로, 이 설정에서
 `Expiration Settings` 메뉴에서는 TA 서버에서 사용하는 만료 시간 관련 설정을 구성할 수 있습니다.  
 **토큰 만료 시간**과 **트랜잭션 만료 시간**을 설정하며, 이는 TA의 프로토콜 동작에 중요한 역할을 합니다.
 
-<img src="./images/live-expiration.jpg" width="600"/>
+<img src="./images/live-expiration.jpg" width="800"/>
 
 | 번호 | 항목                          | 설명                                                                                                                                                                                                                                                                                    |
 | ---- | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1    | **Token Timeout (seconds)**       | TA가 발급하는 **서버 토큰**의 만료 시간을 초 단위로 설정합니다. 클라이언트(Entity, App 등)는 TA의 주요 프로토콜(예: Entity 등록, 사용자 등록, VC 발급 등)을 사용할 때 반드시 서버 토큰을 발급받아야 하며, 이 설정은 해당 토큰의 유효 기간을 의미합니다. 기본값은 **60초**입니다.        |
-| 2    | **Transaction Timeout (seconds)** | **트랜잭션 단위의 만료 시간**을 설정합니다. 하나의 프로토콜은 여러 개의 API 호출로 구성되며, 이 항목은 전체 프로토콜 수행 시간에 대한 유효 기간입니다. 예를 들어, DID 등록 프로토콜이 5개의 API로 구성되어 있다면, 이 전체 흐름에 대한 유효시간을 의미합니다. 기본값은 **300초**입니다. |
+| 1    | **Token Timeout (seconds)**       | TA가 발급하는 **서버 토큰**의 만료 시간을 초 단위로 설정합니다. 클라이언트(Entity, App 등)는 TA의 주요 프로토콜(예: Entity 등록, 사용자 등록, VC 발급 등)을 사용할 때 반드시 서버 토큰을 발급받아야 하며, 이 설정은 해당 토큰의 유효 기간을 의미합니다. 기본값은 **60초**입니다. 입력 범위는 10~600초입니다. |
+| 2    | **Transaction Timeout (seconds)** | **트랜잭션 단위의 만료 시간**을 설정합니다. 하나의 프로토콜은 여러 개의 API 호출로 구성되며, 이 항목은 전체 프로토콜 수행 시간에 대한 유효 기간입니다. 예를 들어, DID 등록 프로토콜이 5개의 API로 구성되어 있다면, 이 전체 흐름에 대한 유효시간을 의미합니다. 기본값은 **300초**입니다. 입력 범위는 60~3600초입니다. |
 | 3    | **UPDATE 버튼**                        | 입력한 설정 값을 저장합니다.                                                                                                                                                                                                                                                            |
 | 4    | **RESET 버튼**                         | 입력한 내용을 초기화합니다.                                                                                                                                                                                                                                                             |
 
@@ -602,7 +619,7 @@ CA 서버가 KYC 서버의 역할을 겸임하고 있으므로, 이 설정에서
 대부분의 프로토콜에는 키 교환 API가 포함되어 있으며, 해당 API에서는 양측이 ECDH 방식으로 암호 키를 생성하기 위한 정보를 주고받습니다.  
 이 메뉴를 통해 키교환시 사용할 **암호화 알고리즘과 패딩 방식**을 지정할 수 있습니다.
 
-<img src="./images/live-exchange.jpg" width="600"/>
+<img src="./images/live-exchange.jpg" width="800"/>
 
 | 번호 | 항목             | 설명                                                                                                                             |
 | ---- | ---------------- | -------------------------------------------------------------------------------------------------------------------------------- |
@@ -612,7 +629,7 @@ CA 서버가 KYC 서버의 역할을 겸임하고 있으므로, 이 설정에서
 | 4    | **RESET 버튼**   | 입력한 내용을 초기화합니다.                                                                                                      |
 
 ---
-> **참고:** 별도의 설정이 없더라도, Cipher Type은 AES-256-CBC초, Padding Type은 PKCS5로 기본 적용됩니다. 
+> **참고:** 별도의 설정이 없더라도, Cipher Type은 AES-256-CBC, Padding Type은 PKCS5로 기본 적용됩니다. 
 ---
 
 <br/>
@@ -634,37 +651,37 @@ Open DID 시스템에서 TA 서버는 Notification 사업자의 역할도 함께
 
 <br/>
 
-## 3.8. Email Server Settins
+## 3.8. Email Server Settings
 
 `Email Server Settings`는 Open DID 시스템에서 발신용 이메일 서버를 설정하는 메뉴입니다.  
 SMTP 서버 정보, 인증 정보, SSL 설정, 타임아웃 옵션 등을 입력하여 메일 발송 환경을 구성할 수 있습니다.
 
 설정이 완료되면 테스트 이메일을 발송하여 설정 값이 정상적으로 작동하는지 확인할 수 있습니다.  
 
-<img src="./images/live-email-server.jpg" width="600"/>
+<img src="./images/live-email-server.jpg" width="800"/>
 
 | 번호 | 항목                         | 설명                                                                  |
 | ---- | ---------------------------- | --------------------------------------------------------------------- |
-| 1    | **Host**                     | SMTP 서버의 호스트 주소입니다.                                        |
-| 2    | **Port**                     | SMTP 서버의 포트 번호입니다.                                          |
-| 3    | **User Name**                | 인증에 사용할 이메일 계정입니다.                                      |
-| 4    | **Password**                 | 이메일 계정의 비밀번호입니다.                                         |
-| 5    | **Sender**                   | 발신자 이메일 주소입니다.                                             |
+| 1    | **Host**                     | SMTP 서버의 호스트 주소입니다(200자 이내). 예: `smtp.example.org` |
+| 2    | **Port**                     | SMTP 서버의 포트 번호입니다(1~65535). 예: `587` |
+| 3    | **User Name**                | 인증에 사용할 이메일 계정입니다(4~256자). |
+| 4    | **Password**                 | 이메일 계정의 비밀번호입니다(8~128자). |
+| 5    | **Sender**                   | 발신자 이메일 주소입니다(6~254자). |
 | 6    | **Enable STARTTLS**          | STARTTLS 보안 전송 사용 여부입니다.                                   |
 | 7    | **Enable SSL**               | SSL 보안 전송 사용 여부입니다.                                        |
-| 8    | **Connection Timeout (sec)** | 연결 시도에 대한 제한 시간입니다.                                     |
-| 9    | **Read Timeout (sec)**       | 응답을 기다리는 최대 시간입니다.                                      |
-| 10   | **Write Timeout (sec)**      | 요청 전송에 대한 제한 시간입니다.                                     |
-| 11   | **Turn Off SSL Check**       | 테스트 목적으로 SSL 검증을 비활성화할 수 있습니다. (운영 환경 비권장) |
-| 12   | **REGISTER 버튼**            | 입력한 이메일 설정 정보를 저장합니다.                                 |
+| 8    | **Connection Timeout (seconds)** | 연결 시도에 대한 제한 시간입니다(1~300초). |
+| 9    | **Read Timeout (seconds)** | 응답을 기다리는 최대 시간입니다(1~600초). |
+| 10   | **Write Timeout (seconds)** | 요청 전송에 대한 제한 시간입니다(1~600초). |
+| 11   | **Turn Off SSL Check (For Testing)**       | 테스트 목적으로 SSL 검증을 비활성화할 수 있습니다. (운영 환경 비권장) |
+| 12   | **REGISTER 버튼**            | 입력한 이메일 설정 정보를 저장합니다. 이미 등록된 경우 버튼 이름은 `UPDATE`입니다. |
 | 13   | **RESET 버튼**               | 모든 입력 필드를 초기화합니다.                                        |
 | 14   | **TEST 버튼**                | 모든 설정이 정상적으로 입력된 경우에만 작동합니다. <br/>클릭 시 `Send Test Email` 팝업이 나타나며, 테스트 메일을 수신할 이메일 주소를 직접 입력할 수 있습니다. <br/>테스트 메일에는 간단한 확인용 메시지가 포함되어 전송됩니다. |
 
 ---
 > **참고:**  
-> `Enable STARTTLS`와 `Enable SSL`은 **동시에 활성화할 수 없습니다.**      
+> `Enable STARTTLS`와 `Enable SSL`은 **둘 중 하나만 켜야 합니다.** 둘 다 켜거나 둘 다 끄면 저장할 수 없습니다.  
 > 둘 다 이메일 전송 시 보안 연결을 위한 방식이지만, **STARTTLS는 기존 연결을 암호화로 업그레이드**하는 방식이고,  
-> **SSL은 초기부터 암호화된 연결을 사용하는 방식**이므로, 이메일 서버 설정에 따라 하나만 선택해야 충돌을 방지할 수 있습니다.
+> **SSL은 초기부터 암호화된 연결을 사용하는 방식**이므로, 이메일 서버 설정에 맞는 방식을 선택하세요.
 ---
 
 <br/>
@@ -693,7 +710,7 @@ TA는 해당 값을 키워드에 치환하여 최종 이메일을 생성하고 �
 동적으로 변경되는 정보가 많은 경우 서버의 부하를 줄이고,   
 보다 효율적인 메일 발송 처리를 가능하게 하기 위해 도입되었습니다.
 
-<img src="./images/3-11.email-template-settings.png" width="600"/>
+<img src="./images/3-11.email-template-settings.png" width="800"/>
 
 | 번호 | 항목            | 설명                                                                    |
 | ---- | --------------- | ----------------------------------------------------------------------- |
@@ -733,7 +750,7 @@ TA는 해당 값을 키워드에 치환하여 최종 이메일을 생성하고 �
 
 Push 서버를 통해 발송되는 알림은 **사용자에게 VC 발급 요청 시** 사용됩니다.
 
-<img src="./images/live-push.jpg" width="600"/>
+<img src="./images/live-push.jpg" width="800"/>
 
 | 번호 | 항목                 | 설명                                                                                                                                                       |
 | ---- | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -758,6 +775,11 @@ List 사업자는 Open DID에 참여하는 각 Entity가 역할을 수행하는 
 - [3.12. Allowed CA Management](#312-allowed-ca-management)
 - [3.13. VC Schema Management](#313-vc-schema-management)
 - [3.14. VC Plan Management](#314-vc-plan-management)
+- [3.15. Credential Schema Management](#315-credential-schema-management)
+- [3.16. Credential Definition Management](#316-credential-definition-management)
+- [3.22. Certification VC Management](#322-certification-vc-management)
+- [3.23. OID4VCI Credential Issuers](#323-oid4vci-credential-issuers)
+- [3.24. mDoc Trusted Issuers](#324-mdoc-trusted-issuers)
 
 <br/>
 
@@ -786,7 +808,7 @@ TA는 Wallet Identifier별로 허용된 CA 목록을 등록 및 수정할 수 �
 | 4    | **Wallet Identifier**     | CA 허용 목록이 적용될 대상 Wallet의 식별자입니다.                     |
 | 5    | **Allowed CA List**       | 해당 Wallet이 신뢰할 수 있는 CA들의 DID 목록입니다.                   |
 | 6    | **Registered At**         | 등록된 일시입니다.                                                    |
-| 7    | **Updated At**            | 마지막으로 수정된 일시입니다.   
+| 7    | **Updated At**            | 마지막으로 수정된 일시입니다. |
 
 
 ---
@@ -802,17 +824,18 @@ TA는 Wallet Identifier별로 허용된 CA 목록을 등록 및 수정할 수 �
 
 `Allowed CA Management` 화면에서 **REGISTER** 버튼을 클릭하면 아래와 같은 등록 화면으로 이동합니다
 
-<img src="./images/3-14.allowed-ca-registration.png" width="600"/>
+<img src="./images/3-14.allowed-ca-registration.png" width="800"/>
 
 | 번호 | 항목                   | 설명                                                           |
 | ---- | ---------------------- | -------------------------------------------------------------- |
-| 1    | **Wallet Identifier**  | 대상 Wallet의 식별자입니다.                                    |
-| 2    | **Check Availability** | Wallet Identifier의 중복 여부를 확인합니다.                    |
-| 3    | **ADD CA 버튼**        | 클릭 시 아래 CA 목록 테이블에 새로운 입력 행이 추가됩니다.     |
-| 4    | **삭제 아이콘**        | 각 CA 입력 행 오른쪽에 표시되며, 해당 행을 삭제할 수 있습니다. |
-| 5    | **REGISTER 버튼**      | 입력한 내용을 등록합니다.                                      |
-| 6    | **RESET 버튼**         | 입력한 내용을 초기화합니다.                                    |
-| 7    | **CANCEL 버튼**        | 등록을 취소하고 이전 페이지로 돌아갑니다.                      |
+| 1 | **Wallet Identifier**  | 대상 Wallet의 식별자입니다(3~50자). 예: `org.example.wallet` |
+| 2 | **Check Availability** | Wallet Identifier의 중복 여부를 확인합니다.                    |
+| 3 | **ADD CA 버튼**        | 클릭 시 아래 CA 목록 테이블에 새로운 입력 행이 추가됩니다.     |
+| 4 | **CA** | 허용할 CA 앱 식별자입니다. 예: `org.example.ca` |
+| 5 | **삭제 아이콘**        | 각 CA 입력 행 오른쪽에 표시되며, 해당 행을 삭제할 수 있습니다. |
+| 6 | **REGISTER 버튼**      | 입력한 내용을 등록합니다.                                      |
+| 7 | **RESET 버튼**         | 입력한 내용을 초기화합니다.                                    |
+| 8 | **CANCEL 버튼**        | 등록을 취소하고 이전 페이지로 돌아갑니다.                      |
 
 
 <br/>
@@ -821,7 +844,7 @@ TA는 Wallet Identifier별로 허용된 CA 목록을 등록 및 수정할 수 �
 
 `Allowed CA Management` 목록에서 Wallet Identifier를 클릭하면 아래와 같은 상세 화면으로 이동합니다.
 
-<img src="./images/3-15.allowed-ca-detail.png" width="600"/>
+<img src="./images/3-15.allowed-ca-detail.png" width="800"/>
 
 | 번호 | 항목                  | 설명                                                 |
 | ---- | --------------------- | ---------------------------------------------------- |
@@ -837,17 +860,18 @@ TA는 Wallet Identifier별로 허용된 CA 목록을 등록 및 수정할 수 �
 `Allowed CA Management`의 **상세 페이지에서 GO TO EDIT 버튼을 클릭하거나**,  
 **목록 페이지에서 UPDATE 버튼을 클릭하면** 아래와 같은 수정 화면으로 이동합니다.  
 
-<img src="./images/3-16.allowed-ca-update.png" width="600"/>
+<img src="./images/3-16.allowed-ca-update.png" width="800"/>
 
 | 번호 | 항목                   | 설명                                             |
 | ---- | ---------------------- | ------------------------------------------------ |
-| 1    | **Wallet Identifier**  | 수정할 대상 Wallet의 식별자입니다.               |
-| 2    | **Check Availability** | Wallet Identifier의 중복 여부를 다시 확인합니다. |
-| 3    | **ADD CA 버튼**        | 허용할 CA 식별자를 추가할 수 있습니다.           |
-| 4    | **삭제 아이콘**        | 해당 행의 CA 항목을 삭제합니다.                  |
-| 5    | **UPDATE 버튼**        | 수정된 내용을 저장합니다.                        |
-| 6    | **RESET 버튼**         | 입력한 내용을 초기화합니다.                      |
-| 7    | **CANCEL 버튼**        | 수정 작업을 취소하고 이전 페이지로 돌아갑니다.   |
+| 1 | **Wallet Identifier**  | 대상 Wallet의 식별자입니다(3~50자). 예: `org.example.wallet` |
+| 2 | **Check Availability** | Wallet Identifier의 중복 여부를 다시 확인합니다. |
+| 3 | **ADD CA 버튼**        | 허용할 CA 식별자를 추가할 수 있습니다.           |
+| 4 | **CA** | 허용할 CA 앱 식별자입니다. 예: `org.example.ca` |
+| 5 | **삭제 아이콘**        | 해당 행의 CA 항목을 삭제합니다.                  |
+| 6 | **UPDATE 버튼**        | 수정된 내용을 저장합니다.                        |
+| 7 | **RESET 버튼**         | 입력한 내용을 초기화합니다.                      |
+| 8 | **CANCEL 버튼**        | 수정 작업을 취소하고 이전 페이지로 돌아갑니다.   |
 
 <br/>
 
@@ -885,16 +909,17 @@ VC Schema는 TA 서버에 등록되어 있으며, 관리자는 이 목록을 조
 
 `VC Schema 목록`에서 VC 스키마 제목을 클릭하면, 아래와 같이 상세 정보를 확인할 수 있는 화면으로 이동합니다.
 
-<img src="./images/3-18.vc-schema-detail.png" width="600"/>
+<img src="./images/3-18.vc-schema-detail.png" width="800"/>
 
 | 번호 | 항목              | 설명                                                                   |
 | ---- | ----------------- | ---------------------------------------------------------------------- |
-| 1    | **Title**         | VC 스키마의 제목입니다.                                                |
-| 2    | **Description**   | 해당 스키마에 대한 설명입니다.                                         |
-| 3    | **Issuer Name**   | 해당 VC 스키마를 등록한 Issuer의 이름입니다.                          |
-| 4    | **Registered At** | VC 스키마가 최초로 등록된 날짜와 시간입니다.                          |
-| 5    | **VIEW VC SCHEMA 버튼** | 해당 VC 스키마의 실제 JSON 구조를 확인할 수 있는 버튼입니다. 팝업으로 표시됩니다. |
-| 6    | **BACK 버튼**     | 목록 화면으로 되돌아갑니다.                                           |
+| 1 | **Title**         | VC 스키마의 제목입니다.                                                |
+| 2 | **Description**   | 해당 스키마에 대한 설명입니다.                                         |
+| 3 | **Issuer Name**   | 해당 VC 스키마를 등록한 Issuer의 이름입니다.                          |
+| 4 | **Registered At** | VC 스키마가 최초로 등록된 날짜와 시간입니다.                          |
+| 5 | **Updated At** | 마지막으로 수정된 날짜 및 시간입니다. |
+| 6 | **VIEW VC SCHEMA 버튼** | 해당 VC 스키마의 실제 JSON 구조를 확인할 수 있는 버튼입니다. 팝업으로 표시됩니다. |
+| 7 | **BACK 버튼**     | 목록 화면으로 되돌아갑니다.                                           |
 
 <br/>
 
@@ -942,18 +967,19 @@ VC Plan은 Issuer Admin 서버에서 생성되며, 생성된 Plan은 TA Admin �
 
 VC Plan 목록에서 ID를 클릭하면 해당 VC Plan의 상세 정보 화면으로 이동합니다.
 
-<img src="./images/3-20.vc-plan-detail.png" width="600"/>
+<img src="./images/3-20.vc-plan-detail.png" width="800"/>
 
 
 | 번호 | 항목                  | 설명                                                  |
 | ---- | --------------------- | ----------------------------------------------------- |
-| 1    | **ID**                | VC Plan의 고유 식별자입니다.                          |
-| 2    | **VIEW VC PLAN 버튼** | VC Plan의 JSON 원문을 팝업 형태로 확인할 수 있습니다. |
-| 3    | **Name**              | VC Plan의 표시 이름입니다.                            |
-| 4    | **Description**       | VC Plan에 대한 간단한 설명입니다.                     |
-| 5    | **Issuer Name**       | 이 Plan을 생성한 Issuer의 이름입니다.                 |
-| 6    | **Registered At**     | 등록된 날짜 및 시간입니다.                            |
-| 7    | **BACK 버튼**         | 이전 화면으로 돌아갑니다.                             |
+| 1 | **ID**                | VC Plan의 고유 식별자입니다.                          |
+| 2 | **VIEW VC PLAN 버튼** | VC Plan의 JSON 원문을 팝업 형태로 확인할 수 있습니다. |
+| 3 | **Name**              | VC Plan의 표시 이름입니다.                            |
+| 4 | **Description**       | VC Plan에 대한 간단한 설명입니다.                     |
+| 5 | **Issuer Name**       | 이 Plan을 생성한 Issuer의 이름입니다.                 |
+| 6 | **Registered At**     | 등록된 날짜 및 시간입니다.                            |
+| 7 | **Updated At** | 마지막으로 수정된 날짜 및 시간입니다. |
+| 8 | **BACK 버튼**         | 이전 화면으로 돌아갑니다.                             |
 
 <br/>
 
@@ -989,16 +1015,17 @@ Credential Schema는 TA 서버에 등록되어 있으며, 관리자는 이 목�
 
 Credential Schema 목록에서 이름(Name)을 클릭하면 상세 정보 화면으로 이동합니다.
 
-<img src="./images/3-30.credemtial-schema-detail.png" width="600"/>
+<img src="./images/3-30.credemtial-schema-detail.png" width="800"/>
 
 | 번호 | 항목                       | 설명                                                                          |
 | ---- | -------------------------- | ----------------------------------------------------------------------------- |
-| 1    | **Name**                   | Credential Schema의 이름입니다.                                               |
-| 2    | **Credential Schema ID**   | 해당 스키마의 고유 식별자(DID 형식)입니다.                                    |
-| 3    | **Issuer Name**            | 해당 Credential Schema를 등록한 Issuer의 이름입니다.                          |
-| 4    | **Registered At**          | Credential Schema가 최초로 등록된 날짜 및 시간입니다.                        |
-| 5    | **VIEW CREDENTIAL SCHEMA 버튼** | Credential Schema의 JSON 원문을 팝업 형태로 확인할 수 있습니다.                |
-| 6    | **BACK 버튼**              | 목록 화면으로 되돌아갑니다.                                                  |
+| 1 | **Name**                   | Credential Schema의 이름입니다.                                               |
+| 2 | **Credential Schema ID**   | 해당 스키마의 고유 식별자(DID 형식)입니다.                                    |
+| 3 | **Issuer Name**            | 해당 Credential Schema를 등록한 Issuer의 이름입니다.                          |
+| 4 | **Registered At**          | Credential Schema가 최초로 등록된 날짜 및 시간입니다.                        |
+| 5 | **Updated At** | 마지막으로 수정된 날짜 및 시간입니다. |
+| 6 | **VIEW CREDENTIAL SCHEMA 버튼** | Credential Schema의 JSON 원문을 팝업 형태로 확인할 수 있습니다.                |
+| 7 | **BACK 버튼**              | 목록 화면으로 되돌아갑니다.                                                  |
 
 ---
 
@@ -1032,17 +1059,18 @@ Credential Definition은 각 Credential Schema와 1:1 관계를 가지며, Issue
 
 Credential Definition 목록에서 ID를 클릭하면 상세 정보 화면으로 이동합니다.
 
-<img src="./images/3-32.credential-definition-detail.png" width="600"/>
+<img src="./images/3-32.credential-definition-detail.png" width="800"/>
 
 | 번호 | 항목                           | 설명                                                                 |
 | ---- | ------------------------------ | -------------------------------------------------------------------- |
-| 1    | **Credential Definition ID**   | Credential Definition의 DID 형식 식별자입니다.                       |
-| 2    | **Credential Schema ID**       | 연결된 Credential Schema의 DID 식별자입니다.                         |
-| 3    | **Credential Definition Tag**  | Definition 생성 시 부여된 태그 값입니다.                             |
-| 4    | **Issuer Name**                | 해당 Definition을 등록한 Issuer의 이름입니다.                        |
-| 5    | **Registered At**              | Credential Definition이 최초로 등록된 시간입니다.                    |
-| 6    | **VIEW DEFINITION 버튼**       | Credential Definition의 원문(JSON)을 팝업으로 확인할 수 있습니다.     |
-| 7    | **BACK 버튼**                  | 목록 화면으로 돌아갑니다.                                            |
+| 1 | **Credential Definition ID**   | Credential Definition의 DID 형식 식별자입니다.                       |
+| 2 | **Credential Schema ID**       | 연결된 Credential Schema의 DID 식별자입니다.                         |
+| 3 | **Credential Definition Tag**  | Definition 생성 시 부여된 태그 값입니다.                             |
+| 4 | **Issuer Name**                | 해당 Definition을 등록한 Issuer의 이름입니다.                        |
+| 5 | **Registered At**              | Credential Definition이 최초로 등록된 시간입니다.                    |
+| 6 | **Updated At** | 마지막으로 수정된 날짜 및 시간입니다. |
+| 7 | **VIEW DEFINITION 버튼**       | Credential Definition의 원문(JSON)을 팝업으로 확인할 수 있습니다.     |
+| 8 | **BACK 버튼**                  | 목록 화면으로 돌아갑니다.                                            |
 
 <br/>
 
@@ -1089,7 +1117,7 @@ Credential Definition 목록에서 ID를 클릭하면 상세 정보 화면으로
 
 User 목록에서 DID를 클릭하면 해당 User의 상세 정보 화면으로 이동합니다.
 
-<img src="./images/3-24.user-detail.png" width="600"/>
+<img src="./images/3-24.user-detail.png" width="800"/>
 
 | 번호 | 항목              | 설명                                        |
 | ---- | ----------------- | ------------------------------------------- |
@@ -1127,7 +1155,7 @@ User 목록에서 DID를 클릭하면 해당 User의 상세 정보 화면으로 
 
 App 목록에서 App ID를 클릭하면 해당 App의 상세 정보 화면으로 이동합니다.
 
-<img src="./images/3-26.app-detail.png" width="600"/>
+<img src="./images/3-26.app-detail.png" width="800"/>
 
 | 번호 | 항목              | 설명                                                                                                                                    |
 | ---- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
@@ -1164,7 +1192,7 @@ App 목록에서 App ID를 클릭하면 해당 App의 상세 정보 화면으로
 
 Wallet 목록에서 DID를 클릭하면 해당 Wallet의 상세 정보 화면으로 이동합니다.
 
-<img src="./images/3-28.wallet-detail.png" width="600"/>
+<img src="./images/3-28.wallet-detail.png" width="800"/>
 
 | 번호 | 항목              | 설명                                                                                                                                                       |
 | ---- | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -1210,7 +1238,7 @@ ROOT 계정은 `Admin Management` 메뉴에서 모든 기능을 수행할 수 �
 | 4    | **ID**                  | 등록된 관리자 계정의 이메일 ID입니다.                              |
 | 5    | **Role**                | 해당 관리자 계정의 역할(Role)입니다. (예: ROOT, Normal Admin 등)   |
 | 6    | **Registered At**       | 해당 계정이 최초 등록된 일시입니다.                               |
-| 7    | **Updated At**          | 마지막으로 수정된 일시입니다.     
+| 7    | **Updated At**          | 마지막으로 수정된 일시입니다. |
 
 <br/>
 
@@ -1218,14 +1246,14 @@ ROOT 계정은 `Admin Management` 메뉴에서 모든 기능을 수행할 수 �
 
 `Admin Management` 화면에서 **REGISTER** 버튼을 클릭하면, 아래와 같은 등록 화면으로 이동합니다.
 
-<img src="./images/3-22.admin-registration.png" width="600"/>
+<img src="./images/3-22.admin-registration.png" width="800"/>
 
 | 번호 | 항목                        | 설명                                                                |
 | ---- | --------------------------- | ------------------------------------------------------------------- |
-| 1    | **ID**                      | 등록할 관리자 계정의 ID입니다. 이메일 형식을 사용해야 합니다.         |
+| 1    | **ID**                      | 등록할 관리자 계정의 ID입니다. 이메일 형식 3~30자를 사용합니다. 예: `operator@example.org` |
 | 2    | **Check Availability 버튼** | 입력한 ID가 중복되지 않는지 확인합니다.                             |
 | 3    | **Role**                    | 등록할 관리자 계정의 권한을 선택합니다. (예: Normal Admin)           |
-| 4    | **Password**                | 로그인 시 사용할 비밀번호를 입력합니다.                              |
+| 4    | **Password**                | 로그인 시 사용할 비밀번호를 입력합니다(8~30자). 비밀번호 정책이 켜져 있으면 해당 규칙도 적용됩니다. |
 | 5    | **Re-enter Password**       | 비밀번호를 한 번 더 입력하여 일치 여부를 확인합니다.                |
 | 6    | **REGISTER 버튼**           | 입력한 정보를 바탕으로 관리자 계정을 등록합니다.                    |
 | 7    | **RESET 버튼**              | 모든 입력값을 초기화합니다.                                         |
@@ -1237,63 +1265,268 @@ ROOT 계정은 `Admin Management` 메뉴에서 모든 기능을 수행할 수 �
 
 ## 3.22. Certification VC Management
 
-`List Provider Settings > Certification VC Management`에서 Entity 인증 VC 발행 목록을 조회합니다. 이름으로 검색할 수 있으며, 목록에는 이름, DID, 발행 일시, 만료 일시, 등록 일시가 표시됩니다. 인증 VC는 Entity 등록 절차에서 발행되므로 이 화면에서 새 VC를 등록하지 않습니다.
+`List Provider Settings > Certification VC Management`에서 Entity 가입증명서(Certificate VC) 발행 목록을 조회합니다. 가입증명서는 Entity 등록 절차에서 발행되므로 이 메뉴에서 새로 등록하지 않습니다.
+
+<br/>
+
+### 3.22.1. Certification VC 목록 조회
+
+<img src="./images/certificate-vc-management.png" width="800"/>
+
+| 번호 | 항목 | 설명 |
+| --- | --- | --- |
+| 1 | **검색** | Name 또는 DID로 검색합니다. |
+| 2 | **#** | 목록 번호입니다. |
+| 3 | **Name** | Entity의 이름입니다. 클릭하면 상세 화면으로 이동합니다. |
+| 4 | **DID** | Entity의 DID입니다. |
+| 5 | **Published At** | 가입증명서가 발행된 일시입니다. |
+| 6 | **Expired At** | 가입증명서가 만료되는 일시입니다. |
+| 7 | **Registered At** | 목록에 등록된 일시입니다. |
+
+<br/>
+
+### 3.22.2. Certification VC 상세
+
+<img src="./images/certificate-vc-detail.png" width="800"/>
+
+| 번호 | 항목 | 설명 |
+| --- | --- | --- |
+| 1 | **Name** | Entity의 이름입니다. |
+| 2 | **DID** | Entity의 DID입니다. |
+| 3 | **Published URL** | 발행된 가입증명서의 URL입니다. |
+| 4 | **Published At** | 가입증명서가 발행된 일시입니다. |
+| 5 | **Expired At** | 가입증명서가 만료되는 일시입니다. |
+| 6 | **Certificate VC / VIEW VC 버튼** | 가입증명서 VC 원문을 팝업으로 표시합니다. |
+| 7 | **Registered At** | 목록에 등록된 일시입니다. |
+| 8 | **Updated At** | 마지막으로 수정된 일시입니다. |
+| 9 | **BACK 버튼** | 목록 화면으로 돌아갑니다. |
+
+<br/>
 
 ## 3.23. OID4VCI Credential Issuers
 
-`List Provider Settings > OID4VCI Credential Issuers`에서 OID4VCI 발급자의 등록 상태를 조회합니다. 상태와 Credential Issuer 값으로 검색할 수 있고, 목록에는 발급자 식별자, Issuer Metadata URI, User Initiation URI, 상태, 요청 및 수정 일시가 표시됩니다. 항목을 선택한 뒤 `UPDATE`로 상태를 변경할 수 있습니다.
+`List Provider Settings > OID4VCI Credential Issuers`에서 OID4VCI 발급자의 등록 상태를 관리합니다. 발급자는 `POST /list/api/v1/oid4vci/issuers`로 등록을 요청하며, 요청 직후 상태는 `REQUESTED`입니다. 이 메뉴에는 등록 버튼이 없고, 관리자는 요청을 승인하거나 정보를 수정합니다.
 
-> **예시**: 문서에 URI를 기재해야 할 때는 `https://issuer.example.org/.well-known/openid-credential-issuer`처럼 예시 도메인을 사용하세요. 현재 화면의 `did:example:issuer-123`과 내부 시험용 URI는 운영 설정값으로 사용하지 않습니다.
+<br/>
+
+### 3.23.1. 발급자 목록 조회
+
+<img src="./images/oid4vci-issuers.png" width="800"/>
+
+| 번호 | 항목 | 설명 |
+| --- | --- | --- |
+| 1 | **검색** | Credential Issuer 값으로 검색합니다. 오른쪽 위 상태 선택으로 목록을 거를 수 있습니다. |
+| 2 | **UPDATE 버튼** | 선택한 발급자의 수정 화면으로 이동합니다. |
+| 3 | **Credential Issuer** | 발급자 식별자입니다. 클릭하면 상세 화면으로 이동합니다. |
+| 4 | **Issuer Metadata URI** | 발급자 메타데이터 URI입니다. |
+| 5 | **User Initiation URI** | 사용자가 발급을 시작하는 URI입니다. |
+| 6 | **Status** | `REQUESTED`, `ACTIVE`, `REJECTED`, `SUSPENDED`, `REVOKED` 중 하나입니다. |
+| 7 | **Requested At** | 등록을 요청한 일시입니다. |
+| 8 | **Updated At** | 마지막으로 수정된 일시입니다. |
+
+<br/>
+
+### 3.23.2. 발급자 상세와 상태 변경
+
+<img src="./images/oid4vci-issuer-detail.png" width="800"/>
+
+| 번호 | 항목 | 설명 |
+| --- | --- | --- |
+| 1 | **Credential Issuer** | 발급자 식별자입니다. |
+| 2 | **Credential Issuer Metadata URI** | 발급자 메타데이터 URI입니다. |
+| 3 | **User Initiation URI** | 사용자가 발급을 시작하는 URI입니다. |
+| 4 | **Current Status** | 현재 상태입니다. |
+| 5 | **Registration Requested At** | 등록을 요청한 일시입니다. |
+| 6 | **Last Updated At** | 마지막으로 수정된 일시입니다. |
+| 7 | **BACK 버튼** | 목록 화면으로 돌아갑니다. |
+| 8 | **EDIT 버튼** | 수정 화면으로 이동합니다. |
+| 9 | **상태 변경 버튼** | 현재 상태에서 바꿀 수 있는 상태만 버튼으로 표시됩니다. |
+| 10 | **Status History** | 변경 일시, 이전 상태, 새 상태, 사유, 변경자를 표시합니다. |
+
+| 현재 상태 | 변경 가능한 상태 | 사유 |
+| --- | --- | --- |
+| `REQUESTED` | `ACTIVE`, `REJECTED` | `REJECTED`는 필수 |
+| `ACTIVE` | `SUSPENDED`, `REVOKED` | 필수 |
+| `SUSPENDED` | `ACTIVE`, `REVOKED` | `REVOKED`는 필수 |
+| `REJECTED`, `REVOKED` | 없음 | - |
+
+<br/>
+
+### 3.23.3. 발급자 정보 수정
+
+<img src="./images/oid4vci-issuer-edit.png" width="800"/>
+
+| 번호 | 항목 | 설명 |
+| --- | --- | --- |
+| 1 | **Credential Issuer*** | 발급자 식별자입니다. 예: `https://issuer.example.org` |
+| 2 | **Credential Issuer Metadata URI*** | 발급자 메타데이터 URI입니다. Credential Issuer를 입력하면 기본 경로로 자동 입력되며 직접 바꿀 수 있습니다. 예: `https://issuer.example.org/.well-known/openid-credential-issuer` |
+| 3 | **User Initiation URI*** | 사용자가 발급을 시작하는 URI입니다. 예: `https://issuer.example.org/issue/start` |
+| 4 | **CANCEL 버튼** | 수정을 취소하고 이전 화면으로 돌아갑니다. |
+| 5 | **SAVE 버튼** | 수정한 내용을 저장합니다. |
+
+<br/>
 
 ## 3.24. mDoc Trusted Issuers
 
-`List Provider Settings > mDoc Trusted Issuers`에서 신뢰할 수 있는 mDoc 발급자를 검색, 등록 및 수정합니다. 목록에는 Issuer, DID, 허용된 `docTypes`, 상태, 등록 일시가 표시됩니다.
+`List Provider Settings > mDoc Trusted Issuers`에서 신뢰할 수 있는 mDoc 발급자를 등록하고 관리합니다.
+
+<br/>
+
+### 3.24.1. mDoc 발급자 목록 조회
 
 <img src="./images/live-mdoc-issuers.jpg" width="800"/>
 
-`REGISTER`를 누르면 등록 화면으로 이동합니다. 등록할 Issuer를 선택하고 Issuer metadata URL을 확인한 뒤 `Load docTypes`를 눌러 메타데이터에 선언된 문서 유형을 불러옵니다. 등록할 수 있는 Issuer는 등록이 완료된 Entity이며, 이미 활성화 또는 중지 상태인 발급자는 중복 등록할 수 없습니다. 취소된 발급자는 다시 등록할 수 있습니다.
+| 번호 | 항목 | 설명 |
+| --- | --- | --- |
+| 1 | **검색** | DID 또는 Issuer 이름으로 검색합니다. 오른쪽 위 상태 선택으로 목록을 거를 수 있습니다. |
+| 2 | **REGISTER 버튼** | 등록 화면으로 이동합니다. |
+| 3 | **UPDATE 버튼** | 선택한 발급자의 수정 화면으로 이동합니다. |
+| 4 | **Issuer** | 발급자 이름입니다. 클릭하면 상세 화면으로 이동합니다. |
+| 5 | **DID** | 발급자 DID입니다. |
+| 6 | **docTypes** | 허용된 문서 유형입니다. |
+| 7 | **Status** | `ACTIVE`, `SUSPENDED`, `REVOKED` 중 하나입니다. |
+| 8 | **Registered At** | 등록 일시입니다. |
+| 9 | **Updated At** | 마지막으로 수정된 일시입니다. |
+
+<br/>
+
+### 3.24.2. mDoc 발급자 등록
 
 <img src="./images/live-mdoc-register.jpg" width="800"/>
 
-> **예시**: 설명에는 `https://issuer.example.org/.well-known/openid-credential-issuer`와 `org.example.mdl` 같은 예시 값을 사용하세요. 실제 발급자 URL과 `docType`은 해당 Issuer의 메타데이터에서 확인해야 합니다.
+| 번호 | 항목 | 설명 |
+| --- | --- | --- |
+| 1 | **Issuer*** | 등록할 Issuer를 선택합니다. 등록이 완료된(`COMPLETED`) Entity만 표시되며, `ACTIVE`·`SUSPENDED` 상태로 이미 등록된 발급자는 선택할 수 없습니다. `REVOKED` 발급자는 다시 등록할 수 있습니다. |
+| 2 | **Issuer metadata URL*** | Issuer의 OID4VCI 메타데이터 URL입니다. Issuer를 선택하면 자동으로 채워지며 바꿀 수 있습니다. 예: `https://issuer.example.org/.well-known/openid-credential-issuer` |
+| 3 | **LOAD DOCTYPES 버튼** | 메타데이터에 `mso_mdoc`로 선언된 문서 유형을 불러옵니다. |
+| 4 | **docTypes*** | 허용할 문서 유형을 체크합니다. 메타데이터에 선언된 값만 선택할 수 있습니다. 예: `org.iso.18013.5.1.mDL` |
+| 5 | **CANCEL 버튼** | 등록을 취소하고 이전 화면으로 돌아갑니다. |
+| 6 | **REGISTER 버튼** | 확인 후 등록합니다. 등록된 발급자의 상태는 `ACTIVE`입니다. |
+
+<br/>
+
+### 3.24.3. mDoc 발급자 상세와 상태 변경
+
+<img src="./images/mdoc-issuer-detail.png" width="800"/>
+
+| 번호 | 항목 | 설명 |
+| --- | --- | --- |
+| 1 | **Issuer** | 발급자 이름입니다. |
+| 2 | **DID** | 발급자 DID입니다. |
+| 3 | **Issuer metadata URL** | 메타데이터 URL입니다. |
+| 4 | **docTypes** | 허용된 문서 유형입니다. |
+| 5 | **Current Status** | 현재 상태입니다. |
+| 6 | **Entity ID** | 연결된 Entity의 ID입니다. |
+| 7 | **Registered At** | 등록 일시입니다. |
+| 8 | **Last Updated At** | 마지막으로 수정된 일시입니다. |
+| 9 | **BACK, EDIT 버튼** | 목록으로 돌아가거나 수정 화면으로 이동합니다. |
+| 10 | **상태 변경 버튼** | 현재 상태에서 바꿀 수 있는 상태만 표시됩니다. `SUSPENDED`, `REVOKED`로 바꿀 때는 사유가 필수입니다. |
+| 11 | **RE-REGISTER 버튼** | `REVOKED` 상태일 때 표시되며 다시 등록하는 화면으로 이동합니다. |
+| 12 | **Status History** | 변경 일시, 이전 상태, 새 상태, 사유, 변경자를 표시합니다. |
+
+| 현재 상태 | 변경 가능한 상태 |
+| --- | --- |
+| `ACTIVE` | `SUSPENDED`, `REVOKED` |
+| `SUSPENDED` | `ACTIVE`, `REVOKED` |
+| `REVOKED` | 없음 (`RE-REGISTER`로 다시 등록) |
+
+<br/>
 
 ## 3.25. Server Configuration
 
-`Server Configuration`에서 외부 서버 연동용 API 키를 설정합니다. 현재 화면에는 Ledger Service Server의 `LSS API Key` 입력란과 `UPDATE`, `RESET` 버튼이 있습니다. 발급받은 키를 입력하고 `UPDATE`를 눌러 저장합니다. `RESET`은 저장 전 입력값을 초기화할 때 사용합니다. API 키 값은 화면 캡처, 문서, 예시 설정에 포함하지 마세요.
+`Server Configuration`에서 외부 서버 연동용 API 키를 설정합니다.
+
+<img src="./images/server-configuration.png" width="800"/>
+
+| 번호 | 항목 | 설명 |
+| --- | --- | --- |
+| 1 | **Ledger Service Server** | LSS에서 발급한 API Key를 입력합니다. `API_KEY_LSS`로 저장되며, TA가 LSS를 호출할 때 `X-API-Key` 헤더로 보냅니다. |
+| 2 | **UPDATE 버튼** | 입력한 값을 저장합니다. |
+| 3 | **RESET 버튼** | 저장 전 입력값을 초기화합니다. |
+
+> **주의**: API 키 값은 화면 캡처, 문서, 예시 설정에 포함하지 마세요.
+
+<br/>
 
 ## 3.26. Password Policy Settings
 
-`Admin Management > Password Policy Settings`에서 관리자 계정 비밀번호 정책을 관리합니다. `Minimum Length`는 6~20자, `Password Expiration Period`는 30~365일 범위에서 설정합니다. 필요에 따라 대문자, 숫자, 특수문자 사용 규칙을 켜고 `UPDATE`로 저장합니다. `RESET`은 변경 전 입력 상태로 되돌립니다. 현재 설치 화면의 값은 최소 8자, 만료 기간 365일이며 구성 규칙은 모두 꺼져 있습니다. 실제 적용 정책은 운영 환경 설정을 확인하세요.
+`Admin Management > Password Policy Settings`에서 관리자 계정 비밀번호 정책을 관리합니다.
 
 <img src="./images/live-password-policy.jpg" width="800"/>
 
+| 번호 | 항목 | 설명 |
+| --- | --- | --- |
+| 1 | **Minimum Length** | 비밀번호 최소 길이입니다. 6~20자로 설정합니다. 기본값은 8입니다. |
+| 2 | **Password Expiration Period** | 비밀번호 만료 기간입니다. 30~365일로 설정합니다. 기본값은 365입니다. |
+| 3 | **Uppercase Letters (A-Z)** | 대문자를 반드시 포함하게 합니다. 기본값은 꺼짐입니다. |
+| 4 | **Numbers (0-9)** | 숫자를 반드시 포함하게 합니다. 기본값은 꺼짐입니다. |
+| 5 | **Special Characters (!@#$%^&*)** | 특수문자를 반드시 포함하게 합니다. 기본값은 꺼짐입니다. |
+| 6 | **UPDATE 버튼** | 정책을 저장합니다. 아직 등록하지 않았다면 버튼 이름은 `REGISTER`입니다. |
+| 7 | **RESET 버튼** | 변경 전 입력 상태로 되돌립니다. |
+
+<br/>
+
 ## 3.27. Log Management
 
-TA 등록이 완료되면 사이드바의 `Log Management`에서 API 호출 기록을 조회할 수 있습니다. 두 화면 모두 최신 기록부터 페이지별로 표시되며, 검색 조건을 선택하고 값을 입력한 뒤 검색할 수 있습니다. 새로고침으로 목록을 다시 불러오고, `Called At`을 클릭하면 상세 창이 열립니다. 로그는 조회 전용입니다.
+TA 등록이 완료되면 사이드바의 `Log Management`에서 API 호출 기록을 조회할 수 있습니다. 두 화면 모두 최신 기록부터 페이지별로 표시하고, 새로고침 버튼으로 목록을 다시 불러옵니다. `Called At`을 클릭하면 상세 창이 열립니다. 로그는 조회 전용입니다.
+
+<br/>
 
 ### 3.27.1. API Log
 
+`Log Management > API Log`(`/logs/api`)는 `@ArticleLog`가 적용된 TA 및 Notification Agent API 호출 기록을 보여줍니다.
+
 <img src="./images/api-log-api-example.png" width="800"/>
 
-> 예시 데이터로 렌더링한 목록 화면입니다. 실제 로그와 계정 정보는 환경에 따라 다릅니다.
-
-`Log Management > API Log`는 `@ArticleLog`가 적용된 TA 및 Notification Agent API 호출 기록을 보여줍니다. 목록에는 호출 시각(`Called At`), HTTP 메서드, URI, 상태 코드, 결과(`SUCCESS` 또는 `FAIL`), 요청자 ID가 표시됩니다. `URI` 또는 `Result`로 검색할 수 있습니다. 상세 창에서는 처리 시간, 클라이언트 IP, User Agent, 오류 메시지가 기록된 경우 함께 확인할 수 있습니다. 화면 경로는 `/logs/api`입니다.
+| 번호 | 항목 | 설명 |
+| --- | --- | --- |
+| 1 | **검색** | `URI` 또는 `Result`(`SUCCESS`, `FAIL`)로 검색합니다. |
+| 2 | **Called At** | 호출 일시입니다. 클릭하면 상세 창이 열립니다. |
+| 3 | **Method** | HTTP 메서드입니다. |
+| 4 | **URI** | 호출한 URI입니다. |
+| 5 | **Status** | HTTP 상태 코드입니다. |
+| 6 | **Result** | `SUCCESS` 또는 `FAIL`입니다. |
+| 7 | **Requester ID** | 요청자 ID입니다. |
 
 <img src="./images/api-log-api-detail-example.png" width="800"/>
 
-> 호출 시각을 선택했을 때 표시되는 상세 창의 예시입니다.
+상세 창은 목록 항목에 더해 다음을 표시합니다.
+
+| 항목 | 설명 |
+| --- | --- |
+| **Duration Ms** | 처리 시간(밀리초)입니다. |
+| **Client IP** | 클라이언트 IP입니다. |
+| **User Agent** | 요청의 User Agent입니다. |
+| **Message** | 오류 메시지가 기록된 경우 표시합니다. |
+
+<br/>
 
 ### 3.27.2. Audit API Log
 
+`Log Management > Audit API Log`(`/logs/audit`)는 Admin API의 관리자 작업 기록을 보여줍니다.
+
 <img src="./images/api-log-audit-example.png" width="800"/>
 
-> 예시 데이터로 렌더링한 목록 화면입니다. 실제 로그와 계정 정보는 환경에 따라 다릅니다.
-
-`Log Management > Audit API Log`는 Admin API의 관리자 작업 기록을 보여줍니다. 목록에는 호출 시각, 요청자 ID, 작업 유형(`Action Type`), 대상 유형과 ID, 결과가 표시됩니다. `Action Type`, `Target Type`, `Result`, `Requester ID`로 검색할 수 있습니다. `Action Type`에는 `CREATE`, `UPDATE`, `DELETE`, `LOGIN`, `LOGOUT` 등의 값이 사용됩니다. 상세 창에서는 작업 설명, 클라이언트 IP, User Agent, 오류 메시지가 기록된 경우 함께 확인할 수 있습니다. 화면 경로는 `/logs/audit`입니다.
+| 번호 | 항목 | 설명 |
+| --- | --- | --- |
+| 1 | **검색** | `Action Type`, `Target Type`, `Result`, `Requester ID`로 검색합니다. `Action Type`은 `NONE`, `CREATE`, `UPDATE`, `DELETE`, `LOGIN`, `LOGOUT` 중에서 선택합니다. |
+| 2 | **Called At** | 호출 일시입니다. 클릭하면 상세 창이 열립니다. |
+| 3 | **Requester ID** | 작업한 관리자 ID입니다. |
+| 4 | **Action Type** | 작업 유형입니다. |
+| 5 | **Target Type** | 작업 대상의 유형입니다. |
+| 6 | **Target ID** | 작업 대상의 ID입니다. |
+| 7 | **Result** | `SUCCESS` 또는 `FAIL`입니다. |
 
 <img src="./images/api-log-audit-detail-example.png" width="800"/>
 
-> 호출 시각을 선택했을 때 표시되는 상세 창의 예시입니다.
+상세 창은 목록 항목에 더해 다음을 표시합니다.
+
+| 항목 | 설명 |
+| --- | --- |
+| **Client IP** | 클라이언트 IP입니다. |
+| **Description** | 작업 설명입니다. |
+| **User Agent** | 요청의 User Agent입니다. |
+| **Message** | 오류 메시지가 기록된 경우 표시합니다. |
 
 > 로그는 서버의 `@ArticleLog`가 적용된 API 호출에서 생성됩니다. 결과가 `FAIL`이면 API Log의 상태 코드와 해당 로그의 상세 메시지를 확인하세요.
 

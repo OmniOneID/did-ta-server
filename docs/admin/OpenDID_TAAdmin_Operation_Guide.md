@@ -18,8 +18,8 @@ puppeteer:
 Open DID TA Admin Console Guide
 ==
 
-- Date: 2026-10-30
-- Version: v3.0.1
+- Date: 2026-11-06
+- Version: v3.0.2
 
 Revision History
 ==
@@ -36,6 +36,7 @@ Revision History
 | v2.0.0  | 2025-05-30 | Added Credential Schema and Credential Definition sections. |
 | v3.0.0  | 2026-10-29 | Updated console menus, password policy, and current screen captures. |
 | v3.0.1  | 2026-10-30 | Added API Log and Audit API Log guidance. |
+| v3.0.2  | 2026-11-06 | Retook the screen examples, expanded the Certification VC, OID4VCI, mDoc, Server Configuration, Password Policy, and Log sections with item tables, and aligned earlier sections with the screens. |
 | v3.0.2  | 2026-11-04 | Corrected the registration guidance and the `QUICK REGISTER` prerequisites and behavior in `3.2. Entity Management`. |
 
 Table of Contents
@@ -101,8 +102,16 @@ Table of Contents
     - [3.21.1. Admin List Inquiry](#3211-admin-list-inquiry)
     - [3.21.2. Admin Registration](#3212-admin-registration)
   - [3.22. Certification VC Management](#322-certification-vc-management)
+    - [3.22.1. Certification VC List](#3221-certification-vc-list)
+    - [3.22.2. Certification VC Details](#3222-certification-vc-details)
   - [3.23. OID4VCI Credential Issuers](#323-oid4vci-credential-issuers)
+    - [3.23.1. Issuer List](#3231-issuer-list)
+    - [3.23.2. Issuer Details and Status Changes](#3232-issuer-details-and-status-changes)
+    - [3.23.3. Edit Issuer Information](#3233-edit-issuer-information)
   - [3.24. mDoc Trusted Issuers](#324-mdoc-trusted-issuers)
+    - [3.24.1. mDoc Issuer List](#3241-mdoc-issuer-list)
+    - [3.24.2. Register an mDoc Issuer](#3242-register-an-mdoc-issuer)
+    - [3.24.3. mDoc Issuer Details and Status Changes](#3243-mdoc-issuer-details-and-status-changes)
   - [3.25. Server Configuration](#325-server-configuration)
   - [3.26. Password Policy Settings](#326-password-policy-settings)
   - [3.27. Log Management](#327-log-management)
@@ -291,7 +300,7 @@ TA registration proceeds sequentially through a total of 4 steps.
 In this step, enter the **registration password** to be used in the final stage of TA registration.  
 The password must be entered identically to the password preset in the **Trust Agent server configuration file**.
 
-<img src="./images/3-1-1.ta-registration.png" width="600"/>
+<img src="./images/3-1-1.ta-registration.png" width="800"/>
 
 | Item                 | Description                                                  |
 | -------------------- | ------------------------------------------------------------ |
@@ -305,12 +314,12 @@ The password must be entered identically to the password preset in the **Trust A
 
 This is the step to enter TA information.
 
-<img src="./images/3-1-2.ta-registration.png" width="600"/>
+<img src="./images/3-1-2.ta-registration.png" width="800"/>
 
 | Item                     | Description                                                                    |
 | ------------------------ | ------------------------------------------------------------------------------ |
-| **Name**                 | Enter the name of the TA. Example: `tas`                                      |
-| **TA URL**               | TA server call URL. Must be entered in the format `http://<IP>:8090/tas`      |
+| **Name**                 | Enter the name of the TA. Example: `TrustAgent` |
+| **TA URL**               | TA server call URL. Format: `http://<IP>:8090/tas`. Example on the screen: `https://tas.example.org/tas` |
 | **Test Connection Button** | Test server connection with the entered URL                                  |
 | **BACK Button**          | Move to the previous step                                                      |
 | **NEXT Button**          | Move to the next step                                                          |
@@ -326,7 +335,7 @@ Once registered, the DID Document **cannot be changed or re-registered**.
 
 Generate the TA's DID Document.  
 
-<img src="./images/3-1-3.ta-registration.png" width="600"/>
+<img src="./images/3-1-3.ta-registration.png" width="800"/>
 
 | Item               | Description                                    |
 | ------------------ | ---------------------------------------------- |
@@ -340,8 +349,8 @@ When the DID Document is successfully generated, **Step 3-2 area is automaticall
 
 Register the generated DID Document on the blockchain.  
 
-<img src="./images/3-1-4.ta-registration.png" width="600"/>
-<img src="./images/3-1-5.ta-registration.png" width="600"/>
+<img src="./images/3-1-4.ta-registration.png" width="800"/>
+<img src="./images/3-1-5.ta-registration.png" width="800"/>
 
 | Item               | Description                                              |
 | ------------------ | -------------------------------------------------------- |
@@ -364,11 +373,11 @@ which must have a unique value within the system.
 
 Enter DN and generate Certificate VC.  
 
-<img src="./images/3-1-6.ta-registration.png" width="600"/>
+<img src="./images/3-1-6.ta-registration.png" width="800"/>
 
 | Item               | Description                                                                      |
 | ------------------ | -------------------------------------------------------------------------------- |
-| **DN**             | Value that serves as the TA's unique identifier. Example: `cn=TrustAgent,dc=opendid,dc=com` |
+| **DN**             | Value that serves as the TA's unique identifier. Example: `cn=TrustAgent,dc=example,dc=org` |
 | **GENERATE Button** | Generate Certificate VC based on the entered DN information.                    |
 
 When Certificate VC is generated, **Step 2 area is displayed on the screen.**
@@ -379,8 +388,8 @@ When Certificate VC is generated, **Step 2 area is displayed on the screen.**
 
 Register the generated Certificate VC on the blockchain.  
 
-<img src="./images/3-1-7.ta-registration.png" width="600"/>
-<img src="./images/3-1-8.ta-registration.png" width="600"/>
+<img src="./images/3-1-7.ta-registration.png" width="800"/>
+<img src="./images/3-1-8.ta-registration.png" width="800"/>
 
 | Item               | Description                                              |
 | ------------------ | -------------------------------------------------------- |
@@ -395,18 +404,23 @@ Register the generated Certificate VC on the blockchain.
 Once TA registration is complete, the `TA Management` menu is activated,  
 and you can check the registered TA's DID information, status, URL, etc.
 
-<img src="./images/3-2.ta-management.png" width="600"/>
+<img src="./images/3-2.ta-management.png" width="800"/>
 
 | No. | Item                  | Description                                                                   |
 | --- | --------------------- | ----------------------------------------------------------------------------- |
-| 1   | **DID**               | TA's unique identifier. Displayed in format like 'did:omn:tas'.              |
-| 2   | **Name**              | TA's name.                                                                    |
-| 3   | **Status**            | TA's current registration status. <br/>Status types are as follows:<br/>- `DID_DOCUMENT_REQUIRED`: DID Document not yet registered<br/>- `CERTIFICATE_VC_REQUIRED`: DID Document registered but Certificate VC not yet issued<br/>- `COMPLETED`: TA registration completed |
-| 4   | **URL**               | TA server's base URL address.                                                 |
-| 5   | **Certificate URL**   | URL address where TA's certificate can be verified.                          |
-| 6   | **Registered At**     | Date and time when TA was registered in Open DID.                           |
-| 7   | **VIEW DID DOCUMENT** | Button to check DID Document. When clicked, DID document information registered on blockchain is displayed in popup format. |
-| 8   | **DID Document Content** | Content of the DID Document displayed when VIEW DID DOCUMENT button is clicked. Includes TA's DID information, controller, creation time, verification methods, etc. in JSON format. |
+| 1 | **DID**               | TA's unique identifier. Displayed in format like 'did:omn:tas'.              |
+| 2 | **Name**              | TA's name.                                                                    |
+| 3 | **Status**            | TA's current registration status. <br/>Status types are as follows:<br/>- `DID_DOCUMENT_REQUIRED`: DID Document not yet registered<br/>- `CERTIFICATE_VC_REQUIRED`: DID Document registered but Certificate VC not yet issued<br/>- `COMPLETED`: TA registration completed |
+| 4 | **URL**               | TA server's base URL address.                                                 |
+| 5 | **Certificate URL**   | URL address where TA's certificate can be verified.                          |
+| 6 | **VIEW Button** | Button next to Certificate URL. Shows the certificate VC in a popup. |
+| 7 | **Registered At**     | Date and time when TA was registered in Open DID.                           |
+| 8 | **VIEW DID DOCUMENT** | Button to check DID Document. When clicked, DID document information registered on blockchain is displayed in popup format. |
+| 9 | **DID Document Content** | Content of the DID Document displayed when VIEW DID DOCUMENT button is clicked. Includes TA's DID information, controller, creation time, verification methods, etc. in JSON format. |
+
+<img src="./images/3-2.ta-management-did-document.png" width="800"/>
+
+> The DID Document popup shown when you click `VIEW DID DOCUMENT`.
 
 <br/>
 
@@ -447,15 +461,16 @@ The Entity list is provided in table format, allowing you to check the main info
 
 | No. | Item                    | Description                                                                |
 | --- | ----------------------- | -------------------------------------------------------------------------- |
-| 1   | **DELETE Button**       | Delete Entity information.                                                 |
-| 2   | **QUICK REGISTER Button** | Function to register all Entities at once for testing purposes.          |
-| 3   | **DID**                 | Entity's unique DID identifier.                                            |
-| 4   | **Name**                | Entity's name. Click to go to detail page.                                |
-| 5   | **Role**                | Entity's role (e.g., Issuer, Verifier, Wallet, etc.).                     |
-| 6   | **Status**              | Entity's registration status. <br/>Status types are as follows:<br/>- `DID_DOCUMENT_REQUIRED`: DID Document not yet registered<br/>- `CERTIFICATE_VC_REQUIRED`: DID Document registered but Certificate VC not yet issued<br/>- `COMPLETED`: Entity registration completed |
-| 7   | **URL**                 | Entity server's base call URL.                                             |
-| 8   | **Registered At**       | Date and time when Entity was first registered.                            |
-| 9   | **Updated At**          | Date and time when Entity information was last modified.                   |
+| 1 | **DELETE Button**       | Delete Entity information.                                                 |
+| 2 | **QUICK REGISTER Button** | Function to register all Entities at once for testing purposes.          |
+| 3 | **Search** | Searches by Name, DID, Role, or Status. Role is selected from Issuer, Verifier, App Provider, Wallet Provider, and OP Provider. |
+| 4 | **DID**                 | Entity's unique DID identifier.                                            |
+| 5 | **Name**                | Entity's name. Click to go to detail page.                                |
+| 6 | **Role**                | Entity's role (e.g., Issuer, Verifier, Wallet, etc.).                     |
+| 7 | **Status**              | Entity's registration status. <br/>Status types are as follows:<br/>- `DID_DOCUMENT_REQUIRED`: DID Document not yet registered<br/>- `CERTIFICATE_VC_REQUIRED`: DID Document registered but Certificate VC not yet issued<br/>- `COMPLETED`: Entity registration completed |
+| 8 | **URL**                 | Entity server's base call URL.                                             |
+| 9 | **Registered At**       | Date and time when Entity was first registered.                            |
+| 10 | **Updated At**          | Date and time when Entity information was last modified.                   |
 
 ---
 
@@ -509,19 +524,20 @@ you move to a page where you can check detailed information about that server.
 
 On the detail page, you can check main information such as registered Entity's DID, name, role, status, call URL, etc.
 
-<img src="./images/3-6.entity-detail-information.png" width="600"/>
+<img src="./images/3-6.entity-detail-information.png" width="800"/>
 
 | No. | Item                      | Description                                                                          |
 | --- | ------------------------- | ------------------------------------------------------------------------------------ |
-| 1   | **DID**                   | Entity's unique DID identifier.                                                      |
-| 2   | **Name**                  | Entity's name. Click to go to detail page.                                          |
-| 3   | **Role**                  | Entity's role (e.g., Issuer, Verifier, Wallet, etc.).                               |
-| 4   | **Status**                | Entity's registration status. <br/>Status types are as follows:<br/>- `DID_DOCUMENT_REQUIRED`: DID Document not yet registered<br/>- `CERTIFICATE_VC_REQUIRED`: DID Document registered but Certificate VC not yet issued<br/>- `COMPLETED`: Entity registration completed |
-| 5   | **URL**                   | Entity server's base call URL.                                                      |
-| 6   | **Registered At**         | Date and time when Entity was first registered.                                     |
-| 7   | **Updated At**            | Date and time when Entity information was last modified.                            |
-| 8   | **BACK Button**           | Close detail screen and return to previous page.                                    |
-| 8   | **DID DOC APPROVAL Button** | Approve DID Document registration request. <br/> Only displayed when Status is in DID Document Required state (not yet registered on blockchain). |
+| 1 | **DID**                   | Entity's unique DID identifier.                                                      |
+| 2 | **VIEW DID DOCUMENT Button** | Shows the DID Document in a popup. |
+| 3 | **Name**                  | Entity's name. |
+| 4 | **Role**                  | Entity's role (e.g., Issuer, Verifier, Wallet, etc.).                               |
+| 5 | **Status**                | Entity's registration status. <br/>Status types are as follows:<br/>- `DID_DOCUMENT_REQUIRED`: DID Document not yet registered<br/>- `CERTIFICATE_VC_REQUIRED`: DID Document registered but Certificate VC not yet issued<br/>- `COMPLETED`: Entity registration completed |
+| 6 | **Server URL** | Entity server's base call URL. |
+| 7 | **Registered At**         | Date and time when Entity was first registered.                                     |
+| 8 | **Updated At**            | Date and time when Entity information was last modified.                            |
+| 9 | **BACK Button**           | Close detail screen and return to previous page.                                    |
+| 10 | **DID DOC APPROVAL Button** | Approve DID Document registration request. <br/> Only displayed when Status is in DID Document Required state (not yet registered on blockchain). |
 
 ---
 
@@ -544,13 +560,14 @@ and since the CA server also serves as a KYC server, CA server information must 
 
 | No. | Item                     | Description                                                                       |
 | --- | ------------------------ | --------------------------------------------------------------------------------- |
-| 1   | **Name**                 | Enter KYC server name. Generally use CA server name. Example: `cas`              |
-| 2   | **Server URL**           | Call URL of CA server to be used as KYC server. Example: `http://<IP>:8094/cas`  |
-| 3   | **Test Connection Button** | Test connection with entered server URL.                                        |
-| 4   | **REGISTER Button**      | Save entered KYC information.                                                     |
-| 5   | **RESET Button**         | Initialize all entered content.                                                   |
+| 1 | **Name**                 | Enter the KYC server name (3 to 20 characters). The CA server name is generally used. Example: `cas` |
+| 2 | **Type** | KYC verification type. It is fixed to `Transaction-Based` and cannot be changed. |
+| 3 | **Server URL**           | Call URL of the CA server used as the KYC server (up to 200 characters). Example: `https://cas.example.org/cas` |
+| 4 | **Test Connection Button** | Tests the connection to the entered server URL. The test must pass before saving. |
+| 5 | **REGISTER Button**      | Saves the entered KYC information. If it is already registered, the button is named `UPDATE`. |
+| 6 | **RESET Button**         | Initialize all entered content.                                                   |
 
-<img src="./images/live-kyc.jpg" width="600"/>
+<img src="./images/live-kyc.jpg" width="800"/>
 
 <br/>
 
@@ -566,12 +583,12 @@ Actual configuration is done in sub-items [3.5. Expiration Settings](#35-expirat
 In the `Expiration Settings` menu, you can configure expiration time-related settings used by the TA server.  
 Set **token expiration time** and **transaction expiration time**, which play important roles in TA protocol operations.
 
-<img src="./images/live-expiration.jpg" width="600"/>
+<img src="./images/live-expiration.jpg" width="800"/>
 
 | No. | Item                          | Description                                                                                                                                                                                                                                                                 |
 | --- | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | **Token Timeout (seconds)**       | Set expiration time in seconds for **server tokens** issued by TA. Clients (Entity, App, etc.) must obtain server tokens when using TA's main protocols (e.g., Entity registration, user registration, VC issuance, etc.), and this setting means the validity period of such tokens. Default is **60 seconds**.        |
-| 2   | **Transaction Timeout (seconds)** | Set **transaction-level expiration time**. One protocol consists of multiple API calls, and this item is the validity period for the entire protocol execution time. For example, if DID registration protocol consists of 5 APIs, this means the validity time for this entire flow. Default is **300 seconds**. |
+| 1   | **Token Timeout (seconds)**       | Set expiration time in seconds for **server tokens** issued by TA. Clients (Entity, App, etc.) must obtain server tokens when using TA's main protocols (e.g., Entity registration, user registration, VC issuance, etc.), and this setting means the validity period of such tokens. Default is **60 seconds**. The allowed range is 10 to 600 seconds. |
+| 2   | **Transaction Timeout (seconds)** | Set **transaction-level expiration time**. One protocol consists of multiple API calls, and this item is the validity period for the entire protocol execution time. For example, if DID registration protocol consists of 5 APIs, this means the validity time for this entire flow. Default is **300 seconds**. The allowed range is 60 to 3600 seconds. |
 | 3   | **UPDATE Button**                        | Save entered setting values.                                                                                                                                                                                                                                            |
 | 4   | **RESET Button**                         | Initialize entered content.                                                                                                                                                                                                                                             |
 
@@ -590,7 +607,7 @@ This setting becomes the foundation for performing **session-level encrypted com
 Most protocols include key exchange APIs, where both sides exchange information to generate encryption keys using ECDH method.  
 Through this menu, you can specify **encryption algorithms and padding methods** to be used during key exchange.
 
-<img src="./images/live-exchange.jpg" width="600"/>
+<img src="./images/live-exchange.jpg" width="800"/>
 
 | No. | Item             | Description                                                                                                             |
 | --- | ---------------- | ----------------------------------------------------------------------------------------------------------------------- |
@@ -629,28 +646,28 @@ You can configure the email sending environment by entering SMTP server informat
 
 Once configuration is complete, you can send test emails to verify that the configured values work properly.  
 
-<img src="./images/live-email-server.jpg" width="600"/>
+<img src="./images/live-email-server.jpg" width="800"/>
 
 | No. | Item                         | Description                                                                   |
 | --- | ---------------------------- | ----------------------------------------------------------------------------- |
-| 1   | **Host**                     | SMTP server host address.                                                    |
-| 2   | **Port**                     | SMTP server port number.                                                     |
-| 3   | **User Name**                | Email account for authentication.                                            |
-| 4   | **Password**                 | Password for email account.                                                   |
-| 5    | **Sender**                   | Sender email address.                                             |
+| 1   | **Host**                     | SMTP server host address (up to 200 characters). Example: `smtp.example.org` |
+| 2   | **Port**                     | SMTP server port number (1 to 65535). Example: `587` |
+| 3   | **User Name**                | Email account used for authentication (4 to 256 characters). |
+| 4   | **Password**                 | Password for the email account (8 to 128 characters). |
+| 5    | **Sender**                   | Sender email address (6 to 254 characters). |
 | 6    | **Enable STARTTLS**          | Whether to use STARTTLS secure transmission.                                   |
 | 7    | **Enable SSL**               | Whether to use SSL secure transmission.                                        |
-| 8    | **Connection Timeout (sec)** | Time limit for connection attempts.                                     |
-| 9    | **Read Timeout (sec)**       | Maximum time to wait for response.                                      |
-| 10   | **Write Timeout (sec)**      | Time limit for request transmission.                                     |
-| 11   | **Turn Off SSL Check**       | Can disable SSL verification for testing purposes. (Not recommended for production environment) |
-| 12   | **REGISTER Button**            | Save entered email configuration information.                                 |
+| 8    | **Connection Timeout (seconds)** | Time limit for connection attempts (1 to 300 seconds). |
+| 9    | **Read Timeout (seconds)** | Maximum time to wait for a response (1 to 600 seconds). |
+| 10   | **Write Timeout (seconds)** | Time limit for sending a request (1 to 600 seconds). |
+| 11   | **Turn Off SSL Check (For Testing)**       | Can disable SSL verification for testing purposes. (Not recommended for production environment) |
+| 12   | **REGISTER Button**            | Saves the entered email settings. If they are already registered, the button is named `UPDATE`. |
 | 13   | **RESET Button**               | Initialize all input fields.                                        |
 | 14   | **TEST Button**                | Only works when all settings are properly entered. <br/>When clicked, `Send Test Email` popup appears, allowing you to directly enter email address to receive test mail. <br/>Test mail includes simple confirmation message. |
 
 ---
 > **Note:**  
-> `Enable STARTTLS` and `Enable SSL` **cannot be activated simultaneously.**      
+> **Turn on exactly one of** `Enable STARTTLS` and `Enable SSL`. You cannot save with both on or both off.  
 > Both are methods for secure connection during email transmission, but **STARTTLS upgrades existing connection to encryption**,  
 > while **SSL uses encrypted connection from the beginning**, so only one should be selected according to email server settings to avoid conflicts.
 ---
@@ -673,7 +690,7 @@ This approach was introduced to reduce server load and
 enable more efficient email sending processing when email content is long or   
 contains a lot of dynamically changing information.
 
-<img src="./images/3-11.email-template-settings.png" width="600"/>
+<img src="./images/3-11.email-template-settings.png" width="800"/>
 
 | No. | Item            | Description                                                                    |
 | --- | --------------- | ------------------------------------------------------------------------------ |
@@ -713,7 +730,7 @@ configure integration with push server.
 
 Notifications sent through Push server are used **when requesting VC issuance to users**.
 
-<img src="./images/live-push.jpg" width="600"/>
+<img src="./images/live-push.jpg" width="800"/>
 
 | No. | Item                 | Description                                                                                                                                                       |
 | --- | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -738,6 +755,11 @@ Sub-menus are as follows:
 - [3.12. Allowed CA Management](#312-allowed-ca-management)
 - [3.13. VC Schema Management](#313-vc-schema-management)
 - [3.14. VC Plan Management](#314-vc-plan-management)
+- [3.15. Credential Schema Management](#315-credential-schema-management)
+- [3.16. Credential Definition Management](#316-credential-definition-management)
+- [3.22. Certification VC Management](#322-certification-vc-management)
+- [3.23. OID4VCI Credential Issuers](#323-oid4vci-credential-issuers)
+- [3.24. mDoc Trusted Issuers](#324-mdoc-trusted-issuers)
 
 <br/>
 
@@ -781,17 +803,18 @@ You can manage the list of CAs that each Wallet can trust through register, modi
 
 When you click the **REGISTER** button on the `Allowed CA Management` screen, you move to the registration screen below
 
-<img src="./images/3-14.allowed-ca-registration.png" width="600"/>
+<img src="./images/3-14.allowed-ca-registration.png" width="800"/>
 
 | No. | Item                   | Description                                                           |
 | --- | ---------------------- | --------------------------------------------------------------------- |
-| 1   | **Wallet Identifier**  | Target Wallet identifier.                                             |
-| 2   | **Check Availability** | Check for duplicate Wallet Identifier.                               |
-| 3   | **ADD CA Button**      | When clicked, new input row is added to CA list table below.         |
-| 4   | **Delete Icon**        | Displayed on right side of each CA input row, can delete that row.   |
-| 5   | **REGISTER Button**    | Register entered content.                                             |
-| 6   | **RESET Button**       | Initialize entered content.                                           |
-| 7   | **CANCEL Button**      | Cancel registration and return to previous page.                     |
+| 1 | **Wallet Identifier**  | Target Wallet identifier (3 to 50 characters). Example: `org.example.wallet` |
+| 2 | **Check Availability** | Check for duplicate Wallet Identifier.                               |
+| 3 | **ADD CA Button**      | When clicked, new input row is added to CA list table below.         |
+| 4 | **CA** | CA app identifier to allow. Example: `org.example.ca` |
+| 5 | **Delete Icon**        | Displayed on right side of each CA input row, can delete that row.   |
+| 6 | **REGISTER Button**    | Register entered content.                                             |
+| 7 | **RESET Button**       | Initialize entered content.                                           |
+| 8 | **CANCEL Button**      | Cancel registration and return to previous page.                     |
 
 <br/>
 
@@ -799,7 +822,7 @@ When you click the **REGISTER** button on the `Allowed CA Management` screen, yo
 
 When you click Wallet Identifier in the `Allowed CA Management` list, you move to the detail screen below.
 
-<img src="./images/3-15.allowed-ca-detail.png" width="600"/>
+<img src="./images/3-15.allowed-ca-detail.png" width="800"/>
 
 | No. | Item                  | Description                                                 |
 | --- | --------------------- | ----------------------------------------------------------- |
@@ -815,17 +838,18 @@ When you click Wallet Identifier in the `Allowed CA Management` list, you move t
 When you **click GO TO EDIT button on detail page of `Allowed CA Management`** or  
 **click UPDATE button on list page**, you move to the modification screen below.  
 
-<img src="./images/3-16.allowed-ca-update.png" width="600"/>
+<img src="./images/3-16.allowed-ca-update.png" width="800"/>
 
 | No. | Item                   | Description                                             |
 | --- | ---------------------- | ------------------------------------------------------- |
-| 1   | **Wallet Identifier**  | Identifier of target Wallet to modify.                 |
-| 2   | **Check Availability** | Re-check for duplicate Wallet Identifier.              |
-| 3   | **ADD CA Button**      | Add CA identifier to allow.                             |
-| 4   | **Delete Icon**        | Delete CA item in that row.                             |
-| 5   | **UPDATE Button**      | Save modified content.                                  |
-| 6   | **RESET Button**       | Initialize entered content.                             |
-| 7   | **CANCEL Button**      | Cancel modification and return to previous page.       |
+| 1 | **Wallet Identifier**  | Target Wallet identifier (3 to 50 characters). Example: `org.example.wallet` |
+| 2 | **Check Availability** | Re-check for duplicate Wallet Identifier.              |
+| 3 | **ADD CA Button**      | Add CA identifier to allow.                             |
+| 4 | **CA** | CA app identifier to allow. Example: `org.example.ca` |
+| 5 | **Delete Icon**        | Delete CA item in that row.                             |
+| 6 | **UPDATE Button**      | Save modified content.                                  |
+| 7 | **RESET Button**       | Initialize entered content.                             |
+| 8 | **CANCEL Button**      | Cancel modification and return to previous page.       |
 
 <br/>
 
@@ -863,16 +887,17 @@ When entering `List Provider Settings > VC Schema Management` menu, the list of 
 
 When you click VC schema title in `VC Schema list`, you move to screen where you can check detailed information as below.
 
-<img src="./images/3-18.vc-schema-detail.png" width="600"/>
+<img src="./images/3-18.vc-schema-detail.png" width="800"/>
 
 | No. | Item                        | Description                                                                   |
 | --- | --------------------------- | ----------------------------------------------------------------------------- |
-| 1   | **Title**                   | VC schema title.                                                              |
-| 2   | **Description**             | Description of this schema.                                                   |
-| 3   | **Issuer Name**             | Name of Issuer that registered this VC schema.                               |
-| 4   | **Registered At**           | Date and time when VC schema was first registered.                           |
-| 5   | **VIEW VC SCHEMA Button**   | Button to check actual JSON structure of this VC schema. Displayed in popup. |
-| 6   | **BACK Button**             | Return to list screen.                                                        |
+| 1 | **Title**                   | VC schema title.                                                              |
+| 2 | **Description**             | Description of this schema.                                                   |
+| 3 | **Issuer Name**             | Name of Issuer that registered this VC schema.                               |
+| 4 | **Registered At**           | Date and time when VC schema was first registered.                           |
+| 5 | **Updated At** | Date and time of the last modification. |
+| 6 | **VIEW VC SCHEMA Button**   | Button to check actual JSON structure of this VC schema. Displayed in popup. |
+| 7 | **BACK Button**             | Return to list screen.                                                        |
 
 <br/>
 
@@ -920,17 +945,18 @@ Clicking each VC Plan ID moves to screen where you can check detailed informatio
 
 When you click ID in VC Plan list, you move to detail information screen of that VC Plan.
 
-<img src="./images/3-20.vc-plan-detail.png" width="600"/>
+<img src="./images/3-20.vc-plan-detail.png" width="800"/>
 
 | No. | Item                  | Description                                                  |
 | --- | --------------------- | ------------------------------------------------------------ |
-| 1   | **ID**                | VC Plan unique identifier.                                   |
-| 2   | **VIEW VC PLAN Button** | Check VC Plan JSON original text in popup format.         |
-| 3   | **Name**              | VC Plan display name.                                        |
-| 4   | **Description**       | Brief description of VC Plan.                                |
-| 5   | **Issuer Name**       | Name of Issuer that created this Plan.                       |
-| 6   | **Registered At**     | Registration date and time.                                  |
-| 7   | **BACK Button**       | Return to previous screen.                                   |
+| 1 | **ID**                | VC Plan unique identifier.                                   |
+| 2 | **VIEW VC PLAN Button** | Check VC Plan JSON original text in popup format.         |
+| 3 | **Name**              | VC Plan display name.                                        |
+| 4 | **Description**       | Brief description of VC Plan.                                |
+| 5 | **Issuer Name**       | Name of Issuer that created this Plan.                       |
+| 6 | **Registered At**     | Registration date and time.                                  |
+| 7 | **Updated At** | Date and time of the last modification. |
+| 8 | **BACK Button**       | Return to previous screen.                                   |
 
 <br/>
 
@@ -966,16 +992,17 @@ When entering `List Provider Settings > Credential Schema Management` menu, the 
 
 When you click name (Name) in Credential Schema list, you move to detail information screen.
 
-<img src="./images/3-30.credemtial-schema-detail.png" width="600"/>
+<img src="./images/3-30.credemtial-schema-detail.png" width="800"/>
 
 | No. | Item                            | Description                                                                          |
 | --- | ------------------------------- | ------------------------------------------------------------------------------------ |
-| 1   | **Name**                        | Credential Schema name.                                                              |
-| 2   | **Credential Schema ID**        | Unique identifier (DID format) of this schema.                                      |
-| 3   | **Issuer Name**                 | Name of Issuer that registered this Credential Schema.                              |
-| 4   | **Registered At**               | Date and time when Credential Schema was first registered.                          |
-| 5   | **VIEW CREDENTIAL SCHEMA Button** | Check Credential Schema JSON original text in popup format.                       |
-| 6   | **BACK Button**                 | Return to list screen.                                                               |
+| 1 | **Name**                        | Credential Schema name.                                                              |
+| 2 | **Credential Schema ID**        | Unique identifier (DID format) of this schema.                                      |
+| 3 | **Issuer Name**                 | Name of Issuer that registered this Credential Schema.                              |
+| 4 | **Registered At**               | Date and time when Credential Schema was first registered.                          |
+| 5 | **Updated At** | Date and time of the last modification. |
+| 6 | **VIEW CREDENTIAL SCHEMA Button** | Check Credential Schema JSON original text in popup format.                       |
+| 7 | **BACK Button**                 | Return to list screen.                                                               |
 
 ---
 
@@ -1009,17 +1036,18 @@ When entering `List Provider Settings > Credential Definition Management` menu, 
 
 When you click ID in Credential Definition list, you move to detail information screen.
 
-<img src="./images/3-32.credential-definition-detail.png" width="600"/>
+<img src="./images/3-32.credential-definition-detail.png" width="800"/>
 
 | No. | Item                           | Description                                                                 |
 | --- | ------------------------------ | --------------------------------------------------------------------------- |
-| 1   | **Credential Definition ID**   | DID format identifier of Credential Definition.                            |
-| 2   | **Credential Schema ID**       | DID identifier of connected Credential Schema.                             |
-| 3   | **Credential Definition Tag**  | Tag value assigned when creating Definition.                                |
-| 4   | **Issuer Name**                | Name of Issuer that registered this Definition.                            |
-| 5   | **Registered At**              | Time when Credential Definition was first registered.                       |
-| 6   | **VIEW DEFINITION Button**     | Check Credential Definition original text (JSON) in popup.                 |
-| 7   | **BACK Button**                | Return to list screen.                                                      |
+| 1 | **Credential Definition ID**   | DID format identifier of Credential Definition.                            |
+| 2 | **Credential Schema ID**       | DID identifier of connected Credential Schema.                             |
+| 3 | **Credential Definition Tag**  | Tag value assigned when creating Definition.                                |
+| 4 | **Issuer Name**                | Name of Issuer that registered this Definition.                            |
+| 5 | **Registered At**              | Time when Credential Definition was first registered.                       |
+| 6 | **Updated At** | Date and time of the last modification. |
+| 7 | **VIEW DEFINITION Button**     | Check Credential Definition original text (JSON) in popup.                 |
+| 8 | **BACK Button**                | Return to list screen.                                                      |
 
 <br/>
 
@@ -1065,7 +1093,7 @@ You can search user information by DID or PII criteria through search function.
 
 When you click DID in User list, you move to detail information screen of that User.
 
-<img src="./images/3-24.user-detail.png" width="600"/>
+<img src="./images/3-24.user-detail.png" width="800"/>
 
 | No. | Item              | Description                                        |
 | --- | ----------------- | -------------------------------------------------- |
@@ -1102,7 +1130,7 @@ When entering `App List` menu, the list of Apps registered in Open DID system is
 
 When you click App ID in App list, you move to detail information screen of that App.
 
-<img src="./images/3-26.app-detail.png" width="600"/>
+<img src="./images/3-26.app-detail.png" width="800"/>
 
 | No. | Item              | Description                                                                                                                                    |
 | --- | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -1139,7 +1167,7 @@ When entering `Wallet List` menu, the list of registered Wallets is displayed in
 
 When you click DID in Wallet list, you move to detail information screen of that Wallet.
 
-<img src="./images/3-28.wallet-detail.png" width="600"/>
+<img src="./images/3-28.wallet-detail.png" width="800"/>
 
 | No. | Item              | Description                                                                                                                                                        |
 | --- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -1191,14 +1219,14 @@ When entering the `Admin Management` menu, the list of registered administrator 
 
 When you click **REGISTER** button on `Admin Management` screen, you move to registration screen as below.
 
-<img src="./images/3-22.admin-registration.png" width="600"/>
+<img src="./images/3-22.admin-registration.png" width="800"/>
 
 | No. | Item                        | Description                                                                |
 | --- | --------------------------- | -------------------------------------------------------------------------- |
-| 1   | **ID**                      | ID of administrator account to register. Must use email format.           |
+| 1   | **ID**                      | ID of the administrator account to register. Use an email address of 3 to 30 characters. Example: `operator@example.org` |
 | 2   | **Check Availability Button** | Check if entered ID is not duplicated.                                   |
 | 3   | **Role**                    | Select privilege of administrator account to register. (e.g., Normal Admin) |
-| 4   | **Password**                | Enter password to use for login.                                           |
+| 4   | **Password**                | Enter the password used to sign in (8 to 30 characters). If the password policy is on, its rules also apply. |
 | 5   | **Re-enter Password**       | Enter password again to check consistency.                                 |
 | 6   | **REGISTER Button**         | Register administrator account based on entered information.               |
 | 7   | **RESET Button**            | Initialize all input values.                                               |
@@ -1209,65 +1237,270 @@ When you click **REGISTER** button on `Admin Management` screen, you move to reg
 
 ## 3.22. Certification VC Management
 
-Open `List Provider Settings > Certification VC Management` to view certificate VCs issued to entities. Search by name; the list shows the name, DID, publication time, expiration time, and registration time. Certificate VCs are issued during entity enrollment and are not registered from this screen.
+`List Provider Settings > Certification VC Management` shows the certificate VCs issued to Entities. Certificate VCs are issued during Entity registration, so they are not registered from this menu.
+
+<br/>
+
+### 3.22.1. Certification VC List
+
+<img src="./images/certificate-vc-management.png" width="800"/>
+
+| No. | Item | Description |
+| --- | --- | --- |
+| 1 | **Search** | Searches by Name or DID. |
+| 2 | **#** | List number. |
+| 3 | **Name** | Entity name. Click to open the detail screen. |
+| 4 | **DID** | Entity DID. |
+| 5 | **Published At** | Date and time the certificate VC was published. |
+| 6 | **Expired At** | Date and time the certificate VC expires. |
+| 7 | **Registered At** | Date and time it was added to the list. |
+
+<br/>
+
+### 3.22.2. Certification VC Details
+
+<img src="./images/certificate-vc-detail.png" width="800"/>
+
+| No. | Item | Description |
+| --- | --- | --- |
+| 1 | **Name** | Entity name. |
+| 2 | **DID** | Entity DID. |
+| 3 | **Published URL** | URL of the published certificate VC. |
+| 4 | **Published At** | Date and time the certificate VC was published. |
+| 5 | **Expired At** | Date and time the certificate VC expires. |
+| 6 | **Certificate VC / VIEW VC Button** | Shows the certificate VC in a popup. |
+| 7 | **Registered At** | Date and time it was added to the list. |
+| 8 | **Updated At** | Date and time of the last modification. |
+| 9 | **BACK Button** | Returns to the list. |
+
+<br/>
 
 ## 3.23. OID4VCI Credential Issuers
 
-Open `List Provider Settings > OID4VCI Credential Issuers` to review OID4VCI issuer registrations. Filter by status or Credential Issuer. The list shows the issuer identifier, Issuer Metadata URI, User Initiation URI, status, request time, and update time. Select a row and use `UPDATE` to change its status.
+`List Provider Settings > OID4VCI Credential Issuers` manages the registration status of OID4VCI credential issuers. An issuer requests registration through `POST /list/api/v1/oid4vci/issuers`, and its status is `REQUESTED` right after the request. This menu has no register button; administrators approve requests or edit issuer information.
 
-> **Example**: Use an illustrative URI such as `https://issuer.example.org/.well-known/openid-credential-issuer` in documentation. The `did:example:issuer-123` and internal test URI shown in the local instance are not production configuration values.
+<br/>
+
+### 3.23.1. Issuer List
+
+<img src="./images/oid4vci-issuers.png" width="800"/>
+
+| No. | Item | Description |
+| --- | --- | --- |
+| 1 | **Search** | Searches by Credential Issuer. The status selector at the top right filters the list. |
+| 2 | **UPDATE Button** | Opens the edit screen of the selected issuer. |
+| 3 | **Credential Issuer** | Issuer identifier. Click to open the detail screen. |
+| 4 | **Issuer Metadata URI** | Issuer metadata URI. |
+| 5 | **User Initiation URI** | URI where a user starts issuance. |
+| 6 | **Status** | One of `REQUESTED`, `ACTIVE`, `REJECTED`, `SUSPENDED`, and `REVOKED`. |
+| 7 | **Requested At** | Date and time registration was requested. |
+| 8 | **Updated At** | Date and time of the last modification. |
+
+<br/>
+
+### 3.23.2. Issuer Details and Status Changes
+
+<img src="./images/oid4vci-issuer-detail.png" width="800"/>
+
+| No. | Item | Description |
+| --- | --- | --- |
+| 1 | **Credential Issuer** | Issuer identifier. |
+| 2 | **Credential Issuer Metadata URI** | Issuer metadata URI. |
+| 3 | **User Initiation URI** | URI where a user starts issuance. |
+| 4 | **Current Status** | Current status. |
+| 5 | **Registration Requested At** | Date and time registration was requested. |
+| 6 | **Last Updated At** | Date and time of the last modification. |
+| 7 | **BACK Button** | Returns to the list. |
+| 8 | **EDIT Button** | Opens the edit screen. |
+| 9 | **Status change buttons** | Only the statuses reachable from the current status are shown. |
+| 10 | **Status History** | Shows the change date, previous status, new status, reason, and who made the change. |
+
+| Current status | Allowed next status | Reason |
+| --- | --- | --- |
+| `REQUESTED` | `ACTIVE`, `REJECTED` | Required for `REJECTED` |
+| `ACTIVE` | `SUSPENDED`, `REVOKED` | Required |
+| `SUSPENDED` | `ACTIVE`, `REVOKED` | Required for `REVOKED` |
+| `REJECTED`, `REVOKED` | None | - |
+
+<br/>
+
+### 3.23.3. Edit Issuer Information
+
+<img src="./images/oid4vci-issuer-edit.png" width="800"/>
+
+| No. | Item | Description |
+| --- | --- | --- |
+| 1 | **Credential Issuer*** | Issuer identifier. Example: `https://issuer.example.org` |
+| 2 | **Credential Issuer Metadata URI*** | Issuer metadata URI. It is filled in with the default path when you enter Credential Issuer, and you can change it. Example: `https://issuer.example.org/.well-known/openid-credential-issuer` |
+| 3 | **User Initiation URI*** | URI where a user starts issuance. Example: `https://issuer.example.org/issue/start` |
+| 4 | **CANCEL Button** | Cancels and returns to the previous screen. |
+| 5 | **SAVE Button** | Saves the changes. |
+
+<br/>
 
 ## 3.24. mDoc Trusted Issuers
 
-Open `List Provider Settings > mDoc Trusted Issuers` to search, register, and update trusted mDoc issuers. The list shows Issuer, DID, permitted `docTypes`, status, and registration time.
+`List Provider Settings > mDoc Trusted Issuers` registers and manages trusted mDoc issuers.
+
+<br/>
+
+### 3.24.1. mDoc Issuer List
 
 <img src="./images/live-mdoc-issuers.jpg" width="800"/>
 
-Select `REGISTER`, choose an enrolled Issuer, confirm its metadata URL, and select `Load docTypes` to load the document types declared in the issuer metadata. An active or suspended issuer cannot be registered again; a revoked issuer can be registered again.
+| No. | Item | Description |
+| --- | --- | --- |
+| 1 | **Search** | Searches by DID or Issuer name. The status selector at the top right filters the list. |
+| 2 | **REGISTER Button** | Opens the registration screen. |
+| 3 | **UPDATE Button** | Opens the edit screen of the selected issuer. |
+| 4 | **Issuer** | Issuer name. Click to open the detail screen. |
+| 5 | **DID** | Issuer DID. |
+| 6 | **docTypes** | Allowed document types. |
+| 7 | **Status** | One of `ACTIVE`, `SUSPENDED`, and `REVOKED`. |
+| 8 | **Registered At** | Date and time of registration. |
+| 9 | **Updated At** | Date and time of the last modification. |
+
+<br/>
+
+### 3.24.2. Register an mDoc Issuer
 
 <img src="./images/live-mdoc-register.jpg" width="800"/>
 
-> **Example**: Use `https://issuer.example.org/.well-known/openid-credential-issuer` and `org.example.mdl` as illustrative values. Confirm the real issuer URL and document types in that issuer's metadata.
+| No. | Item | Description |
+| --- | --- | --- |
+| 1 | **Issuer*** | Select the Issuer to register. Only Entities whose registration is complete (`COMPLETED`) are listed. Issuers already registered as `ACTIVE` or `SUSPENDED` cannot be selected. `REVOKED` issuers can be registered again. |
+| 2 | **Issuer metadata URL*** | OID4VCI metadata URL of the Issuer. It is filled in when you select an Issuer, and you can change it. Example: `https://issuer.example.org/.well-known/openid-credential-issuer` |
+| 3 | **LOAD DOCTYPES Button** | Loads the document types declared as `mso_mdoc` in the metadata. |
+| 4 | **docTypes*** | Check the document types to allow. Only values declared in the metadata can be selected. Example: `org.iso.18013.5.1.mDL` |
+| 5 | **CANCEL Button** | Cancels and returns to the previous screen. |
+| 6 | **REGISTER Button** | Registers after confirmation. A registered issuer has the status `ACTIVE`. |
+
+<br/>
+
+### 3.24.3. mDoc Issuer Details and Status Changes
+
+<img src="./images/mdoc-issuer-detail.png" width="800"/>
+
+| No. | Item | Description |
+| --- | --- | --- |
+| 1 | **Issuer** | Issuer name. |
+| 2 | **DID** | Issuer DID. |
+| 3 | **Issuer metadata URL** | Metadata URL. |
+| 4 | **docTypes** | Allowed document types. |
+| 5 | **Current Status** | Current status. |
+| 6 | **Entity ID** | ID of the linked Entity. |
+| 7 | **Registered At** | Date and time of registration. |
+| 8 | **Last Updated At** | Date and time of the last modification. |
+| 9 | **BACK, EDIT Buttons** | Return to the list or open the edit screen. |
+| 10 | **Status change buttons** | Only the statuses reachable from the current status are shown. A reason is required for `SUSPENDED` and `REVOKED`. |
+| 11 | **RE-REGISTER Button** | Shown for `REVOKED` issuers. Opens the screen for registering again. |
+| 12 | **Status History** | Shows the change date, previous status, new status, reason, and who made the change. |
+
+| Current status | Allowed next status |
+| --- | --- |
+| `ACTIVE` | `SUSPENDED`, `REVOKED` |
+| `SUSPENDED` | `ACTIVE`, `REVOKED` |
+| `REVOKED` | None (register again with `RE-REGISTER`) |
+
+<br/>
 
 ## 3.25. Server Configuration
 
-Use `Server Configuration` to set API keys for external service connections. The current screen provides an `LSS API Key` field for the Ledger Service Server and `UPDATE` and `RESET` actions. Enter the issued key and select `UPDATE` to save it. `RESET` clears unsaved input. Do not put API key values in screenshots, guides, or sample configuration.
+`Server Configuration` sets API keys for integrating with external servers.
+
+<img src="./images/server-configuration.png" width="800"/>
+
+| No. | Item | Description |
+| --- | --- | --- |
+| 1 | **Ledger Service Server** | Enter the API key issued by LSS. It is stored as `API_KEY_LSS`, and the TA sends it in the `X-API-Key` header when calling LSS. |
+| 2 | **UPDATE Button** | Saves the entered value. |
+| 3 | **RESET Button** | Resets the input before saving. |
+
+> **Caution**: Do not include API key values in screen captures, documents, or sample settings.
+
+<br/>
 
 ## 3.26. Password Policy Settings
 
-Open `Admin Management > Password Policy Settings` to manage administrator password rules. `Minimum Length` accepts 6–20 characters; `Password Expiration Period` accepts 30–365 days. Enable uppercase letters, numbers, or special characters as required, then select `UPDATE`. `RESET` restores the form. The inspected installation currently shows an eight-character minimum, 365-day expiration, and all composition switches off. Confirm the effective policy in each deployment.
+`Admin Management > Password Policy Settings` manages the password policy for administrator accounts.
 
 <img src="./images/live-password-policy.jpg" width="800"/>
 
+| No. | Item | Description |
+| --- | --- | --- |
+| 1 | **Minimum Length** | Minimum password length, from 6 to 20 characters. The default is 8. |
+| 2 | **Password Expiration Period** | Password expiration period, from 30 to 365 days. The default is 365. |
+| 3 | **Uppercase Letters (A-Z)** | Requires an uppercase letter. Off by default. |
+| 4 | **Numbers (0-9)** | Requires a number. Off by default. |
+| 5 | **Special Characters (!@#$%^&*)** | Requires a special character. Off by default. |
+| 6 | **UPDATE Button** | Saves the policy. If no policy is registered yet, the button is named `REGISTER`. |
+| 7 | **RESET Button** | Reverts to the input before the change. |
+
+<br/>
+
 ## 3.27. Log Management
 
-After TA registration, open `Log Management` in the sidebar to inspect API calls. Both screens show paginated records, with the newest first. Select a search field, enter a value, and search; use refresh to reload the list. Click `Called At` to open a record's detail dialog. Logs are read only.
+Once the TA is registered, API call records are available under `Log Management` in the sidebar. Both screens show the newest records first, page by page, and the refresh button reloads the list. Click `Called At` to open the detail dialog. Logs are read-only.
+
+<br/>
 
 ### 3.27.1. API Log
 
+`Log Management > API Log` (`/logs/api`) shows calls to TA and Notification Agent APIs that use `@ArticleLog`.
+
 <img src="./images/api-log-api-example.png" width="800"/>
 
-> List screen rendered with example data. Actual logs and accounts depend on the environment.
-
-`Log Management > API Log` shows annotated Agent API calls for TA and Notification. The list displays call time (`Called At`), HTTP method, URI, status code, result (`SUCCESS` or `FAIL`), and requester ID. Search by `URI` or `Result`. The detail dialog also shows duration, client IP, user agent, and error message when recorded. The page path is `/logs/api`.
+| No. | Item | Description |
+| --- | --- | --- |
+| 1 | **Search** | Searches by `URI` or `Result` (`SUCCESS`, `FAIL`). |
+| 2 | **Called At** | Date and time of the call. Click to open the detail dialog. |
+| 3 | **Method** | HTTP method. |
+| 4 | **URI** | Called URI. |
+| 5 | **Status** | HTTP status code. |
+| 6 | **Result** | `SUCCESS` or `FAIL`. |
+| 7 | **Requester ID** | Requester ID. |
 
 <img src="./images/api-log-api-detail-example.png" width="800"/>
 
-> Example detail dialog opened by selecting the call time.
+In addition to the list items, the detail dialog shows the following.
+
+| Item | Description |
+| --- | --- |
+| **Duration Ms** | Processing time in milliseconds. |
+| **Client IP** | Client IP address. |
+| **User Agent** | User Agent of the request. |
+| **Message** | Shown when an error message was recorded. |
+
+<br/>
 
 ### 3.27.2. Audit API Log
 
+`Log Management > Audit API Log` (`/logs/audit`) shows administrator operations performed through Admin APIs.
+
 <img src="./images/api-log-audit-example.png" width="800"/>
 
-> List screen rendered with example data. Actual logs and accounts depend on the environment.
-
-`Log Management > Audit API Log` shows administrator actions through Admin APIs. The list displays call time, requester ID, action type, target type and ID, and result. Search by `Action Type`, `Target Type`, `Result`, or `Requester ID`. Action types include `CREATE`, `UPDATE`, `DELETE`, `LOGIN`, and `LOGOUT`. The detail dialog also shows the action description, client IP, user agent, and error message when recorded. The page path is `/logs/audit`.
+| No. | Item | Description |
+| --- | --- | --- |
+| 1 | **Search** | Searches by `Action Type`, `Target Type`, `Result`, or `Requester ID`. `Action Type` is selected from `NONE`, `CREATE`, `UPDATE`, `DELETE`, `LOGIN`, and `LOGOUT`. |
+| 2 | **Called At** | Date and time of the call. Click to open the detail dialog. |
+| 3 | **Requester ID** | ID of the administrator who performed the operation. |
+| 4 | **Action Type** | Operation type. |
+| 5 | **Target Type** | Type of the target. |
+| 6 | **Target ID** | ID of the target. |
+| 7 | **Result** | `SUCCESS` or `FAIL`. |
 
 <img src="./images/api-log-audit-detail-example.png" width="800"/>
 
-> Example detail dialog opened by selecting the call time.
+In addition to the list items, the detail dialog shows the following.
 
-> Records are created for API calls annotated with `@ArticleLog` on the server. For a `FAIL` result, inspect the API Log status code and the available detail message.
+| Item | Description |
+| --- | --- |
+| **Client IP** | Client IP address. |
+| **Description** | Description of the operation. |
+| **User Agent** | User Agent of the request. |
+| **Message** | Shown when an error message was recorded. |
+
+> Logs are created from API calls that use `@ArticleLog` on the server. If the result is `FAIL`, check the status code in API Log and the detail message of that log.
 
 [Open DID Installation Guide]: https://github.com/OmniOneID/did-release/blob/main/release-V2.0.0.0/OpenDID_Installation_Guide-V2.0.0.0.md
 
