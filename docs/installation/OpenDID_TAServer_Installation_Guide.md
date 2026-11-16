@@ -225,7 +225,7 @@ did-ta-server
         ├── gradle
         ├── libs
             └── did-common-sdk-server-3.0.0.jar
-            └── did-ta-sdk-server-1.0.0.jar
+            └── did-ta-sdk-server-3.0.0.jar
             └── did-blockchain-sdk-server-2.0.0.jar
             └── did-core-sdk-server-2.0.0.jar
             └── did-crypto-sdk-server-2.0.0.jar
