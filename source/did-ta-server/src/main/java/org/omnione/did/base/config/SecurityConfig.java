@@ -86,6 +86,10 @@ public class SecurityConfig {
                                                          .AuthorizationManagerRequestMatcherRegistry configurer) {
         allowedUrlsConfigurer(configurer);
         configurer.requestMatchers(org.springframework.http.HttpMethod.POST,
+                        "/tas/admin/v1/entities/register-did/public").permitAll()
+                .requestMatchers(org.springframework.http.HttpMethod.GET,
+                        "/tas/admin/v1/entities/request-status").permitAll()
+                .requestMatchers(org.springframework.http.HttpMethod.POST,
                         "/tas/admin/v1/login", "/tas/admin/v1/refresh-token", "/tas/admin/v1/logout",
                         "/tas/admin/v1/password-reset/send-otp", "/tas/admin/v1/password-reset/verify-otp").permitAll()
                 .requestMatchers(org.springframework.http.HttpMethod.POST,
