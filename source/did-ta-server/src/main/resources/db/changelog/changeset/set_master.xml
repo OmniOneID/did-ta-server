@@ -49,4 +49,6 @@
   <include file="set.10/add-column_list_mdoc_issuer_metadata_uri.xml" relativeToChangelogFile="true"/>
 
   <include file="set.11/create-table_api_log.xml" relativeToChangelogFile="true"/>
+  <include file="set.11/add-column_admin_session_version.xml" relativeToChangelogFile="true"/>
+  <include file="set.11/expand_admin_login_password.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

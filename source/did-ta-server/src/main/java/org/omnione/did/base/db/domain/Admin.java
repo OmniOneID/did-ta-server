@@ -41,8 +41,11 @@ public class Admin extends BaseEntity implements Serializable {
     @Column(name = "login_id", nullable = false, length = 50)
     private String loginId;
 
-    @Column(name = "login_password", nullable = false, length = 64)
+    @Column(name = "login_password", nullable = false, length = 120)
     private String loginPassword;
+
+    @Column(name = "password_algo", nullable = false, length = 20)
+    private String passwordAlgo;
 
     @Column(name = "name", nullable = true, length = 200)
     private String name;
@@ -66,4 +69,8 @@ public class Admin extends BaseEntity implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(name = "password_reset_reason", nullable = true, length = 20)
     private PasswordResetReason passwordResetReason;
+
+    @Builder.Default
+    @Column(name = "session_version", nullable = false)
+    private Long sessionVersion = 0L;
 }

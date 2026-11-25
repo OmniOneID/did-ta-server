@@ -25,6 +25,10 @@ public class SessionService {
     private final AdminPasswordPolicyRepository adminPasswordPolicyRepository;
     private final AdminRepository adminRepository;
 
+    public AdminDto requestAdminLoginById(Long id) {
+        return AdminDto.fromAdmin(adminQueryService.findById(id));
+    }
+
     public AdminDto requestAdminLogin(RequestAdminLoginReqDto requestAdminLoginReqDto) {
         Admin admin = adminQueryService.findByLoginIdAndLoginPassword(
                 requestAdminLoginReqDto.getLoginId(),
