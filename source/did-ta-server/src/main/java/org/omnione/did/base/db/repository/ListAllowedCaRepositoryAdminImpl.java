@@ -67,7 +67,7 @@ public class ListAllowedCaRepositoryAdminImpl implements ListAllowedCaRepository
         if (searchKey != null && searchValue != null && !searchValue.isEmpty()) {
             switch (searchKey) {
                 case "walletId":
-                    predicate = predicate.and(qListAllowedCa.walletId.eq(searchValue));
+                    predicate = predicate.and(qListAllowedCa.walletId.containsIgnoreCase(searchValue));
                     break;
                 default:
                     predicate = predicate.and(Expressions.FALSE);

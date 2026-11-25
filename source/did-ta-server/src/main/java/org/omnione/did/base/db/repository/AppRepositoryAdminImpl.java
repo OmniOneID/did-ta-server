@@ -70,10 +70,10 @@ public class AppRepositoryAdminImpl implements AppRepositoryAdmin {
         if (searchKey != null && searchValue != null && !searchValue.isEmpty()) {
             switch (searchKey) {
                 case "appId":
-                    predicate = predicate.and(qApp.appId.eq(searchValue));
+                    predicate = predicate.and(qApp.appId.containsIgnoreCase(searchValue));
                     break;
                 case "pushToken":
-                    predicate = predicate.and(qApp.pushToken.eq(searchValue));
+                    predicate = predicate.and(qApp.pushToken.containsIgnoreCase(searchValue));
                     break;
                 case "status":
                     predicate = predicate.and(qApp.status.eq(AppStatus.valueOf(searchValue)));

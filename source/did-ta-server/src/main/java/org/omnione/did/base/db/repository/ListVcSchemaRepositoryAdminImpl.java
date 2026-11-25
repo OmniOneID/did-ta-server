@@ -68,13 +68,13 @@ public class ListVcSchemaRepositoryAdminImpl implements ListVcSchemaRepositoryAd
         if (searchKey != null && searchValue != null && !searchValue.isEmpty()) {
             switch (searchKey) {
                 case "title":
-                    predicate = predicate.and(qListVcSchema.title.eq(searchValue));
+                    predicate = predicate.and(qListVcSchema.title.containsIgnoreCase(searchValue));
                     break;
                 case "issuerDid":
-                    predicate = predicate.and(qListVcSchema.issuerDid.eq(searchValue));
+                    predicate = predicate.and(qListVcSchema.issuerDid.containsIgnoreCase(searchValue));
                     break;
                 case "issuerName":
-                    predicate = predicate.and(qListVcSchema.issuerName.eq(searchValue));
+                    predicate = predicate.and(qListVcSchema.issuerName.containsIgnoreCase(searchValue));
                     break;
                 default:
                     predicate = predicate.and(Expressions.FALSE);

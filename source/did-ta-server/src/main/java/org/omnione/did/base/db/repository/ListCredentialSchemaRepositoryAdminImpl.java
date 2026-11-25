@@ -66,13 +66,13 @@ public class ListCredentialSchemaRepositoryAdminImpl implements ListCredentialSc
         if (searchKey != null && searchValue != null && !searchValue.isEmpty()) {
             switch (searchKey) {
                 case "name":
-                    predicate = predicate.and(qListCredentialSchema.name.eq(searchValue));
+                    predicate = predicate.and(qListCredentialSchema.name.containsIgnoreCase(searchValue));
                     break;
                 case "issuerDid":
-                    predicate = predicate.and(qListCredentialSchema.issuerDid.eq(searchValue));
+                    predicate = predicate.and(qListCredentialSchema.issuerDid.containsIgnoreCase(searchValue));
                     break;
                 case "issuerName":
-                    predicate = predicate.and(qListCredentialSchema.issuerName.eq(searchValue));
+                    predicate = predicate.and(qListCredentialSchema.issuerName.containsIgnoreCase(searchValue));
                     break;
                 default:
                     predicate = predicate.and(Expressions.FALSE);

@@ -67,10 +67,10 @@ public class WalletRepositoryAdminImpl implements  WalletRepositoryAdmin  {
         if (searchKey != null && searchValue != null && !searchValue.isEmpty()) {
             switch (searchKey) {
                 case "walletId":
-                    predicate = predicate.and(qWallet.walletId.eq(searchValue));
+                    predicate = predicate.and(qWallet.walletId.containsIgnoreCase(searchValue));
                     break;
                 case "did":
-                    predicate = predicate.and(qWallet.did.eq(searchValue));
+                    predicate = predicate.and(qWallet.did.containsIgnoreCase(searchValue));
                     break;
                 case "status":
                     predicate = predicate.and(qWallet.status.eq(WalletStatus.valueOf(searchValue)));

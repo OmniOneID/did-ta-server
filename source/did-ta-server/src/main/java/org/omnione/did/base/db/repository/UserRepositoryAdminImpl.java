@@ -67,10 +67,10 @@ public class UserRepositoryAdminImpl implements UserRepositoryAdmin {
         if (searchKey != null && searchValue != null && !searchValue.isEmpty()) {
             switch (searchKey) {
                 case "did":
-                    predicate = predicate.and(qUser.did.eq(searchValue));
+                    predicate = predicate.and(qUser.did.containsIgnoreCase(searchValue));
                     break;
                 case "pii":
-                    predicate = predicate.and(qUser.pii.eq(searchValue));
+                    predicate = predicate.and(qUser.pii.containsIgnoreCase(searchValue));
                     break;
                 case "status":
                     predicate = predicate.and(qUser.status.eq(UserStatus.valueOf(searchValue)));

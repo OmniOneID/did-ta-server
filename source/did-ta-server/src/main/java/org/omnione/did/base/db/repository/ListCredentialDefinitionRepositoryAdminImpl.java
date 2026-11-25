@@ -65,16 +65,16 @@ public class ListCredentialDefinitionRepositoryAdminImpl implements ListCredenti
         if (searchKey != null && searchValue != null && !searchValue.isEmpty()) {
             switch (searchKey) {
                 case "credentialDefinitionId":
-                    predicate = predicate.and(qListCredentialDefinition.credentialDefinitionId.eq(searchValue));
+                    predicate = predicate.and(qListCredentialDefinition.credentialDefinitionId.containsIgnoreCase(searchValue));
                     break;
                 case "credentialSchemaId":
-                    predicate = predicate.and(qListCredentialDefinition.credentialSchemaId.eq(searchValue));
+                    predicate = predicate.and(qListCredentialDefinition.credentialSchemaId.containsIgnoreCase(searchValue));
                     break;
                 case "issuerDid":
-                    predicate = predicate.and(qListCredentialDefinition.issuerDid.eq(searchValue));
+                    predicate = predicate.and(qListCredentialDefinition.issuerDid.containsIgnoreCase(searchValue));
                     break;
                 case "issuerName":
-                    predicate = predicate.and(qListCredentialDefinition.issuerName.eq(searchValue));
+                    predicate = predicate.and(qListCredentialDefinition.issuerName.containsIgnoreCase(searchValue));
                     break;
                 default:
                     predicate = predicate.and(Expressions.FALSE);

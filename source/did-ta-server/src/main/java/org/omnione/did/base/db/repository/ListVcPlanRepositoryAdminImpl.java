@@ -68,16 +68,16 @@ public class ListVcPlanRepositoryAdminImpl implements ListVcPlanRepositoryAdmin 
         if (searchKey != null && searchValue != null && !searchValue.isEmpty()) {
             switch (searchKey) {
                 case "vcPlanId":
-                    predicate = predicate.and(qListVcPlan.vcPlanId.eq(searchValue));
+                    predicate = predicate.and(qListVcPlan.vcPlanId.containsIgnoreCase(searchValue));
                     break;
                 case "name":
-                    predicate = predicate.and(qListVcPlan.name.eq(searchValue));
+                    predicate = predicate.and(qListVcPlan.name.containsIgnoreCase(searchValue));
                     break;
                 case "issuerDid":
-                    predicate = predicate.and(qListVcPlan.issuerDid.eq(searchValue));
+                    predicate = predicate.and(qListVcPlan.issuerDid.containsIgnoreCase(searchValue));
                     break;
                 case "issuerName":
-                    predicate = predicate.and(qListVcPlan.issuerName.eq(searchValue));
+                    predicate = predicate.and(qListVcPlan.issuerName.containsIgnoreCase(searchValue));
                     break;
                 default:
                     predicate = predicate.and(Expressions.FALSE);

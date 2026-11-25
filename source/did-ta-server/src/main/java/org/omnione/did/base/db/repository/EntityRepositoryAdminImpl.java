@@ -68,10 +68,10 @@ public class EntityRepositoryAdminImpl implements EntityRepositoryAdmin {
         if (searchKey != null && searchValue != null && !searchValue.isEmpty()) {
             switch (searchKey) {
                 case "did":
-                    predicate = predicate.and(entity.did.eq(searchValue));
+                    predicate = predicate.and(entity.did.containsIgnoreCase(searchValue));
                     break;
                 case "name":
-                    predicate = predicate.and(entity.name.eq(searchValue));
+                    predicate = predicate.and(entity.name.containsIgnoreCase(searchValue));
                     break;
                 case "role":
                     predicate = predicate.and(entity.role.eq(Role.valueOf(searchValue)));
