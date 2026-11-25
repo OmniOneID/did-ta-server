@@ -29,6 +29,7 @@ import org.omnione.did.tas.v1.admin.dto.admin.ResetPasswordReqDto;
 import org.omnione.did.tas.v1.admin.dto.admin.VerifyAdminIdUniqueResDto;
 import org.omnione.did.tas.v1.admin.service.AdminManagementService;
 import org.omnione.did.tas.v1.common.dto.EmptyResDto;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
@@ -73,8 +74,9 @@ public class AdminManagementController {
     @RequestMapping(value = "/admins", method = RequestMethod.DELETE)
     @ArticleLog(name = "[Admin Manage] Delete Admin", description = "Delete admin",
             targetType = "ADMIN", targetId = "#id", actionType = ActionType.DELETE)
-    public EmptyResDto deleteAdmin(@RequestParam Long id) {
-        return adminManagementService.deleteAdmin(id);
+    public EmptyResDto deleteAdmin(@RequestParam Long id, HttpServletRequest request) {
+        request.setAttribute("targetId", adminManagementService.deleteAdmin(id));
+        return new EmptyResDto();
     }
 
     @PostMapping(value = "/admins/root/reset-password")
