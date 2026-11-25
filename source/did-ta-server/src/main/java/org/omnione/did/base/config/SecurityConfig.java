@@ -88,6 +88,9 @@ public class SecurityConfig {
         configurer.requestMatchers(org.springframework.http.HttpMethod.POST,
                         "/tas/admin/v1/login", "/tas/admin/v1/refresh-token", "/tas/admin/v1/logout",
                         "/tas/admin/v1/password-reset/send-otp", "/tas/admin/v1/password-reset/verify-otp").permitAll()
+                .requestMatchers(org.springframework.http.HttpMethod.POST,
+                        "/tas/admin/v1/admins", "/tas/admin/v1/admins/root/reset-password").hasRole("ROOT")
+                .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/tas/admin/v1/admins").hasRole("ROOT")
                 .requestMatchers("/tas/admin/v1/**").hasAnyRole("NORMAL", "ROOT")
                 .anyRequest().permitAll();
     }
