@@ -96,10 +96,11 @@ const AllowedCaEditPage = (props: Props) => {
     };
 
     const handleReset = () => {
+        if (!initialData) return;
         setErrors({});
         setIsButtonDisabled(true);
-        setFormData({ caList: [], walletId: ''});
-        setIsWalletIdValid(false);
+        setFormData({ ...initialData, caList: [...initialData.caList] });
+        setIsWalletIdValid(true);
         setWalletIdCheckMessage('');
         setWalletIdCheckStatus('');
     };
