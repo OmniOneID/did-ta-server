@@ -1,3 +1,4 @@
+import { tokenStore } from '../utils/authTokens';
 import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect } from 'react';
 import { PasswordPolicy } from '../constants/password-policy';
 import { getAdminPasswordPolicy } from '../apis/admin-api';
@@ -44,29 +45,11 @@ export const PasswordPolicyProvider: React.FC<{ children: ReactNode }> = ({ chil
   }, []);
 
   useEffect(() => {
-    let mounted = true;
-    const autoLoad = async () => {
-      if (hasTriedLoading || isLoading) return;
-      setIsLoading(true);
-      setError(null);
-      setHasTriedLoading(true);
-      try {
-        const response = await getAdminPasswordPolicy();
-        if (mounted && response && response.data) {
-          setPolicy(response.data);
-        }
-      } catch (err) {
-        if (mounted) {
-          const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
-          setError(errorMessage);
-        }
-      } finally {
-        if (mounted) setIsLoading(false);
-      }
-    };
-    autoLoad();
-    return () => { mounted = false; };
-  }, []);
+    const onAuthenticated = () => { void loadPolicy(); };
+    if (tokenStore.getRefresh()) onAuthenticated();
+    window.addEventListener('admin-authenticated', onAuthenticated);
+    return () => window.removeEventListener('admin-authenticated', onAuthenticated);
+  }, [loadPolicy]);
 
   const updatePolicy = useCallback((newPolicy: PasswordPolicy) => {
     setPolicy(newPolicy);
