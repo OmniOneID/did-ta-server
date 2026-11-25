@@ -5,6 +5,10 @@ import { ReactRouterAppProvider } from '@toolpad/core/react-router';
 import { DialogsProvider } from '@toolpad/core/useDialogs';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Outlet, useNavigate } from 'react-router';
+import { tokenStore } from './utils/authTokens';
+import { restoreSessionFromToken } from './utils/authSync';
+import { ADMIN_LOGOUT_EVENT, logoutAdmin } from './utils/logout';
+import { useIdleLogout } from './hooks/useIdleLogout';
 import { getTaInfo } from './apis/ta-api';
 import LoadingOverlay from './components/loading/LoadingOverlay';
 import { getNavigationByStatus } from './config/navigationConfig';
@@ -20,9 +24,10 @@ function AppContent() {
   const [isLoading, setIsLoading] = useState(true);
 
   const [session, setSessionState] = useState<ExtendedSession | null>(() => {
-    const storedSession = sessionStorage.getItem('session');
-    return storedSession ? JSON.parse(storedSession) : null;
+    const storedSession = sessionStorage.getItem('session') ?? localStorage.getItem('session');
+    return storedSession && tokenStore.getRefresh() ? JSON.parse(storedSession) : null;
   });
+  const [isRestoring, setIsRestoring] = useState(() => !session && !!tokenStore.getRefresh());
 
   const [navigation, setNavigation] = useState<Navigation>(getNavigationByStatus(null));
 
@@ -32,23 +37,52 @@ function AppContent() {
     setSessionState(newSession);
     if (newSession) {
       sessionStorage.setItem('session', JSON.stringify(newSession));
+      localStorage.setItem('session', JSON.stringify(newSession));
     } else {
       sessionStorage.removeItem('session');
+      localStorage.removeItem('session');
     }
-    localStorage.removeItem('session');
+  }, []);
+
+  useEffect(() => {
+    if (session || !tokenStore.getRefresh()) return;
+    void restoreSessionFromToken('/tas/admin/v1')
+      .then((restored) => { if (restored) setSession(restored); })
+      .finally(() => setIsRestoring(false));
   }, []);
 
   const signIn = useCallback(() => {
     navigate('/sign-in');
   }, [navigate]);
 
-  const signOut = useCallback(() => {
+  const signOut = useCallback(async () => {
+    if (tokenStore.isPendingLogout()) {
+      sessionStorage.removeItem('session');
+      sessionStorage.removeItem('activeSession');
+      window.location.replace('/sign-in');
+      return;
+    }
+    await logoutAdmin('/tas/admin/v1');
     setSession(null);
     navigate('/sign-in');
-  }, [navigate]);
+  }, [navigate, setSession]);
+
+  useEffect(() => {
+    const onStorage = (event: StorageEvent) => {
+      if (event.key === ADMIN_LOGOUT_EVENT && event.newValue) {
+        tokenStore.markRemoteLogout(event.newValue);
+      }
+    };
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
+  }, [navigate, setSession]);
 
   // Fetch TA information
   useEffect(() => {
+    if (!session) {
+      setIsLoading(false);
+      return;
+    }
     const fetchTaInfo = () => {
       setIsLoading(true);
       getTaInfo()
@@ -74,7 +108,7 @@ function AppContent() {
     return () => {
       window.removeEventListener('popstate', handlePopState);
     };
-  }, []);
+  }, [session, navigate]);
 
   useEffect(() => {
     if (serverStatus !== null) {
@@ -82,9 +116,20 @@ function AppContent() {
     }
   }, [serverStatus]);
 
+  useIdleLogout(session !== null, signOut);
+
+  const displaySession = useMemo(() => session ? {
+    ...session,
+    user: {
+      ...session.user,
+      name: session.user?.name || session.user?.id || 'Admin',
+      email: session.user?.email || session.user?.id || undefined,
+    },
+  } : null, [session]);
+
   const sessionContextValue = useMemo(() => ({ session, setSession }), [session, setSession]);
 
-  if (isLoading) {
+  if (isLoading || isRestoring) {
     return <LoadingOverlay />;
   }
 
@@ -93,7 +138,7 @@ function AppContent() {
       <DialogsProvider>
         <ReactRouterAppProvider
           navigation={navigation}
-          session={session}
+          session={displaySession}
           authentication={{ signIn, signOut }}
           theme={customTheme}
         >
