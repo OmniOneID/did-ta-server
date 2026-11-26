@@ -47,6 +47,12 @@ export default function Oid4vciIssuerDetailPage() {
 
   useEffect(() => { load(); }, [load]);
 
+  const closeStatusDialog = () => {
+    if (loading) return;
+    setTarget(null);
+    setReason("");
+  };
+
   const applyStatus = async () => {
     if (!target || (requiresReason(target) && !reason.trim())) return;
     setLoading(true);
@@ -57,8 +63,8 @@ export default function Oid4vciIssuerDetailPage() {
       await load();
       await dialogs.open(CustomDialog, { title: "Notification", message: "Status changed successfully.", isModal: true });
     } catch (error) {
-      await dialogs.open(CustomDialog, { title: "Status change failed", message: formatErrorMessage(error, "The existing status was preserved."), isModal: true });
       setLoading(false);
+      await dialogs.open(CustomDialog, { title: "Status change failed", message: formatErrorMessage(error, "The existing status was preserved."), isModal: true });
     }
   };
 
@@ -99,7 +105,7 @@ export default function Oid4vciIssuerDetailPage() {
           </TableBody>
         </Table>
       </Paper>
-      <Dialog open={!!target} onClose={() => !loading && setTarget(null)} fullWidth maxWidth="sm">
+      <Dialog open={!!target} onClose={closeStatusDialog} fullWidth maxWidth="sm">
         <DialogTitle>Confirm status change to {target}</DialogTitle>
         <DialogContent>
           <Typography mb={2}>This operation is audited and may affect Wallet visibility.</Typography>
@@ -108,7 +114,7 @@ export default function Oid4vciIssuerDetailPage() {
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setTarget(null)} disabled={loading}>Cancel</Button>
+          <Button onClick={closeStatusDialog} disabled={loading}>Cancel</Button>
           <Button variant="contained" onClick={applyStatus} disabled={loading || (!!target && requiresReason(target) && !reason.trim())}>Confirm</Button>
         </DialogActions>
       </Dialog>

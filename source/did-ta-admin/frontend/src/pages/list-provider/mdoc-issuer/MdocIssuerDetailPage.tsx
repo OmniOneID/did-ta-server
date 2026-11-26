@@ -47,6 +47,12 @@ export default function MdocIssuerDetailPage() {
 
   useEffect(() => { load(); }, [load]);
 
+  const closeStatusDialog = () => {
+    if (loading) return;
+    setTarget(null);
+    setReason("");
+  };
+
   const applyStatus = async () => {
     if (!target || (requiresReason(target) && !reason.trim())) return;
     setLoading(true);
@@ -114,7 +120,7 @@ export default function MdocIssuerDetailPage() {
           </TableBody>
         </Table>
       </Paper>
-      <Dialog open={!!target} onClose={() => !loading && setTarget(null)} fullWidth maxWidth="sm">
+      <Dialog open={!!target} onClose={closeStatusDialog} fullWidth maxWidth="sm">
         <DialogTitle>Confirm status change to {target}</DialogTitle>
         <DialogContent>
           <Typography mb={2}>
@@ -127,7 +133,7 @@ export default function MdocIssuerDetailPage() {
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setTarget(null)} disabled={loading}>Cancel</Button>
+          <Button onClick={closeStatusDialog} disabled={loading}>Cancel</Button>
           <Button variant="contained" onClick={applyStatus} disabled={loading || (!!target && requiresReason(target) && !reason.trim())}>Confirm</Button>
         </DialogActions>
       </Dialog>
